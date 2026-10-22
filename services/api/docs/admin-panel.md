@@ -10,12 +10,32 @@ Sign-in is **local only**: there is no federated identity provider. Operator
 accounts are created by the CLI with a username and a scrypt password hash,
 so the panel's attack surface never depends on an external IdP.
 
+## Sidebar layout
+
+Every entry belongs to a titled section, and each heading is a separator (not a
+link), so the scope of a group is never ambiguous:
+
+| Group | Entries |
+|---|---|
+| Operación | `#overview`, `#growth`, `#voice`, `#economy`, `#usage` |
+| Exámenes | `#exam-weeks`, `#exam-results`, `#ia-config` |
+| Comercial | `#plans`, `#campaigns` |
+| Sistema | `#browse`, `#policy`, `#audit` |
+
+New entries must declare a `group` in the `NAV` table; the heading is derived
+from the data, so a group cannot silently gain a stray entry.
+
+Status badges use Tabler's utilities: `.badge` draws the pill and
+`bg-<tone>-lt` paints it (saturated text on a 10 % tint). `badge-<tone>` is
+**not** defined in the vendored CSS — it silently renders the neutral grey pill,
+so every state looks the same.
+
 ## Capabilities
 
 - **Dashboards** (`#overview`, `#growth`, `#voice`, `#economy`): KPI cards and
   30-day timeseries (accounts, waitlist, hosted sessions, helper cost,
   minutes granted/consumed, orders and volume) from fixed read-only queries.
-- **Table browser** (`#tablas`): any table declared in `src/admin-browse.ts`
+- **Table browser** (`#browse`): any table declared in `src/admin-browse.ts`
   with server-side validated filters, ordering and pagination. Filters are
   always applied by the API; the client only paints.
 - **Per-user actions**: account detail (support triage report), single-user
@@ -28,6 +48,12 @@ so the panel's attack surface never depends on an external IdP.
     remain retained and block ordinary same-week regeneration; replacement
     requires the existing explicit force operation. Safe latest-job/scheduler
     status lives here.
+    Weeks and jobs are colour-coded by severity (green = usable, red = needs an
+    operator, yellow = waiting or unknown). A job's error code is a button that
+    opens a dialog with the coarse code, the sanitized per-section reasons from
+    the last attempt, timestamps, attempts and the next step. Only messages the
+    pipeline writes itself are stored (`error_details`, migration `047`);
+    provider bodies, stack traces and user content are dropped by the writer.
   - `#exam/<uuid>` — full-page exam review: sections in exam order, accepted
     answers marked, judge verdicts with reasons, passages once per text, variant
     and pool tabs, and approve/reject with a mandatory reason. No raw JSON.
@@ -36,7 +62,7 @@ so the panel's attack surface never depends on an external IdP.
     or read provider response bodies and are time-bounded.
   - `#exam-results` — per-student attempts, filters and detail.
   - `#level-tests` redirects to `#exam-weeks` for old bookmarks.
-- **Welcome policy** (`#política`): the same audited policy change the CLI
+- **Welcome policy** (`#policy`): the same audited policy change the CLI
   performs, with version conflict detection.
 
 ## Enable on a deployment

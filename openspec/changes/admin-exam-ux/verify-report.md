@@ -70,3 +70,9 @@ petición lleva de verdad el valor escrito (`applyFilter`).
   `weekRow` (cobertura directa en `level-tests-admin.test.ts`).
 - Revisión visual del operador sobre datos reales: pendiente de su visto bueno
   (el E2E usa contenido del stub).
+
+## Posterior
+
+El pulido de estados, el diálogo de error y la agrupación completa del menú
+viven en `openspec/changes/admin-exam-polish/`; ese cambio deja el E2E en 37
+checks (ver su `verify-report.md`).

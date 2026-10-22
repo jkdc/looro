@@ -276,4 +276,9 @@ integration('the status endpoint exposes the last generation jobs', async () => 
   assert.equal(body.jobs.length, 2);
   assert.ok(body.jobs[0].languageID === 'en');
   assert.ok('latestJob' in body);
+  // A red job must explain itself: the coarse code plus the sanitized reasons.
+  const failed = body.jobs.find((job: { status: string }) => job.status === 'failed');
+  assert.equal(failed.errorCode, 'generation_failed');
+  assert.ok(Array.isArray(failed.errors) && failed.errors.length === 1);
+  assert.match(failed.errors[0], /^[a-z0-9_.,()%:\- ]+$/);
 });

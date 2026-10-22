@@ -24,12 +24,6 @@ try {
 
   // One completed student attempt (idempotent by email) so the results
   // section has real data: snapshot identity follows migration 042 exactly.
-  const existing = await db.query(`SELECT id FROM accounts WHERE email = 'student@example.test' LIMIT 1`);
-  if (existing.rowCount) {
-    console.log('student attempt already seeded');
-  } else {
-  const accountID = randomUUID();
-  await db.query('INSERT INTO accounts(id,email,is_guest) VALUES($1,$2,false)', [accountID, 'student@example.test']);
   const weekId = Number(process.env.SEED_WEEK_ID) || (() => {
     const now = new Date();
     const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -38,6 +32,12 @@ try {
     const start = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
     return monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - start.getTime()) / 86_400_000 + 1) / 7);
   })();
+  const existing = await db.query(`SELECT id FROM accounts WHERE email = 'student@example.test' LIMIT 1`);
+  if (existing.rowCount) {
+    console.log('student attempt already seeded');
+  } else {
+  const accountID = randomUUID();
+  await db.query('INSERT INTO accounts(id,email,is_guest) VALUES($1,$2,false)', [accountID, 'student@example.test']);
   const content = { languageID: 'en', level: 'A1', weekId, version: 1, thresholds: { overall: 60 },
     source: 'llm', passages: [], readingPassageIds: [], listeningPassageIds: [],
     items: [{ id: 'i1', section: 'recognition', kind: 'choice', prompt: 'She ___ a doctor.',
@@ -60,6 +60,17 @@ try {
     [accountID, randomUUID(), examID, JSON.stringify(result)]);
   console.log(`student attempt seeded (account ${accountID}, week ${weekId})`);
   }
+
+  // One failed job from the previous week: deterministic red row plus a real
+  // error dialog to assert, without waiting for the stub to fail.
+  await db.query(`INSERT INTO level_test_generation_jobs(language_id,level,week_index,state,attempts,error_code,
+      error_details,started_at,finished_at,updated_at)
+    VALUES('en','B2',$1 - 1,'failed',2,'generation_failed',$2::jsonb,
+      now() - interval '40 minutes', now() - interval '35 minutes', now() - interval '35 minutes')
+    ON CONFLICT(language_id,level,week_index) DO UPDATE SET state='failed',attempts=2,error_code='generation_failed',
+      error_details=EXCLUDED.error_details,updated_at=EXCLUDED.updated_at`,
+  [weekId, JSON.stringify(['reading: only 2 passages (needed 4)', 'writing: empty response'])]);
+  console.log(`failed generation job seeded (en B2, week ${weekId - 1})`);
 } finally {
   await db.end();
 }

@@ -579,17 +579,20 @@ export function createApp(services: Services) {
     assertAdminPageOrigin(request);
     await adminOnly(request);
     const config = services.generationStatus?.config;
-    const latest = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, started_at, finished_at, updated_at " +
+    const latest = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, error_details, started_at, finished_at, updated_at " +
       "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1")).rows[0] as
       { language_id: string; level: string; week_index: number; state: string; attempts: number;
-        error_code: string | null; started_at: Date | null; finished_at: Date | null; updated_at: Date } | undefined;
-    const jobs = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, started_at, finished_at, updated_at " +
+        error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date } | undefined;
+    const jobs = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, error_details, started_at, finished_at, updated_at " +
       "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10")).rows as
       { language_id: string; level: string; week_index: number; state: string; attempts: number;
-        error_code: string | null; started_at: Date | null; finished_at: Date | null; updated_at: Date }[];
+        error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date }[];
     const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
+    // `errors` carries the sanitized per-section reasons; `errorCode` stays the
+    // coarse, stable code used for badges.
     const jobItem = (job: NonNullable<typeof latest>) => ({ languageID: job.language_id, level: job.level,
       weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
+      errors: Array.isArray(job.error_details) ? job.error_details.filter(entry => typeof entry === 'string') : [],
       startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
     reply.header('cache-control', 'no-store');
     return {

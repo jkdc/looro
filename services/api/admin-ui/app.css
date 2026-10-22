@@ -113,3 +113,22 @@
 }
 .exam-verdict-reason { font-size: .8125rem; margin-top: .35rem; color: #b37400; }
 .exam-actions { position: sticky; bottom: 0; z-index: 5; box-shadow: 0 -2px 12px rgba(0, 0, 0, .06); }
+
+/* ---- sidebar sections: every entry belongs to a visible group ---- */
+#nav .nav-group { margin-top: .35rem; }
+#nav .nav-group .nav-link {
+  padding: .8rem 1rem .2rem;
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .42);
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  pointer-events: none;
+}
+#nav .nav-group:first-child .nav-link { border-top: none; padding-top: .25rem; }
+#nav .nav-item .nav-link { border-radius: 4px; }
+
+/* ---- generation job error dialog ---- */
+#detail-body table th { width: 9rem; }
+#detail-body ul { padding-left: 1.1rem; }

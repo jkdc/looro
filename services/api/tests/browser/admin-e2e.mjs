@@ -94,11 +94,27 @@ try {
   // the generation view carries no provider form.
   await check('sidebar groups the exam surfaces with three entries', async () => {
     const nav = await page.textContent('#nav');
-    if (!nav.includes('Exámenes')) throw new Error('exam group heading missing');
+    for (const group of ['Operación', 'Exámenes', 'Comercial', 'Sistema']) {
+      if (!nav.includes(group)) throw new Error(`group ${group} missing from the sidebar`);
+    }
     for (const href of ['#exam-weeks', '#exam-results', '#ia-config']) {
       if (!(await page.isVisible(`a[href="${href}"]`))) throw new Error(`${href} link missing`);
     }
     if (await page.isVisible('a[href="#level-tests"]')) throw new Error('legacy link still in the nav');
+    // Every entry must live under its own heading: no heading can be read as the
+    // first item of the section below it.
+    const order = await page.evaluate(() => [...document.querySelectorAll('#nav .nav-group, #nav a.nav-link')]
+      .map(node => node.classList.contains('nav-group') ? `group:${node.textContent.trim()}` : node.getAttribute('href')));
+    const section = heading => order.indexOf(`group:${heading}`);
+    const between = (href, heading, next) =>
+      order.indexOf(href) > section(heading) && order.indexOf(href) < section(next);
+    for (const href of ['#exam-weeks', '#exam-results', '#ia-config']) {
+      if (!between(href, 'Exámenes', 'Comercial')) throw new Error(`${href} is not inside the exam section`);
+    }
+    for (const href of ['#plans', '#campaigns']) {
+      if (!between(href, 'Comercial', 'Sistema')) throw new Error(`${href} is not inside the commercial section`);
+    }
+    if (order.indexOf('#audit') < section('Sistema')) throw new Error('audit is not inside the system section');
   });
   await page.goto(`${PANEL}/#level-tests`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
@@ -175,6 +191,42 @@ try {
     await expectText('#scheduler-note', 'no configurado');
     await expectText('#scheduler-note', 'activo en este proceso: no');
   });
+  await check('job states are colour-coded by severity', async () => {
+    const states = await page.$$eval('#jobs-monitor tbody tr', rows => rows.map(row => {
+      const badge = row.querySelector('.badge');
+      const style = badge ? getComputedStyle(badge) : null;
+      return { text: badge?.textContent?.trim() ?? '', tone: badge?.className ?? '',
+        color: style?.color ?? '', background: style?.backgroundColor ?? '' };
+    }));
+    // The class name is not proof: this Tabler ships `.badge` plus `bg-*-lt`
+    // only, so a missing utility class paints the neutral grey badge. Assert the
+    // real channels instead of trusting the markup.
+    const channels = value => {
+      const srgb = value.match(/color\(srgb ([\d.]+) ([\d.]+) ([\d.]+)/);
+      if (srgb) return srgb.slice(1, 4).map(Number);
+      return (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+    };
+    const failed = states.find(entry => entry.text === 'failed');
+    const finished = states.find(entry => entry.text === 'finished');
+    if (!failed) throw new Error('seeded failed job is missing');
+    if (!failed.tone.includes('bg-danger-lt')) throw new Error(`failed badge tone: ${failed.tone}`);
+    if (!finished) throw new Error('no finished job in the monitor');
+    if (!finished.tone.includes('bg-success-lt')) throw new Error(`finished badge tone: ${finished.tone}`);
+    const [fr, fg, fb] = channels(failed.color);
+    if (!(fr > fg && fr > fb)) throw new Error(`failed badge text is not red: ${failed.color}`);
+    const [gr, gg, gb] = channels(finished.color);
+    if (!(gg > gr && gg > gb)) throw new Error(`finished badge text is not green: ${finished.color}`);
+  });
+  await check('a generation error opens a dialog with the real reasons', async () => {
+    await page.click('#jobs-monitor [data-job-error]');
+    await page.waitForSelector('#detail-modal.show', { timeout: 5_000 });
+    await expectText('#detail-body', 'generation_failed');
+    await expectText('#detail-body', 'Detalle del último intento');
+    await expectText('#detail-body', 'reading: only 2 passages (needed 4)');
+    await expectText('#detail-body', 'writing: empty response');
+    await shot('10e-job-error');
+    await page.click('#detail-close');
+  });
 
   // 6. Generated-exams listing: seeded drafts visible with the regenerate
   // affordance on current-week unpublished rows, audited moderation.
@@ -217,6 +269,8 @@ try {
       undefined, { timeout: 10_000 });
     if (await page.isVisible(weekRow('A1') + ' [data-week-approve]'))
       throw new Error('approve still offered for an approved row');
+    const tone = await page.getAttribute(weekRow('A1') + ' .badge', 'class');
+    if (!tone?.includes('bg-success-lt')) throw new Error(`approved badge tone: ${tone}`);
   });
   await shot('07-draft-approved');
   await drainToasts();
@@ -233,6 +287,8 @@ try {
     await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
       .some(tr => tr.textContent?.includes('A2') && tr.textContent?.includes('rejected')),
       undefined, { timeout: 10_000 });
+    const tone = await page.getAttribute(weekRow('A2') + ' .badge', 'class');
+    if (!tone?.includes('bg-danger-lt')) throw new Error(`rejected badge tone: ${tone}`);
   });
   await shot('08-draft-rejected');
 

@@ -41,3 +41,16 @@ test('an unknown durable provider outcome is never automatically reissued', { sk
     await db.end();
   }
 });
+
+test('generation error details keep our own messages and drop provider payloads', async () => {
+  const { sanitizeGenerationErrorDetails } = await import('../src/level-tests-generation-jobs.js');
+  assert.deepEqual(
+    sanitizeGenerationErrorDetails(['reading: only 2 passages (needed 4)', 'writing: empty response'], 'generation_failed'),
+    ['reading: only 2 passages (needed 4)', 'writing: empty response']);
+  // Anything that looks like a provider body, a stack trace or user content is dropped.
+  assert.deepEqual(sanitizeGenerationErrorDetails([
+    '{"error":"Invalid API key"}', 'TypeError: fetch failed at /app/src', 'reading: Lunes\nMiércoles'], 'generation_failed'),
+    ['generation_failed']);
+  assert.deepEqual(sanitizeGenerationErrorDetails(undefined, 'llm_outcome_unknown'), ['llm_outcome_unknown']);
+  assert.equal(sanitizeGenerationErrorDetails(Array.from({ length: 20 }, (_, i) => `section: code_${i}`), null).length, 10);
+});

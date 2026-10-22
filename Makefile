@@ -47,6 +47,7 @@ health: ## Comprueba /healthz y /readyz de la API
 	@curl -sk https://localhost/readyz && echo
 
 migrate: ## Aplica migraciones pendientes (up ya lo hace al arrancar)
+	$(COMPOSE) build migrate
 	$(COMPOSE) run --rm migrate
 
 psql: ## Consola psql contra la base de datos local

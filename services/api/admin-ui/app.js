@@ -3,19 +3,19 @@
 
 const $ = selector => document.querySelector(selector);
 const NAV = [
-  { id: 'overview', label: 'Resumen', icon: 'ti-chart-bar' },
-  { id: 'growth', label: 'Crecimiento', icon: 'ti-trending-up' },
-  { id: 'voice', label: 'Voz', icon: 'ti-microphone' },
-  { id: 'economy', label: 'Economía', icon: 'ti-coins' },
-  { id: 'usage', label: 'Uso', icon: 'ti-activity' },
-  { id: 'browse', label: 'Tablas', icon: 'ti-table' },
-  { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
+  { id: 'overview', label: 'Resumen', icon: 'ti-chart-bar', group: 'Operación' },
+  { id: 'growth', label: 'Crecimiento', icon: 'ti-trending-up', group: 'Operación' },
+  { id: 'voice', label: 'Voz', icon: 'ti-microphone', group: 'Operación' },
+  { id: 'economy', label: 'Economía', icon: 'ti-coins', group: 'Operación' },
+  { id: 'usage', label: 'Uso', icon: 'ti-activity', group: 'Operación' },
   { id: 'exam-weeks', label: 'Generar y revisar', icon: 'ti-book', group: 'Exámenes' },
   { id: 'exam-results', label: 'Resultados', icon: 'ti-clipboard-check', group: 'Exámenes' },
   { id: 'ia-config', label: 'Configuración de IA', icon: 'ti-cpu', group: 'Exámenes' },
-  { id: 'plans', label: 'Planes', icon: 'ti-crown' },
-  { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
-  { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
+  { id: 'plans', label: 'Planes', icon: 'ti-crown', group: 'Comercial' },
+  { id: 'campaigns', label: 'Campañas', icon: 'ti-gift', group: 'Comercial' },
+  { id: 'browse', label: 'Tablas', icon: 'ti-table', group: 'Sistema' },
+  { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings', group: 'Sistema' },
+  { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check', group: 'Sistema' }
 ];
 const PALETTE = ['#206bc4', '#2fb344', '#f76707', '#a55aad', '#d63939', '#429ade'];
 const CHART_TYPE = { orders: 'bar', revenue_minor: 'bar', minutes_granted_ms: 'bar', minutes_consumed_ms: 'bar' };
@@ -54,13 +54,17 @@ const BADGE_COLORS = {
   open: 'info', granted: 'success', skipped: 'secondary', account_deleted: 'secondary', operator_close: 'danger',
   user_requested: 'secondary', cancelled_before_provider: 'secondary', minutes: 'azure', ai_value: 'purple',
   stripe: 'indigo', play: 'green', welcome: 'teal', gift: 'orange', purchase: 'azure', reserve: 'secondary',
-  settle: 'secondary', release: 'secondary', forfeit: 'danger', transfer: 'secondary'
+  settle: 'secondary', release: 'secondary', forfeit: 'danger', transfer: 'secondary',
+  // Exam weeks and generation jobs: green means usable, red means the operator
+  // has to look at it, yellow means waiting or unknown.
+  draft: 'warning', approved: 'success', rejected: 'danger', retired: 'secondary',
+  running: 'info', finished: 'success', failed: 'danger', unknown: 'warning'
 };
 const badgeCell = cell => {
   const raw = cell.getValue();
   if (raw === null || raw === undefined || raw === '') return '<span class="text-secondary">—</span>';
   const tone = BADGE_COLORS[String(raw)] ?? 'secondary';
-  return `<span class="badge badge-${tone}">${escapeHtml(String(raw))}</span>`;
+  return `<span class="badge bg-${tone}-lt">${escapeHtml(String(raw))}</span>`;
 };
 const BADGED_COLUMNS = new Set(['state', 'kind', 'close_reason', 'environment', 'entitlement_kind', 'purpose',
   'provider', 'reason', 'funding_mode', 'outcome']);
@@ -84,6 +88,12 @@ const closeModal = id => { const element = $(id); element.classList.remove('show
 const detail = (title, body) => {
   $('#detail-title').textContent = title;
   $('#detail-body').textContent = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
+  openModal('#detail-modal');
+};
+/** Structured detail (escaped by the caller) for payloads a <pre> cannot explain. */
+const detailHtml = (title, html) => {
+  $('#detail-title').textContent = title;
+  $('#detail-body').innerHTML = html;
   openModal('#detail-modal');
 };
 $('#detail-close').addEventListener('click', () => closeModal('#detail-modal'));
@@ -320,14 +330,65 @@ let lastWatchTone = '';
 let levelTestsRender = null;     // { container, view } — refreshed when a watched run ends
 const TERMINAL_JOB_STATES = new Set(['finished', 'failed', 'unknown']);
 
+const JOB_ERROR_HELP = [
+  [/judge_failed_or_incomplete/, 'El juez LLM no devolvió un veredicto válido para esa sección. Suele repetirse con el mismo modelo: cambia de modelo o revisa la cuota del proveedor.'],
+  [/only \d+ passages|minimum|fewer valid/, 'El proveedor devolvió menos contenido válido del exigido (pasajes o ítems). La respuesta llegó incompleta o no pasó el validador.'],
+  [/fetch|network|timeout|ETIMEDOUT/i, 'La llamada al proveedor falló por red o agotó el tiempo de espera.'],
+  [/llm_outcome_unknown/, 'No se pudo confirmar si el proveedor completó la petición (corte o timeout). Por seguridad no se reintenta solo: vuelve a lanzarlo con «Regenerar».'],
+  [/interrupted_generation/, 'El proceso se interrumpió mientras generaba (reinicio o despliegue del contenedor).'],
+  [/reconciliation_required/, 'La semana quedó en estado desconocido y hay que reconciliarla antes de reintentar.'],
+  [/attempt_limit_reached/, 'Se agotaron los reintentos automáticos para esta semana y nivel.'],
+  [/finished_without_week/, 'La marca dice terminado pero no hay examen guardado: vuelve a generarlo.'],
+  [/no llm configuration/, 'No hay configuración de proveedor guardada. Revísala en Configuración de IA.'],
+  [/no exam model/, 'No hay plantilla de examen para ese nivel.'],
+];
+const jobErrorHelp = (job) => {
+  const haystack = [job.errorCode, ...(Array.isArray(job.errors) ? job.errors : [])].filter(Boolean).join(' ');
+  return JOB_ERROR_HELP.find(([pattern]) => pattern.test(haystack))?.[1]
+    ?? 'El pipeline de generación falló sin un motivo más específico. Revisa la configuración del proveedor y vuelve a lanzar la generación.';
+};
+/** Explains a red generation row: coarse code, real reasons, timestamps and
+    what to do next. Content is escaped; nothing from the provider is trusted. */
+const showJobError = job => {
+  const errors = Array.isArray(job.errors) ? job.errors : [];
+  const rows = [
+    ['Examen', `${job.languageID} ${job.level} · semana ${job.weekId}`],
+    ['Intentos', String(job.attempts ?? 0)],
+    ['Inicio', examStamp(job.startedAt)],
+    ['Fin', examStamp(job.finishedAt)],
+    ['Actualizado', examStamp(job.updatedAt)],
+  ];
+  detailHtml(`Error de generación · ${job.languageID} ${job.level}`,
+    '<div class="d-flex flex-wrap align-items-center gap-2 mb-3">' +
+    badgeCell({ getValue: () => job.status }) +
+    '<span class="badge badge-outline">' + escapeHtml(job.errorCode ?? 'error') + '</span></div>' +
+    '<p class="mb-3">' + escapeHtml(jobErrorHelp(job)) + '</p>' +
+    '<table class="table table-sm mb-3"><tbody>' + rows.map(([label, value]) =>
+      '<tr><th class="text-secondary fw-normal">' + escapeHtml(label) + '</th><td>' + escapeHtml(value) + '</td></tr>').join('') +
+    '</tbody></table>' +
+    '<div class="subheader text-secondary mb-1">Detalle del último intento</div>' +
+    (errors.length
+      ? '<ul class="mb-0">' + errors.map(error => '<li><code>' + escapeHtml(error) + '</code></li>').join('') + '</ul>'
+      : '<div class="text-secondary small">Este intento no dejó detalle por sección.</div>') +
+    '<div class="alert alert-info mt-3 mb-0 small">Si se repite, revisa la clave, la cuota y el modelo en Configuración de IA y vuelve a lanzar desde Generar y revisar.</div>');
+};
+
 function renderJobs(jobs = lastJobsSnapshot) {
   const monitor = $('#jobs-monitor'); if (!monitor) return;
   monitor.innerHTML = jobs.length ? `<div class="table-responsive"><table class="table table-sm table-vcenter"><thead>
-      <tr><th>Idioma</th><th>Nivel</th><th>Semana</th><th>Estado</th><th>Intentos</th><th>Error</th><th>Actualizado</th></tr></thead><tbody>${jobs.map(job =>
+      <tr><th>Idioma</th><th>Nivel</th><th>Semana</th><th>Estado</th><th>Intentos</th><th>Error</th><th>Actualizado</th></tr></thead><tbody>${jobs.map((job, index) =>
       '<tr><td>' + escapeHtml(job.languageID) + '</td><td>' + escapeHtml(job.level) + '</td><td>' + escapeHtml(job.weekId) +
       '</td><td>' + badgeCell({ getValue: () => job.status }) + '</td><td>' + escapeHtml(job.attempts) + '</td><td>' +
-      escapeHtml(job.errorCode || '—') + '</td><td>' + escapeHtml((job.updatedAt || '—').slice(0, 16).replace('T', ' ')) + '</td></tr>').join('')}
+      (job.errorCode
+        ? '<button type="button" class="btn btn-link btn-sm p-0 align-baseline text-danger" data-job-error="' + index +
+          '" title="Ver detalle del error">' + escapeHtml(job.errorCode) + '</button>'
+        : '<span class="text-secondary">—</span>') +
+      '</td><td>' + escapeHtml(examStamp(job.updatedAt)) + '</td></tr>').join('')}
       </tbody></table></div>` : '<div class="text-secondary small">Sin jobs registrados.</div>';
+  // Re-attached on every repaint: the monitor re-renders while a run is watched.
+  for (const button of monitor.querySelectorAll('[data-job-error]')) {
+    button.onclick = () => showJobError(jobs[Number(button.dataset.jobError)]);
+  }
 }
 
 function scheduleGenerationWatch() {
@@ -535,9 +596,14 @@ async function renderExamWeeksView(container, view = {}) {
   if (runningJobs.length) startGenerationWatch(runningJobs.map(job => `${job.languageID}:${job.level}`), currentWeekId);
   const job = status.latestJob;
   const jobHtml = job
-    ? '<hr><strong>Último job:</strong> ' + escapeHtml(job.status) + ' · ' + escapeHtml(job.languageID) + ' ' + escapeHtml(job.level) +
-      ' · semana ' + escapeHtml(job.weekId) + '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
-      ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' + escapeHtml(job.errorCode || '—') + '</div>'
+    ? '<hr><strong>Último job:</strong> ' + badgeCell({ getValue: () => job.status }) + ' · ' +
+      escapeHtml(job.languageID) + ' ' + escapeHtml(job.level) + ' · semana ' + escapeHtml(job.weekId) +
+      '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
+      ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' +
+      (job.errorCode
+        ? '<button type="button" class="btn btn-link btn-sm p-0 align-baseline text-danger" id="latest-job-error">' +
+          escapeHtml(job.errorCode) + '</button>'
+        : '—') + '</div>'
     : '<hr><div class="text-secondary">Todavía no hay jobs registrados.</div>';
   const rowCells = item => '<tr><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.languageID) +
     '</td><td>' + escapeHtml(item.level) + '</td><td>' + badgeCell({ getValue: () => item.status }) +
@@ -607,6 +673,7 @@ async function renderExamWeeksView(container, view = {}) {
   });
   // Repaint the watch state on re-render and keep ticking while mounted.
   renderJobs();
+  $('#latest-job-error')?.addEventListener('click', () => showJobError(job));
   scheduleGenerationWatch();
   $('#gen-launch').onclick = async () => {
     const languageID = $('#gen-language').value, levels = $('#gen-levels').value;
@@ -639,7 +706,6 @@ async function renderExamWeeksView(container, view = {}) {
 
 /* ---- exam review page: the exam as the student takes it, never raw JSON ---- */
 const EXAM_SECTION_LABELS = { recognition: 'Reconocimiento', writing: 'Escritura', reading: 'Lectura', listening: 'Escucha' };
-const EXAM_STATUS_TONES = { draft: 'warning', approved: 'success', rejected: 'danger', retired: 'secondary' };
 const examSectionLabel = section => EXAM_SECTION_LABELS[section] ?? section;
 const examStamp = value => value ? String(value).slice(0, 16).replace('T', ' ') : '—';
 const examAccepted = item => new Set((Array.isArray(item.answers) ? item.answers : [])
@@ -660,15 +726,15 @@ const examAnswerChips = item => {
   const answers = Array.isArray(item.answers) ? item.answers : [];
   if (!answers.length) return '<div class="text-secondary small">Sin respuestas aceptadas.</div>';
   return '<div class="exam-answers"><span class="text-secondary small me-1">Aceptadas:</span>' +
-    answers.map(answer => '<span class="badge badge-success">' + escapeHtml(answer) + '</span>').join(' ') + '</div>';
+    answers.map(answer => '<span class="badge bg-success-lt">' + escapeHtml(answer) + '</span>').join(' ') + '</div>';
 };
 
 const examItemCard = (item, verdict, index) => {
   const flagged = verdict?.verdict === 'flagged';
   const judge = verdict
-    ? '<span class="badge badge-' + (flagged ? 'warning' : 'success') + '">Juez: ' +
+    ? '<span class="badge bg-' + (flagged ? 'warning' : 'success') + '-lt">Juez: ' +
       (flagged ? 'marcado' : 'ok') + '</span>'
-    : '<span class="badge badge-secondary">Juez: sin revisar</span>';
+    : '<span class="badge bg-secondary-lt">Juez: sin revisar</span>';
   const reason = verdict?.reason
     ? '<div class="exam-verdict-reason"><i class="ti ti-info-circle me-1"></i>' + escapeHtml(verdict.reason) + '</div>' : '';
   return '<article class="exam-item' + (flagged ? ' exam-item-flagged' : '') + '">' +
@@ -767,7 +833,7 @@ async function renderExamReview(container, params = {}, rawId) {
     .filter(entry => entry && entry.id).map(entry => [entry.id, entry]));
   const flagged = [...verdicts.values()].filter(entry => entry.verdict === 'flagged');
   const status = String(week.status ?? '');
-  const tone = EXAM_STATUS_TONES[status] ?? 'secondary';
+  const tone = BADGE_COLORS[status] ?? 'secondary';
   const tabs = variants.map((_, index) => ({ id: 'variant-' + index, label: 'Variante ' + (index + 1) }))
     .concat([{ id: 'pool', label: 'Pool completo' }]);
 
@@ -783,7 +849,7 @@ async function renderExamReview(container, params = {}, rawId) {
     '<div><div class="text-secondary small">Idioma ' + escapeHtml(week.languageID) + ' · nivel ' + escapeHtml(week.level) +
     ' · semana ' + escapeHtml(week.weekId) + '</div>' +
     '<h2 class="mb-2">' + escapeHtml(week.languageID) + ' ' + escapeHtml(week.level) + ' · semana ' + escapeHtml(week.weekId) + '</h2>' +
-    '<div class="d-flex align-items-center gap-2"><span class="badge badge-' + tone + '">' + escapeHtml(status) + '</span>' +
+    '<div class="d-flex align-items-center gap-2"><span class="badge bg-' + tone + '-lt">' + escapeHtml(status) + '</span>' +
     '<span class="text-secondary small">' + variants.length + ' variante' + (variants.length === 1 ? '' : 's') + '</span>' +
     '<span class="text-secondary small">' + escapeHtml(week.generator || '—') + '</span></div></div>' +
     '<div class="text-end text-secondary small">' +
@@ -865,8 +931,8 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
     '<tr><td class="cell-mono" title="' + escapeHtml(item.attemptId) + '">' + escapeHtml(item.attemptId.slice(0, 8)) + '…</td>' +
     '<td>' + escapeHtml(item.email || '—') + '</td><td>' + escapeHtml(item.languageID) + ' ' + escapeHtml(item.level) +
     '</td><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.source) + '</td><td>' +
-    (item.state === 'completed' ? badgeCell({ getValue: () => 'settled' }) + ' ' : '<span class="badge badge-info">in_progress</span> ') +
-    (item.passed === null ? '—' : item.passed ? '<span class="badge badge-success">passed</span>' : '<span class="badge badge-danger">failed</span>') +
+    (item.state === 'completed' ? badgeCell({ getValue: () => 'settled' }) + ' ' : '<span class="badge bg-info-lt">in_progress</span> ') +
+    (item.passed === null ? '—' : item.passed ? '<span class="badge bg-success-lt">passed</span>' : '<span class="badge bg-danger-lt">failed</span>') +
     '</td><td>' + (item.overall === null ? '—' : item.overall + ' %') + '</td><td>' +
     escapeHtml((item.startedAt || '—').slice(0, 16).replace('T', ' ')) + '</td>' +
     '<td class="text-end"><button class="btn btn-sm btn-outline-secondary" data-attempt-detail="' +
@@ -1154,7 +1220,7 @@ async function route() {
   document.title = `${view.title} · Palique Admin`;
   // The review page belongs to the generation surface: keep it highlighted.
   const navPath = routePath === 'exam' ? 'exam-weeks' : routePath;
-  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${navPath}`);
+  for (const link of document.querySelectorAll('#nav a.nav-link')) link.classList.toggle('active', link.hash === `#${navPath}`);
   for (const chart of charts) chart.destroy();
   charts.length = 0;
   for (const table of tables) table.destroy();
@@ -1165,10 +1231,12 @@ async function route() {
   catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger mt-3"><i class="ti ti-alert-triangle me-2"></i>${error.code ?? error.message}</div>`; }
 }
 (function boot() {
-  // Grouping is data: a heading appears whenever an entry opens a new group.
+  // Grouping is data: a heading appears whenever an entry opens a new group, so
+  // every entry belongs to a visible section and no heading can be mistaken for
+  // the first item of the next one.
   $('#nav').innerHTML = NAV.map((item, index) => {
-    const heading = item.group && NAV[index - 1]?.group !== item.group
-      ? `<li class="nav-item"><span class="nav-link text-secondary text-uppercase fw-bold pt-3" style="font-size:.7rem">${item.group}</span></li>`
+    const heading = NAV[index - 1]?.group !== item.group
+      ? `<li class="nav-item nav-group"><span class="nav-link">${escapeHtml(item.group ?? '')}</span></li>`
       : '';
     return heading + `<li class="nav-item"><a class="nav-link" href="#${item.id}">
     <span class="nav-link-icon"><i class="ti ${item.icon}"></i></span><span class="nav-link-title">${item.label}</span></a></li>`;
