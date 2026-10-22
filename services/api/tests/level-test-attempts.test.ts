@@ -359,3 +359,68 @@ integration('attempt event timestamps never regress and exact retries preserve t
     assert.equal(detail.json().attempt.revision, 4);
   } finally { await app.close(); }
 });
+
+integration('LLM snapshots must carry a valid generation lineage and variant identity', async () => {
+  const owner = await account();
+  const exam = composeWeekly('en', 'B1', new Date('2026-10-07T12:00:00Z'))!;
+  const generationID = randomUUID();
+  const llm = identifySnapshot({ ...exam, variant: 1 }, 'llm', generationID);
+  assert.equal(llm.examId, `${generationID}:v1`);
+  const app = createApp({ db: db!, auth: {} });
+  const upload = (snapshot: unknown) => app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync',
+    headers: { authorization: owner.authorization },
+    payload: { snapshots: [snapshot], attempts: [{ ...attempt(llm), examId: (snapshot as { examId: string }).examId }] } });
+  try {
+    const valid = await upload(llm);
+    assert.equal(valid.statusCode, 200, valid.body);
+
+    for (const broken of [
+      { ...llm, generationId: 'not-a-uuid' },
+      { ...llm, variant: 0, examId: `${generationID}:v0` },
+      { ...llm, variant: 6, examId: `${generationID}:v6` },
+      { ...llm, examId: `${generationID}:v2` },
+      { ...llm, source: 'bundled' }
+    ]) {
+      const response = await upload(broken);
+      assert.equal(response.statusCode, 400, JSON.stringify(broken).slice(0, 80));
+      assert.equal(response.json().error?.code, 'invalid_exam_snapshot');
+    }
+  } finally { await app.close(); }
+});
+
+integration('a pre-existing attempt without a receipt conflicts or replays based on its stored bytes', async () => {
+  const owner = await account(), snapshot = bundledSnapshot(), created = attempt(snapshot);
+  const app = createApp({ db: db!, auth: {} });
+  const headers = { authorization: owner.authorization };
+  const create = (value: typeof created) => app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+    payload: { snapshots: [snapshot], attempts: [value] } });
+  try {
+    assert.equal((await create(created)).statusCode, 200);
+    await db!.query('DELETE FROM level_test_attempt_creation_receipts WHERE account_id=$1 AND attempt_id=$2',
+      [owner.accountID, created.attemptId]);
+
+    // Identical bytes with no receipt: the durable attempt itself is the proof.
+    const replay = await create(created);
+    assert.equal(replay.statusCode, 200, replay.body);
+    assert.deepEqual(replay.json().accepted, [{ attemptId: created.attemptId, revision: 1 }]);
+    assert.equal((await db!.query(`SELECT count(*)::int AS n FROM level_test_attempt_creation_receipts
+      WHERE account_id=$1 AND attempt_id=$2`, [owner.accountID, created.attemptId])).rows[0]!.n, 1);
+
+    await db!.query('DELETE FROM level_test_attempt_creation_receipts WHERE account_id=$1 AND attempt_id=$2',
+      [owner.accountID, created.attemptId]);
+    const altered = await create({ ...created, position: 9 });
+    assert.equal(altered.statusCode, 409);
+    assert.equal(altered.json().error?.code, 'exam_attempt_conflict');
+  } finally { await app.close(); }
+});
+
+integration('unparseable exam ids never fall through to a public variant lookup', async () => {
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    for (const raw of ['%', '%ZZ', '%E0%A4%A']) {
+      const response = await app.inject({ method: 'GET', url: `/v1/level-tests/exams/${raw}` });
+      assert.ok(response.statusCode === 404 || response.statusCode === 400, response.body);
+      if (response.statusCode === 404) assert.equal(response.json().error?.code, 'exam_not_found');
+    }
+  } finally { await app.close(); }
+});

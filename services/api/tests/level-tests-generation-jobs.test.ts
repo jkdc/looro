@@ -119,3 +119,96 @@ test('generation error details keep our own messages and drop provider payloads'
   assert.deepEqual(sanitizeGenerationErrorDetails(undefined, 'llm_outcome_unknown'), ['llm_outcome_unknown']);
   assert.equal(sanitizeGenerationErrorDetails(Array.from({ length: 20 }, (_, i) => `section: code_${i}`), null).length, 10);
 });
+
+test('an interrupted running job is reconciled to unknown before a new provider call', { skip: !databaseURL }, async () => {
+  const db = connectDatabase(databaseURL!);
+  const weekIndex = 987001;
+  try {
+    await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+      ['en', 'A1', weekIndex]);
+    await db.query(`INSERT INTO level_test_generation_jobs(id,language_id,level,week_index,state,attempts,started_at,updated_at)
+      VALUES($1,'en','A1',$2,'running',1,now(),now())`, [randomUUID(), weekIndex]);
+    const result = await runLevelTestGenerationJob(db, {}, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' });
+    assert.equal(result.status, 'unknown');
+    assert.deepEqual(result.errors, ['reconciliation_required']);
+    const row = (await db.query(`SELECT state,error_code,error_details,finished_at FROM level_test_generation_jobs
+      WHERE language_id='en' AND level='A1' AND week_index=$1`, [weekIndex])).rows[0]!;
+    assert.equal(row.state, 'unknown');
+    assert.equal(row.error_code, 'interrupted_generation');
+    assert.deepEqual(row.error_details, ['interrupted_generation']);
+    assert.ok(row.finished_at instanceof Date);
+  } finally { await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+    ['en', 'A1', weekIndex]); await db.end(); }
+});
+
+test('a finished job without a published week is never silently retried', { skip: !databaseURL }, async () => {
+  const db = connectDatabase(databaseURL!);
+  const weekIndex = 987002;
+  try {
+    await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+      ['en', 'A1', weekIndex]);
+    await db.query(`INSERT INTO level_test_generation_jobs(id,language_id,level,week_index,state,attempts,started_at,updated_at,finished_at)
+      VALUES($1,'en','A1',$2,'finished',1,now(),now(),now())`, [randomUUID(), weekIndex]);
+    const result = await runLevelTestGenerationJob(db, {}, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' });
+    assert.equal(result.status, 'unknown');
+    assert.deepEqual(result.errors, ['finished_without_week']);
+    const row = (await db.query(`SELECT state FROM level_test_generation_jobs
+      WHERE language_id='en' AND level='A1' AND week_index=$1`, [weekIndex])).rows[0]!;
+    assert.equal(row.state, 'finished');
+  } finally { await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+    ['en', 'A1', weekIndex]); await db.end(); }
+});
+
+test('an aborted run is recorded as unknown instead of failed or finished', { skip: !databaseURL }, async () => {
+  const db = connectDatabase(databaseURL!);
+  const weekIndex = 987003;
+  const controller = new AbortController();
+  controller.abort();
+  try {
+    await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+      ['en', 'A1', weekIndex]);
+    const result = await runLevelTestGenerationJob(db, {}, { languageID: 'en', level: 'A1', weekIndex,
+      origin: 'automatic_worker', signal: controller.signal });
+    assert.equal(result.status, 'unknown');
+    assert.deepEqual(result.errors, ['llm_outcome_unknown']);
+    const row = (await db.query(`SELECT state,error_code FROM level_test_generation_jobs
+      WHERE language_id='en' AND level='A1' AND week_index=$1`, [weekIndex])).rows[0]!;
+    assert.equal(row.state, 'unknown');
+    assert.equal(row.error_code, 'llm_outcome_unknown');
+  } finally { await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3',
+    ['en', 'A1', weekIndex]); await db.end(); }
+});
+
+test('an unexpected failure inside the provider pipeline is recorded as failed, never lost', { skip: !databaseURL }, async () => {
+  const db = connectDatabase(databaseURL!);
+  const weekIndex = 987004;
+  // Route only the generation reads through a failing connection so the job's
+  // own bookkeeping still works; this is the defensive catch for a mid-run
+  // database or provider failure that never produced an outcome object.
+  const failing = new Proxy(db, {
+    get(target, property) {
+      if (property === 'query') {
+        return (sql: string, params?: unknown[]) => String(sql).includes('level_test_weeks')
+          ? Promise.reject(new Error('database unavailable'))
+          : target.query(sql, params);
+      }
+      const value = Reflect.get(target, property, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    }
+  }) as typeof db;
+  try {
+    await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3', ['en', 'A1', weekIndex]);
+    await db.query('DELETE FROM level_test_weeks WHERE language_id=$1 AND level=$2 AND week_index=$3', ['en', 'A1', weekIndex]);
+    const result = await runLevelTestGenerationJob(failing, {}, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' });
+    assert.equal(result.status, 'failed');
+    assert.deepEqual(result.errors, ['generation_failed']);
+    const row = (await db.query(`SELECT state,error_code,error_details FROM level_test_generation_jobs
+      WHERE language_id='en' AND level='A1' AND week_index=$1`, [weekIndex])).rows[0]!;
+    assert.equal(row.state, 'failed');
+    assert.equal(row.error_code, 'generation_failed');
+    assert.deepEqual(row.error_details, ['generation_failed']);
+  } finally {
+    await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3', ['en', 'A1', weekIndex]);
+    await db.end();
+  }
+});

@@ -125,6 +125,18 @@ test('provider configuration stays absent when missing and requires explicit liv
   assert.throws(() => new MinuteReceiptVault(db, 'key', new Map([['key', Buffer.alloc(31)]])), /invalid_receipt_encryption/);
 });
 
+test('configured provider factories construct only with a complete pair', () => {
+  const db = {} as any, vault = {} as any, transport = new FakePlay() as unknown as PlayTransport;
+  const stripe = configuredStripeMinuteProvider(db, vault, stripeConfig());
+  assert.ok(stripe instanceof StripeMinuteProvider);
+  assert.ok(configuredPlayMinuteProvider(db, vault, playConfig(), transport) instanceof PlayMinuteProvider);
+  for (const [config, missing] of [[undefined, transport], [playConfig(), undefined]] as const) {
+    assert.throws(() => configuredPlayMinuteProvider(db, vault, config, missing),
+      (error: { code?: string; status?: number }) =>
+        error.code === 'play_minute_configuration_invalid' && error.status === 503);
+  }
+});
+
 integration('Stripe checkout snapshots the server quote and persists its reference before exposing the URL', async () => {
   const f = await fixture();
   try {

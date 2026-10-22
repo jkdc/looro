@@ -168,3 +168,47 @@ test('scheduler enforces a single timeout across the complete week run', async (
   assert.equal(clock.pendingTimers, 1);
   await scheduler.stop();
 });
+
+class ManualClock implements SchedulerClock {
+  private time: number;
+  private nextID = 1;
+  private timers = new Map<number, () => void>();
+  constructor(now: Date) { this.time = now.getTime(); }
+  now() { return new Date(this.time); }
+  setTimeout(callback: () => void): unknown { const id = this.nextID++; this.timers.set(id, callback); return id; }
+  clearTimeout(handle: unknown) { this.timers.delete(handle as number); }
+  fireNext() {
+    const entry = this.timers.entries().next().value as [number, () => void] | undefined;
+    if (!entry) throw new Error('no pending timer');
+    this.timers.delete(entry[0]);
+    entry[1]();
+  }
+  get pendingTimers() { return this.timers.size; }
+}
+
+test('a timer that fires before its target re-arms instead of running generation early', async () => {
+  const clock = new ManualClock(new Date('2026-10-19T03:00:00Z'));
+  let runs = 0;
+  const scheduler = createLevelTestScheduler({ config: enabled(), clock,
+    runWeek: async () => { runs += 1; } });
+  scheduler.start();
+  assert.equal(clock.pendingTimers, 1);
+  clock.fireNext();
+  assert.equal(runs, 0);
+  assert.equal(clock.pendingTimers, 1);
+  await scheduler.stop();
+  assert.equal(clock.pendingTimers, 0);
+});
+
+test('a run that throws is contained and the scheduler arms its next timer', async () => {
+  const clock = new FakeClock(new Date('2026-10-19T04:00:00Z'));
+  let calls = 0;
+  const scheduler = createLevelTestScheduler({ config: enabled(), clock,
+    runWeek: async () => { calls += 1; throw new Error('boom'); } });
+  scheduler.start();
+  await clock.advance(0);
+  assert.equal(calls, 1);
+  assert.equal(clock.pendingTimers, 1);
+  await scheduler.stop();
+  assert.equal(clock.pendingTimers, 0);
+});
