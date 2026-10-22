@@ -17,9 +17,10 @@ no external traffic, no production data.
 
 ```sh
 cd services/api/tests/browser
-docker compose -f compose.yaml up --build -d database migrate api stub-llm caddy bootstrap
-# wait for bootstrap to finish (operator + two draft weeks seeded):
-docker compose -f compose.yaml logs -f bootstrap     # "draft weeks seeded..." then Ctrl-C
+docker compose -f compose.yaml up --build -d database migrate api stub-llm caddy bootstrap seed-generate
+# wait for bootstrap (operator + student attempt + failed job) and for the
+# generation pipeline (two draft weeks) to finish:
+docker compose -f compose.yaml logs -f bootstrap seed-generate   # Ctrl-C when both log their seeded output
 
 # from the repository root:
 node services/api/tests/browser/admin-e2e.mjs

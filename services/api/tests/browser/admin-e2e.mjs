@@ -681,6 +681,148 @@ try {
       throw new Error('retirement motive missing from the review page');
   });
   await shot('14-week-retired');
+
+  // 12. Remaining administrative surfaces. Until here the suite only proved
+  // login, configuration, generation/review and results; the operational and
+  // commercial views never rendered. Each view is driven against the real API
+  // and the mutations are re-read from the audit table.
+  const errorsBeforeSurfaces = observedPageErrors.length;
+  await page.goto(`${PANEL}/#overview`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => document.querySelectorAll('#view canvas').length > 0,
+    undefined, { timeout: 15_000 });
+  await check('overview renders the KPI snapshot and its charts', async () => {
+    const text = (await page.textContent('#view')) ?? '';
+    for (const label of ['Cuentas', 'Invitados', 'Suscripciones activas', 'Acciones admin', 'Minutos en wallets'])
+      if (!text.includes(label)) throw new Error(`KPI ${label} missing`);
+    const canvases = await page.$$eval('#view canvas', nodes => nodes.length);
+    if (canvases < 3) throw new Error(`only ${canvases} charts mounted`);
+  });
+  await shot('15-overview');
+
+  for (const [route, label] of [['growth', 'Crecimiento'], ['voice', 'Voz'], ['economy', 'Economía']]) {
+    await page.goto(`${PANEL}/#${route}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.querySelectorAll('#view canvas').length > 0,
+      undefined, { timeout: 15_000 });
+    await check(`${label} renders its timeseries`, async () => {
+      if (!((await page.title()) ?? '').includes(label)) throw new Error(`title=${await page.title()}`);
+      const canvases = await page.$$eval('#view canvas', nodes => nodes.length);
+      if (canvases < 2) throw new Error(`only ${canvases} charts mounted`);
+      if (await page.isVisible('#view .alert-danger')) throw new Error('view rendered an error alert');
+    });
+  }
+  await shot('16-growth-voice-economy');
+
+  await page.goto(`${PANEL}/#usage`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => document.querySelectorAll('#view canvas').length > 0,
+    undefined, { timeout: 15_000 });
+  await check('usage renders KPIs, top features and the retention cohort table', async () => {
+    const text = (await page.textContent('#view')) ?? '';
+    for (const needle of ['DAU (hoy)', 'WAU', 'MAU', 'Funciones más usadas (7 días)', 'Retención por cohorte de registro'])
+      if (!text.includes(needle)) throw new Error(`${needle} missing`);
+    if (!text.includes('D30')) throw new Error('retention header missing');
+  });
+  await shot('17-usage');
+
+  await page.goto(`${PANEL}/#browse`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#browse-table', { timeout: 10_000 });
+  await page.selectOption('#browse-table', 'accounts');
+  await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('student@example.test'),
+    undefined, { timeout: 15_000 }).catch(() => {});
+  await check('table browser lists the seeded account and its total', async () => {
+    const grid = (await page.textContent('#browse-grid')) ?? '';
+    if (!grid.includes('student@example.test')) throw new Error('seeded account row missing');
+    const total = (await page.textContent('#browse-total')) ?? '';
+    if (!/\d+/.test(total)) throw new Error(`total=${total}`);
+    if (await page.isVisible('#browse-grid [data-page]')) throw new Error('unexpected pager markup');
+  });
+  await shot('18-browse-accounts');
+
+  await page.goto(`${PANEL}/#policy`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#pol-save', { timeout: 10_000 });
+  const policyVersionBefore = (await page.textContent('#view')) ?? '';
+  await drainToasts();
+  await page.click('#pol-save');
+  await page.waitForSelector('.alert-danger', { timeout: 10_000 });
+  await check('a welcome policy save without a motive is rejected by the API', async () => {
+    await expectText('.alert-danger', 'Error: invalid_request');
+  });
+  await drainToasts();
+  const policyMinutes = await page.inputValue('#pol-minutes');
+  await page.fill('#pol-minutes', String(Number(policyMinutes) === 5 ? 6 : 5));
+  await page.fill('#pol-reason', 'Ajuste de bienvenida en E2E');
+  await page.click('#pol-save');
+  await page.waitForSelector('.alert-success', { timeout: 10_000 });
+  await check('a motivated welcome policy save persists and bumps the version', async () => {
+    await expectText('.alert-success', 'Política actualizada');
+    await page.waitForFunction(before => {
+      const text = document.querySelector('#view')?.textContent ?? '';
+      return text !== before && /versión actual \d+/.test(text);
+    }, policyVersionBefore, { timeout: 10_000 });
+    const after = (await page.textContent('#view')) ?? '';
+    const before = policyVersionBefore.match(/versión actual (\d+)/)?.[1];
+    const current = after.match(/versión actual (\d+)/)?.[1];
+    if (!before || !current || Number(current) !== Number(before) + 1)
+      throw new Error(`version ${before} -> ${current}`);
+  });
+  await shot('19-policy-saved');
+  await drainToasts();
+
+  await page.goto(`${PANEL}/#plans`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#plans-save', { timeout: 10_000 });
+  const plansVersionBefore = ((await page.textContent('#view')) ?? '').match(/versión actual (\d+)/)?.[1];
+  await page.click('#plans-save');
+  await page.waitForFunction(() => (document.querySelector('#plans-error')?.textContent ?? '').length > 0,
+    undefined, { timeout: 10_000 });
+  await check('a plans save without a motive reports the API rejection', async () => {
+    await expectText('#plans-error', 'Error: invalid_request');
+  });
+  await page.fill('#plans-reason', 'Revisión comercial en E2E');
+  await page.click('#plans-save');
+  await page.waitForSelector('.alert-success', { timeout: 10_000 });
+  await check('a motivated plans save persists and bumps the version', async () => {
+    await expectText('.alert-success', 'Planes actualizados');
+    const current = ((await page.textContent('#view')) ?? '').match(/versión actual (\d+)/)?.[1];
+    if (!plansVersionBefore || !current || Number(current) !== Number(plansVersionBefore) + 1)
+      throw new Error(`version ${plansVersionBefore} -> ${current}`);
+  });
+  await shot('20-plans-saved');
+  await drainToasts();
+
+  await page.goto(`${PANEL}/#campaigns`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#camp-prepare', { timeout: 10_000 });
+  await check('a minute campaign prepares and applies to one account', async () => {
+    if (!accountId) throw new Error('seeded account id unavailable');
+    await page.fill('#camp-account', accountId);
+    await page.fill('#camp-minutes', '5');
+    await page.fill('#camp-reason', 'Campaña de prueba E2E');
+    await page.click('#camp-prepare');
+    await page.waitForSelector('#camp-apply', { timeout: 10_000 });
+    const prepared = (await page.textContent('#camp-result')) ?? '';
+    if (!prepared.includes('Preparada:') || !prepared.includes('5 min/usuario'))
+      throw new Error(`prepare result=${prepared.slice(0, 120)}`);
+    await page.click('#camp-apply');
+    await page.waitForFunction(() => (document.querySelector('#camp-result')?.textContent ?? '').includes('Aplicada:'),
+      undefined, { timeout: 15_000 });
+    const applied = (await page.textContent('#camp-result')) ?? '';
+    if (!applied.includes('Aplicada: concedidos 1') || !applied.includes('omitidos 0'))
+      throw new Error(`apply result=${applied.slice(-160)}`);
+  });
+  await shot('21-campaign-applied');
+
+  await page.goto(`${PANEL}/#audit`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('policy.update'),
+    undefined, { timeout: 15_000 });
+  await check('the audit table records every mutation with its motive', async () => {
+    const audit = (await page.textContent('#browse-grid')) ?? '';
+    for (const action of ['policy.update', 'plans.update', 'campaign.prepare', 'campaign.apply'])
+      if (!audit.includes(action)) throw new Error(`audit action ${action} missing`);
+    if (!audit.includes('Revisión comercial en E2E')) throw new Error('audited motive missing');
+  });
+  await shot('22-audit');
+  await check('the remaining views never raised a page error', async () => {
+    const fresh = observedPageErrors.slice(errorsBeforeSurfaces);
+    if (fresh.length) throw new Error(fresh.join(' | '));
+  });
 } catch (error) {
   failures.push(`scenario aborted: ${error.message}`);
   await shot('99-aborted').catch(() => {});
