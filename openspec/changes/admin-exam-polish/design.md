@@ -95,3 +95,32 @@ Order: Operación (dashboards) → Exámenes → Comercial → Sistema.
   the red badge, the green `finished` badge and the dialog contents; the nav
   check asserts DOM membership (each group's links sit between its heading and
   the next one), not just the presence of a heading.
+
+## Runs are history, not a mutable row
+
+`level_test_generation_jobs` had PK `(language_id, level, week_index)`: every
+attempt overwrote the previous one, so a retry erased the failure it was
+retrying. Migration `049` gives each attempt its own `id` and keeps `attempts`
+as the ordinal for its key; the runner inserts a row as `running` and closes
+that same row on its terminal state. `exists` writes nothing — there was no
+generation. Guards read the newest run by `attempts DESC`.
+
+Retry policy: the automatic cap (`MAX_AUTOMATIC_ATTEMPTS = 2`) protects the
+scheduler and CLI from re-running a broken generation forever. An operator
+launch passes `manual: true` and opens the next run beyond the cap; attempts
+keep counting so the history shows the real number of tries. `unknown`
+(reconciliation required) is never bypassed by a manual retry.
+
+## Provenance on the week
+
+`origin` is written by the single `INSERT` (`persistWeek`) from a required
+`GenerateOptions.origin`: the panel (launch and regeneration) sends
+`user_operator`; the scheduler and the CLI send `automatic_worker`. Rows that
+predate migration `048` stay `unknown` instead of inventing history. The listing
+exposes it and the panel paints `Operador` / `Automático` / `—`.
+
+## Watch with a run log
+
+The status endpoint returns runs newest-first. The panel's `byKey` map must keep
+the first row for a watched key (the live attempt), not the last: with a
+mutable row the distinction did not exist.

@@ -135,3 +135,37 @@ el panel separa ambos casos, avisa en tono `warning` y apunta a «Regenerar».
 - E2E: el chequeo nuevo falló primero con el panel antiguo (toast de éxito
   «aprobados omitidos», sin aviso) y pasa tras el arreglo. **42/42** desde pila
   limpia. Evidencia: `e2e-evidence/t11-browser-e2e/10g-launch-skipped-existing.png`.
+
+## Ejecuciones, reintentos y procedencia
+
+Antes, `level_test_generation_jobs` tenía PK `(language_id, level, week_index)`:
+cada intento machacaba el anterior. Un reintento borraba el fallo que estaba
+reintentando, y `exists` (la semana ya existía) se guardaba como `finished`, una
+generación verde que nunca ocurrió.
+
+- Migración `049`: una fila por intento (`id` PK, `attempts` como ordinal,
+  índice por clave). El runner abre la fila en `running` y la cierra en su estado
+  terminal. `exists` no escribe nada.
+- El tope de dos intentos sigue aplicando al scheduler y al CLI; un lanzamiento
+  manual desde el panel abre el siguiente intento por encima del tope. `unknown`
+  (reconciliación pendiente) no se salta nunca.
+- Migración `048`: `level_test_weeks.origin`
+  (`user_operator|automatic_worker|unknown`), escrito en el único `INSERT` desde
+  un campo obligatorio de `GenerateOptions`, expuesto en el listado y pintado
+  como `Origen` en la tabla y en la revisión.
+
+Evidencia:
+
+- Rojo observado antes de migrar: el test de `exists` falló con `expected 0,
+  actual 1` (dejaba una fila), y los tests de esquema con `column "id" does not
+  exist` / `column "origin" of relation "level_test_weeks" does not exist`.
+- Test nuevo de reintento manual: el automático no escribe (`attempt_limit_reached`)
+  y el manual añade una fila con ordinal 3 conservando el fallo previo (2).
+- Test nuevo de procedencia: `en/A2` desde el panel queda `user_operator`,
+  `es/A2` desde el worker queda `automatic_worker`; el listado devuelve ambos y
+  las filas sin dato quedan `unknown`.
+- Suite API completa: **566/566** (0 fallos, 0 saltados) contra PostgreSQL 17
+  efímero; `npx tsc --noEmit` limpio.
+- E2E: **43/43** desde pila limpia, incluido «the weeks table reports who
+  triggered each generation» (A1 sembrado por CLI → `Automático`, B1 lanzado
+  desde el panel → `Operador`).

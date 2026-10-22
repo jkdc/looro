@@ -366,6 +366,17 @@ try {
   await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await shot('10b-generation-launch');
 
+  await check('the weeks table reports who triggered each generation', async () => {
+    const rows = await page.$$eval('#exam-weeks-card tbody tr',
+      trs => trs.map(tr => [...tr.cells].map(cell => (cell.textContent ?? '').trim())));
+    const launched = rows.find(cells => cells[2] === 'B1');
+    if (!launched || launched[6] !== 'Operador')
+      throw new Error(`B1 origin=${launched?.[6] ?? 'missing row'}`);
+    const seeded = rows.find(cells => cells[2] === 'A1');
+    if (!seeded || seeded[6] !== 'Automático')
+      throw new Error(`A1 origin=${seeded?.[6] ?? 'missing row'}`);
+  });
+
   // 8b2. Launching a level whose week already exists must not enqueue a job
   // that finishes without generating (the operator would read a green
   // "completed" for content that never changed).

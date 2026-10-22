@@ -115,3 +115,37 @@ regeneration operation, which is force and refuses approved keys.
 #### Scenario: A missing week still launches
 - **WHEN** the launcher is called for a level with no week for the current week
 - **THEN** the key is `started` and its generation job runs through the runner as before.
+
+### Requirement: Generation runs are append-only history
+
+The system SHALL record one `level_test_generation_jobs` row per generation
+attempt, identified by its own `id`, with `attempts` as the ordinal for its
+language, level and week. A retry SHALL append a new run instead of overwriting
+the previous failure, and a run that never started SHALL NOT leave a row. The
+status endpoint SHALL keep returning the last ten rows as `jobs[]`, where each
+row is one attempt.
+
+#### Scenario: A skipped launch leaves no run
+- **WHEN** the runner finds an existing week and no force was requested
+- **THEN** it answers `exists` and writes nothing.
+
+#### Scenario: A manual retry appends a run
+- **WHEN** the newest run for a key is `failed` with the automatic cap reached
+- **AND** an operator launches that level from the panel
+- **THEN** a new run is inserted with the next `attempts` ordinal and the previous failure remains readable.
+
+#### Scenario: Automatic callers stop at the cap
+- **WHEN** the scheduler or the CLI finds the cap reached
+- **THEN** it answers `attempt_limit_reached` without writing a run.
+
+### Requirement: Week provenance
+
+`level_test_weeks` SHALL store `origin` in
+`{user_operator, automatic_worker, unknown}`, written when the row is created:
+panel launch and regeneration are `user_operator`; scheduler and CLI are
+`automatic_worker`; rows created before the column are `unknown`. The listing
+SHALL return it and the panel SHALL paint `Operador`, `Automático` or `—`.
+
+#### Scenario: Panel and worker are distinguishable
+- **WHEN** one week is generated from the panel and another by the CLI
+- **THEN** the listing reports `user_operator` for the first and `automatic_worker` for the second.

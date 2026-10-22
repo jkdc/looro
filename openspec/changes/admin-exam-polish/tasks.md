@@ -24,6 +24,16 @@
 - [x] 3c.3 Panel toast separates approved vs already existing and points to «Regenerar»; launcher copy matches
 - [x] 3c.4 E2E reproduces the misleading green "completed" before the fix and passes after
 
+## 3d. Runs, retries and provenance
+- [x] 3d.1 Migration `049`: one row per attempt (`id` PK, `attempts` ordinal, key index)
+- [x] 3d.2 `exists` writes no run; retries append instead of overwriting a failure
+- [x] 3d.3 Automatic cap kept for scheduler/CLI; operator launch retries beyond it (`manual: true`)
+- [x] 3d.4 Migration `048`: `level_test_weeks.origin` (`user_operator|automatic_worker|unknown`), required in `GenerateOptions`
+- [x] 3d.5 Listing returns `origin`; panel paints `Origen` in the table and the review page
+- [x] 3d.6 Watch keeps the newest run per key (run log is newest-first)
+- [x] 3d.7 Tests: no run on `exists`, manual retry appends, cap stops automatic callers, origin persisted and listed
+- [x] 3d.8 E2E: seeded rows show `Automático`, the launched one `Operador`
+
 ## 3b. Generation watch
 - [x] 3b.1 Cadence fixed at `GENERATION_POLL_MS = 5_000` (was an inline 2 s literal)
 - [x] 3b.2 Leaving the view parks the watch (no ghost timer); returning resumes it

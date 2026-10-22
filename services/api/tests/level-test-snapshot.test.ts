@@ -98,7 +98,7 @@ test('snapshot identity changes when accepted solutions change without a content
 test('new generated snapshots preserve types, unit references, passages and effective thresholds', async () => {
   const { db, rows } = storedWeeks();
   const outcome = await generateWeeklyLevelTest({ db, env: ENV, transport },
-    { languageID: 'en', level: 'A1', now: NOW });
+    { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
   assert.equal(outcome.status, 'approved');
   const exam = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   assert.deepEqual(exam.thresholds, THRESHOLDS);
@@ -125,7 +125,7 @@ test('new generated snapshots preserve types, unit references, passages and effe
 
 test('stored generated grading survives later bundled threshold edits', async () => {
   const { db } = storedWeeks();
-  await generateWeeklyLevelTest({ db, env: ENV, transport }, { languageID: 'en', level: 'A1', now: NOW });
+  await generateWeeklyLevelTest({ db, env: ENV, transport }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
   const before = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   const bank = levelTestLevels('en').find(level => level.level === 'A1')!;
   const thresholds = bank.thresholds;
@@ -138,10 +138,10 @@ test('stored generated grading survives later bundled threshold edits', async ()
 
 test('force regeneration changes generation identity and preserves retired content', async () => {
   const { db, rows } = storedWeeks();
-  await generateWeeklyLevelTest({ db, env: ENV, transport }, { languageID: 'en', level: 'A1', now: NOW });
+  await generateWeeklyLevelTest({ db, env: ENV, transport }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
   const first = structuredClone(rows[0]!);
   await generateWeeklyLevelTest({ db, env: ENV, transport },
-    { languageID: 'en', level: 'A1', now: NOW, force: true });
+    { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker', force: true });
   const second = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   assert.equal(rows[0]!.status, 'retired');
   assert.deepEqual(rows[0]!.variants, first.variants);
@@ -154,7 +154,7 @@ test('force regeneration changes generation identity and preserves retired conte
 test('current and hybrid retain legacy HTTP fields and pinned ETag revalidation', async () => {
   const { db } = storedWeeks();
   assert.equal((await generateWeeklyLevelTest({ db, env: ENV, transport },
-    { languageID: 'en', level: 'A1', now: new Date() })).status, 'approved');
+    { languageID: 'en', level: 'A1', now: new Date(), origin: 'automatic_worker' })).status, 'approved');
   const app = createApp({ db, auth: {} });
   try {
     for (const url of ['/v1/level-tests/current?language=en&level=B1',

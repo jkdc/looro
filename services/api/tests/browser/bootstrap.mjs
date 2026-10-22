@@ -66,9 +66,7 @@ try {
   await db.query(`INSERT INTO level_test_generation_jobs(language_id,level,week_index,state,attempts,error_code,
       error_details,started_at,finished_at,updated_at)
     VALUES('en','B2',$1 - 1,'failed',2,'generation_failed',$2::jsonb,
-      now() - interval '40 minutes', now() - interval '35 minutes', now() - interval '35 minutes')
-    ON CONFLICT(language_id,level,week_index) DO UPDATE SET state='failed',attempts=2,error_code='generation_failed',
-      error_details=EXCLUDED.error_details,updated_at=EXCLUDED.updated_at`,
+      now() - interval '40 minutes', now() - interval '35 minutes', now() - interval '35 minutes')`,
   [weekId, JSON.stringify(['reading: only 2 passages (needed 4)', 'writing: empty response'])]);
   console.log(`failed generation job seeded (en B2, week ${weekId - 1})`);
 } finally {

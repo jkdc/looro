@@ -257,9 +257,12 @@ export interface GenerateDeps {
   now?: Date;
 }
 
+export type GenerationOrigin = 'user_operator' | 'automatic_worker';
 export interface GenerateOptions {
   languageID: string; level: string;
-  weekIndex?: number; force?: boolean; now?: Date; signal?: AbortSignal;
+  weekIndex?: number; force?: boolean; manual?: boolean; now?: Date; signal?: AbortSignal;
+  /** Who asked for this generation. Required so every caller decides explicitly. */
+  origin: GenerationOrigin;
 }
 export interface GenerationOutcome {
   status: 'approved' | 'draft' | 'exists' | 'failed';
@@ -381,7 +384,8 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
     model: config.model, generator: `llm:${config.provider}`, review,
-    tokensIn, tokensOut, approvedBy, verifyMode: settings.verifyMode, force: options.force === true });
+    tokensIn, tokensOut, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
+    origin: options.origin });
 
   return { status: status as 'approved' | 'draft', languageID, level, weekId,
     variants: variants.length, tokensIn, tokensOut };
@@ -540,7 +544,7 @@ async function persistWeek(db: Database, input: {
   pool: GeneratedPool; variants: unknown[]; status: string;
   model: string; generator: string; review: unknown[] | undefined;
   tokensIn: number; tokensOut: number; approvedBy: string | null;
-  verifyMode: string; force: boolean;
+  verifyMode: string; force: boolean; origin: GenerationOrigin;
 }): Promise<void> {
   await transaction(db, async (sql: PoolClient) => {
     const existing = await currentWeekRow(sql, input.languageID, input.level, input.weekId);
@@ -553,12 +557,12 @@ async function persistWeek(db: Database, input: {
         [input.languageID, input.level, input.weekId]);
     }
     await sql.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, source, status, pool, variants,
-      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by)
-      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
+      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by, origin)
+      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
       [input.generationId, input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
        JSON.stringify(input.variants), input.generator, input.model, PROMPT_VERSION, JUDGE_VERSION,
        input.verifyMode, JSON.stringify(input.review ?? []), input.tokensIn, input.tokensOut,
-       input.status === 'approved' ? new Date() : null, input.approvedBy]);
+       input.status === 'approved' ? new Date() : null, input.approvedBy, input.origin]);
   });
 }
 

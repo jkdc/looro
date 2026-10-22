@@ -145,7 +145,7 @@ integration('generation persists approved variants and the endpoints serve them'
 
     const outcome = await generateWeeklyLevelTest(
       { db, env: ENV_BASE, transport: sectionTransport() },
-      { languageID: 'en', level: 'A1' });
+      { languageID: 'en', level: 'A1', origin: 'automatic_worker' });
     assert.equal(outcome.status, 'approved');
     assert.equal(outcome.variants, 3);
 
@@ -188,13 +188,28 @@ integration('generation persists approved variants and the endpoints serve them'
 integration('strict judge removes rejected items and approves the trimmed exam', async db => {
   const outcome = await generateWeeklyLevelTest(
     { db, env: { ...ENV_BASE, LEVELTEST_VERIFY: 'strict' }, transport: sectionTransport() },
-    { languageID: 'es', level: 'A1', force: true });
+    { languageID: 'es', level: 'A1', force: true, origin: 'automatic_worker' });
   assert.equal(outcome.status, 'approved');
   const history = await db.query(`SELECT status FROM level_test_weeks WHERE language_id='es' AND level='A1'`);
   assert.ok(history.rows.length >= 1);
 });
 
 
+
+integration('a generated week records who triggered the generation', async db => {
+  const manual = await generateWeeklyLevelTest(
+    { db, env: ENV_BASE, transport: sectionTransport() },
+    { languageID: 'en', level: 'A2', force: true, origin: 'user_operator' });
+  assert.equal(manual.status, 'approved');
+  const automatic = await generateWeeklyLevelTest(
+    { db, env: ENV_BASE, transport: sectionTransport() },
+    { languageID: 'es', level: 'A2', force: true, origin: 'automatic_worker' });
+  assert.equal(automatic.status, 'approved');
+  const rows = (await db.query(`SELECT language_id, origin FROM level_test_weeks
+    WHERE level='A2' AND status='approved' AND language_id IN ('en','es') ORDER BY language_id`)).rows;
+  assert.deepEqual(rows.map(row => [row.language_id, row.origin]),
+    [['en', 'user_operator'], ['es', 'automatic_worker']]);
+});
 
 integration('unknown judge transport outcome stops generation in flag and strict modes', async db => {
   for (const verifyMode of ['flag', 'strict'] as const) {
@@ -208,7 +223,7 @@ integration('unknown judge transport outcome stops generation in flag and strict
         if (system.includes('strict exam reviewer')) throw new LlmTransportError('llm_outcome_unknown');
         return sectionTransport()(_config, messages);
       },
-    }, { languageID: 'fr', level: 'A1', weekIndex: 998001 });
+    }, { languageID: 'fr', level: 'A1', weekIndex: 998001, origin: 'automatic_worker' });
     assert.equal(outcome.status, 'failed');
     assert.ok(outcome.errors?.some(error => error.includes('llm_outcome_unknown')));
     assert.equal(calls, 5);

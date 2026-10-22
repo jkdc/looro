@@ -81,6 +81,7 @@ const toast = (message, kind = 'success') => {
   document.body.append(element);
   setTimeout(() => element.remove(), 4_000);
 };
+const originLabel = value => value === 'user_operator' ? 'Operador' : value === 'automatic_worker' ? 'Automático' : '—';
 const openModal = id => { const element = $(id); element.classList.add('show'); element.style.display = 'block';
   document.body.classList.add('modal-open'); };
 const closeModal = id => { const element = $(id); element.classList.remove('show'); element.style.display = '';
@@ -429,9 +430,13 @@ async function watchGenerationTick() {
     const jobs = Array.isArray(status.jobs) ? status.jobs : [];
     lastJobsSnapshot = jobs;
     renderJobs(jobs);
-    const byKey = new Map(jobs
-      .filter(job => watch.keys.has(`${job.languageID}:${job.level}`) && job.weekId === watch.weekId)
-      .map(job => [`${job.languageID}:${job.level}`, job]));
+    // The run log is newest first, so the first row per key is the live attempt.
+    const byKey = new Map();
+    for (const job of jobs) {
+      const key = `${job.languageID}:${job.level}`;
+      if (!watch.keys.has(key) || job.weekId !== watch.weekId || byKey.has(key)) continue;
+      byKey.set(key, job);
+    }
     const done = [...watch.keys].filter(key => byKey.get(key) && TERMINAL_JOB_STATES.has(byKey.get(key).status));
     for (const key of done) {
       const job = byKey.get(key);
@@ -634,6 +639,7 @@ async function renderExamWeeksView(container, view = {}) {
   const rowCells = item => '<tr><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.languageID) +
     '</td><td>' + escapeHtml(item.level) + '</td><td>' + badgeCell({ getValue: () => item.status }) +
     '</td><td>' + escapeHtml(item.variantCount) + '</td><td>' + escapeHtml(item.model || '—') + '</td><td>' +
+    escapeHtml(originLabel(item.origin)) + '</td><td>' +
     escapeHtml((item.createdAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td>' +
     escapeHtml((item.approvedAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td class="text-end text-nowrap">' +
     '<a class="btn btn-sm btn-outline-secondary me-1" href="#exam/' + escapeHtml(item.id) + '">Revisar</a>' +
@@ -645,7 +651,7 @@ async function renderExamWeeksView(container, view = {}) {
       ':' + escapeHtml(item.level) + '">Regenerar</button>' : '') +
     '</td></tr>';
   const rows = weeks.items.map(rowCells).join('') ||
-    '<tr><td colspan="9" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
+    '<tr><td colspan="10" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
   const STATES = ['draft', 'approved', 'rejected', 'retired'];
   const option = (value, label, current) =>
     '<option value="' + escapeHtml(value) + '"' + (value === current ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
@@ -676,7 +682,7 @@ async function renderExamWeeksView(container, view = {}) {
       <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>
     <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
-    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
+    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Origen</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
       <button class="btn btn-sm btn-outline-secondary" id="weeks-prev" ${weeks.offset === 0 ? 'disabled' : ''}>Anterior</button>
       <span class="text-secondary small">Exámenes ${weeks.total ? weeks.offset + 1 : 0}–${weeks.offset + weeks.items.length} de ${weeks.total}</span>
       <button class="btn btn-sm btn-outline-secondary" id="weeks-next" ${weeks.items.length < weeks.limit ? 'disabled' : ''}>Siguiente</button>
@@ -884,6 +890,7 @@ async function renderExamReview(container, params = {}, rawId) {
     '<span class="text-secondary small">' + escapeHtml(week.generator || '—') + '</span></div></div>' +
     '<div class="text-end text-secondary small">' +
     '<div>Modelo: <strong>' + escapeHtml(week.model || '—') + '</strong></div>' +
+    '<div>Origen: ' + escapeHtml(originLabel(week.origin)) + '</div>' +
     '<div>Juez: ' + escapeHtml(week.judgeMode || '—') + '</div>' +
     '<div>Tokens: ' + number(week.tokensIn ?? 0) + ' entrada · ' + number(week.tokensOut ?? 0) + ' salida</div>' +
     '<div>Creado: ' + escapeHtml(examStamp(week.createdAt)) + '</div>' +

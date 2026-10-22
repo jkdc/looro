@@ -96,7 +96,7 @@ function database() {
   return { state, db: { query, connect: async () => ({ query, release() {} }) } as unknown as Database };
 }
 const generate = (db: Database, env = ENV, call = transport()) =>
-  generateWeeklyLevelTest({ db, env, transport: call }, { languageID: 'en', level: 'A1', now: NOW });
+  generateWeeklyLevelTest({ db, env, transport: call }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
 
 test('an unknown provider outcome is not retried by the section loop', async () => {
   const { db } = database();
@@ -136,7 +136,7 @@ test("rejected week blocks generation unless force retires the row", async () =>
   assert.equal(calls, 0);
   assert.equal(state.weeks[0]!.status, "rejected");
   const forced = await generateWeeklyLevelTest({ db, env: ENV, transport: call },
-    { languageID: "en", level: "A1", now: NOW, force: true });
+    { languageID: "en", level: "A1", now: NOW, force: true, origin: "automatic_worker" });
   assert.equal(forced.status, "approved");
   assert.equal(state.weeks[0]!.status, "retired");
   assert.equal(state.weeks.length, 2);

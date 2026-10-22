@@ -29,7 +29,7 @@ try {
       // Pace the calls: the coding plan has RPM limits.
       await new Promise(resolve => setTimeout(resolve, 5000));
       try {
-        const outcome = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekIndex(new Date()), force: flag('--force') });
+        const outcome = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekIndex(new Date()), force: flag('--force'), origin: 'automatic_worker' });
         summary.push(outcome);
         if (['failed', 'unknown'].includes(outcome.status)) failures += 1;
         console.error(`${languageID}/${level}: ${outcome.status}${outcome.errors?.length ? ` — ${outcome.errors.join('; ')}` : ''}`);

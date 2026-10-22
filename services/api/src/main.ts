@@ -109,7 +109,7 @@ try {
     !(appleClient && appleRevoker)) throw new Error('No account identity provider configured.');
   if (generationConfig.enabled) generationScheduler = createLevelTestScheduler({ config: generationConfig, runWeek: async (weekId, signal, timeoutMs) => {
     await runLevelTestCombinations(generationConfig, weekId, signal, async (languageID, level, jobWeek, jobSignal) => {
-      const result = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: jobWeek, signal: jobSignal });
+      const result = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: jobWeek, signal: jobSignal, origin: 'automatic_worker' });
       if (result.status === 'failed' || result.status === 'unknown')
         console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId: jobWeek, status: result.status, errorCode: result.errors?.[0] ?? 'generation_failed' }));
     }, (languageID, level, code) => console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId, status: 'failed', errorCode: code })), undefined, timeoutMs);

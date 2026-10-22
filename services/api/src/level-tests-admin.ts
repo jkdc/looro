@@ -52,8 +52,10 @@ export function runGenerationLaunch(db: Database, env: NodeJS.ProcessEnv,
   void (async () => {
     for (const key of keys) {
       if (key.status !== 'started') continue;
-      try { await runLevelTestGenerationJob(db, env, { languageID: key.languageID, level: key.level, weekIndex: weekId }); }
-      catch { /* the job runner records failures itself */ }
+      try {
+        await runLevelTestGenerationJob(db, env, { languageID: key.languageID, level: key.level, weekIndex: weekId,
+          origin: 'user_operator', manual: true });
+      } catch { /* the job runner records failures itself */ }
     }
   })();
 }
@@ -68,6 +70,7 @@ export interface WeekMeta {
   id: string; languageID: string; level: string; weekId: number; status: string;
   judgeMode: string; generator: string; model: string; variantCount: number;
   tokensIn: number; tokensOut: number; createdAt: string; approvedAt: string | null; approvedBy: string | null;
+  origin: string;
 }
 
 export type WeekDetail = WeekMeta & {
@@ -125,11 +128,11 @@ const weekRow = (row: Record<string, unknown>): WeekMeta => ({
   variantCount: Array.isArray(row.variants) ? row.variants.length : 0,
   tokensIn: Number(row.tokens_in ?? 0), tokensOut: Number(row.tokens_out ?? 0),
   createdAt: iso(row.created_at) as string, approvedAt: iso(row.approved_at) as string | null,
-  approvedBy: (row.approved_by as string | null) ?? null,
+  approvedBy: (row.approved_by as string | null) ?? null, origin: (row.origin as string | undefined) ?? 'unknown',
 });
 
 const WEEK_META_COLUMNS = `id, language_id, level, week_index, status, judge_mode, generator, model,
-  jsonb_array_length(variants) AS variant_count, tokens_in, tokens_out, created_at, approved_at, approved_by`;
+  jsonb_array_length(variants) AS variant_count, tokens_in, tokens_out, created_at, approved_at, approved_by, origin`;
 
 const metadataRow = (row: Record<string, unknown>): WeekMeta => ({ ...weekRow(row),
   variantCount: row.variant_count as number });
@@ -157,7 +160,7 @@ export async function listLevelTestWeeks(db: Database, q: WeekListQuery):
 /** Full week content: metadata plus the heavy exam payload. */
 export async function levelTestWeekDetail(db: Database, id: string): Promise<WeekDetail | undefined> {
   const row = (await db.query(`SELECT id, language_id, level, week_index, status, judge_mode, generator, model,
-    pool, variants, review, tokens_in, tokens_out, created_at, approved_at, approved_by,
+    pool, variants, review, tokens_in, tokens_out, created_at, approved_at, approved_by, origin,
     prompt_version, judge_version
     FROM level_test_weeks WHERE id=$1`, [id])).rows[0] as Record<string, unknown> | undefined;
   if (!row) return undefined;

@@ -511,7 +511,7 @@ export function createApp(services: Services) {
     await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.regenerate',
       `${languageID}:${level}:${weekId}`, reason, { languageID, level, weekId }));
     // Fire-and-forget: the job module owns serialization and failure recording.
-    void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true })
+    void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true, origin: 'user_operator' })
       .catch(() => undefined);
     return reply.code(202).send({ started: true });
   });

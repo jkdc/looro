@@ -41,7 +41,7 @@ const session = () => cachedSession ??= (async () => {
 })();
 
 const CURRENT = weekIndex(new Date());
-const seed = async (rows: Partial<{ language: string; level: string; week: number; status: string; createdAt: Date; approved: boolean }>[]) => {
+const seed = async (rows: Partial<{ language: string; level: string; week: number; status: string; createdAt: Date; approved: boolean; origin: string }>[]) => {
   const ids: string[] = [];
   for (const row of rows) {
     const id = randomUUID();
@@ -49,10 +49,10 @@ const seed = async (rows: Partial<{ language: string; level: string; week: numbe
     const pool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
     const variants = [{ variant: 1, items: [], passages: [] }];
     await db!.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, status, pool, variants,
-      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, created_at)
-      VALUES($1,$2,$3,$4,$5,$6,$7,'llm:opencode','glm-5.3-flash',1,1,'off','[]'::jsonb, 10, 20, $8)`,
+      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, created_at, origin)
+      VALUES($1,$2,$3,$4,$5,$6,$7,'llm:opencode','glm-5.3-flash',1,1,'off','[]'::jsonb, 10, 20, $8, $9)`,
       [id, row.language ?? 'en', row.level ?? 'A1', row.week ?? CURRENT, row.status ?? 'draft',
-        JSON.stringify(pool), JSON.stringify(variants), row.createdAt ?? new Date()]);
+        JSON.stringify(pool), JSON.stringify(variants), row.createdAt ?? new Date(), row.origin ?? 'unknown']);
     if (row.approved) await db!.query('UPDATE level_test_weeks SET approved_at=now(), approved_by=$2 WHERE id=$1', [id, id]);
   }
   return ids;
@@ -72,7 +72,7 @@ integration('the listing returns metadata only, newest first, across all statuse
   assert.equal(body.limit, 50);
   assert.equal(body.items[0].languageID, 'fr');
   assert.deepEqual(Object.keys(body.items[0]).sort(), ['approvedAt', 'approvedBy', 'createdAt', 'generator', 'id',
-    'judgeMode', 'languageID', 'level', 'model', 'status', 'tokensIn', 'tokensOut', 'variantCount', 'weekId']);
+    'judgeMode', 'languageID', 'level', 'model', 'origin', 'status', 'tokensIn', 'tokensOut', 'variantCount', 'weekId']);
   assert.ok(!('pool' in body.items[0]) && !('variants' in body.items[0]));
 });
 
@@ -105,6 +105,18 @@ integration('the listing filters by creation date range and sorts', async () => 
   assert.equal((await get('created_from=2026-10-02&created_to=2026-10-20')).total, 1);
   const byLanguage = await get('sort=language_id&dir=asc');
   assert.deepEqual(byLanguage.items.map((row: { languageID: string }) => row.languageID), ['en', 'es', 'it']);
+});
+
+integration('the listing reports who triggered each generated week', async () => {
+  await seed([
+    { level: 'A1', status: 'draft' },
+    { level: 'A2', status: 'draft', origin: 'user_operator' },
+    { level: 'B1', status: 'draft', origin: 'automatic_worker' },
+  ]);
+  const response = await app().inject({ method: 'GET', url: '/v1/admin/level-tests/weeks?sort=level&dir=asc', headers: await session() });
+  const body = response.json();
+  assert.deepEqual(body.items.map((row: { origin: string }) => row.origin),
+    ['unknown', 'user_operator', 'automatic_worker']);
 });
 
 integration('the listing paginates with a stable total', async () => {
@@ -291,7 +303,7 @@ integration('approval is refused while a regeneration holds the generation lock'
 });
 
 integration('the status endpoint exposes the last generation jobs', async () => {
-  for (const level of ['A1', 'A2']) await runLevelTestGenerationJob(db!, {}, { languageID: 'en', level, weekIndex: CURRENT })
+  for (const level of ['A1', 'A2']) await runLevelTestGenerationJob(db!, {}, { languageID: 'en', level, weekIndex: CURRENT, origin: 'user_operator' })
     .catch(() => undefined);
   const response = await app().inject({ method: 'GET', url: '/v1/admin/level-tests/status', headers: await session() });
   const body = response.json();

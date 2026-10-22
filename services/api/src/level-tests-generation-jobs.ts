@@ -1,4 +1,5 @@
 import type { PoolClient } from 'pg';
+import { randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
 import { generateWeeklyLevelTest, type GenerateOptions, type GenerationOutcome } from './level-tests-llm.js';
 
@@ -23,38 +24,41 @@ export async function runLevelTestGenerationJob(
     locked = acquired.rows[0]?.locked === true;
     if (!locked) return { status: 'busy', languageID: options.languageID, level: options.level, weekId: weekId! };
 
-    const prior = (await client.query(`SELECT state, attempts FROM level_test_generation_jobs
-      WHERE language_id=$1 AND level=$2 AND week_index=$3`, [options.languageID, options.level, weekId])).rows[0] as
-      { state: string; attempts: number } | undefined;
+    const prior = (await client.query(`SELECT id, state, attempts FROM level_test_generation_jobs
+      WHERE language_id=$1 AND level=$2 AND week_index=$3 ORDER BY attempts DESC LIMIT 1`,
+    [options.languageID, options.level, weekId])).rows[0] as
+      { id: string; state: string; attempts: number } | undefined;
     const existing = (await client.query(`SELECT status, variants FROM level_test_weeks
       WHERE language_id=$1 AND level=$2 AND week_index=$3`, [options.languageID, options.level, weekId])).rows[0] as
       { status: string; variants: unknown[] } | undefined;
 
     if (existing && !options.force) {
-      await saveState(client, options, weekId!, 'finished', prior?.attempts ?? 0, null, []);
+      // Nothing was generated, so nothing is recorded: a run row here would show
+      // the operator a completed generation that never happened.
       return { status: 'exists', languageID: options.languageID, level: options.level, weekId: weekId!,
         variants: Array.isArray(existing.variants) ? existing.variants.length : 0 };
     }
     if (!options.force && prior?.state === 'unknown')
       return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['reconciliation_required'] };
     if (!options.force && prior?.state === 'running') {
-      await saveState(client, options, weekId!, 'unknown', prior.attempts, 'interrupted_generation',
-        ['interrupted_generation']);
+      await closeRun(client, prior.id, 'unknown', 'interrupted_generation', ['interrupted_generation']);
       return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['reconciliation_required'] };
     }
     if (!options.force && prior?.state === 'finished')
       return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['finished_without_week'] };
-    if (!options.force && prior?.state === 'failed' && prior.attempts >= MAX_AUTOMATIC_ATTEMPTS)
+    // The cap protects the automatic paths (scheduler/CLI) from re-running a
+    // broken generation forever. An explicit operator launch may retry it.
+    if (!options.force && !options.manual && prior?.state === 'failed' && prior.attempts >= MAX_AUTOMATIC_ATTEMPTS)
       return { status: 'failed', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['attempt_limit_reached'] };
 
     const attempt = (prior?.attempts ?? 0) + 1;
-    await saveState(client, options, weekId!, 'running', attempt, null, []);
+    const runId = await startRun(client, options, weekId!, attempt);
     let outcome: GenerationOutcome;
     try {
       outcome = await generateWeeklyLevelTest({ db, env }, { ...options, weekIndex: weekId, signal: options.signal });
     } catch (error) {
       const unknown = options.signal?.aborted || (error instanceof Error && error.message === 'llm_outcome_unknown');
-      await saveState(client, options, weekId!, unknown ? 'unknown' : 'failed', attempt,
+      await closeRun(client, runId, unknown ? 'unknown' : 'failed',
         unknown ? 'llm_outcome_unknown' : 'generation_failed',
         [unknown ? 'llm_outcome_unknown' : 'generation_failed']);
       if (unknown) return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['llm_outcome_unknown'] };
@@ -66,7 +70,7 @@ export async function runLevelTestGenerationJob(
     // Keep the section-level reasons for the operator-facing error dialog; the
     // coarse error_code stays the stable contract for badges and summaries.
     const details = state === 'finished' ? [] : sanitizeGenerationErrorDetails(outcome.errors, unknown ? 'llm_outcome_unknown' : errorCode);
-    await saveState(client, options, weekId!, state, attempt, errorCode, details);
+    await closeRun(client, runId, state, errorCode, details);
     if (unknown) return { ...outcome, status: 'unknown', errors: ['llm_outcome_unknown'] };
     return outcome.status === 'failed' ? { ...outcome, errors: [errorCode ?? 'generation_failed'] } : outcome;
   } finally {
@@ -82,16 +86,19 @@ function safeCode(value: string | undefined): string {
   return value && /^[a-z0-9_]{1,80}$/.test(value) ? value : 'generation_failed';
 }
 
-async function saveState(client: PoolClient, options: GenerateOptions, weekId: number,
-  state: 'running' | 'finished' | 'failed' | 'unknown', attempts: number, errorCode: string | null,
-  errorDetails: string[]): Promise<void> {
-  await client.query(`INSERT INTO level_test_generation_jobs(language_id,level,week_index,state,attempts,error_code,error_details,started_at,finished_at,updated_at)
-    VALUES($1,$2,$3,$4,$5,$6,$7::jsonb,CASE WHEN $4='running' THEN now() ELSE NULL END,CASE WHEN $4='running' THEN NULL ELSE now() END,now())
-    ON CONFLICT(language_id,level,week_index) DO UPDATE SET state=EXCLUDED.state,attempts=EXCLUDED.attempts,
-      error_code=EXCLUDED.error_code,error_details=EXCLUDED.error_details,
-      started_at=CASE WHEN EXCLUDED.state='running' THEN now() ELSE level_test_generation_jobs.started_at END,
-      finished_at=CASE WHEN EXCLUDED.state='running' THEN NULL ELSE now() END,updated_at=now()`,
-  [options.languageID, options.level, weekId, state, attempts, errorCode, JSON.stringify(errorDetails)]);
+async function startRun(client: PoolClient, options: GenerateOptions, weekId: number, attempt: number): Promise<string> {
+  const id = randomUUID();
+  await client.query(`INSERT INTO level_test_generation_jobs(id, language_id, level, week_index, state, attempts, started_at, updated_at)
+    VALUES($1,$2,$3,$4,'running',$5,now(),now())`,
+  [id, options.languageID, options.level, weekId, attempt]);
+  return id;
+}
+
+async function closeRun(client: PoolClient, id: string, state: 'finished' | 'failed' | 'unknown',
+  errorCode: string | null, errorDetails: string[]): Promise<void> {
+  await client.query(`UPDATE level_test_generation_jobs
+    SET state=$2, error_code=$3, error_details=$4::jsonb, finished_at=now(), updated_at=now() WHERE id=$1`,
+  [id, state, errorCode, JSON.stringify(errorDetails)]);
 }
 
 const MAX_ERROR_DETAILS = 10;

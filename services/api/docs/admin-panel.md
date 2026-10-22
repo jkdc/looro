@@ -53,6 +53,16 @@ so every state looks the same.
     a green completion for content that did not change. Redoing a draft or a
     rejected week goes through «Regenerar», which is force and refuses approved
     keys.
+    The jobs table is a run log: every attempt is its own row, so a retry keeps
+    the previous failure and its reasons instead of overwriting them (migration
+    `049`). The automatic cap of two attempts binds the scheduler and the CLI; a
+    launch from the panel is an explicit operator request and may retry beyond
+    it, with the attempt ordinal still growing. The weeks table carries `Origen`
+    (`Operador` / `Automático` / `—`): panel launches and regenerations are
+    `user_operator`, scheduler and CLI runs are `automatic_worker`, and rows that
+    predate migration `048` stay `unknown`. Approval provenance is separate:
+    `approved_by` holds `system:auto` when auto-publish approved a week or the
+    operator id when a human did.
     Weeks and jobs are colour-coded by severity (green = usable, red = needs an
     operator, yellow = waiting or unknown). While a run started from the panel
     (or already `running` when the view mounts) is live, the monitor polls

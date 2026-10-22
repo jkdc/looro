@@ -34,7 +34,22 @@ to a section.
 - Four titled sections in the sidebar (`Operación`, `Exámenes`, `Comercial`,
   `Sistema`); headings are separators, never links.
 
+## Scope added after the first pass
+
+- The launcher no longer enqueues a level whose week already exists: it reports
+  `skipped_existing` and creates no run (the runner would answer `exists` and
+  the old upsert recorded it as `finished`, a green completion for content that
+  never changed).
+- `level_test_generation_jobs` becomes a run log: one row per attempt, so a
+  retry keeps the previous failure. The automatic cap (two attempts) still binds
+  the scheduler and CLI; an operator launch may retry beyond it.
+- Weeks record `origin` (`user_operator` | `automatic_worker` | `unknown`), so
+  the listing answers who triggered each generation. `approved_by` stays as is
+  (it already distinguishes `system:auto` from an operator id).
+
 ## Out of scope
 
 New endpoints, grading changes, exam content, Android/iOS, provider behaviour,
-retry policy.
+and the retire/invalidate path for an approval (it needs its own audited
+action: `reject` only accepts drafts and the trigger only allows
+`approved → retired`).
