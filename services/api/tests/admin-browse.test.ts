@@ -60,6 +60,14 @@ test('browse query builder rejects unknown tables, columns, operators and magnit
     { q_id: 'eq:not-a-uuid' }, { q_created_at: 'gte:yesterday-ish' }, { q_id: 'eq:abc), (SELECT 1' },
     { q_is_guest: 'eq:1' }, { q_id: 'in:a,b' }
   ]) assert.throws(() => buildBrowseQuery('accounts', bad), /invalid_request/, JSON.stringify(bad));
+  // Values PostgreSQL itself would reject (22003) must never reach the cast.
+  assert.throws(() => buildBrowseQuery('minute_campaigns', { q_recipient_count: 'gt:2147483648' }), /invalid_request/);
+  assert.throws(() => buildBrowseQuery('minute_campaigns', { q_recipient_count: 'gt:9007199254740992' }), /invalid_request/);
+  assert.ok(buildBrowseQuery('minute_campaigns', { q_recipient_count: 'gte:2147483647' }));
+  assert.throws(() => buildBrowseQuery('wallets', { q_balance_nano: 'gt:9223372036854775808' }), /invalid_request/);
+  assert.throws(() => buildBrowseQuery('wallets', { q_balance_nano: 'gt:9999999999999999999' }), /invalid_request/);
+  assert.ok(buildBrowseQuery('wallets', { q_balance_nano: 'gte:9223372036854775807' }));
+  assert.throws(() => buildBrowseQuery('accounts', { q_created_at: `gte:${'2'.repeat(33)}` }), /invalid_request/);
   assert.ok(buildBrowseQuery('accounts', { q_id: 'in:00000000-0000-0000-0000-000000000000,11111111-1111-1111-1111-111111111111' }));
 });
 
@@ -240,5 +248,22 @@ integration('unauthenticated browsing fails closed', async () => {
       cookie: 'admin_session=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',
       'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': proxyToken } });
     assert.equal(foreign.statusCode, 401);
+  } finally { await service.close(); }
+});
+
+integration('browse rejects values PostgreSQL cannot cast instead of surfacing a 500', async () => {
+  const token = await adminCookie();
+  const service = app();
+  try {
+    for (const target of [
+      '/v1/admin/browse/minute_campaigns?q_recipient_count=gt:2147483648',
+      '/v1/admin/browse/wallets?q_balance_nano=gt:9999999999999999999',
+      `/v1/admin/browse/accounts?q_created_at=gte:${'2'.repeat(33)}`
+    ]) {
+      const response = await service.inject({ method: 'GET', url: target, headers: {
+        cookie: adminCookieHeader(token), 'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': proxyToken } });
+      assert.equal(response.statusCode, 400, target);
+      assert.equal(response.json().error?.code, 'invalid_request');
+    }
   } finally { await service.close(); }
 });

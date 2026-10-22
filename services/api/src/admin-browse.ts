@@ -293,7 +293,12 @@ function assertValueValid(type: ColumnType, value: string): void {
   if (type === 'boolean') { if (value !== 'true' && value !== 'false') throw new ServiceError('invalid_request'); return; }
   if (type === 'integer' || type === 'bigint') {
     if (!/^-?\d{1,19}$/.test(value)) throw new ServiceError('invalid_request');
-    if (Number(value) > Number.MAX_SAFE_INTEGER && type === 'integer') throw new ServiceError('invalid_request');
+    // PostgreSQL rejects values outside the column's own range with 22003; keep
+    // that a clean 400 instead of letting a malformed filter become a 500.
+    const numeric = BigInt(value);
+    const minimum = type === 'integer' ? -2147483648n : -9223372036854775808n;
+    const maximum = type === 'integer' ? 2147483647n : 9223372036854775807n;
+    if (numeric < minimum || numeric > maximum) throw new ServiceError('invalid_request');
     return;
   }
   if (type === 'timestamptz') {
