@@ -198,8 +198,50 @@ integration('regenerate is csrf-gated and admin-only', async () => {
   assert.equal(unauth.statusCode, 401);
 });
 
-integration('approval is refused while a regeneration holds the generation lock', async () => {
-  const [id] = await seed([{ language: 'en', level: 'A1', status: 'draft' }]);
+integration('generation launch starts missing keys and skips approved ones', async () => {
+  await seed([{ language: 'en', level: 'A1', status: 'approved', approved: true }]);
+  const response = await post('/v1/admin/level-tests/generate',
+    { languageID: 'en', levels: 'all', reason: 'lanzamiento semanal de todos los niveles' });
+  assert.equal(response.statusCode, 202);
+  const body = response.json();
+  assert.equal(body.started, true);
+  assert.equal(body.keys.find((key: { level: string }) => key.level === 'A1')?.status, 'skipped_approved');
+  assert.equal(body.keys.filter((key: { status: string }) => key.status === 'started').length, 4);
+  for (let i = 0; i < 20; i++) {
+    const jobs = (await db!.query("SELECT count(*)::int AS n FROM level_test_generation_jobs WHERE language_id='en'")).rows[0].n;
+    if (jobs >= 4) break;
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+  const jobs = (await db!.query("SELECT level FROM level_test_generation_jobs WHERE language_id='en' ORDER BY level")).rows;
+  assert.deepEqual(jobs.map(job => job.level), ['A2', 'B1', 'B2', 'C1']);
+  const audit = (await db!.query("SELECT count(*)::int AS n FROM admin_actions WHERE action='level_test.generate'")).rows[0].n;
+  assert.equal(audit, 1);
+});
+
+integration('generation launch accepts a single level', async () => {
+  const response = await post('/v1/admin/level-tests/generate',
+    { languageID: 'es', levels: ['B1'], reason: 'single level launch' });
+  assert.equal(response.statusCode, 202);
+  assert.deepEqual(response.json().keys, [{ languageID: 'es', level: 'B1', status: 'started' }]);
+});
+
+integration('generation launch validates language, levels, week and reason', async () => {
+  for (const payload of [
+    { languageID: 'xx', levels: 'all', reason: 'invalid language code' },
+    { languageID: 'en', levels: ['Z9'], reason: 'invalid cefr level' },
+    { languageID: 'en', levels: 'all', reason: 'ab' },
+    { languageID: 'en', levels: 'all', weekIndex: CURRENT - 3, reason: 'past week launch' },
+  ]) {
+    const response = await post('/v1/admin/level-tests/generate', payload);
+    assert.equal(response.statusCode, 400, JSON.stringify(payload));
+    assert.equal(response.json().error?.code, 'invalid_request');
+  }
+  const unauth = await app().inject({ method: 'POST', url: '/v1/admin/level-tests/generate',
+    headers, payload: { languageID: 'en', reason: 'no session here' } });
+  assert.equal(unauth.statusCode, 401);
+});
+
+integration('approval is refused while a regeneration holds the generation lock', async () => {  const [id] = await seed([{ language: 'en', level: 'A1', status: 'draft' }]);
   const holder = connectDatabase(url!);
   const key = `level-test-generation:en:A1:${CURRENT}`;
   await holder.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [key]);

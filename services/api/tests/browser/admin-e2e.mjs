@@ -244,6 +244,25 @@ try {
   });
   await shot('10-regeneration-monitor');
 
+  // 8b. On-demand launch: single level B1 (no row yet) runs through the stub.
+  await drainToasts();
+  await page.selectOption('#gen-language', 'en');
+  await page.selectOption('#gen-levels', 'B1');
+  await page.click('#gen-launch');
+  await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+  await page.fill('#reason-text', 'Lanzado en E2E para B1');
+  await page.click('#reason-ok');
+  await page.waitForSelector('.alert-success', { timeout: 10_000 });
+  await check('generation launch runs the missing level and reports it', async () => {
+    await expectText('.alert-success', 'Lanzados 1');
+    await page.waitForFunction(() => {
+      const monitor = document.querySelector('#jobs-monitor');
+      return monitor && /B1/.test(monitor.textContent ?? '') && /finished/.test(monitor.textContent ?? '');
+    }, undefined, { timeout: 120_000 });
+  });
+  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
+  await shot('10b-generation-launch');
+
   // 9. Results section: seeded student attempt, filters, detail modal and the
   // per-student deep link.
   await page.click('a[href="#exam-results"]');

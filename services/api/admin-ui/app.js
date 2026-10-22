@@ -364,6 +364,16 @@ async function renderLevelTestOperations(container, view = {}) {
       <div class="d-flex justify-content-between"><span>Configurado</span><strong>${status.schedule.enabled ? 'Sí' : 'No'}</strong></div>
       <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
       <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
+      <div class="mt-3" id="launch-generation">
+        <div class="row g-2 align-items-end">
+          <div class="col-auto"><label class="form-label" for="gen-language">Idioma</label>
+            <select class="form-select form-select-sm" id="gen-language">${['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'].map(lang => `<option>${lang}</option>`).join('')}</select></div>
+          <div class="col-auto"><label class="form-label" for="gen-levels">Niveles</label>
+            <select class="form-select form-select-sm" id="gen-levels"><option value="all">Todos los niveles</option>${['A1', 'A2', 'B1', 'B2', 'C1'].map(level => `<option>${level}</option>`).join('')}</select></div>
+          <div class="col-auto"><button class="btn btn-sm btn-primary" id="gen-launch">Lanzar generación</button></div>
+        </div>
+        <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
+      </div>
       <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>
     <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
@@ -485,6 +495,20 @@ async function renderLevelTestOperations(container, view = {}) {
     } catch { /* polling is best effort */ }
   };
   void pollJobs();
+  $('#gen-launch').onclick = async () => {
+    const languageID = $('#gen-language').value, levels = $('#gen-levels').value;
+    const target = `${languageID} · ${levels === 'all' ? 'todos los niveles' : levels}`;
+    const decision = await ask('Generar exámenes', target);
+    if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
+    try {
+      const outcome = await api('/v1/admin/level-tests/generate', { method: 'POST',
+        body: JSON.stringify({ languageID, levels, reason: decision.reason }) });
+      const launched = outcome.keys.filter(key => key.status === 'started').length;
+      const skipped = outcome.keys.length - launched;
+      toast(`Lanzados ${launched} examen(es)${skipped ? ` · ${skipped} aprobados omitidos` : ''}`);
+      void pollJobs();
+    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
+  };
   container.querySelectorAll('[data-week-regenerate]').forEach(button => button.onclick = async () => {
     const [languageID, level] = button.dataset.weekRegenerate.split(':');
     const decision = await ask('Regenerar examen', languageID + ':' + level);
@@ -516,6 +540,8 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
   ]);
   if (epoch !== attemptsRenderEpoch) return;
   const studentEmail = merged.studentEmail || (merged.account ? attempts.items[0]?.email : null);
+  // A re-render landing while the operator types must not wipe the draft input.
+  const draftEmail = $('#wa-email')?.value ?? merged.email ?? '';
   const rows = attempts.items.map(item =>
     '<tr><td class="cell-mono" title="' + escapeHtml(item.attemptId) + '">' + escapeHtml(item.attemptId.slice(0, 8)) + '…</td>' +
     '<td>' + escapeHtml(item.email || '—') + '</td><td>' + escapeHtml(item.languageID) + ' ' + escapeHtml(item.level) +
@@ -528,7 +554,7 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
     escapeHtml(item.accountId) + ':' + escapeHtml(item.attemptId) + '">Ver</button></td></tr>').join('') ||
     '<tr><td colspan="9" class="text-secondary">Sin resultados para este filtro.</td></tr>';
   const filterBar = `<div class="row g-2 mb-2 align-items-end">
-    <div class="col"><input class="form-control form-control-sm" id="wa-email" placeholder="Email contiene" value="${escapeHtml(merged.email ?? '')}"></div>
+    <div class="col"><input class="form-control form-control-sm" id="wa-email" placeholder="Email contiene" value="${escapeHtml(draftEmail)}"></div>
     <div class="col-auto"><select class="form-select form-select-sm" id="wa-language"><option value="">Idioma: todos</option>${['en','es','fr','de','it','pt','nb','zh'].map(lang => `<option${lang === merged.language ? ' selected' : ''}>${lang}</option>`).join('')}</select></div>
     <div class="col-auto"><select class="form-select form-select-sm" id="wa-state"><option value="">Estado: todos</option><option${merged.state === 'completed' ? ' selected' : ''}>completed</option><option${merged.state === 'in_progress' ? ' selected' : ''}>in_progress</option></select></div>
     <div class="col-auto"><select class="form-select form-select-sm" id="wa-passed"><option value="">Resultado: todos</option><option value="true"${merged.passed === 'true' ? ' selected' : ''}>aprobados</option><option value="false"${merged.passed === 'false' ? ' selected' : ''}>suspendidos</option></select></div>

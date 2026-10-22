@@ -68,6 +68,22 @@ The system SHALL expose `POST /v1/admin/level-tests/regenerate` accepting `{lang
 - **WHEN** `reason` is shorter than 3 or longer than 500 chars
 - **THEN** the response is `400 invalid_request` and no job starts.
 
+### Requirement: On-demand generation launcher
+
+The system SHALL expose `POST /v1/admin/level-tests/generate` accepting `{languageID, levels?, weekIndex?, reason}` (levels defaulting to all CEFR levels; reason 3-500 chars), validating language, levels and week against whitelists, answering `202 {started: true, keys[]}` where each key is `started` or `skipped_approved` (an approved key is never regenerated here), auditing accepted requests as `level_test.generate`, and running the started keys sequentially in the background through the job runner (each job records its own state; an existing draft makes the job finish as `exists` without LLM cost).
+
+#### Scenario: Launch all levels for a language
+- **WHEN** the launcher is called with `levels: 'all'` for a language with one approved level
+- **THEN** the response marks the approved key `skipped_approved`, the other four keys `started`, and exactly the started keys get a generation job.
+
+#### Scenario: Launch a single level
+- **WHEN** the launcher is called with `levels: ['B1']`
+- **THEN** exactly that key starts.
+
+#### Scenario: Validation and audit
+- **WHEN** the language, a level, or the reason is invalid, or weekIndex is not the current week
+- **THEN** the response is `400 invalid_request` and nothing runs; accepted requests write one `level_test.generate` audit entry with the reason.
+
 ### Requirement: Generation jobs monitor
 
 The system SHALL extend `GET /v1/admin/level-tests/status` with `jobs[]`, the last 10 `level_test_generation_jobs` rows ordered by `updated_at DESC` (same item shape as `latestJob`), while keeping `latestJob` unchanged for compatibility.

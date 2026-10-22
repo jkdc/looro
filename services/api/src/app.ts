@@ -38,7 +38,8 @@ import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from '.
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publication.js';
-import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, validateRegenerateRequest } from './level-tests-admin.js';
+import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, planGenerationLaunch,
+  runGenerationLaunch, validateRegenerateRequest } from './level-tests-admin.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { weekIndex } from './level-tests.js';
 import { attemptCsv, levelTestAttemptDetail, levelTestAttemptSummary, listLevelTestAttempts,
@@ -513,6 +514,26 @@ export function createApp(services: Services) {
     void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true })
       .catch(() => undefined);
     return reply.code(202).send({ started: true });
+  });
+  app.post('/v1/admin/level-tests/generate', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['languageID', 'levels', 'weekIndex', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const languageID = stringField(body, 'languageID', 8);
+    const reason = stringField(body, 'reason', 500);
+    if (reason.trim().length < 3) throw new ServiceError('invalid_request');
+    if (body.weekIndex !== undefined && (typeof body.weekIndex !== 'number' || !Number.isSafeInteger(body.weekIndex)))
+      throw new ServiceError('invalid_request');
+    const weekId = body.weekIndex === undefined ? weekIndex(new Date()) : body.weekIndex as number;
+    const levels = body.levels === undefined || body.levels === 'all'
+      ? ['A1', 'A2', 'B1', 'B2', 'C1']
+      : Array.isArray(body.levels) ? body.levels.map(level => String(level)) : [String(body.levels)];
+    const keys = await planGenerationLaunch(db, languageID, levels, weekId);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.generate',
+      `${languageID}:${weekId}`, reason, { languageID, weekId, keys }));
+    runGenerationLaunch(db, process.env, keys, weekId);
+    return reply.code(202).send({ started: true, keys });
   });
   // Student exam results (admin-exam-results): reads are gated but un-audited,
   // matching the browse surface; student answers never reach the logs.
