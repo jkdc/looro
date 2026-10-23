@@ -39,7 +39,7 @@ Create cohesive route modules for API capabilities, extract only application ope
 - [x] T3 — Extract remaining admin level-test routes and status/draft query operations; route: inline; status: complete; commit: `072512b`.
 - [x] T4 — Extract LLM config routes, inject environment, separate audit helper from CLI; route: inline; status: complete; commit: `2674ff0`.
 - [x] T5 — Isolate runtime lifecycle and test start/partial-failure/shutdown; route: inline; status: complete; commit: `eb70690`.
-- [x] T6 — Smoke cleanup policy, close conditional report items, final documentation and integrated checks; route: inline; status: complete; commits: `ed62393` plus final review correction (see L12).
+- [x] T6 — Smoke cleanup policy, close conditional report items, final documentation and integrated checks; route: inline; status: complete; commits: `ed62393`, `44ffcdb`.
 
 ## Log
 

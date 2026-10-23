@@ -64,4 +64,4 @@ Revisión independiente: **PASS con advisories no bloqueantes**, contra `a87f3ef
 - `2674ff0` — entorno explícito, rutas de configuración LLM y auditoría.
 - `eb70690` — lifecycle aislado y pruebas de ejecución.
 - `ed62393` — cleanup seguro del stack efímero, README, cierre condicional e informe de verificación.
-- Commit pendiente — assertion exacta del contador del smoke y aclaración del cwd Make/Compose tras revisión independiente.
+- `44ffcdb` — assertion exacta del contador del smoke y aclaración del cwd Make/Compose tras revisión independiente.
