@@ -14,7 +14,7 @@ La reorganización acordada está implementada en incrementos reversibles. La su
 | Informe | Resultado y evidencia |
 |---|---|
 | H1 / fases 1–3 | Las rutas administrativas de intentos, generación/revisión de exámenes y configuración LLM se registran desde tres módulos cohesivos sobre la misma instancia Fastify. Los hooks y políticas transversales siguen en la raíz. Pruebas PostgreSQL y HTTP de los dominios afectados pasan. |
-| H2 | Autenticación, origen/CSRF, admisión, límites, errores y observabilidad permanecen en el ensamblaje raíz. El smoke HTTP confirma que la ruta de administración rechaza una petición sin sesión. La suite comprueba los efectos persistidos de admisión. |
+| H2 | Autenticación, origen/CSRF, admisión, límites, errores y observabilidad permanecen en el ensamblaje raíz. El smoke HTTP confirma que la ruta de administración rechaza una petición sin sesión y comprueba el incremento exacto del contador de red. Una revisión independiente comparó 48 peticiones rechazadas (status, cuerpo, cabeceras y efectos de admisión) entre base y candidato. |
 | H3 | Las proyecciones de estado/borradores viven en operaciones de administración de level-tests; auditoría reusable se separó del entrypoint CLI. Transacciones de publicación y lanzamiento asíncrono se conservaron. |
 | H4 | Las rutas de generación/configuración reciben el entorno desde `createApp`; los valores dinámicos almacenados en BD siguen leyéndose por petición y conservan su precedencia. Prueba de dos instancias aisladas: valores independientes, sin mutar `process.env`. |
 | H5 / fase 4 | El lifecycle tiene una frontera import-safe y pruebas de inicio, fallo parcial, trabajo pendiente y cierre idempotente. Se conservaron entrypoint y orden observado de arranque/cierre. |
@@ -25,7 +25,7 @@ La reorganización acordada está implementada en incrementos reversibles. La su
 
 ### Inventario de las rutas afectadas
 
-Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (`a87f3ef`) con las del `app.ts` actual más los tres módulos extraídos. Resultado: **78 expresiones de método/ruta en la base y 78 en el candidato; cero eliminadas y cero añadidas**. Los registros que ya estaban delegados a helpers externos permanecieron sin cambios en ambos lados. Además, las pruebas de integración ejercitan los grupos trasladados y el smoke recorre la imagen compilada. Esta comparación acota el inventario a las declaraciones directas del ensamblaje y módulos afectados; no convierte `printRoutes()` en una interfaz contractual.
+Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (`a87f3ef`) con las del `app.ts` actual más los tres módulos extraídos. Resultado: **78 expresiones de método/ruta en la base y 78 en el candidato; cero eliminadas y cero añadidas**. Los registros que ya estaban delegados a helpers externos permanecieron sin cambios en ambos lados. La revisión independiente comparó también el inventario runtime completo y observó **126 registros Fastify equivalentes** (incluidos `HEAD` implícitos). Además, las pruebas de integración ejercitan los grupos trasladados y el smoke recorre la imagen compilada. Esta comparación acota el inventario fuente a las declaraciones directas del ensamblaje y módulos afectados; no convierte `printRoutes()` en una interfaz contractual.
 
 ### Recomendaciones condicionadas no aplicadas
 
@@ -42,6 +42,8 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 | `make obs-check` | Correcto: Compose válido, 5 reglas Prometheus, tests de reglas correctos y Alertmanager válido. |
 | `make test-api` | Correcto: build/arranque de imagen compilada, smoke HTTP y **634/634 pruebas**, 0 fallos, 0 skips; al final eliminó solo `looro-smoke` y su volumen. |
 | Prueba de política de `make test-api` con Docker simulado | Antes: un fallo de tests dejaba el stack sin teardown. Después: fallo limpia; `KEEP_SMOKE_STACK=1` retiene; éxito limpia; fallo del cleanup propaga error; un valor inválido falla antes de ejecutar Docker. |
+| Revisión independiente en archivos `git archive` de base y candidato | Correcto en pruebas focalizadas: build de ambos, 40/40 pruebas PostgreSQL admin/audit/attempt/week por revisión, 126 rutas equivalentes, 48 rechazos equivalentes y 5 probes de composición de arranque. El smoke compilado candidato pasó 1/1 y terminó con SIGTERM limpio. No se repitió la suite total ni el smoke de contenedor endurecido en esta revisión. |
+| Smoke enfocado después de corrección | Con una fila histórica sintética de otro identificador (`hits=77`), el smoke compilado pasó 1/1 y demostró que el contador aumentó exactamente en uno por la petición denegada. La consulta anterior se había reproducido como falso positivo sin enviar esa petición. |
 | `git diff --check` | Correcto. |
 
 ## Límites y riesgos restantes
@@ -49,6 +51,10 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 - `npm run build` en el host no pudo escribir en `services/api/dist`, preexistente y propiedad de root. No se borró ni cambió ese directorio. El build oficial en Docker y el smoke compilado sí pasaron.
 - El ejecutable `gentle-ai` no está disponible en este entorno. Por tanto no se ejecutó evaluación/revisión nativa RDD ni se afirma que exista aprobación; la verificación funcional anterior sí es observable.
 - El cambio es de organización y testabilidad, no una garantía nueva sobre proveedores o despliegue. Los límites externos ya señalados en el informe original permanecen fuera de esta entrega.
+
+## Dictamen independiente y seguimiento
+
+Revisión independiente: **PASS con advisories no bloqueantes**, contra `a87f3ef..387ecab`; no se encontraron regresiones causadas por el candidato. Se corrigieron el falso positivo posible del smoke y la ambigüedad del directorio de trabajo en README. Se difiere como mejora menor añadir pruebas persistentes para los cinco escenarios de composición real de `main()` que el revisor probó en scratch: el lifecycle extraído ya tiene pruebas propias y no se detectó fallo actual. La corrección posterior fue solo de test/documentación; se ejecutaron `npm --prefix services/api run check` y el smoke compilado focalizado 1/1, no se repitió la suite completa de 634.
 
 ## Commits de trabajo
 
@@ -58,3 +64,4 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 - `2674ff0` — entorno explícito, rutas de configuración LLM y auditoría.
 - `eb70690` — lifecycle aislado y pruebas de ejecución.
 - `ed62393` — cleanup seguro del stack efímero, README, cierre condicional e informe de verificación.
+- Commit pendiente — assertion exacta del contador del smoke y aclaración del cwd Make/Compose tras revisión independiente.

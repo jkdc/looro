@@ -27,20 +27,22 @@ test('compiled API is ready over HTTP and enforces admin authentication', { skip
   assert.equal(pricingBody.currency, 'USD');
   assert.equal(typeof pricingBody.rateVersion, 'string');
 
-  const admin = await fetch(`${baseURL}/v1/admin/level-tests/status`, {
-    headers: { 'x-app-client-ip': '198.51.100.23', 'x-app-proxy-token': proxyToken! },
-    signal: AbortSignal.timeout(2_000),
-  });
-  assert.equal(admin.status, 401);
-  assert.deepEqual(await admin.json(), { error: { code: 'admin_sign_in_required' } });
-
   const databaseURL = process.env.TEST_DATABASE_URL;
   assert.ok(databaseURL, 'smoke API test requires the isolated PostgreSQL test database');
   const db = connectDatabase(databaseURL);
+  const admissionHits = async () => {
+    const result = await db.query<{ hits: string }>(`SELECT COALESCE(SUM(hits), 0)::text AS hits FROM auth_rate_limits
+      WHERE operation='admin-api' AND scope='network'`);
+    return BigInt(result.rows[0]!.hits);
+  };
   try {
-    const admission = await db.query<{ hits: number }>(`SELECT hits FROM auth_rate_limits
-      WHERE operation='admin-api' AND scope='network' AND window_start=date_trunc('hour', now())
-      ORDER BY hits DESC LIMIT 1`);
-    assert.ok((admission.rows[0]?.hits ?? 0) >= 1, 'denied admin HTTP request must retain its admission counter');
+    const before = await admissionHits();
+    const admin = await fetch(`${baseURL}/v1/admin/level-tests/status`, {
+      headers: { 'x-app-client-ip': '198.51.100.23', 'x-app-proxy-token': proxyToken! },
+      signal: AbortSignal.timeout(2_000),
+    });
+    assert.equal(admin.status, 401);
+    assert.deepEqual(await admin.json(), { error: { code: 'admin_sign_in_required' } });
+    assert.equal(await admissionHits(), before + 1n, 'denied admin HTTP request must add exactly one network admission hit');
   } finally { await db.end(); }
 });

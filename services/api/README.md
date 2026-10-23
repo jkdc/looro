@@ -119,12 +119,12 @@ A 600-second wall-clock closure request is **not an absolute provider spending g
 
 ## Container verification
 
-An isolated smoke stack uses PostgreSQL 17, no Caddy, and an ephemeral localhost-only API port:
+An isolated smoke stack uses PostgreSQL 17, no Caddy, and an ephemeral localhost-only API port. Run the direct Compose commands below from `services/api`; for the full standard test target, run `make test-api` from the repository root (or `make -C ../.. test-api` from this directory):
 
 ```sh
-docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml up --build -d api
-docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
-docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
+docker compose -p looro-smoke -f tests/compose.smoke.yaml up --build -d api
+docker compose -p looro-smoke -f tests/compose.smoke.yaml run --rm tests
+docker compose -p looro-smoke -f tests/compose.smoke.yaml port api 8080
 ```
 
 `make test-api` also sends real HTTP requests to the compiled API after bounded readiness: it checks `/v1/pricing` and verifies that an unauthenticated admin request is rejected. The admin proxy values in this test stack are synthetic and must never be reused outside it. CI runs this isolated smoke in addition to the API tests. The target removes only its disposable `looro-smoke` Compose project and volumes by default, including after a failed test, while preserving the test's exit status. To retain the stack for diagnosis, run `KEEP_SMOKE_STACK=1 make test-api` and later remove it with `make smoke-down`. The normal developer entry points are `npm run check`, `npm run build`, `npm test`, and `make test-api`; the full repository check is `make check` from the repository root.
@@ -132,7 +132,7 @@ docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
 Only this disposable test project may be removed with:
 
 ```sh
-docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml down --volumes
+docker compose -p looro-smoke -f tests/compose.smoke.yaml down --volumes
 ```
 
 ## Complete before commercial activation
