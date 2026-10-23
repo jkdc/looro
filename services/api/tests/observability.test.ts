@@ -67,3 +67,30 @@ test('domain metrics record through the instruments with contract attributes', a
   const tokens = await collectSum(reader, 'palique.llm.tokens');
   assert.equal(tokens.get('direction=output,provider=glm'), 12);
 });
+
+//
+// Section 3: OTel init/shutdown and pool gauges (src/observability.ts)
+// Static import per file convention (see the Section 2 note on live bindings).
+import { addDatabasePoolObservability, initObservability, shutdownObservability } from '../src/observability.js';
+
+// No-op contract: tests, the smoke stack and CI never start the telemetry
+// stack, so init must install nothing until OTEL_ENABLED is exactly 'true'.
+test('observability stays no-op unless OTEL_ENABLED is true', async () => {
+  initObservability({});                        // disabled
+  initObservability({ OTEL_ENABLED: 'false' }); // disabled
+  await shutdownObservability();                // resolves without providers
+});
+
+test('pool observability publishes max and per-state connections', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const fakePool = { options: { max: 10 }, idleCount: 3, totalCount: 7, waitingCount: 1 } as never;
+  addDatabasePoolObservability(fakePool);
+  const pool = await collectSum(reader, 'palique.db.pool.connections');
+  assert.equal(pool.get('state=idle'), 3);
+  assert.equal(pool.get('state=in_use'), 4); // totalCount - idleCount
+  assert.equal(pool.get('state=waiting'), 1);
+  const max = await collectSum(reader, 'palique.db.pool.max_connections');
+  assert.equal([...max.values()].reduce((a, b) => a + b, 0), 10);
+});
