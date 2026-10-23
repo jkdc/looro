@@ -15,6 +15,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/tests/support ./dist/tests/support
 COPY migrations ./migrations
 USER node
 EXPOSE 8080
