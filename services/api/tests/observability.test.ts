@@ -159,3 +159,97 @@ integration('unexpected 5xx responses include requestId and never internals', as
     assert.equal(typeof logged['route'], 'string');
   } finally { console.error = original; await app.close(); }
 });
+
+//
+// Section 5: LLM chat completion instrumentation (src/llm-config.ts)
+// Static import per file convention (see the Section 2 note on live bindings).
+import { chatCompletion, LlmTransportError, type ResolvedLlmConfig } from '../src/llm-config.js';
+
+const llmConfig: ResolvedLlmConfig = { provider: 'glm', baseUrl: 'http://llm.test', model: 'm', apiKey: 'k' };
+
+test('chatCompletion records ok outcome with tokens and duration', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const reply = await chatCompletion(llmConfig,
+    [{ role: 'user', content: 'hi' }],
+    async () => new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5 } }), { status: 200 }));
+  assert.equal(reply.tokensIn, 10);
+  const requests = await collectSum(reader, 'palique.llm.requests');
+  assert.equal(requests.get('provider=glm,status=ok'), 1);
+  const tokens = await collectSum(reader, 'palique.llm.tokens');
+  assert.equal(tokens.get('direction=input,provider=glm'), 10);
+  assert.equal(tokens.get('direction=output,provider=glm'), 5);
+});
+
+test('chatCompletion records failed outcome with the transport error code', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  // The re-thrown error must stay the original LlmTransportError (no-retry
+  // contract): callers match on it to classify outcomes as unknown.
+  await assert.rejects(
+    chatCompletion(llmConfig, [{ role: 'user', content: 'hi' }], async () => { throw new Error('socket down'); }),
+    (error: unknown) => error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
+  const requests = await collectSum(reader, 'palique.llm.requests');
+  assert.equal(requests.get('error_code=llm_outcome_unknown,provider=glm,status=failed'), 1);
+});
+
+//
+// Section 6: generation job wrapper instrumentation (src/level-tests-generation-jobs.ts)
+// Idempotent no-op outcomes ('busy', 'exists') and early state checks run
+// against a scripted PoolClient fake — no database needed for the mapping.
+import { runLevelTestGenerationJob } from '../src/level-tests-generation-jobs.js';
+import { type GenerateOptions } from '../src/level-tests-llm.js';
+import type { Database } from '../src/db.js';
+
+/** Pool fake whose clients replay scripted query results in order. */
+const fakeDb = (results: { rows: unknown[] }[]): Database => {
+  let next = 0;
+  return {
+    connect: async () => ({
+      query: async () => results[next++] ?? { rows: [] },
+      release: () => {},
+    }),
+  } as unknown as Database;
+};
+
+const jobOptions: GenerateOptions = { languageID: 'en', level: 'A1', weekIndex: 0, origin: 'automatic_worker' };
+
+test('generation job wrapper counts failed and unknown outcomes', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+
+  // Automatic attempts past the cap return 'failed' without generating.
+  const failed = await runLevelTestGenerationJob(
+    fakeDb([{ rows: [{ locked: true }] }, { rows: [{ id: 'j1', state: 'failed', attempts: 2 }] }]), {}, jobOptions);
+  assert.equal(failed.status, 'failed');
+  // A prior 'unknown' run short-circuits to reconciliation_required.
+  const unknown = await runLevelTestGenerationJob(
+    fakeDb([{ rows: [{ locked: true }] }, { rows: [{ id: 'j2', state: 'unknown', attempts: 1 }] }]), {}, jobOptions);
+  assert.equal(unknown.status, 'unknown');
+
+  const jobs = await collectSum(reader, 'palique.leveltest.generation.jobs');
+  assert.equal(jobs.get('language=en,level=A1,status=failed'), 1);
+  assert.equal(jobs.get('language=en,level=A1,status=unknown'), 1);
+  // Last-success only ever fires on finished outcomes.
+  const lastSuccess = await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds');
+  assert.equal(lastSuccess.size, 0);
+});
+
+test('generation job wrapper passes busy and exists through without recording metrics', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+
+  const busy = await runLevelTestGenerationJob(fakeDb([{ rows: [{ locked: false }] }]), {}, jobOptions);
+  assert.equal(busy.status, 'busy');
+  const exists = await runLevelTestGenerationJob(
+    fakeDb([{ rows: [{ locked: true }] }, { rows: [] }, { rows: [{ status: 'finished', variants: [] }] }]), {}, jobOptions);
+  assert.equal(exists.status, 'exists');
+
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.jobs')).size, 0);
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+});

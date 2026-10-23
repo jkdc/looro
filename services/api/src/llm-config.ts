@@ -1,6 +1,7 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
 import { Agent } from 'undici';
 import type { Database } from './db.js';
+import { paliqueMetrics } from './metrics.js';
 
 /** LLM provider configuration for weekly level-test generation
     (level-tests-llm): presets (openai / glm z.ai / opencode go gateway),
@@ -102,32 +103,45 @@ const llmAgent = new Agent({ headersTimeout: 900_000, bodyTimeout: 900_000 });
 
 export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMessage[],
                                      fetchFn: typeof fetch = fetch, signal?: AbortSignal): Promise<ChatReply> {
-  const url = `${config.baseUrl.replace(/\/$/, '')}/chat/completions`;
-  let response: Response;
+  const started = performance.now();
   try {
-    response = await fetchFn(url, {
-      method: 'POST',
-      signal,
-      headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
-        // OpenCode Go routes per conversation and rejects session-less requests.
-        ...(config.provider === 'opencode' ? { 'x-opencode-session': config.sessionID ?? randomUUID(),
-          'user-agent': 'palique-api/1.0' } : {}) },
-      body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
-      dispatcher: llmAgent,
-    } as RequestInit & { dispatcher: Agent });
-  } catch {
-    throw new LlmTransportError('llm_outcome_unknown');
+    const url = `${config.baseUrl.replace(/\/$/, '')}/chat/completions`;
+    let response: Response;
+    try {
+      response = await fetchFn(url, {
+        method: 'POST',
+        signal,
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
+          // OpenCode Go routes per conversation and rejects session-less requests.
+          ...(config.provider === 'opencode' ? { 'x-opencode-session': config.sessionID ?? randomUUID(),
+            'user-agent': 'palique-api/1.0' } : {}) },
+        body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
+        dispatcher: llmAgent,
+      } as RequestInit & { dispatcher: Agent });
+    } catch {
+      throw new LlmTransportError('llm_outcome_unknown');
+    }
+    if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
+    let payload: { choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
+    try {
+      payload = await response.json() as typeof payload;
+    } catch {
+      throw new LlmTransportError('llm_outcome_unknown');
+    }
+    const content = payload.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
+    const outcome: ChatReply = { content, tokensIn: payload.usage?.prompt_tokens ?? 0,
+      tokensOut: payload.usage?.completion_tokens ?? 0 };
+    paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'ok' });
+    paliqueMetrics.llmRequestDuration.record((performance.now() - started) / 1000, { provider: config.provider });
+    paliqueMetrics.llmTokens.add(outcome.tokensIn, { provider: config.provider, direction: 'input' });
+    paliqueMetrics.llmTokens.add(outcome.tokensOut, { provider: config.provider, direction: 'output' });
+    return outcome;
+  } catch (error) {
+    paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'failed',
+      error_code: error instanceof LlmTransportError ? error.code : 'llm_unknown_error' });
+    throw error; // unchanged: the no-retry contract relies on the original LlmTransportError
   }
-  if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
-  let payload: { choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
-  try {
-    payload = await response.json() as typeof payload;
-  } catch {
-    throw new LlmTransportError("llm_outcome_unknown");
-  }
-  const content = payload.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
-  return { content, tokensIn: payload.usage?.prompt_tokens ?? 0, tokensOut: payload.usage?.completion_tokens ?? 0 };
 }
 
 export class LlmTransportError extends Error {
