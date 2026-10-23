@@ -9,7 +9,7 @@ const isCompiled = existsSync(fileURLToPath(compiledMain));
 const mainEntry = isCompiled ? compiledMain : new URL('../src/main.ts', import.meta.url);
 const registerHooks = new URL('./support/main-wiring-register.mjs', import.meta.url);
 
-function runMainProbe(failure?: string) {
+function runMainProbe(failure?: string, signal?: string) {
   const loaderArgs = isCompiled ? [] : ['--import', 'tsx'];
   const result = spawnSync(process.execPath, [...loaderArgs, '--import', fileURLToPath(registerHooks), fileURLToPath(mainEntry)], {
     cwd: process.cwd(), encoding: 'utf8', timeout: 10_000,
@@ -18,6 +18,7 @@ function runMainProbe(failure?: string) {
       DATABASE_URL: 'postgres://probe.invalid/test',
       PUBLIC_ORIGIN: 'http://localhost:8080',
       MAIN_WIRING_FAILURE: failure ?? '',
+      MAIN_WIRING_SIGNAL: signal ?? '',
       MAIN_WIRING_ENTRY: mainEntry.href,
     },
   });
@@ -92,4 +93,15 @@ test('main composition closes timers, app, telemetry, and database when listenin
   assert.ok(!result.events.includes('api_started'), result.events.join(', '));
   assert.ok(!result.events.includes('minute_worker_start'), result.events.join(', '));
   assert.ok(!result.events.includes('generation_worker_start'), result.events.join(', '));
+});
+
+test('main composition registers signal handlers and shuts resources down on SIGTERM', () => {
+  const result = runMainProbe(undefined, 'SIGTERM');
+  assert.equal(result.status, 0);
+  has(result.events, 'signal_handler_registered:SIGTERM');
+  has(result.events, 'signal_handler_registered:SIGINT');
+  before(result.events, 'api_started', 'timers_clear');
+  before(result.events, 'timers_clear', 'http_close');
+  before(result.events, 'http_close', 'observability_shutdown');
+  before(result.events, 'observability_shutdown', 'database_close');
 });

@@ -5,9 +5,15 @@ const failAt = name => {
   if (failure === name) throw new Error(`controlled startup failure: ${name}`);
 };
 
+const processOn = process.on.bind(process);
+process.on = function (event, ...args) {
+  if (event === 'SIGTERM' || event === 'SIGINT') record(`signal_handler_registered:${event}`);
+  return processOn(event, ...args);
+};
+process.once('exit', () => console.log(`MAIN_WIRING_EVENTS=${JSON.stringify(events)}`));
+
 globalThis.setInterval = () => ({ unref() { record('timer_unref'); } });
 globalThis.clearInterval = () => record('timers_clear');
-process.once('beforeExit', () => console.log(`MAIN_WIRING_EVENTS=${JSON.stringify(events)}`));
 
 export function connectDatabase() {
   record('database_open');
@@ -82,7 +88,11 @@ export function createApp() {
   };
 }
 export const log = {
-  info(name) { record(name); },
+  info(name) {
+    record(name);
+    if (name === 'api_started' && process.env.MAIN_WIRING_SIGNAL)
+      setImmediate(() => process.emit(process.env.MAIN_WIRING_SIGNAL));
+  },
   warn(name) { record(name); },
   error(name) { record(name); },
 };

@@ -84,6 +84,12 @@ The process entry MUST be import-safe for tests. Startup validation, database/te
 - **WHEN** a signal or close request arrives while shutdown is in progress
 - **THEN** cleanup is idempotent and does not leak intervals, jobs, server, providers, telemetry, or database resources
 
+#### Scenario: Process termination signal shuts down the API
+
+- **WHEN** the running process receives `SIGTERM`
+- **THEN** the registered signal handler completes the ordered lifecycle cleanup before exiting
+- **AND** both `SIGTERM` and `SIGINT` handlers are registered by the process entry point
+
 ### Requirement: Preserve build and operational entry points
 
 The change MUST retain `dist/src/main.js`, CLI invocation names, migration/operation/fixture resolution, and existing migration history. No applied migration is edited.
