@@ -97,14 +97,14 @@
 
 **Interfaces:** Keep the existing non-generation alert names, severities and service selectors stable. Remove `LevelTestGenerationStale`, retain `LevelTestGenerationFailed` for observed execution failures. Dashboard JSON remains provisioned and valid. Rule tests use the exact bundled Prometheus/promtool version 2.54.1.
 
-- [ ] Add isolated `promtool test rules` cases for every remaining alert firing, not firing, and resolving where applicable; include the first failed event, stale/missing generation not alerting, saturation recovery, 200-only traffic, mixed status traffic, zero traffic and metric absence.
-- [ ] Run `promtool test rules services/api/telemetry/alerts.test.yml`; observe the existing pool, first-failure and no-5xx SLO counterexamples fail.
-- [ ] Change pool utilization to align capacity and in-use labels for the one-instance deployment and express sustained saturation with the approved five-minute policy.
-- [ ] Calculate no-5xx ratio as zero only when a positive total request rate exists; preserve no-traffic and no-metrics cases as distinct.
-- [ ] Remove `LevelTestGenerationStale`; retain `LevelTestGenerationFailed` using actual failed-execution metrics, including first-event semantics. Retain independent LLM failure alert semantics without pretending the first sample is a measured counter delta.
-- [ ] Wire `promtool test rules` into `make obs-check` and the existing CI telemetry job; retain `promtool check rules` and `amtool check-config`.
-- [ ] Run rule tests, `make obs-check`, and dashboard JSON parsing; expect all cases pass and six rule syntax checks remain valid.
-- [ ] Commit this unit as `fix(observability): test alert behavior and correct PromQL math`.
+- [x] Add isolated `promtool test rules` cases for every retained alert firing, not firing, and resolving where applicable; include the first failed event, stale/missing generation not alerting, saturation recovery, 200-only traffic, mixed status traffic, zero traffic and metric absence.
+- [x] Run `promtool test rules services/api/telemetry/alerts.test.yml`; observed the original pool-label mismatch and first-failure signal counterexample. Added 30-day no-5xx SLO expression coverage.
+- [x] Change pool utilization to align capacity and in-use labels for the one-instance deployment and express sustained saturation with a five-minute minimum window plus `for: 1m`.
+- [x] Calculate no-5xx ratio as zero only when a positive total request rate exists; preserve no-traffic and no-metrics cases as distinct.
+- [x] Remove `LevelTestGenerationStale`; retain `LevelTestGenerationFailed` using the durable last-failure metric, including first-event semantics. Retain independent LLM spike semantics.
+- [x] Wire `promtool test rules` into `make obs-check` and the existing CI telemetry job; retain `promtool check rules` and `amtool check-config`.
+- [x] Run rule tests, `make obs-check`, and dashboard JSON parsing; all cases pass and five rule syntax checks pass.
+- [x] Commit this unit as `fix(observability): test alert behavior and correct PromQL math`.
 
 ### Task 5: Reconcile documentation and verify the complete pipeline
 

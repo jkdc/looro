@@ -60,4 +60,5 @@ jobs:
         run: |
           docker compose --project-directory . -f compose.yaml config -q
           docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint promtool prom/prometheus:v2.54.1 check rules /telemetry/alerts.yml
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint promtool prom/prometheus:v2.54.1 test rules /telemetry/alerts.test.yml
           docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint amtool prom/alertmanager:v0.27.0 check-config /telemetry/alertmanager.yml

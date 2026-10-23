@@ -14,6 +14,7 @@
 #   palique_leveltest_generation_jobs_total{status=finished|failed|unknown}
 #   palique_leveltest_generation_job_duration_seconds_{count,sum,bucket}
 #   palique_leveltest_generation_last_success_unix_seconds
+#   palique_leveltest_generation_last_failure_unix_seconds
 #   palique_llm_requests_total{status=ok|failed}
 #   palique_llm_request_duration_seconds_{count,sum,bucket}
 #   palique_llm_tokens_total{direction=input|output}
@@ -32,7 +33,7 @@ groups:
     rules:
       - alert: ApiHttp5xxRatioHigh
         expr: |
-          sum(rate(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api", http_response_status_code=~"5.."}[5m]))
+          (sum(rate(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api", http_response_status_code=~"5.."}[5m])) or vector(0))
             /
           sum(rate(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api"}[5m]))
             > 0.05
@@ -67,7 +68,7 @@ groups:
 
       - alert: LevelTestGenerationFailed
         expr: |
-          (sum(increase(palique_leveltest_generation_jobs_total{job="otel-collector", exported_job="palique-api", status="failed"}[24h])) or vector(0)) > 0
+          time() - max(palique_leveltest_generation_last_failure_unix_seconds{job="otel-collector", exported_job="palique-api"}) < 86400
         for: 1m
         labels:
           severity: warning
@@ -75,23 +76,8 @@ groups:
         annotations:
           summary: "Level-test generation failed in the last 24h"
           description: >-
-            At least one weekly generation attempt ended in failure. Review
-            level_test_generation_jobs and level_test_weeks, and the error
-            codes recorded by the pipeline (for example llm_outcome_unknown).
-          runbook: docs/observability.md#generacion-fallando
-
-      - alert: LevelTestGenerationStale
-        expr: |
-          (time() - palique_leveltest_generation_last_success_unix_seconds{job="otel-collector", exported_job="palique-api"}) > 691200
-        for: 1m
-        labels:
-          severity: warning
-          component: level-tests
-        annotations:
-          summary: "No successful level-test generation for 8 days"
-          description: >-
-            The weekly generation has not finished successfully in more than
-            8 days. Check the scheduler logs and the LLM provider status.
+            At least one actual level-test generation execution failed within
+            24 hours. Review the persisted job error codes and provider configuration.
           runbook: docs/observability.md#generacion-fallando
 
       - alert: LlmFailuresSpike
@@ -111,9 +97,9 @@ groups:
 
       - alert: DbPoolSaturated
         expr: |
-          max_over_time(palique_db_pool_connections{job="otel-collector", exported_job="palique-api", state="in_use"}[5m])
-            /
-          max(palique_db_pool_max_connections{job="otel-collector", exported_job="palique-api"})
+          sum by (job, exported_job) (min_over_time(palique_db_pool_connections{job="otel-collector", exported_job="palique-api", state="in_use"}[5m]))
+            / on (job, exported_job)
+          sum by (job, exported_job) (palique_db_pool_max_connections{job="otel-collector", exported_job="palique-api"})
             > 0.9
         for: 1m
         labels:

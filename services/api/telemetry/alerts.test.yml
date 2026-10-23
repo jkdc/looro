@@ -1,0 +1,179 @@
+rule_files:
+  - alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  - name: generation-failure-window
+    interval: 1m
+    input_series:
+      - series: 'palique_leveltest_generation_last_failure_unix_seconds{job="otel-collector",exported_job="palique-api"}'
+        values: '0+0x1500'
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: LevelTestGenerationFailed
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              component: level-tests
+            exp_annotations:
+              summary: "Level-test generation failed in the last 24h"
+              description: "At least one actual level-test generation execution failed within 24 hours. Review the persisted job error codes and provider configuration."
+              runbook: "docs/observability.md#generacion-fallando"
+      - eval_time: 25h
+        alertname: LevelTestGenerationFailed
+        exp_alerts: []
+
+  - name: missing-or-stale-output-is-not-a-failure
+    interval: 1m
+    input_series:
+      - series: 'palique_leveltest_generation_last_success_unix_seconds{job="otel-collector",exported_job="palique-api"}'
+        values: '0+0x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: LevelTestGenerationFailed
+        exp_alerts: []
+
+  - name: pool-sustained-saturation
+    interval: 1m
+    input_series:
+      - series: 'palique_db_pool_connections{job="otel-collector",exported_job="palique-api",instance="api-1",state="in_use"}'
+        values: '10+0x8 0+0x10'
+      - series: 'palique_db_pool_max_connections{job="otel-collector",exported_job="palique-api",instance="api-1"}'
+        values: '10+0x10'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: DbPoolSaturated
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              component: database
+              job: otel-collector
+              exported_job: palique-api
+            exp_annotations:
+              summary: "Database pool above 90% utilisation"
+              description: "The PostgreSQL pool has been near its maximum for 5m. Look for long queries, statement_timeout hits and waiting connections."
+              runbook: "docs/observability.md#pool-de-bd-saturado"
+      - eval_time: 15m
+        alertname: DbPoolSaturated
+        exp_alerts: []
+
+  - name: pool-spike-recovers-before-threshold
+    interval: 1m
+    input_series:
+      - series: 'palique_db_pool_connections{job="otel-collector",exported_job="palique-api",instance="api-1",state="in_use"}'
+        values: '0 0 10 0 0 0 0 0 0'
+      - series: 'palique_db_pool_max_connections{job="otel-collector",exported_job="palique-api",instance="api-1"}'
+        values: '10+0x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: DbPoolSaturated
+        exp_alerts: []
+
+  - name: http-no-5xx-with-positive-traffic
+    interval: 1m
+    input_series:
+      - series: 'http_server_request_duration_seconds_count{job="otel-collector",exported_job="palique-api",http_response_status_code="200"}'
+        values: '0 10 20 30 40 50 60 70 80'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: ApiHttp5xxRatioHigh
+        exp_alerts: []
+    promql_expr_test:
+      - eval_time: 8m
+        expr: '1 - (sum(rate(http_server_request_duration_seconds_count{exported_job="palique-api",http_response_status_code=~"5.."}[30d])) or vector(0)) / sum(rate(http_server_request_duration_seconds_count{exported_job="palique-api"}[30d]))'
+        exp_samples:
+          - labels: '{}'
+            value: 1
+
+  - name: http-mixed-traffic-with-high-5xx-ratio
+    interval: 1m
+    input_series:
+      - series: 'http_server_request_duration_seconds_count{job="otel-collector",exported_job="palique-api",http_response_status_code="200"}'
+        values: '0 10 20 30 40 50 60 70 80'
+      - series: 'http_server_request_duration_seconds_count{job="otel-collector",exported_job="palique-api",http_response_status_code="500"}'
+        values: '0 2 4 6 8 10 12 14 16'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: ApiHttp5xxRatioHigh
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              component: api
+            exp_annotations:
+              summary: "5xx ratio above 5% (16.67%)"
+              description: "More than 5% of requests ended in 5xx over a 5m window. Inspect request_failed logs by requestId and the database pool before restarting."
+              runbook: "docs/observability.md#5xx-alto-en-la-api"
+
+  - name: http-zero-traffic-does-not-create-an-error-ratio
+    interval: 1m
+    input_series:
+      - series: 'http_server_request_duration_seconds_count{job="otel-collector",exported_job="palique-api",http_response_status_code="200"}'
+        values: '0+0x10'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: ApiHttp5xxRatioHigh
+        exp_alerts: []
+
+  - name: http-no-telemetry-does-not-create-an-error-ratio
+    interval: 1m
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: ApiHttp5xxRatioHigh
+        exp_alerts: []
+
+  - name: api-metrics-heartbeat
+    interval: 1m
+    input_series:
+      - series: 'palique_db_pool_connections{job="otel-collector",exported_job="palique-api",instance="api-1",state="idle"}'
+        values: '1+0x10'
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: ApiMetricsMissing
+        exp_alerts: []
+
+  - name: api-metrics-absent
+    interval: 1m
+    alert_rule_test:
+      - eval_time: 6m
+        alertname: ApiMetricsMissing
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              component: pipeline
+              job: otel-collector
+              exported_job: palique-api
+            exp_annotations:
+              summary: "No metrics from palique-api for 5m"
+              description: "The API is not exporting metrics. Check the API process, the collector target health and the OTLP endpoint before assuming the service is down. The pool gauge is the heartbeat on purpose: the RED histogram only exists after the first request, so anchoring on it would page a freshly deployed, idle API."
+              runbook: "docs/observability.md#silencio-de-metricas"
+
+  - name: llm-failure-spike
+    interval: 1m
+    input_series:
+      - series: 'palique_llm_requests_total{job="otel-collector",exported_job="palique-api",provider="glm",status="failed"}'
+        values: '0 1 2 3 4 5 6 7 8 9'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: LlmFailuresSpike
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              component: llm
+            exp_annotations:
+              summary: "More than 5 LLM failures in the last hour"
+              description: "Provider or transport failures are spiking. Check the error_code label breakdown, provider status and the configured credentials before retrying generation by hand."
+              runbook: "docs/observability.md#coste-llm-anomalo"
+      - eval_time: 8m
+        alertname: LevelTestGenerationFailed
+        exp_alerts: []
+
+  - name: llm-below-spike-threshold
+    interval: 1m
+    input_series:
+      - series: 'palique_llm_requests_total{job="otel-collector",exported_job="palique-api",provider="glm",status="failed"}'
+        values: '0 1 2 3 4 5 5 5 5'
+    alert_rule_test:
+      - eval_time: 8m
+        alertname: LlmFailuresSpike
+        exp_alerts: []

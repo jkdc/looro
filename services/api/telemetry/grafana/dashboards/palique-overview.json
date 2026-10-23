@@ -49,7 +49,7 @@
         {
           "refId": "A",
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{exported_job=\"palique-api\",http_response_status_code=~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{exported_job=\"palique-api\"}[5m]))",
+          "expr": "(sum(rate(http_server_request_duration_seconds_count{exported_job=\"palique-api\",http_response_status_code=~\"5..\"}[5m])) or vector(0)) / sum(rate(http_server_request_duration_seconds_count{exported_job=\"palique-api\"}[5m]))",
           "legendFormat": "5xx ratio"
         }
       ]
@@ -89,7 +89,7 @@
     {
       "id": 5,
       "type": "stat",
-      "title": "Last generation success age",
+      "title": "Last generation success age (informational)",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 6, "x": 0, "y": 8 },
       "fieldConfig": {
@@ -98,8 +98,7 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "red", "value": 691200 }
+              { "color": "green", "value": null }
             ]
           }
         },

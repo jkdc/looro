@@ -46,9 +46,10 @@ health: ## Comprueba /healthz y /readyz de la API
 	@curl -sk https://localhost/healthz && echo
 	@curl -sk https://localhost/readyz && echo
 
-obs-check: ## Valida la configuración de observabilidad (compose config, promtool, amtool)
+obs-check: ## Valida configs y comportamiento de alertas (compose config, promtool, amtool)
 	docker compose --project-directory $(CURDIR)/services/api -f $(CURDIR)/services/api/compose.yaml config -q
 	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint promtool prom/prometheus:v2.54.1 check rules /telemetry/alerts.yml
+	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint promtool prom/prometheus:v2.54.1 test rules /telemetry/alerts.test.yml
 	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint amtool prom/alertmanager:v0.27.0 check-config /telemetry/alertmanager.yml
 
 migrate: ## Aplica migraciones pendientes (up ya lo hace al arrancar)

@@ -124,7 +124,7 @@ Cada unidad escribe primero una prueba focalizada que reproduzca la conducta ind
 
 Al cierre se ejecutarán los tests focalizados, `npx tsc --noEmit`, pruebas de reglas en la versión de `promtool` del stack, `make obs-check`, `make test-api` y `make check` cuando corresponda al alcance. Cualquier entorno Docker/DB será efímero; no reiniciar servicios del usuario ni realizar llamadas reales a proveedores.
 
-La CI comprobará condiciones firing/no-firing/resolved para las seis reglas, incluyendo saturación sostenida, primer fallo, fallo semanal y ausencia de tráfico. Las pruebas de startup comprobarán OTel desactivado (cero queries de telemetría) y reintento/error de lectura activo sin await indefinido.
+La CI comprobará condiciones firing/no-firing/resolved para las cinco reglas conservadas, incluyendo saturación sostenida y recuperación, fallo real de generación, ausencia de salida semanal sin alerta, ausencia de tráfico y fallo de métricas. Las pruebas de startup comprobarán OTel desactivado (cero queries de telemetría) y lectura activa acotada.
 
 El review final del branch debe confirmar cada H1–H9 y la brecha C1 de la revisión, más que la presencia de los archivos/tareas. La hipótesis API/CLI solo se cierra como confirmada o descartada con el probe reproducible.
 
