@@ -76,10 +76,23 @@ admin-open: ## Abre el panel en el navegador
 
 # ---- Pruebas ---------------------------------------------------------------
 
-test-api: ## Suite de integración de la API en stack aislado (sin tocar tus datos)
-	$(SMOKE) up --build -d api
-	$(SMOKE) run --rm tests
-	$(SMOKE) down --volumes
+test-api: ## Suite API en stack aislado; limpia al terminar (KEEP_SMOKE_STACK=1 conserva para diagnóstico)
+	@set -u; \
+	keep="$${KEEP_SMOKE_STACK:-0}"; \
+	case "$$keep" in 0|1) ;; *) echo "KEEP_SMOKE_STACK must be 0 or 1" >&2; exit 2 ;; esac; \
+	cleanup() { \
+	  result=$$?; \
+	  trap - EXIT; \
+	  if [ "$$keep" = 1 ]; then \
+	    echo "Keeping isolated looro-smoke stack; stop it with make smoke-down"; \
+	  else \
+	    $(SMOKE) down --volumes; cleanup_result=$$?; \
+	    if [ "$$result" -eq 0 ] && [ "$$cleanup_result" -ne 0 ]; then result=$$cleanup_result; fi; \
+	  fi; \
+	  exit "$$result"; \
+	}; \
+	trap cleanup EXIT; trap 'exit 130' INT; trap 'exit 143' TERM; \
+	$(SMOKE) up --build -d api && $(SMOKE) run --rm tests
 
 smoke-up: ## Levanta solo el stack de humo (PostgreSQL + API efímera)
 	$(SMOKE) up --build -d api

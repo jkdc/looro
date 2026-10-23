@@ -127,7 +127,7 @@ docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml run --rm test
 docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
 ```
 
-`make test-api` also sends real HTTP requests to the compiled API after bounded readiness: it checks `/v1/pricing` and verifies that an unauthenticated admin request is rejected. The admin proxy values in this test stack are synthetic and must never be reused outside it. CI runs this isolated smoke in addition to the API tests. The normal developer entry points are `npm run check`, `npm run build`, `npm test`, and `make test-api`; the full repository check is `make check` from the repository root.
+`make test-api` also sends real HTTP requests to the compiled API after bounded readiness: it checks `/v1/pricing` and verifies that an unauthenticated admin request is rejected. The admin proxy values in this test stack are synthetic and must never be reused outside it. CI runs this isolated smoke in addition to the API tests. The target removes only its disposable `looro-smoke` Compose project and volumes by default, including after a failed test, while preserving the test's exit status. To retain the stack for diagnosis, run `KEEP_SMOKE_STACK=1 make test-api` and later remove it with `make smoke-down`. The normal developer entry points are `npm run check`, `npm run build`, `npm test`, and `make test-api`; the full repository check is `make check` from the repository root.
 
 Only this disposable test project may be removed with:
 
