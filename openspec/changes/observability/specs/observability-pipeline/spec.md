@@ -32,6 +32,10 @@ collector as `http_server_request_duration_seconds_{count,sum,bucket}` and
 labeled with `http.request.method`, `http.route`, and
 `http.response.status_code`. `http.route` SHALL be the route template (or
 `unmatched`), never a raw URL carrying identifiers.
+HTTP server spans SHALL use `SERVER` kind, record only the matched route
+template or `unmatched`, and SHALL NOT export `url.path` or any raw request
+target. The active span context SHALL remain isolated to its request until the
+response completes.
 
 #### Scenario: parameterized route records the template
 
@@ -51,7 +55,9 @@ Error responses with status ≥ 500 SHALL include the request's `requestId` in
 the body and SHALL NOT include stack traces or internal error details
 (non-ServiceError failures report the generic code `service_unavailable`). Each
 5xx SHALL also emit the `request_failed` error log with `request_id`, `method`,
-`route`, `status`, and `error_code`.
+`route`, `status`, and `error_code`, and include `X-Request-Id` with the same
+request identifier. Direct 5xx responses SHALL preserve their existing body;
+when no application error code is available, the log uses `server_error`.
 
 #### Scenario: internal error response
 
@@ -73,6 +79,9 @@ account identifier SHALL ever be logged. The defined events
 `level_test_generation_job`, `minute_commerce_failure`, `live_startup_failed`,
 `retention_cleanup_failed`, `guest_allowance_retry_failed`) SHALL replace the
 existing `console.*` calls without changing their payload data.
+At runtime, `timestamp`, `level`, and `event` SHALL be reserved against caller
+override, and fields whose names indicate raw paths, URLs, query data, headers,
+bodies, credentials, or arbitrary exceptions SHALL be discarded.
 
 #### Scenario: request completion log
 

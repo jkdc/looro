@@ -5,7 +5,12 @@ export type LogFields = Record<string, string | number | boolean | null | undefi
 
 const write = (level: 'info' | 'warn' | 'error', event: string, fields?: LogFields): void => {
   const line: Record<string, unknown> = { timestamp: new Date().toISOString(), level, event };
-  for (const [key, value] of Object.entries(fields ?? {})) if (value !== undefined) line[key] = value;
+  const reserved = new Set(['timestamp', 'level', 'event']);
+  const sensitive = /(?:^|_)(?:account_id|api_key|authorization|body|cookie|credential|email|headers?|ip|message|password|path|phone|query|secret|stack|token|url|user_id)(?:_|$)|^error$/i;
+  for (const [key, value] of Object.entries(fields ?? {})) {
+    if (reserved.has(key) || sensitive.test(key) || value === undefined) continue;
+    line[key] = value;
+  }
   const text = JSON.stringify(line);
   if (level === 'error') console.error(text);
   else if (level === 'warn') console.warn(text);

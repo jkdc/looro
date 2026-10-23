@@ -1,7 +1,7 @@
 // OpenTelemetry wiring: explicit tracer/meter providers plus OTLP/HTTP
 // exporters. No NodeSDK on purpose — the API owns exactly what it installs
 // and can shut every piece down deterministically.
-import { metrics, trace } from '@opentelemetry/api';
+import { context, metrics, trace } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
@@ -10,13 +10,21 @@ import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import type { Database } from './db.js';
 import { initDomainMetrics, paliqueMetrics } from './metrics.js';
+import { AsyncLocalStorageContextManager } from './request-context.js';
 
 let shutdown: (() => Promise<void>) | undefined;
+const requestContextManager = new AsyncLocalStorageContextManager();
+let contextManagerInstalled = false;
 
 // No-op unless OTEL_ENABLED=true (tests, smoke stack and CI never start the
 // telemetry stack). Idempotent: a second call keeps the first providers.
 export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
   if (env.OTEL_ENABLED !== 'true' || shutdown) return;
+  if (!contextManagerInstalled) {
+    context.setGlobalContextManager(requestContextManager);
+    contextManagerInstalled = true;
+  }
+  requestContextManager.enable();
   const endpoint = (env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://otel-collector:4318').replace(/\/$/, '');
   const resource = resourceFromAttributes({ [ATTR_SERVICE_NAME]: env.OTEL_SERVICE_NAME ?? 'palique-api' });
   const tracerProvider = new TracerProvider({
@@ -37,7 +45,10 @@ export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
   });
   metrics.setGlobalMeterProvider(meterProvider);
   initDomainMetrics(metrics.getMeter('palique-api'));
-  shutdown = () => Promise.allSettled([tracerProvider.shutdown(), meterProvider.shutdown()]).then(() => {});
+  shutdown = () => Promise.allSettled([tracerProvider.shutdown(), meterProvider.shutdown()]).then(() => {
+    requestContextManager.disable();
+    shutdown = undefined;
+  });
 }
 
 export function shutdownObservability(): Promise<void> { return shutdown?.() ?? Promise.resolve(); }

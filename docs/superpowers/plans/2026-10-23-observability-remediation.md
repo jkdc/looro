@@ -61,7 +61,7 @@
 - [x] Implement only the field filtering, safe route attributes, active request context, span kind/status and compatible 502 correlation required by these tests. Do not attach a raw path template to `url.path`.
 - [x] Rerun `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts tests/http.test.ts`; expect zero failures and no PII markers in any captured channel.
 - [x] Run `cd services/api && ./node_modules/.bin/tsc --noEmit`; expect exit 0.
-- [ ] Commit this unit as `fix(observability): protect request telemetry and classify server spans`.
+- [x] Commit this unit as `fix(observability): protect request telemetry and classify server spans` (`0def7bd`).
 
 ### Task 2: Derive weekly generation health from schedule and persisted outcomes
 

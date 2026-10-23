@@ -25,6 +25,29 @@ test('log emits one JSON line per call with allow-listed scalar fields only', ()
   } finally { console.info = original; }
 });
 
+test('log fields cannot replace envelope fields or emit sensitive names', () => {
+  const original = console.info;
+  const lines: string[] = [];
+  console.info = (value: string) => { lines.push(value); };
+  try {
+    log.info('safe_event', {
+      timestamp: 'forged', level: 'fatal', event: 'forged', route: '/safe', status: 200,
+      path: '/users/pii-account-123', query: 'token=private-token-456', authorization: 'Bearer private-token-456',
+      body: 'private-body-789', error: 'private-error-012', api_key: 'private-key-789',
+      account_id: 'private-account-321', email: 'private@example.invalid', error_code: 'service_unavailable',
+    });
+    const line = JSON.parse(lines[0]!) as Record<string, unknown>;
+    assert.equal(line.event, 'safe_event');
+    assert.equal(line.level, 'info');
+    assert.notEqual(line.timestamp, 'forged');
+    assert.equal(line.route, '/safe');
+    assert.equal(line.status, 200);
+    assert.equal(line.error_code, 'service_unavailable');
+    assert.doesNotMatch(lines[0]!, /pii-account-123|private-token-456|private-body-789|private-error-012|private-key-789|private-account-321|private@example/);
+    for (const forbidden of ['path', 'query', 'authorization', 'body', 'error', 'api_key', 'account_id', 'email']) assert.equal(forbidden in line, false);
+  } finally { console.info = original; }
+});
+
 //
 // Section 2: domain metric registry (src/metrics.ts)
 // Static import on purpose: paliqueMetrics is a live binding (D3), and only a
@@ -103,6 +126,8 @@ import { before, after } from 'node:test';
 import { connectDatabase } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { createApp } from '../src/app.js';
+import { context, trace } from '@opentelemetry/api';
+import { AsyncLocalStorageContextManager } from '../src/request-context.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.endsWith('_test')) throw new Error('Use an isolated database ending in _test.');
@@ -140,6 +165,7 @@ integration('unexpected 5xx responses include requestId and never internals', as
   try {
     const response = await app.inject({ method: 'GET', url: '/__boom' });
     assert.equal(response.statusCode, 500);
+    assert.equal(response.headers['x-request-id'], response.json().error.requestId);
     const body = response.json() as { error: { code: string; requestId?: string } };
     assert.equal(body.error.code, 'service_unavailable');
     assert.ok(typeof body.error.requestId === 'string' && body.error.requestId.length > 0);
@@ -158,6 +184,63 @@ integration('unexpected 5xx responses include requestId and never internals', as
     assert.equal(logged['status'], 500);
     assert.equal(typeof logged['route'], 'string');
   } finally { console.error = original; await app.close(); }
+});
+
+test('direct provider 502 keeps its JSON contract and adds safe request correlation', async () => {
+  const app = createApp({ db: {} as never, auth: {} });
+  app.get('/__provider-failure', async (_request, reply) => reply.code(502).send({ ok: false, error: 'llm_unreachable' }));
+  const original = console.error;
+  const lines: string[] = [];
+  console.error = value => { lines.push(value); };
+  try {
+    const response = await app.inject({ method: 'GET', url: '/__provider-failure' });
+    assert.equal(response.statusCode, 502);
+    assert.deepEqual(response.json(), { ok: false, error: 'llm_unreachable' });
+    assert.ok(typeof response.headers['x-request-id'] === 'string' && response.headers['x-request-id'].length > 0);
+    const failure = lines.map(line => JSON.parse(line) as Record<string, unknown>).find(entry => entry.event === 'request_failed');
+    assert.ok(failure);
+    assert.equal(failure.request_id, response.headers['x-request-id']);
+    assert.equal(failure.error_code, 'server_error');
+  } finally { console.error = original; await app.close(); }
+});
+
+test('request telemetry omits sensitive path data and isolates active spans across requests', async () => {
+  const spans: Array<{ name: string; options: Record<string, unknown>; attributes: Record<string, unknown>; status?: unknown }> = [];
+  trace.setGlobalTracerProvider({ getTracer: () => ({ startSpan: (name: string, options: Record<string, unknown>) => {
+    const captured = { name, options, attributes: { ...(options.attributes as Record<string, unknown>) }, status: undefined as unknown };
+    spans.push(captured);
+    return { setAttribute: (key: string, value: unknown) => { captured.attributes[key] = value; },
+      setStatus: (status: { code: number }) => { captured.status = status; }, spanContext: () => ({ traceId: 'trace-id', spanId: `span-${spans.indexOf(captured)}` }), end: () => {},
+      addEvent: () => {}, recordException: () => {} };
+  } }) } as never);
+  context.setGlobalContextManager(new AsyncLocalStorageContextManager());
+  const app = createApp({ db: {} as never, auth: {} });
+  app.get('/__pii/:account', async () => { throw new Error('private-error-012'); });
+  app.get('/__ctx/:id', async request => ({ active: trace.getActiveSpan()?.spanContext().spanId, id: request.params && (request.params as { id: string }).id }));
+  const oldInfo = console.info, oldError = console.error;
+  const lines: string[] = [];
+  console.info = value => { lines.push(value); }; console.error = value => { lines.push(value); };
+  try {
+    await app.inject({ method: 'GET', url: '/__pii/pii-account-123?query=private-query-456',
+      headers: { authorization: 'private-token-789', 'x-marker': 'private-header-012' }, payload: { marker: 'private-body-345' } });
+    await app.inject({ method: 'GET', url: '/__unmatched/pii-unmatched-678?query=private-query-456' });
+    const output = lines.join('\n');
+    for (const marker of ['pii-account-123', 'pii-unmatched-678', 'private-query-456', 'private-token-789',
+      'private-header-012', 'private-body-345', 'private-error-012']) assert.equal(output.includes(marker), false, marker);
+    assert.equal(spans.length, 2);
+    for (const span of spans) {
+      assert.equal('url.path' in span.attributes, false);
+      assert.equal(span.options.kind, 1); // SpanKind.SERVER
+    }
+    assert.equal(spans[0]!.attributes['http.route'], '/__pii/:account');
+    assert.equal(spans[0]!.status && (spans[0]!.status as { code: number }).code, 2); // SpanStatusCode.ERROR
+    assert.equal(spans[1]!.attributes['http.route'], 'unmatched');
+    const [first, second] = await Promise.all([
+      app.inject({ method: 'GET', url: '/__ctx/one' }), app.inject({ method: 'GET', url: '/__ctx/two' }),
+    ]);
+    assert.deepEqual(first.json(), { active: 'span-2', id: 'one' });
+    assert.deepEqual(second.json(), { active: 'span-3', id: 'two' });
+  } finally { console.info = oldInfo; console.error = oldError; await app.close(); }
 });
 
 //

@@ -1,4 +1,4 @@
-import { trace, type Span } from '@opentelemetry/api';
+import { context, SpanKind, SpanStatusCode, trace, type ContextManagementToken, type Span } from '@opentelemetry/api';
 import Fastify, { type FastifyRequest } from 'fastify';
 import { createHash, createHmac, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
@@ -85,6 +85,8 @@ const uuid = (text: string) => {
 // Per-request span hangs off the request object via a symbol: it never collides
 // with Fastify's own request keys and cannot leak into serialized bodies.
 const REQUEST_SPAN = Symbol('request-span');
+const REQUEST_CONTEXT_TOKEN = Symbol('request-context-token');
+const REQUEST_ERROR_CODE = Symbol('request-error-code');
 const requestRoute = (request: FastifyRequest): string => request.routeOptions.url ?? 'unmatched';
 
 export function createApp(services: Services) {
@@ -117,10 +119,13 @@ export function createApp(services: Services) {
   const windows = new Map<string, { until: number; count: number }>();
   app.addHook('onRequest', async (request, reply) => {
     const span = trace.getTracer('palique-api').startSpan(`${request.method} ${requestRoute(request)}`, {
+      kind: SpanKind.SERVER,
       attributes: { 'http.request.method': request.method, 'http.route': requestRoute(request),
-        'url.path': request.url.split('?')[0]!, 'palique.request_id': request.id },
+        'palique.request_id': request.id },
     });
     (request as unknown as Record<symbol, Span | undefined>)[REQUEST_SPAN] = span;
+    const contextToken = context.attach(trace.setSpan(context.active(), span));
+    (request as unknown as Record<symbol, ContextManagementToken | undefined>)[REQUEST_CONTEXT_TOKEN] = contextToken;
     reply.header('Cache-Control', 'no-store').header('X-Content-Type-Options', 'nosniff');
     // Fastify decodes static route names. Security checks must use the matched route too.
     const path = request.routeOptions.url ?? request.url.split('?')[0]!;
@@ -213,22 +218,35 @@ export function createApp(services: Services) {
       return reply.code(status).send({ error: { code, retryable: error.retryable,
         ...(error.retryable ? { retryAfterMilliseconds: error.retryAfterMilliseconds } : {}) } });
     }
-    // 5xx never leak internals: the body and the log line share the request id,
-    // and the coarse code is all a client ever learns about the failure.
-    if (status >= 500) log.error('request_failed', { request_id: request.id,
-      method: request.method, route: requestRoute(request), status, error_code: code });
+    // The response hook emits one safe failure event for both thrown errors and
+    // direct 5xx replies, without changing their existing bodies.
+    if (status >= 500) (request as unknown as Record<symbol, string | undefined>)[REQUEST_ERROR_CODE] = code;
     reply.code(status).send({ error: { code, ...(status >= 500 ? { requestId: request.id } : {}) } });
+  });
+  app.addHook('onSend', async (request, reply, payload) => {
+    if (reply.statusCode >= 500) reply.header('X-Request-Id', request.id);
+    return payload;
   });
   app.addHook('onResponse', async (request, reply) => {
     const route = requestRoute(request);
     const durationSeconds = reply.elapsedTime / 1000;
+    if (reply.statusCode >= 500) {
+      log.error('request_failed', { request_id: request.id, method: request.method, route,
+        status: reply.statusCode,
+        error_code: (request as unknown as Record<symbol, string | undefined>)[REQUEST_ERROR_CODE] ?? 'server_error' });
+    }
     const span = (request as unknown as Record<symbol, Span | undefined>)[REQUEST_SPAN];
-    if (span) { span.setAttribute('http.response.status_code', reply.statusCode); span.end(); }
+    if (span) {
+      span.setAttribute('http.response.status_code', reply.statusCode);
+      if (reply.statusCode >= 500) span.setStatus({ code: SpanStatusCode.ERROR });
+      span.end();
+    }
+    (request as unknown as Record<symbol, ContextManagementToken | undefined>)[REQUEST_CONTEXT_TOKEN]?.dispose();
     paliqueMetrics.requestDuration.record(durationSeconds, {
       'http.request.method': request.method, 'http.route': route, 'http.response.status_code': String(reply.statusCode) });
     log.info('http_request', { request_id: request.id,
       trace_id: span?.spanContext().traceId ?? undefined,
-      method: request.method, route: route === 'unmatched' ? request.url.split('?')[0]! : route,
+      method: request.method, route,
       status: reply.statusCode, duration_ms: Math.round(reply.elapsedTime) });
   });
   registerLevelTestAttemptRoutes(app, db);

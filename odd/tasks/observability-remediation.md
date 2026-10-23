@@ -38,7 +38,7 @@ Acceptance: tests assert observable log/span/metric/rule behavior; config valida
 
 ## Tasks
 
-- [ ] T1 — S1/S3: secure request logging, server spans and compatible direct 5xx correlation; route inline; status verified, commit pending; focused tests 53 pass, 2 DB-only skipped; typecheck passes.
+- [x] T1 — S1/S3: secure request logging, server spans and compatible direct 5xx correlation; route inline; complete; commits `2bc4101` (SDD plan) and `0def7bd` (implementation); focused tests 53 pass, 2 DB-only skipped; typecheck passes.
 - [ ] T2 — S1/S2: Sunday UTC defaults and restart-safe expected-week outcome telemetry; route inline; status planned; commit pending.
 - [ ] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; status planned; commit pending.
 - [ ] T4 — S1/S2: repair alert math, dashboard no-data states, add behavioral promtool tests and wire them into CI; route inline; status planned; commit pending.
@@ -58,3 +58,4 @@ Detailed red/green steps and exact commands are in `docs/superpowers/plans/2026-
 - L8 — Next step: read Task 1 brief, reproduce PII leak with the failing test first, then implement only after expected RED.
 - L9 — Task 1 implementation: server spans no longer export `url.path`; logs use matched template/`unmatched`, preserve reserved envelope fields and reject sensitive field names, request context uses AsyncLocalStorage, spans are SERVER/ERROR, and all 5xx add `X-Request-Id` while preserving existing response bodies. Regression tests include the actual `/v1/admin/llm-config/test` timeout. RED observed for logger envelope overwrite (`event=forged`) and missing active request context. Focused test command: `tsx --test tests/observability.test.ts tests/http.test.ts tests/level-tests-policy.test.ts` → 53 passed, 2 skipped for PostgreSQL; `tsc --noEmit` passed. Native RDD CLI remains unavailable.
 - L10 — “ve haciendo commits sobre la rama en la que estamos trabajando”. Work-unit commits stay on `feature/observability`; no push or PR is authorized.
+- L11 — Task 1 committed on `feature/observability`: `0def7bd fix(observability): protect request telemetry and classify server spans` (189 insertions, 16 deletions); the execution plan/tracker/design are committed at `2bc4101 docs(observability): track remediation plan` (352 additions). Focused API tests and type-check passed before the implementation commit; no user services or remote systems were touched.

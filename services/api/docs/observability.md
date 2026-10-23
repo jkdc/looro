@@ -27,7 +27,7 @@ UTC), `level` (`info` | `warn` | `error`), `event`, y cuando existan
 | `api_started` | info | — | `main.ts` (arranque completo) |
 | `startup_failed` | error | — | `main.ts` (catch de arranque; sin detalles de configuración) |
 | `http_request` | info | `request_id`, `method`, `route`, `status`, `duration_ms`, `trace_id`? | hook `onResponse` de Fastify |
-| `request_failed` | error | `request_id`, `method`, `route`, `status`, `error_code` | `setErrorHandler` (solo status ≥ 500) |
+| `request_failed` | error | `request_id`, `method`, `route`, `status`, `error_code` | hook `onResponse` (cualquier respuesta ≥ 500, incluidas respuestas directas del proveedor) |
 | `startup_diagnostic` | warn | `request_id`, `reference`, `operation`, `status`, `reason` | `setErrorHandler` (diagnóstico de voz hospedada) |
 | `level_test_generation_job` | warn | `language`, `level`, `week`, `status`, `error_code` | `main.ts` (scheduler semanal) |
 | `minute_commerce_failure` | error | `code` | `main.ts` |
@@ -55,8 +55,9 @@ Toda respuesta 5xx incluye `error.requestId` en el body:
 ```
 
 Ese valor coincide con `request_id` en las líneas `http_request` /
-`request_failed` y, cuando aplique, con la cabecera
-`X-App-Error-Reference`. Los 4xx conservan exactamente
+`request_failed` y con la cabecera `X-Request-Id`. La cabecera
+`X-App-Error-Reference` sigue siendo un diagnóstico independiente cuando
+aplica. Los 4xx conservan exactamente
 `{ "error": { "code": "..." } }` sin `requestId`. Los 5xx nunca exponen
 mensajes internos ni stack traces en el body.
 
@@ -84,6 +85,15 @@ Recordatorios operativos:
   código emite. Una serie `_total` no aparece hasta el primer evento.
 - Labels de cardinalidad cerrada: plantilla de ruta, nunca URL cruda con IDs;
   nunca identificadores de usuario ni IPs.
+- Los spans HTTP son `SERVER`, usan exclusivamente `http.route` como plantilla
+  (o `unmatched`) y no exportan `url.path`. El contexto del span se mantiene
+  aislado por petición hasta completar su respuesta.
+- El logger conserva `timestamp`, `level` y `event` como campos reservados; los
+  nombres que puedan contener rutas, query, headers, cuerpos, credenciales o
+  excepciones arbitrarias se descartan en tiempo de ejecución. `request_id` y
+  códigos cerrados como `error_code` sí se permiten.
+- Toda respuesta 5xx conserva su cuerpo existente y añade `X-Request-Id` con el
+  mismo UUID de `request_id`; los 5xx directos tienen código de log genérico.
 - Los jobs `busy` y `exists` de generación son no-ops idempotentes y no se
   contabilizan a propósito.
 - El coste LLM en € queda fuera de este pipeline: los precios viven en
