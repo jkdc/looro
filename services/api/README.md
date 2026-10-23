@@ -99,7 +99,7 @@ All monetary strings are integer **nanoUSD**: 1 USD = 1,000,000,000 nanoUSD. A d
 | `GET /v1/live/sessions/:id` | Bearer token belonging to the session owner | Minimal state, cumulative milliseconds, confirmed provider cost and customer debit |
 | `POST /v1/live/sessions/:id/close` | Bearer token belonging to the session owner | Requests server closure; never accepts client-reported usage |
 
-Error responses contain a safe `error.code` only. Request bodies, keys, ID tokens, bearer tokens, Stripe payloads, and conversations are not logged. Expired authentication records are pruned every 15 minutes. The basic in-memory rate limit does not trust forwarded client-IP headers; behind Caddy it applies conservatively to the proxy address, so in the base deployment client routes share one bucket per proxy IP. Configure and test a trusted-proxy policy before scaling it; a durable per-client limiter remains documented follow-up work. Stripe webhook routes (`/v1/webhooks/stripe`, `/v1/webhooks/stripe/minutes`) are signature-authenticated server-to-server endpoints: they are reachable without trusted-proxy headers and stay outside the shared in-memory limiter, so a client 429 storm cannot delay payment confirmation. `/readyz`, `/v1/pricing`, `/v1/minutes/products`, and `/payment-return` are also reachable without proxy headers and, like the webhooks, stay outside the shared per-proxy-IP bucket: these routes are public, cheap, and idempotent, and webhook delivery is signature-authenticated, so one abusive client cannot 429 readiness probes or payment flows for everyone behind the proxy; all other client routes fail closed with `trusted_proxy_required` when the trusted proxy is not configured.
+The standard error handler returns a safe `error.code`; it does not add a request ID to every JSON error body. Responses carry `X-Request-Id` for correlation with the structured JSON logs. A small number of direct provider-test responses have their own response shape, so consult their endpoint contract rather than assuming the standard handler applies. Request bodies, keys, ID tokens, bearer tokens, Stripe payloads, and conversations are not logged. Expired authentication records are pruned every 15 minutes. The basic in-memory rate limit does not trust forwarded client-IP headers; behind Caddy it applies conservatively to the proxy address, so in the base deployment client routes share one bucket per proxy IP. Configure and test a trusted-proxy policy before scaling it; a durable per-client limiter remains documented follow-up work. Stripe webhook routes (`/v1/webhooks/stripe`, `/v1/webhooks/stripe/minutes`) are signature-authenticated server-to-server endpoints: they are reachable without trusted-proxy headers and stay outside the shared in-memory limiter, so a client 429 storm cannot delay payment confirmation. `/readyz`, `/v1/pricing`, `/v1/minutes/products`, and `/payment-return` are also reachable without proxy headers and, like the webhooks, stay outside the shared per-proxy-IP bucket: these routes are public, cheap, and idempotent, and webhook delivery is signature-authenticated, so one abusive client cannot 429 readiness probes or payment flows for everyone behind the proxy; all other client routes fail closed with `trusted_proxy_required` when the trusted proxy is not configured.
 
 ## Restricted voice experiment
 
@@ -126,6 +126,8 @@ docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml up --build -d
 docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
 docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
 ```
+
+`make test-api` also sends real HTTP requests to the compiled API after bounded readiness: it checks `/v1/pricing` and verifies that an unauthenticated admin request is rejected. The admin proxy values in this test stack are synthetic and must never be reused outside it. CI runs this isolated smoke in addition to the API tests. The normal developer entry points are `npm run check`, `npm run build`, `npm test`, and `make test-api`; the full repository check is `make check` from the repository root.
 
 Only this disposable test project may be removed with:
 
@@ -165,9 +167,11 @@ containers). The local stack lives in `compose.yaml` with configs under
 | 3003 | Grafana (`admin` / `GRAFANA_PASSWORD`, default `palique-local`) |
 
 `make obs-check` validates the compose file, the alert rules and the
-Alertmanager config without starting anything. Every 5xx response carries
-`error.requestId`, matching the `request_id` field of the structured JSON
-logs.
+Alertmanager config without starting anything. The standard error handler
+correlates responses through the `X-Request-Id` header and the `request_id`
+field in structured JSON logs; it does not promise an `error.requestId` field
+in every response body. Direct provider-test responses retain their own
+contract.
 
 ## Provider contracts
 

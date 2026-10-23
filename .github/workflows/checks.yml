@@ -52,6 +52,9 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: npm test
+      - name: Verify compiled API in isolated smoke stack
+        working-directory: .
+        run: make test-api
       # Compose interpolation needs the two required variables; nothing starts.
       - name: Validate observability configs
         env:

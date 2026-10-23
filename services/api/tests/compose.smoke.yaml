@@ -30,11 +30,21 @@ services:
     environment:
       DATABASE_URL: postgresql://app_test:isolated-smoke-test-only@database:5432/app_container_test
       PUBLIC_ORIGIN: http://localhost:8080
+      ADMIN_HMAC_KEY: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      ADMIN_PROXY_TOKEN: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      ADMIN_PUBLIC_ORIGIN: http://localhost:8081
+      ADMIN_ALLOW_LOCAL_LOOPBACK: "true"
     ports: ["127.0.0.1::8080"]
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:8080/readyz').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 5s
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -45,9 +55,11 @@ services:
       - ../../../apps:/apps:ro
     environment:
       TEST_DATABASE_URL: postgresql://app_test:isolated-smoke-test-only@database:5432/app_container_test
+      SMOKE_API_BASE_URL: http://api:8080
+      SMOKE_ADMIN_PROXY_TOKEN: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
     command: ["sh", "-c", "node --test --test-concurrency=1 dist/tests/*.test.js"]
     depends_on:
-      database:
+      api:
         condition: service_healthy
 volumes:
   smoke_data:

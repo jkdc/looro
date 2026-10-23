@@ -34,7 +34,7 @@ Create cohesive route modules for API capabilities, extract only application ope
 
 ## Tasks
 
-- [ ] T1 — Phase 0 compiled HTTP smoke, CI integration, README baseline; route: inline; status: pending; commit: —
+- [x] T1 — Phase 0 compiled HTTP smoke, CI integration, README baseline; route: inline; status: complete; commit: `7a597a2`.
 - [ ] T2 — Extract admin attempt read routes; route: inline; status: pending; commit: —
 - [ ] T3 — Extract remaining admin level-test and applicable LLM/config routes plus status/draft operations; route: inline; status: pending; commit: —
 - [ ] T4 — Inject env dependencies, extract justified application operations, and separate admin audit from CLI; route: inline; status: pending; commit: —
@@ -47,3 +47,4 @@ Create cohesive route modules for API capabilities, extract only application ope
 - L2 — Implementation authorization: “procede a implementar los cambios acordados en el documento”.
 - L3 — Scope/workspace clarification: “no quiero worktrees, hay que hacer todo lo que dice el documento no entiendo por qué dices que acotaste el piloto. sigue en la rama que estamos”. This overrides the previous assistant narrowing to phases 0–1; use the current branch and implement all applicable report phases.
 - L4 — Baseline `a0997ae` on `feature/learning-platform`; implementation branch `analysis/api-organization` starts at report commit `a87f3ef`. Do not touch unrelated pre-existing untracked user paths.
+- L5 — T1 proof: `npm run check` passed; `make test-api` built and started the compiled hardened API in the isolated Compose stack and passed 628 tests (0 failed, 0 skipped), including the new TCP smoke and persisted denied-admin admission counter. The first attempted Compose config command used a path relative to the wrong working directory and did not test the file; `make test-api` subsequently parsed and exercised the Compose file successfully.
