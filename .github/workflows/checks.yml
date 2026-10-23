@@ -52,3 +52,12 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: npm test
+      # Compose interpolation needs the two required variables; nothing starts.
+      - name: Validate observability configs
+        env:
+          POSTGRES_PASSWORD: local_ci_only
+          API_DOMAIN: ci.local
+        run: |
+          docker compose --project-directory . -f compose.yaml config -q
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint promtool prom/prometheus:v2.54.1 check rules /telemetry/alerts.yml
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint amtool prom/alertmanager:v0.27.0 check-config /telemetry/alertmanager.yml
