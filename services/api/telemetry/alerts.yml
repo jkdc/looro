@@ -1,0 +1,125 @@
+# Alert rules for the Palique API telemetry pipeline.
+#
+# Every series below arrives from the OTel collector's Prometheus exporter.
+# Scrape job is `otel-collector`; the API's service.name becomes the
+# `exported_job="palique-api"` label (Prometheus renames the exporter's own
+# `job` because the scrape adds its own).
+#
+# Series expected (verified live in the end-to-end task; see
+# services/api/docs/observability.md#métricas):
+#   http_server_request_duration_seconds_{count,sum,bucket}
+#   palique_requests_rejected_total
+#   palique_db_pool_connections{state=idle|in_use|waiting}
+#   palique_db_pool_max_connections
+#   palique_leveltest_generation_jobs_total{status=finished|failed|unknown}
+#   palique_leveltest_generation_job_duration_seconds_{count,sum,bucket}
+#   palique_leveltest_generation_last_success_unix_seconds
+#   palique_llm_requests_total{status=ok|failed}
+#   palique_llm_request_duration_seconds_{count,sum,bucket}
+#   palique_llm_tokens_total{direction=input|output}
+#
+# Lessons baked in:
+# - A `*_total` counter series does not exist until its first add(); rules that
+#   can fire on "any event" are anchored with `(sum(...) or vector(0))` and the
+#   parentheses matter (without them `or` evaluates after the comparison and
+#   the rule fires permanently).
+# - `absent()` rules use `for: 5m` so a redeploy does not page.
+# - `for` windows are tuned for local verification (1m); raise to 5-10m in a
+#   real deployment.
+groups:
+  - name: palique-api
+    interval: 30s
+    rules:
+      - alert: ApiHttp5xxRatioHigh
+        expr: |
+          sum(rate(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api", http_response_status_code=~"5.."}[5m]))
+            /
+          sum(rate(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api"}[5m]))
+            > 0.05
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "5xx ratio above 5% ({{ $value | humanizePercentage }})"
+          description: >-
+            More than 5% of requests ended in 5xx over a 5m window. Inspect
+            request_failed logs by requestId and the database pool before
+            restarting.
+          runbook: docs/observability.md#5xx-alto-en-la-api
+
+      - alert: ApiMetricsMissing
+        expr: |
+          absent(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api"})
+        for: 5m
+        labels:
+          severity: critical
+          component: pipeline
+        annotations:
+          summary: "No RED metrics from palique-api for 5m"
+          description: >-
+            The API is not exporting request metrics. Check the API process,
+            the collector target health and the OTLP endpoint before assuming
+            the service is down.
+          runbook: docs/observability.md#silencio-de-metricas
+
+      - alert: LevelTestGenerationFailed
+        expr: |
+          (sum(increase(palique_leveltest_generation_jobs_total{job="otel-collector", exported_job="palique-api", status="failed"}[24h])) or vector(0)) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: level-tests
+        annotations:
+          summary: "Level-test generation failed in the last 24h"
+          description: >-
+            At least one weekly generation attempt ended in failure. Review
+            level_test_generation_jobs and level_test_weeks, and the error
+            codes recorded by the pipeline (for example llm_outcome_unknown).
+          runbook: docs/observability.md#generacion-fallando
+
+      - alert: LevelTestGenerationStale
+        expr: |
+          (time() - palique_leveltest_generation_last_success_unix_seconds{job="otel-collector", exported_job="palique-api"}) > 691200
+        for: 1m
+        labels:
+          severity: warning
+          component: level-tests
+        annotations:
+          summary: "No successful level-test generation for 8 days"
+          description: >-
+            The weekly generation has not finished successfully in more than
+            8 days. Check the scheduler logs and the LLM provider status.
+          runbook: docs/observability.md#generacion-fallando
+
+      - alert: LlmFailuresSpike
+        expr: |
+          (sum(increase(palique_llm_requests_total{job="otel-collector", exported_job="palique-api", status="failed"}[1h])) or vector(0)) > 5
+        for: 1m
+        labels:
+          severity: warning
+          component: llm
+        annotations:
+          summary: "More than 5 LLM failures in the last hour"
+          description: >-
+            Provider or transport failures are spiking. Check the error_code
+            label breakdown, provider status and the configured credentials
+            before retrying generation by hand.
+          runbook: docs/observability.md#coste-llm-anomalo
+
+      - alert: DbPoolSaturated
+        expr: |
+          max_over_time(palique_db_pool_connections{job="otel-collector", exported_job="palique-api", state="in_use"}[5m])
+            /
+          max(palique_db_pool_max_connections{job="otel-collector", exported_job="palique-api"})
+            > 0.9
+        for: 1m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Database pool above 90% utilisation"
+          description: >-
+            The PostgreSQL pool has been near its maximum for 5m. Look for long
+            queries, statement_timeout hits and waiting connections.
+          runbook: docs/observability.md#pool-de-bd-saturado
