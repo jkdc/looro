@@ -50,17 +50,19 @@ groups:
 
       - alert: ApiMetricsMissing
         expr: |
-          absent(http_server_request_duration_seconds_count{job="otel-collector", exported_job="palique-api"})
+          absent(palique_db_pool_connections{job="otel-collector", exported_job="palique-api"})
         for: 5m
         labels:
           severity: critical
           component: pipeline
         annotations:
-          summary: "No RED metrics from palique-api for 5m"
+          summary: "No metrics from palique-api for 5m"
           description: >-
-            The API is not exporting request metrics. Check the API process,
-            the collector target health and the OTLP endpoint before assuming
-            the service is down.
+            The API is not exporting metrics. Check the API process, the
+            collector target health and the OTLP endpoint before assuming the
+            service is down. The pool gauge is the heartbeat on purpose: the
+            RED histogram only exists after the first request, so anchoring on
+            it would page a freshly deployed, idle API.
           runbook: docs/observability.md#silencio-de-metricas
 
       - alert: LevelTestGenerationFailed

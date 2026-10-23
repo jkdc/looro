@@ -2,6 +2,7 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -13,7 +14,10 @@ const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Use an isolated database ending in _test.');
 const db = databaseURL ? connectDatabase(databaseURL) : null;
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
+// `npm test` runs from source with tsx; the container suite runs the compiled
+// output from a production image (no devDependencies), so fall back to node.
 const tsx = join(root, 'node_modules', '.bin', 'tsx');
+const sourceMode = existsSync(tsx);
 before(async () => { if (db) await migrate(db); });
 after(async () => {
   if (db) {
@@ -26,7 +30,10 @@ const integration = (name: string, fn: () => Promise<void>) => test(name, { skip
 
 interface Run { status: number | null; stdout: string; stderr: string }
 const cli = (script: string, args: string[], stdin = '', database = databaseURL): Run => {
-  const result = spawnSync(tsx, [join('src', `${script}.ts`), ...args], {
+  const [command, file] = sourceMode
+    ? [tsx, join('src', `${script}.ts`)]
+    : [process.execPath, join('src', `${script}.js`)];
+  const result = spawnSync(command, [file, ...args], {
     cwd: root, encoding: 'utf8', input: stdin, timeout: 90_000,
     env: { ...process.env, DATABASE_URL: database ?? '' }
   });

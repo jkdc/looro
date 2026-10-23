@@ -253,3 +253,36 @@ test('generation job wrapper passes busy and exists through without recording me
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.jobs')).size, 0);
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
 });
+
+//
+// Section 7: boot seeding of the last-success gauge (src/observability.ts, D8)
+// A counter/gauge born empty cannot power the staleness alert: after a restart
+// the series must exist with the last finished job, or "no generation in 8d"
+// silently stops firing.
+import { initGenerationMetrics } from '../src/observability.js';
+
+test('last-success gauge is seeded from the database at boot', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const finishedAt = new Date('2026-10-20T04:00:00Z');
+  await initGenerationMetrics({ query: async () => ({ rows: [{ at: finishedAt }] }) } as unknown as Database);
+  const seeded = await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds');
+  assert.equal(seeded.get(''), finishedAt.getTime() / 1000);
+});
+
+test('last-success gauge stays absent when nothing has ever finished', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  await initGenerationMetrics({ query: async () => ({ rows: [{ at: null }] }) } as unknown as Database);
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+});
+
+test('boot seeding never blocks startup when the query fails', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  await initGenerationMetrics({ query: async () => { throw new Error('db down'); } } as unknown as Database);
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+});

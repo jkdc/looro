@@ -21,13 +21,14 @@ import { SubscriptionBilling } from './subscription-billing.js';
 import { createLevelTestScheduler, parseLevelTestSchedulerConfig, runLevelTestCombinations } from './level-tests-scheduler.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { log } from './log.js';
-import { addDatabasePoolObservability, initObservability, shutdownObservability } from './observability.js';
+import { addDatabasePoolObservability, initGenerationMetrics, initObservability, shutdownObservability } from './observability.js';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
 initObservability();
 const db = connectDatabase(databaseURL);
 addDatabasePoolObservability(db);
+await initGenerationMetrics(db);
 let hosted: HostedVoice | undefined;
 let hostedHelpers: HostedHelpers | undefined;
 let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>>;

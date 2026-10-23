@@ -84,7 +84,13 @@ test('hosted HTTP authenticates guest ownership, recovers uncertain sessions and
       helperFailure = Object.assign(new ServiceError(code, status), { retryable: true, retryAfterMilliseconds: 1000 });
       const ineligible = await app.inject({ method: 'POST', url: endpoint, headers, payload: body });
       assert.equal(ineligible.statusCode, status); assert.equal(ineligible.headers['retry-after'], undefined);
-      assert.deepEqual(ineligible.json(), { error: { code } });
+      if (status >= 500) {
+        // Every 5xx carries a correlation id for support (observability contract).
+        const failure = ineligible.json();
+        assert.deepEqual(Object.keys(failure.error).sort(), ['code', 'requestId']);
+        assert.equal(failure.error.code, code);
+        assert.match(failure.error.requestId, /^[0-9a-f-]{36}$/);
+      } else assert.deepEqual(ineligible.json(), { error: { code } });
     }
     await db.query('UPDATE auth_sessions SET revoked_at=now() WHERE account_id=$1', [guest]);
     assert.equal((await app.inject({ url: '/v1/live/sessions/current', headers })).statusCode, 401);

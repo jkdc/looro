@@ -97,7 +97,7 @@ Todas filtran `job="otel-collector", exported_job="palique-api"`.
 | Alerta | Expresión (resumen) | Umbral | `for` | Severidad |
 |---|---|---|---|---|
 | `ApiHttp5xxRatioHigh` | ratio 5xx sobre el total RED en 5 m | > 5 % | 1m | critical |
-| `ApiMetricsMissing` | `absent()` de la serie RED | ausente | 5m | critical |
+| `ApiMetricsMissing` | `absent()` de la serie de latido (gauge del pool) | ausente | 5m | critical |
 | `LevelTestGenerationFailed` | `(sum(increase(...{status="failed"}[24h])) or vector(0)) > 0` | cualquier fallo en 24 h | 1m | warning |
 | `LevelTestGenerationStale` | `time() - ...last_success_unix_seconds` | > 691200 s (8 días) | 1m | warning |
 | `LlmFailuresSpike` | `(sum(increase(...{status="failed"}[1h])) or vector(0)) > 5` | > 5 fallos/h | 1m | warning |
@@ -111,7 +111,11 @@ Lecciones incorporadas:
   después de la comparación y la regla dispara siempre).
 - `ApiMetricsMissing` usa `absent()` con `for: 5m` para no disparar en cada
   redepliegue y para cubrir el punto ciego de un proceso caído (el resto de
-  alertas de dominio se auto-resuelven si el proceso muere).
+  alertas de dominio se auto-resuelven si el proceso muere). Se ancla en
+  `palique_db_pool_connections`, que se exporta en cada ciclo mientras el
+  proceso viva: la serie RED solo existe tras la primera petición, así que
+  anclarla ahí daba un falso positivo con una API recién desplegada e inactiva
+  (verificado en vivo).
 - Las ventanas `for` están afinadas para verificación local (1m); en un
   despliegue real conviene subirlas a 5–10m.
 

@@ -1,6 +1,7 @@
 import { connectDatabase } from './db.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { weekIndex } from './level-tests.js';
+import { initObservability, shutdownObservability } from './observability.js';
 
 /** Weekly LLM generation CLI (level-tests-llm, cron option A):
     `npm run leveltests-generate [--force] [--langs en,es] [--levels A1,B1]`
@@ -19,6 +20,10 @@ const languages = value('--langs', 'en,es').split(',').map(entry => entry.trim()
 const levels = value('--levels', 'A1,A2,B1').split(',').map(entry => entry.trim()).filter(Boolean);
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL required'); process.exit(1); }
+
+// Same telemetry contract as the server (no-op unless OTEL_ENABLED=true): a
+// scheduled generation run emits the palique_* metrics/traces operators alert on.
+initObservability();
 
 const db = connectDatabase(databaseURL);
 try {
@@ -41,4 +46,8 @@ try {
   }
   console.log(JSON.stringify(summary));
   process.exitCode = failures > 0 ? 1 : 0;
-} finally { await db.end(); }
+} finally {
+  await db.end();
+  // Flush buffered metrics/traces before the process ends.
+  await shutdownObservability();
+}

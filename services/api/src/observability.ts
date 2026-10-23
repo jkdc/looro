@@ -42,6 +42,19 @@ export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
 
 export function shutdownObservability(): Promise<void> { return shutdown?.() ?? Promise.resolve(); }
 
+/** Seeds the last-success gauge from the database so the staleness alert has a
+    series on the first scrape after a restart (D8): a gauge born empty cannot
+    alert, which is the blind spot the metric exists to close. */
+export async function initGenerationMetrics(db: Database): Promise<void> {
+  try {
+    const { rows } = await db.query(
+      `SELECT max(COALESCE(finished_at, updated_at)) AS at
+         FROM level_test_generation_jobs WHERE state = 'finished'`) as { rows: { at: Date | null }[] };
+    const at = rows[0]?.at;
+    if (at) paliqueMetrics.generationLastSuccess.record(new Date(at).getTime() / 1000);
+  } catch { /* Telemetry must never block boot. */ }
+}
+
 // Gauges are recomputed at every export from live pool counters. Registered
 // AFTER initDomainMetrics so the callback binds to the real instruments.
 export function addDatabasePoolObservability(db: Database): void {
