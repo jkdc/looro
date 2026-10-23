@@ -35,12 +35,12 @@ tests:
         exp_alerts: []
 
   - name: pool-sustained-saturation
-    interval: 1m
+    interval: 15s
     input_series:
       - series: 'palique_db_pool_connections{job="otel-collector",exported_job="palique-api",instance="api-1",state="in_use"}'
-        values: '10+0x8 0+0x10'
+        values: '10+0x24 0+0x35'
       - series: 'palique_db_pool_max_connections{job="otel-collector",exported_job="palique-api",instance="api-1"}'
-        values: '10+0x10'
+        values: '10+0x60'
     alert_rule_test:
       - eval_time: 6m
         alertname: DbPoolSaturated
@@ -52,7 +52,7 @@ tests:
               exported_job: palique-api
             exp_annotations:
               summary: "Database pool above 90% utilisation"
-              description: "The PostgreSQL pool has been near its maximum for 5m. Look for long queries, statement_timeout hits and waiting connections."
+              description: "The PostgreSQL pool has been near its maximum for a full 5m scrape window. Look for long queries, statement_timeout hits and waiting connections."
               runbook: "docs/observability.md#pool-de-bd-saturado"
       - eval_time: 15m
         alertname: DbPoolSaturated
@@ -67,6 +67,18 @@ tests:
         values: '10+0x10'
     alert_rule_test:
       - eval_time: 8m
+        alertname: DbPoolSaturated
+        exp_alerts: []
+
+  - name: pool-startup-spike-does-not-count-as-five-minutes
+    interval: 30s
+    input_series:
+      - series: 'palique_db_pool_connections{job="otel-collector",exported_job="palique-api",instance="api-1",state="in_use"}'
+        values: '10 10 10 10 0+0x12'
+      - series: 'palique_db_pool_max_connections{job="otel-collector",exported_job="palique-api",instance="api-1"}'
+        values: '10+0x16'
+    alert_rule_test:
+      - eval_time: 1m
         alertname: DbPoolSaturated
         exp_alerts: []
 
