@@ -94,3 +94,68 @@ test('pool observability publishes max and per-state connections', async () => {
   const max = await collectSum(reader, 'palique.db.pool.max_connections');
   assert.equal([...max.values()].reduce((a, b) => a + b, 0), 10);
 });
+
+//
+// Section 4: RED HTTP, per-request logs and requestId on 5xx (src/app.ts)
+// Integration harness identical to tests/admin-usage.test.ts: a real pool from
+// TEST_DATABASE_URL, skipped without it so unit-only runs stay green.
+import { before, after } from 'node:test';
+import { connectDatabase } from '../src/db.js';
+import { migrate } from '../src/migrate.js';
+import { createApp } from '../src/app.js';
+
+const url = process.env.TEST_DATABASE_URL;
+if (url && !new URL(url).pathname.endsWith('_test')) throw new Error('Use an isolated database ending in _test.');
+const db = url ? connectDatabase(url) : null;
+before(async () => { if (db) await migrate(db); });
+after(async () => { if (db) await db.end(); });
+const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !db && 'Set TEST_DATABASE_URL for PostgreSQL tests.' }, fn);
+
+integration('health request emits RED data point and structured log line', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const app = createApp({ db: db!, auth: {} });
+  const original = console.info;
+  const lines: string[] = [];
+  console.info = (value: string) => { lines.push(value); };
+  try {
+    const response = await app.inject({ method: 'GET', url: '/healthz' });
+    assert.equal(response.statusCode, 200);
+    // collectSum keys are "k=v" label strings; histogram point values are not
+    // asserted (the helper sums them to NaN for histograms).
+    const durations = await collectSum(reader, 'http.server.request.duration');
+    assert.ok([...durations.keys()].some(labels => labels.includes('http.route=/healthz') && labels.includes('http.response.status_code=200')));
+    const logged = lines.map(line => JSON.parse(line) as Record<string, unknown>).find(entry => entry['event'] === 'http_request');
+    assert.ok(logged && logged['route'] === '/healthz' && typeof logged['request_id'] === 'string');
+  } finally { console.info = original; await app.close(); }
+});
+
+integration('unexpected 5xx responses include requestId and never internals', async () => {
+  const app = createApp({ db: db!, auth: {} });
+  app.route({ method: 'GET', url: '/__boom', handler: async () => { throw new Error('secret-internal-detail'); } });
+  const original = console.error;
+  const lines: string[] = [];
+  console.error = (value: string) => { lines.push(value); };
+  try {
+    const response = await app.inject({ method: 'GET', url: '/__boom' });
+    assert.equal(response.statusCode, 500);
+    const body = response.json() as { error: { code: string; requestId?: string } };
+    assert.equal(body.error.code, 'service_unavailable');
+    assert.ok(typeof body.error.requestId === 'string' && body.error.requestId.length > 0);
+    // The 4xx shape stays exactly { error: { code } } — no requestId leaks there.
+    const invalid = await app.inject({ method: 'GET', url: '/v1/level-tests/current' });
+    assert.equal(invalid.statusCode, 400);
+    assert.deepEqual(invalid.json(), { error: { code: 'invalid_request' } });
+    // No stack frames, no original message, exactly two error fields.
+    assert.ok(!response.body.includes('secret-internal-detail'));
+    assert.ok(!response.body.includes(' at '));
+    assert.deepEqual(Object.keys(body.error).sort(), ['code', 'requestId']);
+    const logged = lines.map(line => JSON.parse(line) as Record<string, unknown>).find(entry => entry['event'] === 'request_failed');
+    assert.ok(logged, 'a request_failed log line must exist');
+    assert.equal(logged['request_id'], body.error.requestId); // body and log correlate
+    assert.equal(logged['error_code'], 'service_unavailable');
+    assert.equal(logged['status'], 500);
+    assert.equal(typeof logged['route'], 'string');
+  } finally { console.error = original; await app.close(); }
+});

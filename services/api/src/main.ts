@@ -20,10 +20,14 @@ import { InstallationGuestMinuteAttestor } from './guest-minutes.js';
 import { SubscriptionBilling } from './subscription-billing.js';
 import { createLevelTestScheduler, parseLevelTestSchedulerConfig, runLevelTestCombinations } from './level-tests-scheduler.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
+import { log } from './log.js';
+import { addDatabasePoolObservability, initObservability, shutdownObservability } from './observability.js';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
+initObservability();
 const db = connectDatabase(databaseURL);
+addDatabasePoolObservability(db);
 let hosted: HostedVoice | undefined;
 let hostedHelpers: HostedHelpers | undefined;
 let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>>;
@@ -40,7 +44,7 @@ try {
   const appleRevoker = appleClient && appleTeam && appleKey && appleFile ? new AppleTokenRevoker(db,
     { clientID: appleClient, teamID: appleTeam, keyID: appleKey, privateKeyPEM: await readFile(appleFile, 'utf8') }) : undefined;
   await appleRevoker?.validateConfiguration();
-  minuteCommerce = await configuredMinuteCommerce(db, process.env, { onFailure: code => console.error(code) });
+  minuteCommerce = await configuredMinuteCommerce(db, process.env, { onFailure: code => log.error('minute_commerce_failure', { code }) });
   const accessMode = process.env.HOSTED_VOICE_ACCESS ?? 'restricted-test';
   if (!['restricted-test','public-minutes'].includes(accessMode)) throw new Error('Invalid hosted access mode.');
   const publicMinuteAccess = accessMode==='public-minutes';
@@ -76,7 +80,7 @@ try {
     }
     hosted = new HostedVoice(db, new OpenAILiveProvider(process.env.OPENAI_API_KEY ?? ''),
       { accountAllowlist: accounts, billingUnit, lifetimeFundingCapNano,publicMinuteAccess,publicPaidAccess, helpers: hostedHelpers,
-        onStartupFailure: diagnostic => console.warn(JSON.stringify({ event: 'live_startup_failed', ...diagnostic })) });
+        onStartupFailure: diagnostic => log.warn('live_startup_failed', diagnostic) });
     await hosted.start();
   }
   const accessConfig = accessRequestConfig(process.env);
@@ -111,39 +115,43 @@ try {
     await runLevelTestCombinations(generationConfig, weekId, signal, async (languageID, level, jobWeek, jobSignal) => {
       const result = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: jobWeek, signal: jobSignal, origin: 'automatic_worker' });
       if (result.status === 'failed' || result.status === 'unknown')
-        console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId: jobWeek, status: result.status, errorCode: result.errors?.[0] ?? 'generation_failed' }));
-    }, (languageID, level, code) => console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId, status: 'failed', errorCode: code })), undefined, timeoutMs);
+        log.warn('level_test_generation_job', { language: languageID, level, week: jobWeek, status: result.status,
+          error_code: result.errors?.[0] ?? 'generation_failed' });
+    }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
+      status: 'failed', error_code: code }), undefined, timeoutMs);
   } });
   const app = createApp({ db, generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
     minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
     subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
       { origin: origin.origin.replace(/\/$/, '') }) : undefined,
-    tokenProxy: tokenProxyConfig(process.env) && new TokenProxy(db, tokenProxyConfig(process.env)!),
-    onStartupDiagnostic: diagnostic => console.warn(JSON.stringify({ event: 'conversation_request_failed', ...diagnostic })) });
+    tokenProxy: tokenProxyConfig(process.env) && new TokenProxy(db, tokenProxyConfig(process.env)!) });
   const cleanup = setInterval(() => {
-    void pruneAuthenticationRecords(db).catch(() => { console.error('Account retention cleanup failed.'); });
-    void pruneAccessRequests(db).catch(() => { console.error('Access request retention cleanup failed.'); });
-    void pruneAIReports(db).catch(() => { console.error('AI report retention cleanup failed.'); });
-    void pruneUsageEvents(db).catch(() => { console.error('Usage retention cleanup failed.'); });
-    void pruneAdminRecords(db).catch(() => { console.error('Admin retention cleanup failed.'); });
-    void hostedHelpers?.expireBudgets().catch(() => { console.error('Hosted helper budget cleanup failed.'); });
+    void pruneAuthenticationRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
+    void pruneAccessRequests(db).catch(() => { log.error('retention_cleanup_failed'); });
+    void pruneAIReports(db).catch(() => { log.error('retention_cleanup_failed'); });
+    void pruneUsageEvents(db).catch(() => { log.error('retention_cleanup_failed'); });
+    void pruneAdminRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
+    void hostedHelpers?.expireBudgets().catch(() => { log.error('retention_cleanup_failed'); });
   }, 15 * 60_000);
   cleanup.unref();
   let guestLinkFlight:Promise<unknown>|undefined;
   const retryGuestLinks=()=>{if(!guestLinkFlight)guestLinkFlight=finalizeDeferredGuestLinks(db)
-    .catch(()=>{console.error('Guest allowance transfer retry failed.');}).finally(()=>{guestLinkFlight=undefined;});};
+    .catch(()=>{log.error('guest_allowance_retry_failed');}).finally(()=>{guestLinkFlight=undefined;});};
   const guestLinkCleanup=setInterval(retryGuestLinks,60_000);guestLinkCleanup.unref();retryGuestLinks();
   const close = async () => {
     clearInterval(cleanup);clearInterval(guestLinkCleanup);await generationScheduler?.stop();await guestLinkFlight; await app.close(); await hosted?.stop(); await minuteCommerce?.runner.stop();
+    await shutdownObservability();
     await db.end(); process.exit(0);
   };
   process.on('SIGTERM', close); process.on('SIGINT', close);
   await app.listen({ port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
   minuteCommerce?.runner.start();
   generationScheduler?.start();
-  console.info('Palique API is running.');
+  log.info('api_started');
 } catch {
-  console.error('Palique could not start. Check configuration; no secret values are logged.');
-  await generationScheduler?.stop(); await hosted?.stop(); await minuteCommerce?.runner.stop(); await db.end(); process.exitCode = 1;
+  log.error('startup_failed');
+  await generationScheduler?.stop(); await hosted?.stop(); await minuteCommerce?.runner.stop();
+  await shutdownObservability().catch(() => {});
+  await db.end(); process.exitCode = 1;
 }

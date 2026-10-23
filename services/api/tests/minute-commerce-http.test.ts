@@ -252,7 +252,8 @@ integration('the HTTP error boundary maps only the known refund-debt database ex
     assert.equal(response.statusCode, 409); assert.deepEqual(response.json(), { error: { code: 'minute_purchase_reconciliation_required' } });
     handler = async () => { throw Object.assign(new Error('private database detail'), { code: 'P0001' }); };
     const hidden = await f.app.inject(request);
-    assert.equal(hidden.statusCode, 500); assert.deepEqual(hidden.json(), { error: { code: 'service_unavailable' } });
+    assert.equal(hidden.statusCode, 500); assert.equal(hidden.json().error.code, 'service_unavailable');
+    assert.ok(typeof hidden.json().error.requestId === 'string');
   } finally { await f.cleanup(); }
 });
 
