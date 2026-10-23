@@ -148,6 +148,27 @@ Local verification on 12 September 2026: TypeScript build and checks passed. **4
 On 6 October 2026 the suite had grown to **446 tests with no skips and no failures** (local PostgreSQL 17, Node 20; CI runs Node 22). That round also fixed a real dashboard bug the tests exposed: timeseries day labels went through a JS Date round-trip and shifted a day back on hosts east of UTC (`src/admin-metrics.ts` now emits the calendar label from the database), and the ten-thousand-accounts check chunks its bulk INSERT/DELETE below the 10s statement timeout instead of relying on host speed.
 
 
+## Observability
+
+The API exports OpenTelemetry metrics and traces only when `OTEL_ENABLED=true`
+(no-op by default, so tests and the smoke stack never start telemetry
+containers). The local stack lives in `compose.yaml` with configs under
+`telemetry/` and the full contract in `docs/observability.md`.
+
+| Port (loopback) | Service |
+|---|---|
+| 4318 | OTel Collector (OTLP HTTP) |
+| 3200 | Tempo (traces) |
+| 9090 | Prometheus (metrics, rules, alerts) |
+| 9093 | Alertmanager |
+| 5001 | webhook-logger (local alert sink) |
+| 3003 | Grafana (`admin` / `GRAFANA_PASSWORD`, default `palique-local`) |
+
+`make obs-check` validates the compose file, the alert rules and the
+Alertmanager config without starting anything. Every 5xx response carries
+`error.requestId`, matching the `request_id` field of the structured JSON
+logs.
+
 ## Provider contracts
 
 The adapter follows [OpenAI WebRTC creation](https://developers.openai.com/api/docs/guides/voice-webrtc?api=live), [authenticated sideband controls](https://developers.openai.com/api/docs/guides/voice-server-controls?api=live), [cumulative and final usage](https://developers.openai.com/api/docs/guides/live-conversations#usage-and-graceful-close), and the [hangup endpoint](https://developers.openai.com/api/reference/typescript/resources/live/subresources/sessions/methods/hangup). The WebRTC/SIP documentation discrepancy above remains an activation blocker.

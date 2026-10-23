@@ -12,7 +12,11 @@ test('conversation rejection returns a generated reference and retains the origi
       headers: { 'x-request-id': 'private-identity', authorization: 'Bearer private-token' },
       payload: { sdp: 'private-sdp', instructions: 'private-conversation' } });
     assert.equal(response.statusCode, 503);
-    assert.deepEqual(response.json(), { error: { code: 'hosted_voice_not_ready' } });
+    // 5xx bodies carry the request id so a learner can report the exact failure
+    // (the X-App-Error-Reference is a truncated form of the same id).
+    const body = response.json() as { error: { code: string; requestId?: string } };
+    assert.equal(body.error.code, 'hosted_voice_not_ready');
+    assert.match(String(body.error.requestId), /^[a-f0-9-]{36}$/);
     const reference = response.headers['x-app-error-reference'];
     assert.match(String(reference), /^[a-f0-9]{12}$/);
     assert.deepEqual(diagnostics, [{ reference, operation: 'start', status: 503, reason: 'hosted_voice_not_ready' }]);

@@ -210,6 +210,7 @@ test('database errors return a generic unavailable response without input or dat
   const unused = connectDatabase('postgresql://unused@127.0.0.1:1/unused'), service = createApp({ db: unused, auth: {}, accessRequests: new AccessRequests(unused, config) });
   try {
     const response = await service.inject({ method: 'POST', url: '/v1/access-requests', headers: headers(), payload: body('private@example.test') });
-    assert.equal(response.statusCode, 503); assert.deepEqual(response.json(), { error: { code: 'access_requests_unavailable' } });
+    assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'access_requests_unavailable');
+    assert.ok(typeof response.json().error.requestId === 'string');
   } finally { await service.close(); await unused.end(); }
 });

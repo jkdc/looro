@@ -1,0 +1,20 @@
+global:
+  resolve_timeout: 5m
+
+# Single local receiver: every alert payload is logged by the webhook-logger
+# service, so the route always has a verifiable destination. External delivery
+# (Slack/PagerDuty) is documented evolution: add a second receiver fed from
+# ALERTMANAGER_WEBHOOK_URL in the deployment environment.
+route:
+  receiver: webhook
+  group_by: ["alertname", "severity"]
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: webhook
+    webhook_configs:
+      - url: http://webhook-logger:5001/alert
+        send_resolved: true
+        max_alerts: 0

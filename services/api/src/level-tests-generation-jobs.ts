@@ -2,6 +2,7 @@ import type { PoolClient } from 'pg';
 import { randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
 import { generateWeeklyLevelTest, type GenerateOptions, type GenerationOutcome } from './level-tests-llm.js';
+import { paliqueMetrics } from './metrics.js';
 
 export type GenerationJobResult = GenerationOutcome | {
   status: 'busy' | 'unknown'; languageID: string; level: string; weekId: number; errors?: string[];
@@ -10,8 +11,34 @@ export type GenerationJobResult = GenerationOutcome | {
 const MAX_AUTOMATIC_ATTEMPTS = 2;
 const lockKey = (languageID: string, level: string, weekId: number) => `level-test-generation:${languageID}:${level}:${weekId}`;
 
+/** One generation attempt with outcome metrics: approved/draft count as
+    finished (recording the last-success timestamp), failed and unknown are
+    counted too; 'busy' and 'exists' are idempotent no-ops that record nothing. */
+export async function runLevelTestGenerationJob(db: Database, env: NodeJS.ProcessEnv,
+    options: GenerateOptions): Promise<GenerationJobResult> {
+  const startedAt = performance.now();
+  let status: 'finished' | 'failed' | 'unknown' | null = null;
+  try {
+    const result = await runLevelTestGenerationJobOnce(db, env, options);
+    status = result.status === 'approved' || result.status === 'draft' ? 'finished' :
+      result.status === 'failed' ? 'failed' : result.status === 'unknown' ? 'unknown' : null;
+    return result;
+  } catch (error) {
+    status = 'failed';
+    throw error;
+  } finally {
+    if (status) {
+      paliqueMetrics.generationJobs.add(1, { language: options.languageID, level: options.level, status });
+      paliqueMetrics.generationJobDuration.record((performance.now() - startedAt) / 1000,
+        { language: options.languageID, level: options.level });
+      if (status === 'finished') paliqueMetrics.generationLastSuccess.record(Date.now() / 1000);
+      if (status === 'failed') paliqueMetrics.generationLastFailure.record(Date.now() / 1000);
+    }
+  }
+}
+
 /** Serializes CLI and scheduler generation before any external provider call. */
-export async function runLevelTestGenerationJob(
+async function runLevelTestGenerationJobOnce(
   db: Database, env: NodeJS.ProcessEnv, options: GenerateOptions,
 ): Promise<GenerationJobResult> {
   const weekId = options.weekIndex;

@@ -348,6 +348,8 @@ test('connection test times out and cancels the unread provider body', async () 
   state.config = { provider: 'openai', base_url: 'https://provider.example/v1', model: 'saved-model',
     api_key_encrypted: encryptSecret('saved-provider-key', ENV), is_active: true };
   const originalFetch = globalThis.fetch, originalMasterKey = process.env.LEVELTEST_LLM_MASTER_KEY; let canceled = false;
+  const originalError = console.error, failureLines: string[] = [];
+  console.error = value => { failureLines.push(value); };
   process.env.LEVELTEST_LLM_MASTER_KEY = ENV.LEVELTEST_LLM_MASTER_KEY;
   const app = adminApp(db, { llmTestTimeoutMs: 5 });
   globalThis.fetch = async (_input, init) => await new Promise((_resolve, reject) =>
@@ -356,6 +358,11 @@ test('connection test times out and cancels the unread provider body', async () 
     const timeout = await app.inject({ method: 'POST', url: '/v1/admin/llm-config/test', headers, payload: {} });
     assert.equal(timeout.statusCode, 502, timeout.payload);
     assert.equal(timeout.json().error, 'llm_test_timeout');
+    assert.equal(typeof timeout.headers['x-request-id'], 'string');
+    assert.deepEqual(timeout.json(), { ok: false, error: 'llm_test_timeout' });
+    const failure = failureLines.map(line => JSON.parse(line) as Record<string, unknown>).find(entry => entry.event === 'request_failed');
+    assert.ok(failure);
+    assert.equal(failure.request_id, timeout.headers['x-request-id']);
     assert.equal(state.audit.length, 1);
     assert.equal(state.audit[0]![2], 'llm_config.test');
     assert.equal(String(state.audit[0]![5]).includes('saved-provider-key'), false);
@@ -367,7 +374,7 @@ test('connection test times out and cancels the unread provider body', async () 
     assert.equal(state.audit.length, 2);
     assert.equal(String(state.audit[1]![5]).includes('saved-provider-key'), false);
     assert.equal(JSON.stringify(bounded.json()).includes('saved-provider-key'), false);
-  } finally { globalThis.fetch = originalFetch; await app.close();
+  } finally { globalThis.fetch = originalFetch; console.error = originalError; await app.close();
     if (originalMasterKey === undefined) delete process.env.LEVELTEST_LLM_MASTER_KEY; else process.env.LEVELTEST_LLM_MASTER_KEY = originalMasterKey; }
 });
 

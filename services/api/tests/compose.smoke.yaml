@@ -1,4 +1,6 @@
 # Isolated local smoke stack. No production environment or public listener.
+# Telemetry is intentionally absent here: the API is a no-op exporter unless
+# OTEL_ENABLED=true, and no OTEL_* env is set in this stack.
 services:
   database:
     image: postgres:17-alpine

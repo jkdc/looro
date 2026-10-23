@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: palique-dashboards
+    orgId: 1
+    folder: "Palique"
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /etc/grafana/dashboards

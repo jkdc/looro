@@ -14,7 +14,7 @@ IOS_SIMULATOR := iPhone 17
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs status health migrate psql admin-cli admin-add \
-  admin-passwd admin-open test-api smoke-up smoke-down android-build android-test-docker android-install \
+  admin-passwd admin-open obs-check test-api smoke-up smoke-down android-build android-test-docker android-install \
   android-run android-logcat ios-build ios-test ios-device check clean
 
 help: ## Muestra esta ayuda
@@ -45,6 +45,12 @@ status: ## Estado de los contenedores
 health: ## Comprueba /healthz y /readyz de la API
 	@curl -sk https://localhost/healthz && echo
 	@curl -sk https://localhost/readyz && echo
+
+obs-check: ## Valida configs y comportamiento de alertas (compose config, promtool, amtool)
+	docker compose --project-directory $(CURDIR)/services/api -f $(CURDIR)/services/api/compose.yaml config -q
+	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint promtool prom/prometheus:v2.54.1 check rules /telemetry/alerts.yml
+	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint promtool prom/prometheus:v2.54.1 test rules /telemetry/alerts.test.yml
+	docker run --rm -v $(CURDIR)/services/api/telemetry:/telemetry:ro --entrypoint amtool prom/alertmanager:v0.27.0 check-config /telemetry/alertmanager.yml
 
 migrate: ## Aplica migraciones pendientes (up ya lo hace al arrancar)
 	$(COMPOSE) build migrate

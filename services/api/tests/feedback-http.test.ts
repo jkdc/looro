@@ -18,7 +18,8 @@ test('HTTP reporting is unavailable by default and advertises no capability', as
       const capability = await app.inject({ method: 'GET', url: '/v1/feedback/capabilities' });
       assert.equal(capability.statusCode, 200); assert.deepEqual(capability.json(), { aiReports: false });
       const response = await app.inject({ method: 'POST', url: AI_REPORT_PATH, headers: headers(), payload: input() });
-      assert.equal(response.statusCode, 503); assert.deepEqual(response.json(), { error: { code: 'ai_reports_unavailable' } });
+      assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'ai_reports_unavailable');
+      assert.ok(typeof response.json().error.requestId === 'string');
       assert.equal(response.headers['cache-control'], 'no-store');
     } finally { await app.close(); }
   }
@@ -30,7 +31,8 @@ test('HTTP capability does not require an account and report failures never expo
     const capability = await app.inject({ method: 'GET', url: '/v1/feedback/capabilities' });
     assert.equal(capability.statusCode, 200); assert.deepEqual(capability.json(), { aiReports: true });
     const response = await app.inject({ method: 'POST', url: AI_REPORT_PATH, headers: headers(), payload: input() });
-    assert.equal(response.statusCode, 500); assert.deepEqual(response.json(), { error: { code: 'service_unavailable' } });
+    assert.equal(response.statusCode, 500); assert.equal(response.json().error.code, 'service_unavailable');
+    assert.ok(typeof response.json().error.requestId === 'string');
     assert.ok(!response.body.includes('Database'));
   } finally { await app.close(); }
 });
@@ -73,7 +75,8 @@ integration('HTTP rejects invented proxy identities and ignores untrusted forwar
     for (const fakeHeaders of [{}, { 'x-forwarded-for': '198.51.100.10' },
       { ...headers(), 'x-app-proxy-token': 'wrong' }, { ...headers(), 'x-app-client-ip': 'not-an-IP' }]) {
       const response = await app.inject({ method: 'POST', url: AI_REPORT_PATH, headers: fakeHeaders, payload: input() });
-      assert.equal(response.statusCode, 503); assert.deepEqual(response.json(), { error: { code: 'ai_reports_unavailable' } });
+      assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'ai_reports_unavailable');
+      assert.ok(typeof response.json().error.requestId === 'string');
     }
     assert.equal(await reportCount(), 0);
     const trustedHeaders = { ...headers(), 'x-forwarded-for': '198.51.100.10', 'x-real-ip': '198.51.100.11' };

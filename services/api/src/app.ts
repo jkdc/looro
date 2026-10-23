@@ -1,3 +1,4 @@
+import { context, SpanKind, SpanStatusCode, trace, type ContextManagementToken, type Span } from '@opentelemetry/api';
 import Fastify, { type FastifyRequest } from 'fastify';
 import { createHash, createHmac, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
@@ -44,7 +45,9 @@ import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { weekIndex } from './level-tests.js';
 import { attemptCsv, levelTestAttemptDetail, levelTestAttemptSummary, listLevelTestAttempts,
   parseAttemptListQuery } from './level-tests-attempts-admin.js';
+import { log } from './log.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
+import { paliqueMetrics } from './metrics.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 import type { LevelTestSchedulerConfig } from './level-tests-scheduler.js';
@@ -79,6 +82,12 @@ const uuid = (text: string) => {
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(text)) throw new ServiceError('invalid_request');
   return text;
 };
+// Per-request span hangs off the request object via a symbol: it never collides
+// with Fastify's own request keys and cannot leak into serialized bodies.
+const REQUEST_SPAN = Symbol('request-span');
+const REQUEST_CONTEXT_TOKEN = Symbol('request-context-token');
+const REQUEST_ERROR_CODE = Symbol('request-error-code');
+const requestRoute = (request: FastifyRequest): string => request.routeOptions.url ?? 'unmatched';
 
 export function createApp(services: Services) {
   const { db } = services;
@@ -109,6 +118,14 @@ export function createApp(services: Services) {
   });
   const windows = new Map<string, { until: number; count: number }>();
   app.addHook('onRequest', async (request, reply) => {
+    const span = trace.getTracer('palique-api').startSpan(`${request.method} ${requestRoute(request)}`, {
+      kind: SpanKind.SERVER,
+      attributes: { 'http.request.method': request.method, 'http.route': requestRoute(request),
+        'palique.request_id': request.id },
+    });
+    (request as unknown as Record<symbol, Span | undefined>)[REQUEST_SPAN] = span;
+    const contextToken = context.attach(trace.setSpan(context.active(), span));
+    (request as unknown as Record<symbol, ContextManagementToken | undefined>)[REQUEST_CONTEXT_TOKEN] = contextToken;
     reply.header('Cache-Control', 'no-store').header('X-Content-Type-Options', 'nosniff');
     // Fastify decodes static route names. Security checks must use the matched route too.
     const path = request.routeOptions.url ?? request.url.split('?')[0]!;
@@ -168,17 +185,20 @@ export function createApp(services: Services) {
       const allowDirect = 'allowLocalLoopback' in proxy && proxy.allowLocalLoopback === true &&
         isPrivateAddress(remoteAddress);
       try { network = trustedClientNetwork(request.headers, remoteAddress, proxy.proxyToken, allowDirect); }
-      catch { throw new ServiceError('trusted_proxy_required', 503); }
+      catch {
+        paliqueMetrics.requestsRejected.add(1, { reason: 'trusted_proxy' });
+        throw new ServiceError('trusted_proxy_required', 503);
+      }
       networkKey = createHmac('sha256', Buffer.from(proxy.hmacKey, 'hex')).update(network).digest('hex');
     }
     const now = Date.now();
     if (windows.size > 10_000) for (const [key, value] of windows) if (value.until < now) windows.delete(key);
     let slot = windows.get(networkKey);
     if (!slot || slot.until < now) {
-      if (windows.size >= 20_000) throw new ServiceError('rate_limit', 429);
+      if (windows.size >= 20_000) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
       slot = { until: now + 60_000, count: 0 }; windows.set(networkKey, slot);
     }
-    if (++slot.count > 120) throw new ServiceError('rate_limit', 429);
+    if (++slot.count > 120) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
   });
   app.setErrorHandler((error, request, reply) => {
     const purchaseReconciliation = error && typeof error === 'object' && 'code' in error && 'message' in error && error.code === 'P0001' &&
@@ -188,6 +208,8 @@ export function createApp(services: Services) {
     const code = purchaseReconciliation ? 'minute_purchase_reconciliation_required' : error instanceof ServiceError ? error.code : status < 500 ? 'invalid_request' : 'service_unavailable';
     const diagnostic = startupDiagnostic(request.method, request.routeOptions.url, request.id, status, code, error);
     if (diagnostic) {
+      log.warn('startup_diagnostic', { request_id: request.id, reference: diagnostic.reference,
+        operation: diagnostic.operation, status: diagnostic.status, reason: diagnostic.reason });
       reply.header('X-App-Error-Reference', diagnostic.reference);
       try { void Promise.resolve(services.onStartupDiagnostic?.(diagnostic)).catch(() => {}); } catch { /* Diagnostics cannot change a request's outcome. */ }
     }
@@ -196,7 +218,36 @@ export function createApp(services: Services) {
       return reply.code(status).send({ error: { code, retryable: error.retryable,
         ...(error.retryable ? { retryAfterMilliseconds: error.retryAfterMilliseconds } : {}) } });
     }
-    reply.code(status).send({ error: { code } });
+    // The response hook emits one safe failure event for both thrown errors and
+    // direct 5xx replies, without changing their existing bodies.
+    if (status >= 500) (request as unknown as Record<symbol, string | undefined>)[REQUEST_ERROR_CODE] = code;
+    reply.code(status).send({ error: { code, ...(status >= 500 ? { requestId: request.id } : {}) } });
+  });
+  app.addHook('onSend', async (request, reply, payload) => {
+    if (reply.statusCode >= 500) reply.header('X-Request-Id', request.id);
+    return payload;
+  });
+  app.addHook('onResponse', async (request, reply) => {
+    const route = requestRoute(request);
+    const durationSeconds = reply.elapsedTime / 1000;
+    if (reply.statusCode >= 500) {
+      log.error('request_failed', { request_id: request.id, method: request.method, route,
+        status: reply.statusCode,
+        error_code: (request as unknown as Record<symbol, string | undefined>)[REQUEST_ERROR_CODE] ?? 'server_error' });
+    }
+    const span = (request as unknown as Record<symbol, Span | undefined>)[REQUEST_SPAN];
+    if (span) {
+      span.setAttribute('http.response.status_code', reply.statusCode);
+      if (reply.statusCode >= 500) span.setStatus({ code: SpanStatusCode.ERROR });
+      span.end();
+    }
+    (request as unknown as Record<symbol, ContextManagementToken | undefined>)[REQUEST_CONTEXT_TOKEN]?.dispose();
+    paliqueMetrics.requestDuration.record(durationSeconds, {
+      'http.request.method': request.method, 'http.route': route, 'http.response.status_code': String(reply.statusCode) });
+    log.info('http_request', { request_id: request.id,
+      trace_id: span?.spanContext().traceId ?? undefined,
+      method: request.method, route,
+      status: reply.statusCode, duration_ms: Math.round(reply.elapsedTime) });
   });
   registerLevelTestAttemptRoutes(app, db);
   const featureState=()=>{

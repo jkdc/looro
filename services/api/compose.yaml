@@ -61,7 +61,7 @@ services:
       # Weekly level-test generation (disabled unless explicitly enabled).
       LEVELTEST_GENERATE_ENABLED: ${LEVELTEST_GENERATE_ENABLED:-false}
       LEVELTEST_GENERATE_HOUR: ${LEVELTEST_GENERATE_HOUR:-4}
-      LEVELTEST_GENERATE_DAY: ${LEVELTEST_GENERATE_DAY:-1}
+      LEVELTEST_GENERATE_DAY: ${LEVELTEST_GENERATE_DAY:-7}
       LEVELTEST_GENERATE_LANGS: ${LEVELTEST_GENERATE_LANGS:-en,es}
       LEVELTEST_GENERATE_LEVELS: ${LEVELTEST_GENERATE_LEVELS:-A1,A2,B1}
       LEVELTEST_GENERATE_TIMEOUT_MS: ${LEVELTEST_GENERATE_TIMEOUT_MS:-900000}
@@ -73,14 +73,126 @@ services:
       LEVELTEST_VARIANTS: ${LEVELTEST_VARIANTS:-3}
       LEVELTEST_PUBLISH_MODE: ${LEVELTEST_PUBLISH_MODE:-review}
       LEVELTEST_VERIFY: ${LEVELTEST_VERIFY:-flag}
+      # Observability: disabled unless OTEL_ENABLED=true. The collector being
+      # down never takes the API down; export is best-effort and buffered.
+      OTEL_ENABLED: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_SERVICE_NAME: palique-api
     depends_on:
       migrate:
         condition: service_completed_successfully
+      otel-collector:
+        condition: service_started
     restart: unless-stopped
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
+  # ---- Observability stack -------------------------------------------------
+  # Same topology as the reference project: OTLP -> collector -> Prometheus
+  # (metrics/alerts) and Tempo (traces), with Grafana provisioning dashboards.
+  # Every port is published on 127.0.0.1 only: in production only Caddy owns
+  # 80/443, and these UIs are reached through an SSH tunnel.
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.127.0
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./telemetry/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "127.0.0.1:4318:4318"
+    depends_on: [tempo]
+    restart: unless-stopped
+  tempo:
+    image: grafana/tempo:2.7.1
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./telemetry/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/tmp/tempo
+    ports:
+      - "127.0.0.1:3200:3200"
+    depends_on:
+      tempo-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+  # Tempo runs as uid 10001 and a fresh named volume is root-owned, so its
+  # block store cannot mkdir. The reference deployment chowned the volume once
+  # by hand; an init container makes that reproducible on every fresh checkout.
+  tempo-init:
+    image: alpine:3.20
+    command: ["chown", "-R", "10001:10001", "/tmp/tempo"]
+    volumes:
+      - tempo_data:/tmp/tempo
+    restart: "no"
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=90d
+      - --storage.tsdb.retention.size=2GB
+    volumes:
+      - ./telemetry/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./telemetry/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    depends_on: [otel-collector, alertmanager]
+    restart: unless-stopped
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    volumes:
+      - ./telemetry/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    ports:
+      - "127.0.0.1:9093:9093"
+    depends_on: [webhook-logger]
+    restart: unless-stopped
+  # Local sink for Alertmanager: every alert payload is logged to stdout
+  # (docker compose logs webhook-logger) so the route always has a verifiable
+  # destination. External delivery (Slack/PagerDuty) stays documented evolution.
+  webhook-logger:
+    image: python:3.12-alpine
+    command:
+      - python
+      - -c
+      - |
+        import json
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                length = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(length).decode("utf-8", "replace")
+                try:
+                    pretty = json.dumps(json.loads(body), ensure_ascii=False, sort_keys=True)
+                except ValueError:
+                    pretty = body
+                print(f"ALERT POST {self.path}: {pretty}", flush=True)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"ok":true}')
+
+            def log_message(self, *args):
+                pass
+
+        HTTPServer(("0.0.0.0", 5001), Handler).serve_forever()
+    ports:
+      - "127.0.0.1:5001:5001"
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:10.4.8
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-palique-local}
+    volumes:
+      - ./telemetry/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./telemetry/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./telemetry/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3003:3000"
+    depends_on: [tempo, prometheus]
+    restart: unless-stopped
   caddy:
     image: caddy:2-alpine
     environment:
@@ -102,3 +214,6 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  tempo_data:
+  prometheus_data:
+  grafana_data:
