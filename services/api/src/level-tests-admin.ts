@@ -2,6 +2,7 @@ import type { Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { weekIndex } from './level-tests.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
+import type { LevelTestSchedulerConfig } from './level-tests-scheduler.js';
 
 /** Admin read surface over generated level-test weeks (admin-exam-management).
     Listings carry metadata only: pool, variants and review stay behind the
@@ -171,4 +172,53 @@ export async function levelTestWeekDetail(db: Database, id: string): Promise<Wee
     judgeVersion: (row.judge_version as number | null) ?? null,
     retiredAt: iso(row.retired_at), retiredBy: (row.retired_by as string | null) ?? null,
     retiredReason: (row.retired_reason as string | null) ?? null };
+}
+
+type GenerationJobRow = { language_id: string; level: string; week_index: number; state: string; attempts: number;
+  error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date };
+
+/** Builds the operator status view without coupling the query/projection to HTTP. */
+export async function levelTestGenerationStatus(db: Database,
+  generation: { config: LevelTestSchedulerConfig; isStarted: () => boolean } | undefined) {
+  const latest = (await db.query(`SELECT language_id, level, week_index, state, attempts, error_code, error_details,
+    started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1`))
+    .rows[0] as GenerationJobRow | undefined;
+  const jobs = (await db.query(`SELECT language_id, level, week_index, state, attempts, error_code, error_details,
+    started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10`))
+    .rows as GenerationJobRow[];
+  const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
+  const jobItem = (job: GenerationJobRow) => ({ languageID: job.language_id, level: job.level,
+    weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
+    errors: Array.isArray(job.error_details) ? job.error_details.filter(entry => typeof entry === 'string') : [],
+    startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
+  return {
+    schedule: generation ? { enabled: generation.config.enabled, day: generation.config.day, hour: generation.config.hour,
+      languages: generation.config.languages, levels: generation.config.levels, timeoutMs: generation.config.timeoutMs }
+      : { enabled: false, day: null, hour: null, languages: [], levels: [], timeoutMs: null },
+    scheduler: { activeInProcess: generation?.isStarted() ?? false },
+    latestJob: latest ? jobItem(latest) : null,
+    jobs: jobs.map(jobItem),
+  };
+}
+
+function pageNumber(value: unknown, fallback: number, max: number): number {
+  if (value === undefined) return fallback;
+  if (typeof value !== 'string' || !/^(0|[1-9][0-9]*)$/.test(value)) throw new ServiceError('invalid_request');
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed > max) throw new ServiceError('invalid_request');
+  return parsed;
+}
+
+/** Lists reviewable drafts with the existing bounded pagination and wire projection. */
+export async function listLevelTestDrafts(db: Database, query: Record<string, unknown>) {
+  const limit = pageNumber(query.limit, 50, 100);
+  if (limit < 1) throw new ServiceError('invalid_request');
+  const offset = pageNumber(query.offset, 0, 100_000);
+  const rows = (await db.query(`SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review, created_at
+    FROM level_test_weeks WHERE status IN ('draft','rejected') ORDER BY created_at DESC, id DESC LIMIT $1 OFFSET $2`,
+  [limit, offset])).rows;
+  return { items: rows.map(row => ({ id: row.id, languageID: row.language_id, level: row.level,
+    weekId: row.week_index, status: row.status, pool: row.pool, variants: row.variants,
+    judgeMode: row.judge_mode, review: row.review,
+    createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at })), limit, offset };
 }

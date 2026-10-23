@@ -38,11 +38,7 @@ import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForA
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
-import { approveGeneratedWeek, rejectGeneratedWeek, retireGeneratedWeek } from './level-tests-publication.js';
-import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, planGenerationLaunch,
-  runGenerationLaunch, validateRegenerateRequest } from './level-tests-admin.js';
-import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
-import { weekIndex } from './level-tests.js';
+import { registerAdminLevelTestGenerationRoutes, registerAdminLevelTestReviewRoutes } from './http/routes/admin-level-tests.js';
 import { registerAdminLevelTestAttemptRoutes } from './http/routes/admin-level-test-attempts.js';
 import { log } from './log.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
@@ -530,138 +526,15 @@ export function createApp(services: Services) {
       { state: outcome.state }));
     return reply.send(outcome);
   });
-  // LLM provider configuration for weekly level-test generation (level-tests-llm).
-  app.get('/v1/admin/level-tests/weeks', async (request, reply) => {
-    assertAdminPageOrigin(request);
-    await adminOnly(request);
-    const listing = await listLevelTestWeeks(db, parseWeekListQuery(request.query as Record<string, unknown>));
-    reply.header('cache-control', 'no-store');
-    return listing;
-  });
-  app.get('/v1/admin/level-tests/weeks/:id', async (request, reply) => {
-    assertAdminPageOrigin(request);
-    await adminOnly(request);
-    const week = await levelTestWeekDetail(db, uuid((request.params as { id: string }).id));
-    reply.header('cache-control', 'no-store');
-    if (!week) throw new ServiceError('level_test_week_not_found', 404);
-    return week;
-  });
-  app.post('/v1/admin/level-tests/regenerate', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    if (Object.keys(body).some(key => !['languageID', 'level', 'weekIndex', 'reason'].includes(key)))
-      throw new ServiceError('invalid_request');
-    const languageID = stringField(body, 'languageID', 8), level = stringField(body, 'level', 4);
-    const reason = stringField(body, 'reason', 500);
-    if (reason.trim().length < 3) throw new ServiceError('invalid_request');
-    if (body.weekIndex !== undefined && (typeof body.weekIndex !== 'number' || !Number.isSafeInteger(body.weekIndex)))
-      throw new ServiceError('invalid_request');
-    const weekId = body.weekIndex === undefined ? weekIndex(new Date()) : body.weekIndex as number;
-    await validateRegenerateRequest(db, languageID, level, weekId);
-    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.regenerate',
-      `${languageID}:${level}:${weekId}`, reason, { languageID, level, weekId }));
-    // Fire-and-forget: the job module owns serialization and failure recording.
-    void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true, origin: 'user_operator' })
-      .catch(() => undefined);
-    return reply.code(202).send({ started: true });
-  });
-  app.post('/v1/admin/level-tests/generate', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    if (Object.keys(body).some(key => !['languageID', 'levels', 'weekIndex', 'reason'].includes(key)))
-      throw new ServiceError('invalid_request');
-    const languageID = stringField(body, 'languageID', 8);
-    const reason = stringField(body, 'reason', 500);
-    if (reason.trim().length < 3) throw new ServiceError('invalid_request');
-    if (body.weekIndex !== undefined && (typeof body.weekIndex !== 'number' || !Number.isSafeInteger(body.weekIndex)))
-      throw new ServiceError('invalid_request');
-    const weekId = body.weekIndex === undefined ? weekIndex(new Date()) : body.weekIndex as number;
-    const levels = body.levels === undefined || body.levels === 'all'
-      ? ['A1', 'A2', 'B1', 'B2', 'C1']
-      : Array.isArray(body.levels) ? body.levels.map(level => String(level)) : [String(body.levels)];
-    const keys = await planGenerationLaunch(db, languageID, levels, weekId);
-    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.generate',
-      `${languageID}:${weekId}`, reason, { languageID, weekId, keys }));
-    runGenerationLaunch(db, process.env, keys, weekId);
-    return reply.code(202).send({ started: true, keys });
-  });
+  const adminLevelTestRouteDependencies = { db, env: process.env,
+    assertPageOrigin: assertAdminPageOrigin, assertCsrf: assertAdminCsrf,
+    authenticateAdmin: adminOnly, generationStatus: services.generationStatus };
+  // Generation routes retain their original registration position and root hooks.
+  registerAdminLevelTestGenerationRoutes(app, adminLevelTestRouteDependencies);
   // Student exam result reads stay on the root Fastify instance so they inherit
   // the same admission, tracing, and error policies as every other admin route.
   registerAdminLevelTestAttemptRoutes(app, { db, assertPageOrigin: assertAdminPageOrigin, authenticateAdmin: adminOnly });
-  app.get('/v1/admin/level-tests/status', async (request, reply) => {
-    assertAdminPageOrigin(request);
-    await adminOnly(request);
-    const config = services.generationStatus?.config;
-    const latest = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, error_details, started_at, finished_at, updated_at " +
-      "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1")).rows[0] as
-      { language_id: string; level: string; week_index: number; state: string; attempts: number;
-        error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date } | undefined;
-    const jobs = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, error_details, started_at, finished_at, updated_at " +
-      "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10")).rows as
-      { language_id: string; level: string; week_index: number; state: string; attempts: number;
-        error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date }[];
-    const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
-    // `errors` carries the sanitized per-section reasons; `errorCode` stays the
-    // coarse, stable code used for badges.
-    const jobItem = (job: NonNullable<typeof latest>) => ({ languageID: job.language_id, level: job.level,
-      weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
-      errors: Array.isArray(job.error_details) ? job.error_details.filter(entry => typeof entry === 'string') : [],
-      startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
-    reply.header('cache-control', 'no-store');
-    return {
-      schedule: config ? { enabled: config.enabled, day: config.day, hour: config.hour,
-        languages: config.languages, levels: config.levels, timeoutMs: config.timeoutMs }
-        : { enabled: false, day: null, hour: null, languages: [], levels: [], timeoutMs: null },
-      scheduler: { activeInProcess: services.generationStatus?.isStarted() ?? false },
-      latestJob: latest ? jobItem(latest) : null,
-      jobs: jobs.map(jobItem)
-    };
-  });
-  app.get('/v1/admin/level-tests/drafts', async (request, reply) => {
-    assertAdminPageOrigin(request);
-    await adminOnly(request);
-    const query = request.query as Record<string, unknown>;
-    const pageNumber = (value: unknown, fallback: number, max: number) => {
-      if (value === undefined) return fallback;
-      if (typeof value !== 'string' || !/^(0|[1-9][0-9]*)$/.test(value)) throw new ServiceError('invalid_request');
-      const parsed = Number(value);
-      if (!Number.isSafeInteger(parsed) || parsed > max) throw new ServiceError('invalid_request');
-      return parsed;
-    };
-    const limit = pageNumber(query.limit, 50, 100);
-    if (limit < 1) throw new ServiceError('invalid_request');
-    const offset = pageNumber(query.offset, 0, 100_000);
-    const rows = (await db.query("SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review, created_at " +
-      "FROM level_test_weeks WHERE status IN ('draft','rejected') " +
-      "ORDER BY created_at DESC, id DESC LIMIT $1 OFFSET $2", [limit, offset])).rows;
-    reply.header('cache-control', 'no-store');
-    return { items: rows.map(row => ({ id: row.id, languageID: row.language_id, level: row.level,
-      weekId: row.week_index, status: row.status, pool: row.pool, variants: row.variants,
-      judgeMode: row.judge_mode, review: row.review,
-      createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at })),
-    limit, offset };
-  });
-  app.post('/v1/admin/level-tests/:generationId/reject', { bodyLimit: 1024 }, async request => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
-    const id = uuid((request.params as { generationId: string }).generationId);
-    return rejectGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
-  });
-  app.post('/v1/admin/level-tests/:generationId/approve', { bodyLimit: 1024 }, async request => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
-    const id = uuid((request.params as { generationId: string }).generationId);
-    return approveGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
-  });
-  app.post('/v1/admin/level-tests/:generationId/retire', { bodyLimit: 1024 }, async request => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
-    const id = uuid((request.params as { generationId: string }).generationId);
-    return retireGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
-  });
+  registerAdminLevelTestReviewRoutes(app, adminLevelTestRouteDependencies);
   app.get('/v1/admin/llm-config', async request => {
     const admin = await adminOnly(request);
     void admin;
