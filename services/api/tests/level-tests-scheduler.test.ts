@@ -42,11 +42,21 @@ test('next scheduled run is the next configured ISO weekday and hour in UTC', ()
     '2026-10-26T04:00:00.000Z');
   assert.equal(nextScheduledRunUtc(new Date('2026-10-20T05:00:00.000Z'), 4, 1).toISOString(),
     '2026-10-26T04:00:00.000Z');
+  assert.equal(nextScheduledRunUtc(new Date('2026-10-19T04:00:00.000Z'), 4, 7).toISOString(),
+    '2026-10-25T04:00:00.000Z');
+  assert.equal(nextScheduledRunUtc(new Date('2026-10-25T04:00:00.000Z'), 4, 7).toISOString(),
+    '2026-11-01T04:00:00.000Z');
 });
 
-test('scheduler configuration is disabled by default and rejects invalid or duplicate bounds', () => {
-  assert.equal(parseLevelTestSchedulerConfig({}).enabled, false);
-  assert.deepEqual(enabled(), { enabled: true, hour: 4, day: 1, languages: ['en', 'es'], levels: ['A1', 'A2', 'B1'], timeoutMs: 900_000 });
+test('scheduler defaults to disabled Sunday generation and preserves explicit day overrides', () => {
+  assert.deepEqual(parseLevelTestSchedulerConfig({}), {
+    enabled: false, hour: 4, day: 7, languages: ['en', 'es'], levels: ['A1', 'A2', 'B1'], timeoutMs: 900_000,
+  });
+  assert.deepEqual(enabled(), { enabled: true, hour: 4, day: 7, languages: ['en', 'es'], levels: ['A1', 'A2', 'B1'], timeoutMs: 900_000 });
+  assert.equal(parseLevelTestSchedulerConfig({ LEVELTEST_GENERATE_DAY: '3' }).day, 3);
+});
+
+test('scheduler rejects invalid or duplicate bounds', () => {
   for (const env of [
     { LEVELTEST_GENERATE_ENABLED: 'yes' },
     { LEVELTEST_GENERATE_HOUR: '24' },
@@ -75,7 +85,7 @@ test('disabled scheduler creates no timer and does not run generation', async ()
 });
 
 test('startup after the weekly instant recovers only the current ISO week then schedules the next run', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T05:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T05:00:00Z'));
   const weeks: number[] = [];
   const scheduler = createLevelTestScheduler({ config: enabled(), clock,
     runWeek: async weekId => { weeks.push(weekId); } });
@@ -88,7 +98,7 @@ test('startup after the weekly instant recovers only the current ISO week then s
 });
 
 test('scheduler recalculates its next one-shot timer after a delayed run completes', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T03:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T03:00:00Z'));
   let finishRun!: () => void;
   let calls = 0;
   const scheduler = createLevelTestScheduler({ config: enabled(), clock,
@@ -117,7 +127,7 @@ test('per-combination failure does not prevent remaining language-level jobs', a
 });
 
 test('shutdown aborts and drains active generation before stop resolves', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T05:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T05:00:00Z'));
   let signal: AbortSignal | undefined;
   let settled = false;
   const scheduler = createLevelTestScheduler({ config: enabled(), clock,
@@ -135,7 +145,7 @@ test('shutdown aborts and drains active generation before stop resolves', async 
 });
 
 test('generation timeout aborts the active week and re-arms one future timer', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T05:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T05:00:00Z'));
   let signal: AbortSignal | undefined;
   const scheduler = createLevelTestScheduler({ config: enabled(), clock, timeoutMs: 1_000,
     runWeek: async (weekId, activeSignal, timeoutMs) => {
@@ -154,7 +164,7 @@ test('generation timeout aborts the active week and re-arms one future timer', a
 
 
 test('scheduler enforces a single timeout across the complete week run', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T05:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T05:00:00Z'));
   let signal: AbortSignal | undefined;
   const scheduler = createLevelTestScheduler({ config: enabled(), clock, timeoutMs: 1_000,
     runWeek: async (_weekId, activeSignal) => {
@@ -201,7 +211,7 @@ test('a timer that fires before its target re-arms instead of running generation
 });
 
 test('a run that throws is contained and the scheduler arms its next timer', async () => {
-  const clock = new FakeClock(new Date('2026-10-19T04:00:00Z'));
+  const clock = new FakeClock(new Date('2026-10-25T04:00:00Z'));
   let calls = 0;
   const scheduler = createLevelTestScheduler({ config: enabled(), clock,
     runWeek: async () => { calls += 1; throw new Error('boom'); } });

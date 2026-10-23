@@ -52,7 +52,7 @@ export function parseLevelTestSchedulerConfig(env: NodeJS.ProcessEnv): LevelTest
   const config: LevelTestSchedulerConfig = {
     enabled: rawEnabled === 'true',
     hour: boundedInteger(env.LEVELTEST_GENERATE_HOUR, 4, 0, 23, 'LEVELTEST_GENERATE_HOUR'),
-    day: boundedInteger(env.LEVELTEST_GENERATE_DAY, 1, 1, 7, 'LEVELTEST_GENERATE_DAY'),
+    day: boundedInteger(env.LEVELTEST_GENERATE_DAY, 7, 1, 7, 'LEVELTEST_GENERATE_DAY'),
     languages: list(env.LEVELTEST_GENERATE_LANGS, SUPPORTED_LANGUAGES, SUPPORTED_LANGUAGES, 'LEVELTEST_GENERATE_LANGS'),
     levels: list(env.LEVELTEST_GENERATE_LEVELS, SUPPORTED_LEVELS, SUPPORTED_LEVELS, 'LEVELTEST_GENERATE_LEVELS'),
     timeoutMs: boundedInteger(env.LEVELTEST_GENERATE_TIMEOUT_MS, LEVEL_TEST_JOB_TIMEOUT_MS, 30_000, 30 * 60_000, 'LEVELTEST_GENERATE_TIMEOUT_MS'),
