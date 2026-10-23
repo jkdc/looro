@@ -40,7 +40,7 @@ Acceptance: tests assert observable log/span/metric/rule behavior; config valida
 
 - [x] T1 — S1/S3: secure request logging, server spans and compatible direct 5xx correlation; route inline; complete; commits `2bc4101` (SDD plan) and `756dc7e` (implementation); focused tests 53 pass, 2 DB-only skipped; typecheck passes.
 - [x] T2 — S1/S2: Sunday UTC scheduler default and documentation; route inline; complete; commit `d356082`; focused scheduler tests 12 passed and API TypeScript check passed.
-- [ ] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; complete; commit pending.
+- [x] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; complete; commit `a0b6b84`; focused tests 32 passed, 11 skipped (DB-dependent) and API TypeScript check passed.
 - [ ] T4 — S1/S2: repair alert math, remove missing/stale-generation alert, retain failed-execution alert, add behavioral promtool tests and wire them into CI; route inline; status planned; commit pending.
 - [ ] T5 — S1–S4: isolated API/CLI metric probe, reconcile original plan/OpenSpec/runbooks/report, run full applicable suites; route inline; status planned; commit pending.
 

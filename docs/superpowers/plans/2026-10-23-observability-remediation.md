@@ -89,7 +89,7 @@
 - [x] Run focused tests; observed RED for missing failure duration/counter, missing LLM error duration, invented zero token counters, and disabled-mode DB query.
 - [x] Instrument the full job operation boundary (including thrown failures) and LLM duration in a single `finally` path; skip all telemetry-only seed work when disabled and keep enabled seed work bounded and recoverable.
 - [x] Rerun focused tests and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all passed.
-- [x] Commit this unit as `fix(observability): record failure-path metrics without blocking startup`.
+- [x] Commit this unit as `fix(observability): record failure-path metrics without blocking startup` (`a0b6b84`).
 
 ### Task 4: Correct alert/dashboard math and test rule behavior in CI
 
