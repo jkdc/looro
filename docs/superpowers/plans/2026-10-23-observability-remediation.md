@@ -1,0 +1,155 @@
+# Observability Remediation Implementation Plan
+
+> **For agentic workers:** Execute task-by-task using `superpowers:executing-plans`; every behavior change follows `superpowers:test-driven-development`. Steps use checkbox syntax.
+> **Delivery:** Work-unit commits remain on `feature/observability`; no push or pull request is authorized.
+
+**Goal:** Close the privacy, alert-correctness, failure-instrumentation and HTTP trace gaps documented by the approved design without changing the observability stack or enabling generation by default.
+
+**Architecture:** Preserve manual OpenTelemetry instrumentation and the existing Prometheus/Tempo stack. Use safe route templates for HTTP telemetry, derive expected weekly-generation state from the enabled scheduler configuration and already-persisted results, and verify alert expressions with simulated Prometheus rules.
+
+**Tech Stack:** Node.js 22, TypeScript, Fastify 5, OpenTelemetry JS 3.x, PostgreSQL 17, Prometheus/promtool 2.54.1, Docker Compose.
+
+**Spec:** `docs/superpowers/specs/2026-10-23-observability-remediation-design.md`; review evidence: `informe-observabilidad-2026-10-23.md`.
+
+## Global Constraints
+
+- Keep `LEVELTEST_GENERATE_ENABLED=false` when unspecified.
+- Use ISO weekday `7` (Sunday) as the default scheduler day; keep hour `4` UTC unless an explicit config overrides it.
+- The weekly generation deadline is four hours after the configured UTC schedule.
+- Do not add a PostgreSQL migration or a durable activation marker.
+- Do not log request bodies, query strings, concrete path segments, credentials, IPs, account IDs, provider messages, or arbitrary exception objects.
+- Preserve public HTTP status/body compatibility; add correlation only through a backward-compatible surface.
+- Keep explicit user-configured day/hour/languages/levels authoritative.
+- Preserve `busy`/`exists` no-op semantics, LLM no-retry behavior, and honest error/tokens reporting.
+- Do not enable W3C distributed propagation or create an API/CLI identity change without a reproduced Collector collision.
+- Do not inspect or change remote deployment configuration, contact real LLM providers, or stop/start user services.
+- Tests run with the existing Node test runner (`tsx --test`); do not introduce a test framework or generated artifacts.
+
+## Review Focus
+
+1. A request with PII in a path parameter or unmatched path must not export it to stdout or a span attribute.
+2. A log event must not permit caller-provided fields to overwrite reserved fields or add forbidden keys.
+3. First generation failure, failure before the first Prometheus scrape, disabled generation, and an API restart must not be confused with a healthy scheduled week.
+4. A real pool saturation interval and an isolated short spike must follow the documented pending/firing policy.
+5. No-5xx traffic, no traffic, direct 502 responses, telemetry-disabled startup, and failed DB seeding must remain distinguishable and compatible.
+
+## File Map
+
+- `services/api/src/log.ts`: logger field contracts and runtime reserved-key safety.
+- `services/api/src/app.ts`: request logs, request spans, status/error/context and direct-502 correlation.
+- `services/api/src/metrics.ts`, `observability.ts`, `main.ts`: domain metrics and telemetry lifecycle.
+- `services/api/src/level-tests-scheduler.ts`: UTC default and expected weekly calendar.
+- `services/api/src/level-tests-generation-jobs.ts`, `llm-config.ts`: result and duration measurements on failures.
+- `services/api/telemetry/alerts.yml`, `alerts.test.yml`, `grafana/dashboards/palique-overview.json`: operational conditions and their rule tests.
+- `services/api/tests/observability.test.ts`, `level-tests-scheduler.test.ts`, HTTP test files: regression evidence.
+- `Makefile`, `.github/workflows/checks.yml`: run behavioral Prometheus rule tests in the existing validation flow.
+- Existing observability plan, OpenSpec, operations docs and `verify-report.md`: keep requirements and observed evidence aligned.
+
+## Tasks
+
+### Task 1: Make HTTP observability safe and semantically correct
+
+**Files:** `services/api/src/log.ts`, `services/api/src/app.ts`, `services/api/tests/observability.test.ts`, relevant HTTP tests, and the privacy/span sections of the original plan and OpenSpec.
+
+**Interfaces:** Preserve public `log.info/warn/error` use at current call sites while replacing unbounded fields with event-safe fields. Request log route values remain a matched route template or `unmatched`. HTTP spans remain attached to the request and use the installed OTel 3.x context APIs.
+
+- [x] Add a focused test with unique PII markers in a matched parameter, unmatched path, query, header, body and error; assert no marker occurs in captured logs or completed span attributes/events.
+- [x] Run `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts`; observe failure specifically for the concrete `url.path` or unmatched route leak.
+- [x] Add tests proving logger inputs cannot overwrite `timestamp`, `level`, `event`, and cannot emit forbidden field names; assert valid events stay JSON scalar records.
+- [x] Add tests that captured request spans have kind `SERVER`, status `ERROR` on 5xx and an active request context is correct across two concurrent requests.
+- [x] Add a direct provider-test 502 regression asserting existing JSON body/status are unchanged while a documented server-generated correlation header and safe failure event are present.
+- [x] Implement only the field filtering, safe route attributes, active request context, span kind/status and compatible 502 correlation required by these tests. Do not attach a raw path template to `url.path`.
+- [x] Rerun `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts tests/http.test.ts`; expect zero failures and no PII markers in any captured channel.
+- [x] Run `cd services/api && ./node_modules/.bin/tsc --noEmit`; expect exit 0.
+- [ ] Commit this unit as `fix(observability): protect request telemetry and classify server spans`.
+
+### Task 2: Derive weekly generation health from schedule and persisted outcomes
+
+**Files:** `services/api/src/level-tests-scheduler.ts`, `metrics.ts`, `observability.ts`, `main.ts`, generation-related API tests, `tests/level-tests-scheduler.test.ts`, scheduler/alert OpenSpec and operations docs.
+
+**Interfaces:** Scheduler continues to accept ISO `day`, UTC `hour`, languages and levels. Its defaults become `day=7`, `hour=4`, and `enabled=false`. Generation-state telemetry must distinguish disabled, pending, satisfied, overdue/missing and unavailable without high-cardinality labels or invented timestamps.
+
+- [ ] Add deterministic tests for default `{enabled:false, day:7, hour:4}`, an explicit override, Sunday UTC calculation, the four-hour deadline, language/level coverage and startup after the deadline.
+- [ ] Add DB-fixture tests for each configured `(week, language, level)`: a valid stored week/finished result satisfies the schedule; failed, unknown, running, missing and unreadable state do not report success; a disabled scheduler emits no missed-week alert state.
+- [ ] Add tests for first failure before any Prometheus scrape, after API restart with existing DB rows, and for failed-history expiry at the documented 24-hour boundary.
+- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/level-tests-scheduler.test.ts tests/observability.test.ts`; observe the current Monday default/empty historical signal fail the new expectations.
+- [ ] Use the existing persisted jobs/week records to seed and refresh bounded in-memory observable metrics; keep DB query failures distinct from an empty result and avoid querying the DB inside a synchronous OTel callback.
+- [ ] Change only the unspecified weekday default to Sunday; keep enabled opt-in, keep hour 04:00 UTC, and preserve explicit schedule overrides.
+- [ ] Replace the one-time-success-only health signal with current-week per-combination schedule coverage and the approved four-hour grace.
+- [ ] Rerun both focused test files and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
+- [ ] Commit this unit as `feat(observability): detect missed weekly generation from persisted state`.
+
+### Task 3: Measure rejected jobs, LLM latency and disabled-telemetry startup correctly
+
+**Files:** `services/api/src/level-tests-generation-jobs.ts`, `services/api/src/llm-config.ts`, `services/api/src/observability.ts`, `services/api/src/main.ts`, and focused tests/docs for their metric semantics.
+
+**Interfaces:** Preserve existing return/error shapes, `busy`/`exists` behavior, bounded safe error-code labels, token accounting and no automatic LLM retries. `initGenerationMetrics` must be a true no-op when OTel is disabled and must not block API listen when enabled.
+
+- [ ] Add tests that connection-acquisition, query and job-finalization rejections preserve the original rejection and record one failed execution plus one duration without setting last-success.
+- [ ] Add tests proving `busy` and `exists` still record no execution success/failure.
+- [ ] Add LLM tests for success, non-2xx, fetch rejection, invalid JSON, empty response and cancellation. Assert one duration and correct result on every path; preserve token counts only when known and preserve zero retries.
+- [ ] Add a telemetry-disabled startup test asserting zero seed queries, and active telemetry tests for query failure/recovery plus a bounded shutdown/startup path.
+- [ ] Run the focused test file(s); confirm RED specifically exposes absent failure duration/counter and the unexpected disabled-mode DB query.
+- [ ] Instrument the full job operation boundary (including thrown failures) and LLM duration in a single `finally` path; skip all telemetry-only seed work when disabled and keep enabled seed work bounded and recoverable.
+- [ ] Rerun focused tests and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
+- [ ] Commit this unit as `fix(observability): record failure-path metrics without blocking startup`.
+
+### Task 4: Correct alert/dashboard math and test rule behavior in CI
+
+**Files:** `services/api/telemetry/alerts.yml`, new `services/api/telemetry/alerts.test.yml`, `services/api/telemetry/grafana/dashboards/palique-overview.json`, Makefile validation target(s), `.github/workflows/checks.yml`.
+
+**Interfaces:** Existing six rule names, severities and service selectors remain stable unless the schedule design requires one named rule to use the new weekly signal. Dashboard JSON remains provisioned and valid. Rule tests use the exact bundled Prometheus/promtool version 2.54.1.
+
+- [ ] Add isolated `promtool test rules` cases for every existing alert firing, not firing, and resolving where applicable; include the first failed event, weekly deadline, disabled schedule, saturation recovery, 200-only traffic, mixed status traffic, zero traffic and metric absence.
+- [ ] Run `promtool test rules services/api/telemetry/alerts.test.yml`; observe the existing pool, first-failure and no-5xx SLO counterexamples fail.
+- [ ] Change pool utilization to align capacity and in-use labels for the one-instance deployment and express sustained saturation with the approved five-minute policy.
+- [ ] Calculate no-5xx ratio as zero only when a positive total request rate exists; preserve no-traffic and no-metrics cases as distinct.
+- [ ] Change the failure/stale generation alerts to consume the persisted weekly/window signals from Task 2; retain independent LLM failure alert semantics without pretending the first sample is a measured counter delta.
+- [ ] Wire `promtool test rules` into `make obs-check` and the existing CI telemetry job; retain `promtool check rules` and `amtool check-config`.
+- [ ] Run rule tests, `make obs-check`, and dashboard JSON parsing; expect all cases pass and six rule syntax checks remain valid.
+- [ ] Commit this unit as `fix(observability): test alert behavior and correct PromQL math`.
+
+### Task 5: Reconcile documentation and verify the complete pipeline
+
+**Files:** `docs/superpowers/plans/2026-10-22-observability.md`, `openspec/changes/observability/`, `services/api/docs/observability.md`, `openspec/changes/observability/verify-report.md`, and API/CLI probe tests/fixtures only if the collision experiment demonstrates a defect.
+
+**Interfaces:** Documentation must describe implemented behavior and observed proof, not planned or assumed behavior. The API/CLI identity question stays a probe until a reproduced collision justifies a source change.
+
+- [ ] Add a safe isolated API+CLI exporter test: run API-only export, then API plus generation CLI exports, and assert stable counters/gauges/resources without ID cardinality growth. Do not contact real providers or start deployed services.
+- [ ] Run the probe and classify the suspected resource collision as confirmed or not reproduced; only change identity if a wrong metric outcome reproduces, then add a failing regression and update all selectors together.
+- [ ] Update design/spec/plan examples to remove raw URL fields, make logger guarantees precise, describe Sunday UTC/opt-in/four-hour schedule and configured overrides, explain alert no-data states, and name `promtool check` (syntax) vs `promtool test rules` (behavior).
+- [ ] Update runbooks with the actual deadline, DB-unavailable state, per-combination interpretation and API-vs-Collector detection budget; append new proof to the verify report without rewriting old run history.
+- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts tests/level-tests-scheduler.test.ts`, `cd services/api && ./node_modules/.bin/tsc --noEmit`, `make obs-check`, and `make test-api` in the isolated test stack.
+- [ ] Run `make check`; record unavailable platform checks or environment failures explicitly rather than claiming success.
+- [ ] Commit this unit as `docs(observability): align contracts and verification evidence`.
+
+## Interfaces and Pre-flight
+
+Task 1 owns `app.ts` request-log/span changes; no other task modifies that behavior except compatible response correlation in the same unit. Task 2 owns weekly schedule state emitted to metrics; Task 4 consumes that exact metric/status contract in alert rules. Task 3 owns execution-level failure/duration instruments; Task 4 consumes their stable names and labels. Task 5 only documents these settled interfaces.
+
+No source generator or schema migration is needed. The existing branch is already `feature/observability`; do not create a worktree against another branch or alter remote state.
+
+## Verification
+
+- Focused TypeScript tests: `cd services/api && ./node_modules/.bin/tsx --test <relevant test files>`.
+- Static typecheck: `cd services/api && ./node_modules/.bin/tsc --noEmit`.
+- Prometheus behavior: `promtool test rules services/api/telemetry/alerts.test.yml` with project promtool 2.54.1.
+- Ops config: `make obs-check`.
+- API integration: `make test-api` (isolated smoke stack only).
+- Cross-repository contracts: `make check`.
+- No tests may issue a real LLM request, read a deployment credential, or stop a user service.
+
+## Known Environmental Limitations
+
+- `gentle-ai review mode status` cannot run in this workspace (`gentle-ai: command not found`, exit 127). Treat RDD state as unknown and do not claim review approval; retain ordinary tests plus the required independent high-risk verification.
+- CodeGraph CLI and MCP are unavailable; the design and audit used the already-reviewed source map.
+- The Linux workspace cannot run iOS/Xcode checks.
+
+## Log
+
+- L1 — Original authorized request: “lanza sdd usando superpowers y resuelve todos los problemas que has encontrado y definido en el documento que has generado”.
+- L2 — User requirement: “la generación de examenes debería ocurrir los domingos por tanto siempre podemos saber si se han generado o no cada lunes o cada domingo unos horas despues de que corra el worker que los genera, te vale esta respuesta?”
+- L3 — User setting: “mantenemos el interruptor optativo”.
+- L4 — User approval of the four-hour deadline and written design: “ok”; “dale”.
+- L5 — Baseline is commit `a5b103680feac26b2ac4242d081528e57a7e8a3d` on `feature/observability`; reviewed origin range was `707e9b4..a5b1036`.
+- L6 — Fresh builder check of the approved design returned `nothing important left`.
