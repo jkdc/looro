@@ -220,6 +220,7 @@ Todas las actions están pineadas por SHA.
 - Para cambios significativos, mantener SDD en `openspec/changes/` y trabajar con pruebas-first cuando exista un test determinista aplicable.
 - No preguntar cómo encadenar PR ni proponer una estrategia de ramas como condición para continuar. No hacer push, abrir PR ni mergear salvo petición explícita.
 - Usar commits convencionales, pequeños y verificables; nunca añadir atribución de IA o `Co-Authored-By`.
+- En E2E, guardar capturas en `E2E_EVIDENCE_DIR` dentro del directorio ignorado del SDD; no sobrescribir las evidencias versionadas salvo que la actualización sea intencional.
 
 1. **Lee primero**: `README.md`, el `proposal.md` del change relevante si
    existe, y los ficheros vecinos del que vas a tocar.
