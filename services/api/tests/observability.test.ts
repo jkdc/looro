@@ -103,7 +103,36 @@ test('domain metrics record through the instruments with contract attributes', a
 //
 // Section 3: OTel init/shutdown and pool gauges (src/observability.ts)
 // Static import per file convention (see the Section 2 note on live bindings).
-import { addDatabasePoolObservability, initObservability, shutdownObservability } from '../src/observability.js';
+import { addDatabasePoolObservability, initObservability, observabilityResourceAttributes, shutdownObservability, startGenerationMetricsRefresh } from '../src/observability.js';
+
+test('API and generation CLI have distinct stable OTel service instance identities', () => {
+  assert.deepEqual(observabilityResourceAttributes({}), {
+    'service.name': 'palique-api',
+    'service.instance.id': 'api',
+  });
+  assert.deepEqual(observabilityResourceAttributes({ OTEL_SERVICE_INSTANCE_ID: 'leveltest-generate' }), {
+    'service.name': 'palique-api',
+    'service.instance.id': 'leveltest-generate',
+  });
+});
+
+test('generation failure timestamps refresh from durable jobs only while telemetry is enabled', async () => {
+  let calls = 0;
+  const db = { query: async () => { calls += 1; return { rows: [] }; } } as never;
+  const stop = startGenerationMetricsRefresh(db, 5, true);
+  await new Promise(resolve => setTimeout(resolve, 18));
+  stop();
+  const observedCalls = calls;
+  await new Promise(resolve => setTimeout(resolve, 12));
+  assert.ok(observedCalls >= 2);
+  assert.equal(calls, observedCalls);
+
+  calls = 0;
+  const disabledStop = startGenerationMetricsRefresh(db, 5, false);
+  await new Promise(resolve => setTimeout(resolve, 12));
+  disabledStop();
+  assert.equal(calls, 0);
+});
 
 // No-op contract: tests, the smoke stack and CI never start the telemetry
 // stack, so init must install nothing until OTEL_ENABLED is exactly 'true'.

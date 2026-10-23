@@ -75,6 +75,7 @@ el collector (`:8889`) y las scrapea Prometheus.
 | `palique.leveltest.generation.jobs` | Counter | `language`, `level`, `status` ∈ `finished` \| `failed` \| `unknown` | `palique_leveltest_generation_jobs_total` |
 | `palique.leveltest.generation.job.duration` | Histogram (s) | `language`, `level` | `palique_leveltest_generation_job_duration_seconds_*` |
 | `palique.leveltest.generation.last_success_unix_seconds` | Gauge | — | `palique_leveltest_generation_last_success_unix_seconds` |
+| `palique.leveltest.generation.last_failure_unix_seconds` | Gauge | — | `palique_leveltest_generation_last_failure_unix_seconds` |
 | `palique.llm.requests` | Counter | `provider`, `status` ∈ `ok` \| `failed`, `error_code` | `palique_llm_requests_total` |
 | `palique.llm.request.duration` | Histogram (s) | `provider` | `palique_llm_request_duration_seconds_*` |
 | `palique.llm.tokens` | Counter | `provider`, `direction` ∈ `input` \| `output` | `palique_llm_tokens_total` |
@@ -85,6 +86,12 @@ Recordatorios operativos:
   código emite. Una serie `_total` no aparece hasta el primer evento.
 - Labels de cardinalidad cerrada: plantilla de ruta, nunca URL cruda con IDs;
   nunca identificadores de usuario ni IPs.
+- La API y el proceso CLI de generación comparten `service.name=palique-api`,
+  pero usan `service.instance.id=api` y `service.instance.id=leveltest-generate`
+  respectivamente. En el exporter aparecen como `instance`; al scrapearlo,
+  Prometheus los conserva como `exported_instance` junto con su propia etiqueta
+  `instance`. Son dos roles fijos, no IDs únicos por proceso, para evitar
+  colisiones sin cardinalidad creciente por reinicios.
 - Los spans HTTP son `SERVER`, usan exclusivamente `http.route` como plantilla
   (o `unmatched`) y no exportan `url.path`. El contexto del span se mantiene
   aislado por petición hasta completar su respuesta.
@@ -108,17 +115,22 @@ Todas filtran `job="otel-collector", exported_job="palique-api"`.
 |---|---|---|---|---|
 | `ApiHttp5xxRatioHigh` | ratio 5xx sobre el total RED en 5 m | > 5 % | 1m | critical |
 | `ApiMetricsMissing` | `absent()` de la serie de latido (gauge del pool) | ausente | 5m | critical |
-| `LevelTestGenerationFailed` | `(sum(increase(...{status="failed"}[24h])) or vector(0)) > 0` | cualquier fallo en 24 h | 1m | warning |
-| `LevelTestGenerationStale` | `time() - ...last_success_unix_seconds` | > 691200 s (8 días) | 1m | warning |
+| `LevelTestGenerationFailed` | `time() - max(...last_failure_unix_seconds) < 86400` | fallo real en las últimas 24 h | 1m | warning |
 | `LlmFailuresSpike` | `(sum(increase(...{status="failed"}[1h])) or vector(0)) > 5` | > 5 fallos/h | 1m | warning |
-| `DbPoolSaturated` | `max_over_time(...{state="in_use"}[5m]) / max(...max_connections)` | > 90 % del pool | 1m | warning |
+| `DbPoolSaturated` | utilización mínima durante una ventana completa de 5m, con al menos 20 muestras (scrape cada 15s) | > 90 % del pool | 1m | warning |
+
+No existe una alerta para una generación programada ausente o antigua. La
+generación mantiene el valor predeterminado optativo (`LEVELTEST_GENERATE_ENABLED=false`)
+y el calendario predeterminado es domingo a las 04:00 UTC. Solo un intento
+real fallido produce la señal alertable; `last_success` se conserva como
+información de dashboard y no representa por sí solo una incidencia.
 
 Lecciones incorporadas:
 
-- Los counters sin eventos no existen como serie: por eso las reglas que
-  pueden disparar con «cualquier evento» se anclan con
-  `(sum(...) or vector(0))` **con paréntesis** (sin ellos `or` se evalúa
-  después de la comparación y la regla dispara siempre).
+- Los counters sin eventos no existen como serie. El anclaje con
+  `(sum(...) or vector(0))` hace explícito el cero para las consultas que lo
+  necesitan, pero **no recupera el primer evento** de un counter. La alerta de
+  generación usa el timestamp del último fallo real por ese motivo.
 - `ApiMetricsMissing` usa `absent()` con `for: 5m` para no disparar en cada
   redepliegue y para cubrir el punto ciego de un proceso caído (el resto de
   alertas de dominio se auto-resuelven si el proceso muere). Se ancla en
@@ -133,6 +145,7 @@ Validación:
 
 ```bash
 promtool check rules services/api/telemetry/alerts.yml   # o make obs-check
+promtool test rules services/api/telemetry/alerts.test.yml # escenarios fire/resolve/no-fire
 curl -s localhost:9090/api/v1/rules | jq '.data.groups[].rules[].name'
 curl -s localhost:9090/api/v1/alerts | jq '.data.alerts'
 docker compose -f services/api/compose.yaml logs webhook-logger
@@ -147,7 +160,7 @@ la retención de Prometheus (90 días, 2 GB) la hace posible.
 |---|---|---|---|
 | 1 | ≥ 99,5 % de peticiones sin 5xx al mes (presupuesto ≈ 3,6 h) | `1 - sum(rate(http_server_request_duration_seconds_count{exported_job="palique-api",http_response_status_code=~"5.."}[30d])) / sum(rate(http_server_request_duration_seconds_count{exported_job="palique-api"}[30d]))` | evaluación manual; la alerta 5xx es táctica, no medición de SLO |
 | 2 | p95 de GET < 500 ms | `histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{exported_job="palique-api",http_request_method="GET"}[5m])))` | sin alerta de latencia en esta fase |
-| 3 | semana de exámenes generada y publicada a tiempo | proxy: `LevelTestGenerationStale` no dispara | la frescura end-to-end (evento → app) queda como evolución |
+| 3 | semana de exámenes generada y publicada a tiempo | no medido por estas alertas | ausencia de un fallo no demuestra que se haya publicado una generación; comprobarlo por separado |
 
 ## Stack y puertos
 
@@ -190,6 +203,17 @@ funcionando: es un fallo de observabilidad, no de producto.
 
 <a id="generacion-fallando"></a>
 ### Generación fallando
+
+La alerta `LevelTestGenerationFailed` solo representa una ejecución real
+fallida durante las últimas 24 horas; no alerta por falta de salida o por
+antigüedad. El scheduler permanece optativo y, si no se configura otro valor,
+se ejecuta el domingo a las 04:00 UTC. La señal usa el último timestamp de
+fallo persistido disponible, se siembra al iniciar la API y se refresca cada
+minuto mientras OTel está habilitado. Así los fallos del CLI de una sola
+ejecución siguen representados después de que ese proceso termine. Si el fallo
+no llegó a persistirse, puede observarse en el proceso actual, pero no
+recuperarse tras un reinicio. `last_success` es informativo y no activa esta
+alerta.
 
 Revisar `level_test_generation_jobs` y `level_test_weeks` en PostgreSQL.
 Códigos habituales: `llm_outcome_unknown` (transporte tras invocar al

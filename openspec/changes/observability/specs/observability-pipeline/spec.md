@@ -107,11 +107,15 @@ Prometheus series with closed-cardinality labels:
 `palique_leveltest_generation_jobs_total{language,level,status=finished|failed|unknown}`,
 `palique_leveltest_generation_job_duration_seconds_*{language,level}`,
 `palique_leveltest_generation_last_success_unix_seconds`,
+`palique_leveltest_generation_last_failure_unix_seconds`,
 `palique_llm_requests_total{provider,status=ok|failed,error_code (failed only)}`,
 `palique_llm_request_duration_seconds_*{provider}`, and
 `palique_llm_tokens_total{provider,direction=input|output}`, with resource
-`service.name=palique-api` and no user identifier in any label. Counters SHALL
-be created via a re-initializable factory over the OTel meter.
+`service.name=palique-api` and no user identifier in any label. The API and
+generation CLI SHALL use distinct fixed `service.instance.id` values (`api`
+and `leveltest-generate`) so simultaneous exporters do not overwrite identical
+Prometheus series; these role IDs SHALL not vary across process restarts.
+Counters SHALL be created via a re-initializable factory over the OTel meter.
 
 #### Scenario: counter series absent until first event
 
@@ -125,37 +129,64 @@ be created via a re-initializable factory over the OTel meter.
 - **THEN** `palique_leveltest_generation_jobs_total` is incremented with the
   job's `language`, `level`, and resulting `status`, and a successful run
   updates `palique_leveltest_generation_last_success_unix_seconds`.
+- **AND** an actual failed execution updates
+  `palique_leveltest_generation_last_failure_unix_seconds`, including when
+  database access or job finalization throws.
 
 ### Requirement: Alerts loaded in Prometheus
 
-`telemetry/alerts.yml` SHALL define these six rules, all filtering
+`telemetry/alerts.yml` SHALL define these five rules, all filtering
 `job="otel-collector", exported_job="palique-api"` and annotated with a
 `runbook` pointing at `docs/observability.md#runbooks`, evaluated every 30s
 with `for: 1m` (5m for `absent()` rules):
 
 - `ApiHttp5xxRatioHigh`: 5xx ratio over RED count in 5m > 5 % (critical).
 - `ApiMetricsMissing`: `absent()` on the RED series > 5m (critical).
-- `LevelTestGenerationFailed`: any failed generation job in 24h, anchored with
-  `(sum(increase(palique_leveltest_generation_jobs_total{status="failed"}[24h]))
-  or vector(0)) > 0` (warning).
-- `LevelTestGenerationStale`:
-  `time() - palique_leveltest_generation_last_success_unix_seconds > 691200`
-  (last success older than 8 days, warning).
+- `LevelTestGenerationFailed`: an actual recorded failure during the last 24h,
+  expressed as `time() - max(palique_leveltest_generation_last_failure_unix_seconds)
+  < 86400` (warning). Missing or stale output alone SHALL NOT fire this rule.
 - `LlmFailuresSpike`: more than 5 failed LLM requests in 1h, anchored with
   `(sum(increase(palique_llm_requests_total{status="failed"}[1h]))
   or vector(0)) > 5` (warning).
-- `DbPoolSaturated`: `in_use` connections > 90 % of
-  `palique_db_pool_max_connections` over 5m (warning).
+- `DbPoolSaturated`: `in_use` connections remain > 90 % of
+  `palique_db_pool_max_connections` for a complete 5m sample window, with at
+  least 20 observations at the 15s scrape interval (warning).
 
 Prometheus SHALL load the file via `rule_files` and route firing alerts to
 Alertmanager (single route to the local `webhook-logger` sink). Both configs
-SHALL pass `promtool`/`amtool` validation (`make obs-check`, CI step).
+SHALL pass syntax validation and behavioral fixtures: `promtool check rules`,
+`promtool test rules telemetry/alerts.test.yml`, and `amtool check-config`,
+through `make obs-check` and CI. Fixtures SHALL cover firing, resolution,
+healthy/no-data conditions, and the short startup pool-spike case.
 
-#### Scenario: stale weekly generation
+#### Scenario: missing weekly output is not a generation failure
 
-- **WHEN** the last successful generation is older than 8 days
-- **THEN** `LevelTestGenerationStale` fires with severity `warning` and its
-  runbook annotation, and routes to the local webhook sink.
+- **WHEN** a scheduled run or its output is missing or old, and no execution
+  has failed
+- **THEN** no generation alert fires.
+
+#### Scenario: actual generation failure is alertable
+
+- **WHEN** a generation execution fails
+- **THEN** its failure timestamp is exported and `LevelTestGenerationFailed`
+  fires while that timestamp is less than 24 hours old.
+- **AND** the alert resolves after 24 hours without a newer failure.
+
+#### Scenario: persisted failure survives restart
+
+- **WHEN** OTel is enabled at startup and durable failed job records exist
+- **THEN** the last failure timestamp is seeded and remains alertable.
+- **AND** the API refreshes the durable success/failure timestamps at least
+  once per minute while telemetry is enabled, so a one-shot generation CLI
+  export remains represented after the CLI exits.
+- **AND** the API performs no telemetry database query for this refresh when
+  OTel is disabled.
+
+#### Scenario: opt-in weekly schedule default
+
+- **WHEN** no schedule override is configured
+- **THEN** generation remains disabled unless explicitly enabled and defaults
+  to Sunday at 04:00 UTC.
 
 #### Scenario: metric series missing
 

@@ -12,7 +12,7 @@ Este cambio debe hacer que las garantías de privacidad, cobertura de alertas y 
 
 1. Nunca exportar rutas concretas o datos derivados de la petición en logs, métricas o atributos de spans.
 2. Hacer que las alertas de pool, generación, LLM y disponibilidad reflejen su semántica declarada y se prueben con datos temporales simulados.
-3. Medir y alertar los fallos reales de generación, incluso si ocurren antes del primer scrape o el servidor se reinicia.
+3. Medir y alertar los fallos reales de generación, incluso si ocurren antes del primer scrape, el CLI termina o el servidor se reinicia.
 4. Registrar duraciones y resultados también en los caminos de fallo, preservando errores, cuerpos HTTP, ausencia de reintentos y semántica de los jobs no-op.
 5. Asegurar que las trazas HTTP representen spans de servidor y clasifiquen correctamente los 5xx.
 6. Mantener compatibilidad del panel y los consumidores de respuestas HTTP 502 existentes.
@@ -25,12 +25,12 @@ Este cambio debe hacer que las garantías de privacidad, cobertura de alertas y 
 - Ejecutar el stack de producción, usar credenciales, contactar proveedores LLM reales o cambiar sus costes.
 - Añadir una tabla o migración para marcar el primer arranque.
 - Añadir entrega externa de alertas, instrumentación móvil, propagación distribuida W3C ni soporte de infraestructura multiinstancia.
-- Tratar la hipótesis no reproducida de colisión API/CLI como defecto; se probará de forma aislada y solo se modificará esa identidad si la prueba lo demuestra.
+- La prueba aislada confirmó que los exporters API y CLI con identidad idéntica sobrescriben la misma serie Prometheus. La remediación usa IDs de instancia fijos por rol para separar ambos streams sin cardinalidad por reinicio.
 
 ## Restricciones confirmadas
 
 - La configuración actual calcula día y hora en UTC. Los días son ISO-8601: `1` lunes y `7` domingo.
-- El código y Compose usan ahora lunes (`1`) a las 04:00 UTC como valor predeterminado.
+- Tras la implementación de T2, el código y Compose usan domingo (`7`) a las 04:00 UTC como valor predeterminado; `LEVELTEST_GENERATE_ENABLED` sigue siendo optativo.
 - `LEVELTEST_GENERATE_ENABLED` sigue en `false` si no se configura explícitamente. No se habilita como parte de este cambio.
 - La generación procesa las combinaciones de idiomas y niveles configuradas.
 - El esquema ya conserva por semana, idioma y nivel el historial de jobs; las salidas semanales también son persistentes. Los registros duraderos de jobs pueden recuperar fallos observados después de un reinicio.
@@ -67,7 +67,7 @@ Esta opción evita alertas por worker deshabilitado, retrasado o no ejecutado y 
 ### Alertas y ventanas
 
 - `DbPoolSaturated`: comparar utilization con la capacidad de la misma instancia (escalar expresamente el máximo para la topología actual de una instancia) y usar un valor sostenido durante cinco minutos más `for: 1m`. No usar `max_over_time` para afirmar continuidad.
-- `LevelTestGenerationFailed`: usar una señal que reconstruya el primer fallo, expire a las 24 horas y sobreviva al reinicio cuando existe registro duradero.
+- `LevelTestGenerationFailed`: usar una señal que reconstruya el primer fallo, expire a las 24 horas y sobreviva a la salida del CLI y al reinicio de API cuando existe registro duradero. API inicializa el gauge al arrancar y refresca el timestamp desde jobs persistidos cada minuto; las ejecuciones del CLI usan un `service.instance.id` fijo distinto del de API.
 - `LevelTestGenerationStale`: eliminarla; el calendario no se utiliza para alertar por una salida semanal ausente o antigua.
 - `ApiHttp5xxRatioHigh` y el SLO: devolver 0 errores y SLO 1 cuando hay tráfico medible y no hay 5xx; conservar diferenciación de cero tráfico y ausencia de métricas.
 - `ApiMetricsMissing`: mantener heartbeat seguro del proceso y documentar de manera separada caída de la API y caída del Collector; la expiración temporal del Collector forma parte del presupuesto de detección.

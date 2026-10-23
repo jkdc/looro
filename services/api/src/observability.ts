@@ -7,7 +7,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { BatchSpanProcessor, TracerProvider } from '@opentelemetry/sdk-trace';
-import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
+import { ATTR_SERVICE_INSTANCE_ID, ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import type { Database } from './db.js';
 import { initDomainMetrics, paliqueMetrics } from './metrics.js';
 import { AsyncLocalStorageContextManager } from './request-context.js';
@@ -15,6 +15,13 @@ import { AsyncLocalStorageContextManager } from './request-context.js';
 let shutdown: (() => Promise<void>) | undefined;
 const requestContextManager = new AsyncLocalStorageContextManager();
 let contextManagerInstalled = false;
+
+export function observabilityResourceAttributes(env: NodeJS.ProcessEnv): Record<string, string> {
+  return {
+    [ATTR_SERVICE_NAME]: env.OTEL_SERVICE_NAME ?? 'palique-api',
+    [ATTR_SERVICE_INSTANCE_ID]: env.OTEL_SERVICE_INSTANCE_ID ?? 'api',
+  };
+}
 
 // No-op unless OTEL_ENABLED=true (tests, smoke stack and CI never start the
 // telemetry stack). Idempotent: a second call keeps the first providers.
@@ -26,7 +33,7 @@ export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
   }
   requestContextManager.enable();
   const endpoint = (env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://otel-collector:4318').replace(/\/$/, '');
-  const resource = resourceFromAttributes({ [ATTR_SERVICE_NAME]: env.OTEL_SERVICE_NAME ?? 'palique-api' });
+  const resource = resourceFromAttributes(observabilityResourceAttributes(env));
   const tracerProvider = new TracerProvider({
     resource,
     spanProcessors: [new BatchSpanProcessor({
@@ -77,6 +84,19 @@ export async function initGenerationMetrics(db: Database, options: { enabled?: b
     if (row?.failure_at) paliqueMetrics.generationLastFailure.record(new Date(row.failure_at).getTime() / 1000);
   } catch { /* Telemetry must never block boot. */ }
   finally { if (timeout) clearTimeout(timeout); }
+}
+
+/** Refresh durable generation timestamps so one-shot CLI exporters remain
+    represented after the CLI process exits and the collector expires its data. */
+export function startGenerationMetricsRefresh(
+  db: Database,
+  intervalMs = 60_000,
+  enabled = process.env.OTEL_ENABLED === 'true',
+): () => void {
+  if (!enabled) return () => {};
+  const timer = setInterval(() => { void initGenerationMetrics(db, { enabled: true }); }, intervalMs);
+  timer.unref();
+  return () => clearInterval(timer);
 }
 
 // Gauges are recomputed at every export from live pool counters. Registered

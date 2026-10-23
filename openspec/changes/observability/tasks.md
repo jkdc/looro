@@ -99,3 +99,22 @@ pending items are recorded in `verify-report.md`.
       no secrets/tokens/authorization values.
 - [x] `verify-report.md` with commands, outputs, confirmed real label names,
       and honest pending items.
+
+## Remediation follow-up (2026-10-23)
+
+The original task completion above is historical evidence; the following
+requirements and checks supersede the original generation alert design.
+
+- [x] Scheduler defaults to Sunday at 04:00 UTC; generation remains opt-in.
+- [x] Removed the missing/stale-generation alert; added an actual-failure
+      timestamp gauge with durable startup seeding when records exist.
+- [x] Retained five alert rules and added `promtool test rules` behavioral
+      coverage to `make obs-check` and CI.
+- [x] Added a full-window guard for pool saturation and a startup-spike
+      no-fire regression.
+- [x] Isolated Collector probe reproduced API/CLI counter-series collision;
+      fixed resource identity with stable role IDs and refreshed durable
+      failure timestamps every minute from API.
+- [x] Reconciled current plan, OpenSpec, runbook and historical audit/report
+      references with the user-approved actual-failure-only alert requirement.
+- [ ] Record final full API/integration verification in `verify-report.md`.

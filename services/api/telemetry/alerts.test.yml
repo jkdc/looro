@@ -7,7 +7,9 @@ tests:
   - name: generation-failure-window
     interval: 1m
     input_series:
-      - series: 'palique_leveltest_generation_last_failure_unix_seconds{job="otel-collector",exported_job="palique-api"}'
+      - series: 'palique_leveltest_generation_last_failure_unix_seconds{job="otel-collector",exported_job="palique-api",instance="api"}'
+        values: '0+0x1500'
+      - series: 'palique_leveltest_generation_last_failure_unix_seconds{job="otel-collector",exported_job="palique-api",instance="leveltest-generate"}'
         values: '0+0x1500'
     alert_rule_test:
       - eval_time: 2m

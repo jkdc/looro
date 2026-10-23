@@ -18,10 +18,10 @@ The API has no runtime telemetry today: `package.json` has no observability
 dependencies, Fastify runs with `logger: false`, four spots emit bare
 `console.warn`/`console.error` lines, the existing `genReqId: randomUUID()`
 never reaches logs or error bodies, and there are no metrics, traces, or
-alerts. The weekly exam-generation scheduler runs in-process; a silent failure
-would go unnoticed until learners miss their weekly test. Incidents can only
-be debugged by reading unstructured container output with no request
-correlation.
+alerts. A failed exam-generation execution must be measurable and alertable,
+without treating a missing scheduled run or old output as an execution failure.
+Incidents can only be debugged by reading unstructured container output with
+no request correlation.
 
 ## Approach
 
@@ -53,6 +53,7 @@ The observability contract (source of truth for implementation):
   `palique_db_pool_max_connections`, `palique_leveltest_generation_jobs_total`,
   `palique_leveltest_generation_job_duration_seconds_*`,
   `palique_leveltest_generation_last_success_unix_seconds`,
+  `palique_leveltest_generation_last_failure_unix_seconds`,
   `palique_llm_requests_total`, `palique_llm_request_duration_seconds_*`,
   `palique_llm_tokens_total` — all with closed-cardinality labels (route
   template, never raw URLs; no user identifiers).
@@ -60,13 +61,13 @@ The observability contract (source of truth for implementation):
   UTC), `level`, `event`, plus `request_id`/`trace_id`/`error_code` when
   present; defined events replace today's `console.*` calls one-for-one.
 - **Alerts**: `ApiHttp5xxRatioHigh`, `ApiMetricsMissing`,
-  `LevelTestGenerationFailed`, `LevelTestGenerationStale`,
+  `LevelTestGenerationFailed`,
   `LlmFailuresSpike`, `DbPoolSaturated` — severity, runbook annotation,
   `for: 1m` (5m for `absent()`), validated by `promtool`/`amtool` via
   `make obs-check` and a CI step.
-- **SLOs**: three honest internal targets (≥ 99.5% non-5xx per month, p95 GET
-  < 500 ms, weekly generation on time) documented with their queries and
-  limitations.
+- **SLOs**: two measurable internal targets (≥ 99.5% non-5xx per month, p95
+  GET < 500 ms). Weekly generation publication is not measured by these
+  alerts; absence of a failure is not proof of successful publication.
 
 No SQL migrations: Prometheus and Tempo persist in Docker volumes. Tests use
 `InMemoryMetricReader` (unit) and the existing PG-backed integration pattern.

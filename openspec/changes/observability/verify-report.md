@@ -4,6 +4,12 @@ Branch: `feature/observability` (from `feature/learning-platform` @ `707e9b4`).
 Verified on Linux with Docker Compose (project `api`), Node 22 inside the
 images, PostgreSQL 17.
 
+> **Historical verification:** this report records the original implementation
+> and its then-current six-rule design. The 2026-10-23 remediation below
+> supersedes generation staleness alerting and appends behavioral evidence;
+> historical results are not retroactively treated as proof of the revised
+> contract.
+
 ## 1. Test suites
 
 | Command | Result |
@@ -141,6 +147,9 @@ restart.
    `error.requestId` to every 5xx; the assertion was updated (4xx stays
    exact). This test only runs with a real database, so `npm test` did not
    catch it — `make test-api` did.
+   **Superseded detail:** direct upstream 502 responses now preserve their
+   existing JSON body and expose correlation through `X-Request-Id`; they do
+   not add `error.requestId` to that body.
 4. **`make test-api` could never be green.** The smoke image is a production
    build (`npm ci --omit=dev`) and four operator-CLI tests spawn `tsx` from
    `node_modules/.bin`, which is absent there. The invoker now uses `tsx` when
@@ -163,11 +172,43 @@ restart.
 
 - External alert delivery (Slack/PagerDuty): a second Alertmanager receiver
   fed from an environment-provided URL.
-- SLO tracking automation: the three internal SLOs are documented queries,
+- SLO tracking automation: the two measurable internal SLOs are documented queries,
   evaluated manually.
-- Latency alert (p95) and end-to-end freshness (generated → served → app).
+- Latency alert (p95), weekly generation publication measurement and end-to-end
+  freshness (generated → served → app).
 - LLM cost in €: tokens are counted here; money is audited in the ledger and
   `/v1/pricing`, not in this pipeline.
 - NDJSON framing for container log drivers, W3C propagator for cross-service
   traces, and `trace_id` present but zero when `OTEL_ENABLED` is off are
   accepted minors recorded in the execution ledger.
+
+## 7. Remediation verification (2026-10-23)
+
+The current contract keeps generation opt-in, defaults the unspecified schedule
+to Sunday at 04:00 UTC, and does not alert on missing or stale output. Actual
+failed executions emit `palique_leveltest_generation_last_failure_unix_seconds`
+and alert for 24 hours; persisted failures seed the gauge on telemetry-enabled
+startup. The operational runbook documents that an unpersisted failure cannot
+be recovered after a restart. `last_success` remains informational.
+
+`DbPoolSaturated` now requires a complete five-minute window with at least 20
+observations at the configured 15-second scrape interval. Behavioral
+`promtool test rules` coverage verifies alert firing, resolution, no-fire on
+missing/stale generation output, and no-fire for a short startup pool spike.
+The original six-rule syntax check above is historical; the current rule set
+contains five rules.
+
+An isolated Collector 0.127.0 exporter probe also reproduced the API/CLI
+resource-identity collision. Two process-style exporters with the same
+`service.name` and metric attributes emitted counter values 1 and 2, but the
+Collector exposed only the latter series/value. Repeating with fixed
+`service.instance.id=api` and `service.instance.id=leveltest-generate` exposed
+two distinct series, with no random per-process label. API now refreshes the
+durable latest success/failure timestamps every minute while telemetry is
+enabled, so metrics from the one-shot CLI remain represented after process
+exit. Unit coverage verifies the fixed role attributes and that disabled
+telemetry does not start the database refresh timer.
+
+The final verification commands/results for this remediation are recorded in
+the work-unit task document and commit history; this appendix intentionally
+does not rewrite the original live-stack evidence above.

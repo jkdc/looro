@@ -108,16 +108,14 @@
 
 ### Task 5: Reconcile documentation and verify the complete pipeline
 
-**Files:** `docs/superpowers/plans/2026-10-22-observability.md`, `openspec/changes/observability/`, `services/api/docs/observability.md`, `openspec/changes/observability/verify-report.md`, and API/CLI probe tests/fixtures only if the collision experiment demonstrates a defect.
+**Files:** `docs/superpowers/plans/2026-10-22-observability.md`, `openspec/changes/observability/`, `services/api/docs/observability.md`, `openspec/changes/observability/verify-report.md`, `services/api/src/{observability.ts,main.ts,level-tests-generate.ts}`, and telemetry tests/fixtures. The service identity and refresh code are authorized only because the isolated exporter probe reproduced a collision and one-shot CLI expiry.
 
-**Interfaces:** Documentation must describe implemented behavior and observed proof, not planned or assumed behavior. The API/CLI identity question stays a probe until a reproduced collision justifies a source change.
+**Interfaces:** Documentation must describe implemented behavior and observed proof, not planned or assumed behavior. API and CLI share `service.name=palique-api` but need distinct fixed `service.instance.id` values; the API refreshes durable generation timestamps every minute while OTel is enabled.
 
-- [ ] Add a safe isolated API+CLI exporter test: run API-only export, then API plus generation CLI exports, and assert stable counters/gauges/resources without ID cardinality growth. Do not contact real providers or start deployed services.
-- [ ] Run the probe and classify the suspected resource collision as confirmed or not reproduced; only change identity if a wrong metric outcome reproduces, then add a failing regression and update all selectors together.
-- [ ] Update design/spec/plan examples to remove raw URL fields, make logger guarantees precise, describe Sunday UTC/opt-in scheduling without missing-run alerts, explain alert no-data states, and name `promtool check` (syntax) vs `promtool test rules` (behavior).
-- [ ] Update runbooks with the actual deadline, DB-unavailable state, per-combination interpretation and API-vs-Collector detection budget; append new proof to the verify report without rewriting old run history.
-- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts tests/level-tests-scheduler.test.ts`, `cd services/api && ./node_modules/.bin/tsc --noEmit`, `make obs-check`, and `make test-api` in the isolated test stack.
-- [ ] Run `make check`; record unavailable platform checks or environment failures explicitly rather than claiming success.
+- [x] Safe isolated Collector exporter probe reproduced same-identity series overwrite; distinct fixed role IDs produced two separate series without per-run cardinality.
+- [x] Added failing resource-identity and timestamp-refresh tests before implementation; role IDs and periodic durable refresh now preserve CLI failure visibility.
+- [x] Reconciled plan, OpenSpec requirements/design/tasks, operational runbook and historical report; recorded actual-only failure alerting and functional rule-test commands.
+- [ ] Finish full focused TypeScript, typecheck, `make obs-check`, isolated `make test-api`, `make check`, and independent verification after the collision correction.
 - [ ] Commit this unit as `docs(observability): align contracts and verification evidence`.
 
 ## Interfaces and Pre-flight

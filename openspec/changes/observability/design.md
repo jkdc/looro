@@ -64,14 +64,21 @@ logs `user_id`) — Palique's privacy policy (logs without personal data, local
 erasure audit) wins; it also simplifies the RGPD compliance already documented
 in the repo.
 
-### D8 — `generation_last_success` as a gauge set at startup
+### D8 — Alert only on actual generation failures
 
-`palique_leveltest_generation_last_success_unix_seconds` is set at process
-start and after every successful job, enabling a "hasn't generated this week"
-alert as gauge age. Rejected: relying only on `absent()` as periodico does —
-the scheduler is in-process and weekly; counters are born empty and an
-`absent()` rule cannot distinguish "no run yet" from "scheduler dead", while
-gauge age expresses freshness directly.
+The weekly schedule defaults to Sunday at 04:00 UTC and remains opt-in.
+Missing or stale output is not an alert condition. Keep
+`palique_leveltest_generation_last_success_unix_seconds` for informational
+dashboard use, and alert on actual failed executions using the durable
+`palique_leveltest_generation_last_failure_unix_seconds` timestamp. The
+failure timestamp is seeded from persisted failed jobs at telemetry-enabled
+startup and refreshed from persisted records every minute, so failures from
+the one-shot CLI remain exported after that process exits and across API
+restarts. API and CLI use fixed, distinct `service.instance.id` role values
+because an isolated Collector probe showed that identical resource identity
+overwrites the same Prometheus series. A failure that was not persisted
+cannot be reconstructed after a restart. The alert expires 24 hours after the
+most recent recorded failure.
 
 ## Operational lessons inherited from periodico
 
@@ -94,8 +101,10 @@ gauge age expresses freshness directly.
    them.
 6. **Tempo receiver binds `0.0.0.0:4318`.** Without the explicit bind inside
    the container, the collector gets "connection refused" exporting spans.
-7. **Honest documentation.** SLOs are stated as internal reference targets
-   with their limitations written down (retention, no automated tracking).
+7. **Honest documentation.** The two measurable SLOs are internal reference
+   targets with their limitations written down (retention, no automated
+   tracking); weekly generation publication is not represented by the failure
+   alert.
 
 ## Module boundaries
 
@@ -111,4 +120,5 @@ Unit tests with `InMemoryMetricReader` (no DB); integration tests of `app.ts`
 against real PG via `TEST_DATABASE_URL` (pattern `tests/admin-usage.test.ts`);
 `make test-api` runs the full suite with no observability container (no-op
 gate). Config validity is enforced by `promtool`/`amtool` through
-`make obs-check` and the CI step in `checks.yml`.
+`make obs-check` and the CI step in `checks.yml`; this includes behavioral
+`promtool test rules` fixtures, not syntax validation alone.

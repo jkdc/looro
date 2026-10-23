@@ -23,7 +23,7 @@ if (!databaseURL) { console.error('DATABASE_URL required'); process.exit(1); }
 
 // Same telemetry contract as the server (no-op unless OTEL_ENABLED=true): a
 // scheduled generation run emits the palique_* metrics/traces operators alert on.
-initObservability();
+initObservability({ ...process.env, OTEL_SERVICE_INSTANCE_ID: 'leveltest-generate' });
 
 const db = connectDatabase(databaseURL);
 try {
