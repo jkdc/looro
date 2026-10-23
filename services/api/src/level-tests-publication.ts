@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
-import { recordAdminAction } from './admins-admin.js';
+import { recordAdminAction } from './admin-audit.js';
 import { identifySnapshot, type ExamSnapshot } from './level-test-snapshot.js';
 import { examModelFor } from './level-tests-llm.js';
 import { validateGeneratedPool, type GeneratedPool } from './level-tests-validate.js';

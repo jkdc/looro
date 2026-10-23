@@ -3,7 +3,7 @@ import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { appendMinuteEntry, lockMinuteWallet, MS_PER_MINUTE } from './minutes.js';
-import { recordAdminAction } from './admins-admin.js';
+import { recordAdminAction } from './admin-audit.js';
 
 export const SUBSCRIPTION_TIERS = ['standard', 'pro'] as const;
 export type SubscriptionTier = typeof SUBSCRIPTION_TIERS[number];

@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import type { PoolClient } from 'pg';
 import { connectDatabase, transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { hashAdminPassword } from './admin-auth.js';
@@ -62,15 +61,6 @@ export async function disableAdmin(db: Database, id: string): Promise<void> {
     // A disabled administrator loses live sessions immediately, not at expiry.
     await sql.query('UPDATE admin_sessions SET revoked_at=now() WHERE admin_id=$1 AND revoked_at IS NULL', [id]);
   });
-}
-
-export async function recordAdminAction(sql: PoolClient, adminID: string,
-  action: string, target: string, reason: string, detail: unknown): Promise<void> {
-  if (!uuidPattern.test(adminID) || !action || !target || typeof reason !== 'string' ||
-      reason.trim().length < 3 || reason.length > 500 || /[\x00-\x1f]/.test(reason))
-    throw new ServiceError('admin_reason_required');
-  await sql.query('INSERT INTO admin_actions(id,admin_id,action,target,reason,detail) VALUES($1,$2,$3,$4,$5,$6)',
-    [randomUUID(), adminID, action, target, reason, JSON.stringify(detail ?? {})]);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {

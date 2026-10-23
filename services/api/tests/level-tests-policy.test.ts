@@ -239,6 +239,26 @@ test('invalid settings do not partly persist a combined provider update', async 
 });
 function adminApp(db: Database, extra: Record<string, unknown> = {}) { const config = adminAuthConfig(ADMIN_ENV)!;
   return createApp({ db, auth: {}, ...extra, admin: { services: { db, config }, admission: new AuthAdmission(db, config) } }); }
+test('admin LLM views use independent app environment objects without mutating process.env', async () => {
+  const { db } = database();
+  const originalProvider = process.env.LEVELTEST_LLM_PROVIDER;
+  const appA = adminApp(db, { environment: { ...ENV, LEVELTEST_LLM_PROVIDER: 'glm',
+    LEVELTEST_LLM_URL: 'https://provider-a.example/v1', LEVELTEST_LLM_MODEL: 'glm-model' } });
+  const appB = adminApp(db, { environment: { ...ENV, LEVELTEST_LLM_PROVIDER: 'openai',
+    LEVELTEST_LLM_URL: 'https://provider-b.example/v1', LEVELTEST_LLM_MODEL: 'openai-model' } });
+  try {
+    const read = async (app: ReturnType<typeof adminApp>) => {
+      const response = await app.inject({ method: 'GET', url: '/v1/admin/llm-config', headers });
+      assert.equal(response.statusCode, 200);
+      return response.json();
+    };
+    assert.deepEqual(await read(appA).then(({ provider, baseUrl, model }) => ({ provider, baseUrl, model })),
+      { provider: 'glm', baseUrl: 'https://provider-a.example/v1', model: 'glm-model' });
+    assert.deepEqual(await read(appB).then(({ provider, baseUrl, model }) => ({ provider, baseUrl, model })),
+      { provider: 'openai', baseUrl: 'https://provider-b.example/v1', model: 'openai-model' });
+    assert.equal(process.env.LEVELTEST_LLM_PROVIDER, originalProvider);
+  } finally { await appA.close(); await appB.close(); }
+});
 test('authenticated settings save/reload reflects persisted values and retains omitted fields', async () => {
   const { db, state } = database(); state.settings = { publish_mode: 'auto', verify_mode: 'strict', variants: 5 };
   const app = adminApp(db);
@@ -347,11 +367,10 @@ test('connection test times out and cancels the unread provider body', async () 
   const { db, state } = database();
   state.config = { provider: 'openai', base_url: 'https://provider.example/v1', model: 'saved-model',
     api_key_encrypted: encryptSecret('saved-provider-key', ENV), is_active: true };
-  const originalFetch = globalThis.fetch, originalMasterKey = process.env.LEVELTEST_LLM_MASTER_KEY; let canceled = false;
+  const originalFetch = globalThis.fetch; let canceled = false;
   const originalError = console.error, failureLines: string[] = [];
   console.error = value => { failureLines.push(value); };
-  process.env.LEVELTEST_LLM_MASTER_KEY = ENV.LEVELTEST_LLM_MASTER_KEY;
-  const app = adminApp(db, { llmTestTimeoutMs: 5 });
+  const app = adminApp(db, { llmTestTimeoutMs: 5, environment: ENV });
   globalThis.fetch = async (_input, init) => await new Promise((_resolve, reject) =>
     init?.signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true }));
   try {
@@ -374,8 +393,7 @@ test('connection test times out and cancels the unread provider body', async () 
     assert.equal(state.audit.length, 2);
     assert.equal(String(state.audit[1]![5]).includes('saved-provider-key'), false);
     assert.equal(JSON.stringify(bounded.json()).includes('saved-provider-key'), false);
-  } finally { globalThis.fetch = originalFetch; console.error = originalError; await app.close();
-    if (originalMasterKey === undefined) delete process.env.LEVELTEST_LLM_MASTER_KEY; else process.env.LEVELTEST_LLM_MASTER_KEY = originalMasterKey; }
+  } finally { globalThis.fetch = originalFetch; console.error = originalError; await app.close(); }
 });
 
 test('approval rejects tampered variants without publishing or auditing', async () => {

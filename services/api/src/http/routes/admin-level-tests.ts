@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { Database } from '../../db.js';
 import { transaction } from '../../db.js';
 import { ServiceError } from '../../errors.js';
-import { recordAdminAction } from '../../admins-admin.js';
+import { recordAdminAction } from '../../admin-audit.js';
 import { approveGeneratedWeek, rejectGeneratedWeek, retireGeneratedWeek } from '../../level-tests-publication.js';
 import { levelTestGenerationStatus, levelTestWeekDetail, listLevelTestDrafts, listLevelTestWeeks,
   parseWeekListQuery, planGenerationLaunch, runGenerationLaunch, validateRegenerateRequest } from '../../level-tests-admin.js';

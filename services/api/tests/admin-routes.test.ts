@@ -27,7 +27,7 @@ const adminServices: AdminAuthServices | null = db ? {
   db: db!, config: adminAuthConfig({ ADMIN_HMAC_KEY: hmacKey, ADMIN_PROXY_TOKEN: proxyToken,
     ADMIN_PUBLIC_ORIGIN: 'https://admin.example' })!
 } : null;
-const app = () => createApp({ db: db!, auth: {}, admin: { services: adminServices!,
+const app = (environment: NodeJS.ProcessEnv = process.env) => createApp({ db: db!, auth: {}, environment, admin: { services: adminServices!,
   admission: new AuthAdmission(db!, { hmacKey, proxyToken, allowLocalLoopback: false }) } });
 const session = async (): Promise<string> => {
   const admin = await addAdmin(db!, 'google', 'metrics-admin');
@@ -117,10 +117,11 @@ integration('account closeout detail explains the blockers and refuses unknown o
 
 integration('llm configuration errors map to clean 4xx and 5xx responses', async () => {
   const token = await session();
-  const service = app();
   const headers = { cookie: adminCookieHeader(token),
     'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': proxyToken };
-  const saved = process.env.LEVELTEST_LLM_MASTER_KEY;
+  const environment = { ...process.env };
+  delete environment.LEVELTEST_LLM_MASTER_KEY;
+  const service = app(environment);
   try {
     // A body with no provider or settings change is rejected before any write.
     const invalid = await service.inject({ method: 'PUT', url: '/v1/admin/llm-config', headers,
@@ -129,14 +130,11 @@ integration('llm configuration errors map to clean 4xx and 5xx responses', async
     assert.equal(invalid.json().error?.code, 'invalid_llm_config');
 
     // Storing a key without the master key is a configuration failure, not a 500.
-    delete process.env.LEVELTEST_LLM_MASTER_KEY;
     const missingKey = await service.inject({ method: 'PUT', url: '/v1/admin/llm-config', headers,
       payload: { provider: 'glm', baseUrl: 'https://llm.example/v1', model: 'glm-4.5', apiKey: 'sk-test' } });
     assert.equal(missingKey.statusCode, 503);
     assert.equal(missingKey.json().error?.code, 'llm_master_key_missing');
   } finally {
-    if (saved === undefined) delete process.env.LEVELTEST_LLM_MASTER_KEY;
-    else process.env.LEVELTEST_LLM_MASTER_KEY = saved;
     await service.close();
   }
 });

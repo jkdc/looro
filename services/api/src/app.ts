@@ -29,7 +29,7 @@ import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdm
   exchangeSessionToken, adminSignOut, localAdminLogin, type AdminAuthServices } from './admin-auth.js';
 import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
 import { snapshot as adminSnapshot, timeseries, usageOverview, TIMESERIES_SETS } from './admin-metrics.js';
-import { recordAdminAction } from './admins-admin.js';
+import { recordAdminAction } from './admin-audit.js';
 import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
 import { accountCloseoutReport } from './account-closeout-admin.js';
 import { normalizeAccessEmail } from './access-requests.js';
@@ -41,7 +41,7 @@ import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { registerAdminLevelTestGenerationRoutes, registerAdminLevelTestReviewRoutes } from './http/routes/admin-level-tests.js';
 import { registerAdminLevelTestAttemptRoutes } from './http/routes/admin-level-test-attempts.js';
 import { log } from './log.js';
-import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
+import { registerAdminLevelTestLlmConfigRoutes } from './http/routes/admin-level-test-llm-config.js';
 import { paliqueMetrics } from './metrics.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
@@ -57,7 +57,8 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   subscriptions?: SubscriptionBilling,
   admin?: { services: AdminAuthServices; admission: AuthAdmission };
   generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };
-  llmTestTimeoutMs?: number }
+  llmTestTimeoutMs?: number;
+  environment?: NodeJS.ProcessEnv }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
@@ -86,6 +87,7 @@ const requestRoute = (request: FastifyRequest): string => request.routeOptions.u
 
 export function createApp(services: Services) {
   const { db } = services;
+  const environment = services.environment ?? process.env;
   const orderStatus = async (account: string, id: string) => {
     const commerce = services.minuteCommerce;
     if (!commerce) throw new ServiceError('minute_purchases_unavailable', 503);
@@ -526,7 +528,7 @@ export function createApp(services: Services) {
       { state: outcome.state }));
     return reply.send(outcome);
   });
-  const adminLevelTestRouteDependencies = { db, env: process.env,
+  const adminLevelTestRouteDependencies = { db, env: environment,
     assertPageOrigin: assertAdminPageOrigin, assertCsrf: assertAdminCsrf,
     authenticateAdmin: adminOnly, generationStatus: services.generationStatus };
   // Generation routes retain their original registration position and root hooks.
@@ -535,68 +537,8 @@ export function createApp(services: Services) {
   // the same admission, tracing, and error policies as every other admin route.
   registerAdminLevelTestAttemptRoutes(app, { db, assertPageOrigin: assertAdminPageOrigin, authenticateAdmin: adminOnly });
   registerAdminLevelTestReviewRoutes(app, adminLevelTestRouteDependencies);
-  app.get('/v1/admin/llm-config', async request => {
-    const admin = await adminOnly(request);
-    void admin;
-    const view = await readLlmConfigView(db, process.env);
-    return { ...view, providers: LLM_PROVIDER_CATALOG };
-  });
-  app.put('/v1/admin/llm-config', { bodyLimit: 8192 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
-    const allowed = ['provider', 'baseUrl', 'model', 'apiKey', 'label', 'publishMode', 'verifyMode', 'variants'];
-    if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
-    try {
-      const result = await upsertLlmConfig(db, process.env, body as Record<string, unknown>);
-      await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'llm_config.update',
-        'llm_provider_configs', typeof body.provider === 'string' ? body.provider : 'settings',
-        { keys: Object.keys(body) }));
-      return reply.send(result);
-    } catch (error) {
-      if (error instanceof ConfigError) throw new ServiceError(error.code, error.status);
-      throw error;
-    }
-  });
-  app.post('/v1/admin/llm-config/test', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request);
-    try {
-      const config = await storedConfigForTest(db, process.env);
-      const auditOutcome = async (outcome: string, status: number | null) => {
-        try {
-          await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'llm_config.test',
-            config.provider, `Connection test ${outcome}`, { provider: config.provider, model: config.model, outcome, status }));
-        } catch { throw new ServiceError('admin_audit_unavailable', 503); }
-      };
-      const controller = new AbortController();
-      let timedOut = false;
-      const timeoutMs = Math.min(services.llmTestTimeoutMs ?? 8_000, 30_000);
-      const timer = setTimeout(() => { timedOut = true; controller.abort(new Error('llm_test_timeout')); }, timeoutMs);
-      try {
-        const replyTransport = await fetch(`${config.baseUrl.replace(/\/$/, '')}/chat/completions`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
-            'x-opencode-session': request.id, 'user-agent': 'palique-api/1.0' },
-          body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
-          signal: controller.signal,
-        });
-        const outcome = { ok: replyTransport.ok, status: replyTransport.status,
-          detail: replyTransport.ok ? undefined : (await replyTransport.text()).slice(0, 500) };
-        controller.abort(new Error('llm_test_complete'));
-        void replyTransport.body?.cancel().catch(() => undefined);
-        await auditOutcome(replyTransport.ok ? 'ok' : 'provider_rejected', replyTransport.status);
-        return reply.send(outcome);
-      } catch {
-        const outcome = timedOut ? 'timeout' : 'unreachable';
-        await auditOutcome(outcome, null);
-        return reply.code(502).send({ ok: false, error: timedOut ? 'llm_test_timeout' : 'llm_unreachable' });
-      } finally { clearTimeout(timer); }
-    } catch (error) {
-      if (error instanceof ConfigError) throw new ServiceError(error.code, error.status);
-      if (error instanceof ServiceError) throw error;
-      return reply.code(502).send({ ok: false, error: 'llm_unreachable' });
-    }
-  });
+  registerAdminLevelTestLlmConfigRoutes(app, { db, env: environment, assertCsrf: assertAdminCsrf,
+    authenticateAdmin: adminOnly, testTimeoutMs: services.llmTestTimeoutMs });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {
     const reports = services.aiReports;

@@ -122,7 +122,8 @@ try {
     }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
       status: 'failed', error_code: code }), undefined, timeoutMs);
   } });
-  const app = createApp({ db, generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
+  const app = createApp({ db, environment: process.env,
+    generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
     minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
     subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,

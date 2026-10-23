@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { connectDatabase, transaction } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
-import { addAdmin, disableAdmin, listAdmins, recordAdminAction } from '../src/admins-admin.js';
+import { addAdmin, disableAdmin, listAdmins } from '../src/admins-admin.js';
+import { recordAdminAction } from '../src/admin-audit.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.endsWith('_test')) throw new Error('Use a dedicated database ending in _test.');
