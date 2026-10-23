@@ -155,6 +155,9 @@ restart.
    `initGenerationMetrics(db)` (reads the last `finished_at` at startup, never
    blocks boot) and called it from `main.ts`; three unit tests cover the
    seeded, absent and query-failure cases.
+7. **CI step needs compose variables.** `docker compose config -q` interpolates
+   `POSTGRES_PASSWORD` and `API_DOMAIN` (both `:?` required) and CI has no
+   `.env`; the workflow step sets them inline. Nothing starts in CI.
 
 ## 6. Pending (explicitly out of scope)
 
