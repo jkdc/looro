@@ -133,14 +133,17 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
     const outcome: ChatReply = { content, tokensIn: payload.usage?.prompt_tokens ?? 0,
       tokensOut: payload.usage?.completion_tokens ?? 0 };
     paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'ok' });
-    paliqueMetrics.llmRequestDuration.record((performance.now() - started) / 1000, { provider: config.provider });
-    paliqueMetrics.llmTokens.add(outcome.tokensIn, { provider: config.provider, direction: 'input' });
-    paliqueMetrics.llmTokens.add(outcome.tokensOut, { provider: config.provider, direction: 'output' });
+    if (typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens))
+      paliqueMetrics.llmTokens.add(payload.usage.prompt_tokens, { provider: config.provider, direction: 'input' });
+    if (typeof payload.usage?.completion_tokens === 'number' && Number.isFinite(payload.usage.completion_tokens))
+      paliqueMetrics.llmTokens.add(payload.usage.completion_tokens, { provider: config.provider, direction: 'output' });
     return outcome;
   } catch (error) {
     paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'failed',
       error_code: error instanceof LlmTransportError ? error.code : 'llm_unknown_error' });
     throw error; // unchanged: the no-retry contract relies on the original LlmTransportError
+  } finally {
+    paliqueMetrics.llmRequestDuration.record((performance.now() - started) / 1000, { provider: config.provider });
   }
 }
 

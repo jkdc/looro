@@ -39,8 +39,8 @@ Acceptance: tests assert observable log/span/metric/rule behavior; config valida
 ## Tasks
 
 - [x] T1 — S1/S3: secure request logging, server spans and compatible direct 5xx correlation; route inline; complete; commits `2bc4101` (SDD plan) and `756dc7e` (implementation); focused tests 53 pass, 2 DB-only skipped; typecheck passes.
-- [ ] T2 — S1/S2: Sunday UTC scheduler default and documentation; route inline; pending; commit pending.
-- [ ] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; status planned; commit pending.
+- [x] T2 — S1/S2: Sunday UTC scheduler default and documentation; route inline; complete; commit `d356082`; focused scheduler tests 12 passed and API TypeScript check passed.
+- [ ] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; complete; commit pending.
 - [ ] T4 — S1/S2: repair alert math, remove missing/stale-generation alert, retain failed-execution alert, add behavioral promtool tests and wire them into CI; route inline; status planned; commit pending.
 - [ ] T5 — S1–S4: isolated API/CLI metric probe, reconcile original plan/OpenSpec/runbooks/report, run full applicable suites; route inline; status planned; commit pending.
 
@@ -60,3 +60,5 @@ Detailed red/green steps and exact commands are in `docs/superpowers/plans/2026-
 - L10 — “ve haciendo commits sobre la rama en la que estamos trabajando”. Work-unit commits stay on `feature/observability`; no push or PR is authorized.
 - L11 — Task 1 committed on `feature/observability`: `756dc7e fix(observability): protect request telemetry and classify server spans` (192 insertions, 18 deletions); the execution plan/tracker/design are committed at `2bc4101 docs(observability): track remediation plan` (352 additions). Focused API tests and type-check passed before the implementation commit; no user services or remote systems were touched.
 - L12 — A prior read-only mapping handoff could not start; no Task 2 source changes were made before the current user-authorized scope revision.
+- L13 — T2 RED: scheduler config test observed actual default `day=1`, expected `day=7`; GREEN after changing only the unspecified default and Compose fallback to Sunday. Existing Monday-specific helper tests remain explicit; scheduler lifecycle fixtures were moved to Sunday to continue testing default-schedule behavior. `tsx --test tests/level-tests-scheduler.test.ts` passed 12/12; `tsc --noEmit` passed. Commit: `d356082`.
+- L14 — T3 RED/GREEN: focused observability tests proved missing durations on LLM/job errors, missing failed-execution metrics for thrown connection/query/finalization errors, invented zero token counters when provider usage is absent, and a startup seed query despite telemetry being disabled. Added a durable last-failure timestamp gauge, bounded (2s) best-effort seeding only when OTEL is enabled, and failure-path metrics in `finally`; preserved original exceptions, no-op statuses, zero-retry behavior, and public token values. Focused observability/scheduler/job tests and `tsc --noEmit` passed; DB-only cases remained skipped without `TEST_DATABASE_URL`.

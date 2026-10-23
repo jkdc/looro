@@ -69,12 +69,12 @@
 
 **Interfaces:** Scheduler continues to accept ISO `day`, UTC `hour`, languages and levels. Its defaults become `day=7`, `hour=4`, and `enabled=false`. Missing or stale scheduled output is not an alert condition; only a real failed generation execution is alertable (Task 3/4).
 
-- [ ] Add deterministic tests for default `{enabled:false, day:7, hour:4}`, an explicit override, and Sunday UTC calculation.
-- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/level-tests-scheduler.test.ts`; observe the current Monday default fail the new Sunday expectation.
-- [ ] Change only the unspecified weekday default to Sunday; keep enabled opt-in, keep hour 04:00 UTC, and preserve explicit schedule overrides.
-- [ ] Update schedule documentation and compose defaults; do not add expected/missed-week telemetry.
-- [ ] Rerun the focused test file and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
-- [ ] Commit this unit as `fix(level-tests): default weekly generation to Sunday`.
+- [x] Add deterministic tests for default `{enabled:false, day:7, hour:4}`, an explicit override, and Sunday UTC calculation.
+- [x] Run `cd services/api && ./node_modules/.bin/tsx --test tests/level-tests-scheduler.test.ts`; observed the current Monday default fail the new Sunday expectation.
+- [x] Change only the unspecified weekday default to Sunday; keep enabled opt-in, keep hour 04:00 UTC, and preserve explicit schedule overrides.
+- [x] Update scheduler docs and compose defaults; do not add expected/missed-week telemetry.
+- [x] Rerun the focused test file and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all passed.
+- [x] Commit this unit as `fix(level-tests): default weekly generation to Sunday` (`d356082`).
 
 ### Task 3: Measure rejected jobs, LLM latency and disabled-telemetry startup correctly
 
@@ -82,14 +82,14 @@
 
 **Interfaces:** Preserve existing return/error shapes, `busy`/`exists` behavior, bounded safe error-code labels, token accounting and no automatic LLM retries. `initGenerationMetrics` must be a true no-op when OTel is disabled and must not block API listen when enabled.
 
-- [ ] Add tests that connection-acquisition, query and job-finalization rejections preserve the original rejection and record one failed execution plus one duration without setting last-success.
-- [ ] Add tests proving `busy` and `exists` still record no execution success/failure.
-- [ ] Add LLM tests for success, non-2xx, fetch rejection, invalid JSON, empty response and cancellation. Assert one duration and correct result on every path; preserve token counts only when known and preserve zero retries.
-- [ ] Add a telemetry-disabled startup test asserting zero seed queries, and active telemetry tests for query failure/recovery plus a bounded shutdown/startup path.
-- [ ] Run the focused test file(s); confirm RED specifically exposes absent failure duration/counter and the unexpected disabled-mode DB query.
-- [ ] Instrument the full job operation boundary (including thrown failures) and LLM duration in a single `finally` path; skip all telemetry-only seed work when disabled and keep enabled seed work bounded and recoverable.
-- [ ] Rerun focused tests and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
-- [ ] Commit this unit as `fix(observability): record failure-path metrics without blocking startup`.
+- [x] Add tests that connection-acquisition, query and job-finalization rejections preserve the original rejection and record one failed execution plus one duration without setting last-success.
+- [x] Add tests proving `busy` and `exists` still record no execution success/failure.
+- [x] Add LLM tests for success, non-2xx, fetch rejection, invalid JSON, empty response and cancellation. Assert one duration and correct result on every path; preserve token counts only when known and preserve zero retries.
+- [x] Add a telemetry-disabled startup test asserting zero seed queries, and active telemetry tests for query failure/recovery plus a bounded startup path.
+- [x] Run focused tests; observed RED for missing failure duration/counter, missing LLM error duration, invented zero token counters, and disabled-mode DB query.
+- [x] Instrument the full job operation boundary (including thrown failures) and LLM duration in a single `finally` path; skip all telemetry-only seed work when disabled and keep enabled seed work bounded and recoverable.
+- [x] Rerun focused tests and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all passed.
+- [x] Commit this unit as `fix(observability): record failure-path metrics without blocking startup`.
 
 ### Task 4: Correct alert/dashboard math and test rule behavior in CI
 

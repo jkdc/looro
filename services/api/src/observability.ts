@@ -53,17 +53,30 @@ export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
 
 export function shutdownObservability(): Promise<void> { return shutdown?.() ?? Promise.resolve(); }
 
-/** Seeds the last-success gauge from the database so the staleness alert has a
-    series on the first scrape after a restart (D8): a gauge born empty cannot
-    alert, which is the blind spot the metric exists to close. */
-export async function initGenerationMetrics(db: Database): Promise<void> {
+/** Seed durable result timestamps when metrics are enabled. The bounded query
+    keeps telemetry best-effort and prevents an unavailable database from
+    delaying API readiness. */
+export async function initGenerationMetrics(db: Database, options: { enabled?: boolean; timeoutMs?: number } = {}): Promise<void> {
+  const enabled = options.enabled ?? process.env.OTEL_ENABLED === 'true';
+  if (!enabled) return;
+  const timeoutMs = options.timeoutMs ?? 2_000;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
-    const { rows } = await db.query(
-      `SELECT max(COALESCE(finished_at, updated_at)) AS at
-         FROM level_test_generation_jobs WHERE state = 'finished'`) as { rows: { at: Date | null }[] };
-    const at = rows[0]?.at;
-    if (at) paliqueMetrics.generationLastSuccess.record(new Date(at).getTime() / 1000);
+    const query = db.query(
+      `SELECT max(finished_at) FILTER (WHERE state = 'finished') AS success_at,
+              max(finished_at) FILTER (WHERE state = 'failed') AS failure_at
+         FROM level_test_generation_jobs`)
+      .then(result => ({ result }), () => ({ result: undefined }));
+    const deadline = new Promise<{ result: undefined }>(resolve => {
+      timeout = setTimeout(() => resolve({ result: undefined }), timeoutMs);
+    });
+    const { result } = await Promise.race([query, deadline]);
+    if (!result) return;
+    const row = (result as { rows: { success_at: Date | null; failure_at: Date | null }[] }).rows[0];
+    if (row?.success_at) paliqueMetrics.generationLastSuccess.record(new Date(row.success_at).getTime() / 1000);
+    if (row?.failure_at) paliqueMetrics.generationLastFailure.record(new Date(row.failure_at).getTime() / 1000);
   } catch { /* Telemetry must never block boot. */ }
+  finally { if (timeout) clearTimeout(timeout); }
 }
 
 // Gauges are recomputed at every export from live pool counters. Registered

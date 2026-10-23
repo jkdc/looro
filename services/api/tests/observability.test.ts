@@ -75,6 +75,15 @@ async function collectSum(reader: InMemoryMetricReader, name: string): Promise<M
   return out;
 }
 
+async function collectHistogramCount(reader: InMemoryMetricReader, name: string): Promise<number> {
+  const { resourceMetrics } = await reader.collect();
+  for (const scope of resourceMetrics.scopeMetrics)
+    for (const metric of scope.metrics) if (metric.descriptor.name === name)
+      return (metric.dataPoints ?? []).reduce((count, point) =>
+        count + Number((point.value as { count?: number }).count ?? 0), 0);
+  return 0;
+}
+
 test('domain metrics record through the instruments with contract attributes', async () => {
   const reader = new InMemoryMetricReader();
   const provider = new MeterProvider({ readers: [reader] });
@@ -264,6 +273,7 @@ test('chatCompletion records ok outcome with tokens and duration', async () => {
   const tokens = await collectSum(reader, 'palique.llm.tokens');
   assert.equal(tokens.get('direction=input,provider=glm'), 10);
   assert.equal(tokens.get('direction=output,provider=glm'), 5);
+  assert.equal(await collectHistogramCount(reader, 'palique.llm.request.duration'), 1);
 });
 
 test('chatCompletion records failed outcome with the transport error code', async () => {
@@ -277,6 +287,40 @@ test('chatCompletion records failed outcome with the transport error code', asyn
     (error: unknown) => error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
   const requests = await collectSum(reader, 'palique.llm.requests');
   assert.equal(requests.get('error_code=llm_outcome_unknown,provider=glm,status=failed'), 1);
+  assert.equal(await collectHistogramCount(reader, 'palique.llm.request.duration'), 1);
+});
+
+test('chatCompletion records one duration for HTTP, JSON, empty-reply, and cancellation failures', async () => {
+  const failures: Array<{ name: string; fetchFn: typeof fetch; signal?: AbortSignal }> = [
+    { name: 'http', fetchFn: async () => new Response('', { status: 503 }) },
+    { name: 'json', fetchFn: async () => new Response('{', { status: 200 }) },
+    { name: 'empty', fetchFn: async () => new Response(JSON.stringify({ choices: [{ message: { content: '  ' } }] }), { status: 200 }) },
+  ];
+  const controller = new AbortController();
+  controller.abort();
+  failures.push({ name: 'cancelled', fetchFn: async () => { throw new Error('cancelled'); }, signal: controller.signal });
+
+  for (const failure of failures) {
+    const reader = new InMemoryMetricReader();
+    const provider = new MeterProvider({ readers: [reader] });
+    initDomainMetrics(provider.getMeter(`test-${failure.name}`));
+    await assert.rejects(chatCompletion(llmConfig, [{ role: 'user', content: 'hi' }], failure.fetchFn, failure.signal));
+    const requests = await collectSum(reader, 'palique.llm.requests');
+    assert.equal([...requests.values()].reduce((sum, value) => sum + value, 0), 1, failure.name);
+    assert.equal(await collectHistogramCount(reader, 'palique.llm.request.duration'), 1, failure.name);
+    assert.equal((await collectSum(reader, 'palique.llm.tokens')).size, 0, failure.name);
+  }
+});
+
+test('chatCompletion does not invent token measurements when provider usage is absent', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const reply = await chatCompletion(llmConfig, [{ role: 'user', content: 'hi' }], async () =>
+    new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), { status: 200 }));
+  assert.equal(reply.tokensIn, 0);
+  assert.equal(reply.tokensOut, 0);
+  assert.equal((await collectSum(reader, 'palique.llm.tokens')).size, 0);
 });
 
 //
@@ -320,6 +364,47 @@ test('generation job wrapper counts failed and unknown outcomes', async () => {
   // Last-success only ever fires on finished outcomes.
   const lastSuccess = await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds');
   assert.equal(lastSuccess.size, 0);
+  assert.equal(await collectHistogramCount(reader, 'palique.leveltest.generation.job.duration'), 2);
+});
+
+test('generation job wrapper records thrown execution failures and preserves the original error', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const expected = new Error('database unavailable');
+  const db = { connect: async () => { throw expected; } } as unknown as Database;
+
+  await assert.rejects(runLevelTestGenerationJob(db, {}, jobOptions), error => error === expected);
+
+  const jobs = await collectSum(reader, 'palique.leveltest.generation.jobs');
+  assert.equal(jobs.get('language=en,level=A1,status=failed'), 1);
+  assert.equal(await collectHistogramCount(reader, 'palique.leveltest.generation.job.duration'), 1);
+  assert.ok([...await collectSum(reader, 'palique.leveltest.generation.last_failure_unix_seconds')].length > 0);
+});
+
+test('generation job wrapper records query and finalization failures without replacing errors', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  const lockError = new Error('lock query failed');
+  const lockFailureDb = { connect: async () => ({ query: async () => { throw lockError; }, release: () => {} }) } as unknown as Database;
+  await assert.rejects(runLevelTestGenerationJob(lockFailureDb, {}, jobOptions), error => error === lockError);
+
+  const finalizeError = new Error('job finalization failed');
+  const client = {
+    query: async (sql: string) => {
+      if (sql.includes('pg_try_advisory_lock')) return { rows: [{ locked: true }] };
+      if (sql.includes('UPDATE level_test_generation_jobs')) throw finalizeError;
+      return { rows: [] };
+    },
+    release: () => {},
+  };
+  const finalizeFailureDb = { connect: async () => client, query: async () => ({ rows: [] }) } as unknown as Database;
+  await assert.rejects(runLevelTestGenerationJob(finalizeFailureDb, {}, jobOptions), error => error === finalizeError);
+
+  const jobs = await collectSum(reader, 'palique.leveltest.generation.jobs');
+  assert.equal(jobs.get('language=en,level=A1,status=failed'), 2);
+  assert.equal(await collectHistogramCount(reader, 'palique.leveltest.generation.job.duration'), 2);
 });
 
 test('generation job wrapper passes busy and exists through without recording metrics', async () => {
@@ -335,37 +420,58 @@ test('generation job wrapper passes busy and exists through without recording me
 
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.jobs')).size, 0);
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+  assert.equal(await collectHistogramCount(reader, 'palique.leveltest.generation.job.duration'), 0);
 });
 
 //
-// Section 7: boot seeding of the last-success gauge (src/observability.ts, D8)
-// A counter/gauge born empty cannot power the staleness alert: after a restart
-// the series must exist with the last finished job, or "no generation in 8d"
-// silently stops firing.
+// Section 7: bounded boot seeding of the durable success/failure timestamps
+// (src/observability.ts). Last failure powers the recent-failure alert after a
+// restart; last success remains a dashboard signal, not a missed-run alert.
 import { initGenerationMetrics } from '../src/observability.js';
 
-test('last-success gauge is seeded from the database at boot', async () => {
+test('last-success and last-failure gauges are seeded from the database at boot', async () => {
   const reader = new InMemoryMetricReader();
   const provider = new MeterProvider({ readers: [reader] });
   initDomainMetrics(provider.getMeter('test'));
   const finishedAt = new Date('2026-10-20T04:00:00Z');
-  await initGenerationMetrics({ query: async () => ({ rows: [{ at: finishedAt }] }) } as unknown as Database);
+  const failedAt = new Date('2026-10-21T04:00:00Z');
+  await initGenerationMetrics({ query: async () => ({ rows: [{ success_at: finishedAt, failure_at: failedAt }] }) } as unknown as Database, { enabled: true });
   const seeded = await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds');
   assert.equal(seeded.get(''), finishedAt.getTime() / 1000);
+  const failure = await collectSum(reader, 'palique.leveltest.generation.last_failure_unix_seconds');
+  assert.equal(failure.get(''), failedAt.getTime() / 1000);
 });
 
 test('last-success gauge stays absent when nothing has ever finished', async () => {
   const reader = new InMemoryMetricReader();
   const provider = new MeterProvider({ readers: [reader] });
   initDomainMetrics(provider.getMeter('test'));
-  await initGenerationMetrics({ query: async () => ({ rows: [{ at: null }] }) } as unknown as Database);
+  await initGenerationMetrics({ query: async () => ({ rows: [{ success_at: null, failure_at: null }] }) } as unknown as Database, { enabled: true });
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_failure_unix_seconds')).size, 0);
 });
 
-test('boot seeding never blocks startup when the query fails', async () => {
+test('telemetry-disabled boot seeding is a true no-op', async () => {
   const reader = new InMemoryMetricReader();
   const provider = new MeterProvider({ readers: [reader] });
   initDomainMetrics(provider.getMeter('test'));
-  await initGenerationMetrics({ query: async () => { throw new Error('db down'); } } as unknown as Database);
+  let queries = 0;
+  await initGenerationMetrics({ query: async () => { queries += 1; throw new Error('db down'); } } as unknown as Database, { enabled: false });
+  assert.equal(queries, 0);
   assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_success_unix_seconds')).size, 0);
+});
+
+test('telemetry-enabled boot seeding absorbs query failure and bounds a hanging query', async () => {
+  const reader = new InMemoryMetricReader();
+  const provider = new MeterProvider({ readers: [reader] });
+  initDomainMetrics(provider.getMeter('test'));
+  await initGenerationMetrics({ query: async () => { throw new Error('database unavailable'); } } as unknown as Database,
+    { enabled: true, timeoutMs: 20 });
+  let queries = 0;
+  await initGenerationMetrics({ query: async () => {
+    queries += 1;
+    return new Promise(() => {});
+  } } as unknown as Database, { enabled: true, timeoutMs: 20 });
+  assert.equal(queries, 1);
+  assert.equal((await collectSum(reader, 'palique.leveltest.generation.last_failure_unix_seconds')).size, 0);
 });

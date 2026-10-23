@@ -61,7 +61,7 @@ Esta opción evita alertas por worker deshabilitado, retrasado o no ejecutado y 
 - Conservar `LEVELTEST_GENERATE_ENABLED=false` por defecto en todas las superficies. Si está apagado, no se espera ejecución; la ausencia de resultados no genera una alerta.
 - Usar la configuración realmente cargada por el proceso: valores explícitos siguen prevaleciendo sobre los defaults. No leer ni cambiar el estado de despliegues remotos.
 - Registrar los fallos reales de generación con métricas de resultado; no derivar fallos de semanas sin resultados.
-- Mantener `LevelTestGenerationFailed` como alerta de fallos recientes. Debe poder detectar el primer fallo y, cuando exista un registro duradero, recuperar esa señal tras reinicio.
+- Mantener `LevelTestGenerationFailed` como alerta de fallos recientes. Un gauge de timestamp del último fallo permite detectar el primer evento sin depender de un delta de counter y, cuando exista un registro duradero, recuperar esa señal tras reinicio. El counter de jobs sigue midiendo volumen; el gauge de último éxito puede seguir alimentando el dashboard, pero no genera una alerta de antigüedad.
 - La desactivación del worker suprime cualquier expectativa de ejecución (no hay alerta por ausencia); un fallo histórico observado conserva su ventana normal de alerta.
 
 ### Alertas y ventanas

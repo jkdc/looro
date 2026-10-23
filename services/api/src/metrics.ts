@@ -9,6 +9,7 @@ export interface PaliqueMetrics {
   generationJobs: Counter;
   generationJobDuration: Histogram;
   generationLastSuccess: Gauge;
+  generationLastFailure: Gauge;
   llmRequests: Counter;
   llmRequestDuration: Histogram;
   llmTokens: Counter;
@@ -30,6 +31,8 @@ function build(meter: Meter): PaliqueMetrics {
       description: 'Wall-clock duration of level-test generation jobs.' }),
     generationLastSuccess: meter.createGauge('palique.leveltest.generation.last_success_unix_seconds',
       { description: 'Unix seconds of the last finished generation job; initialized at boot.' }),
+    generationLastFailure: meter.createGauge('palique.leveltest.generation.last_failure_unix_seconds',
+      { description: 'Unix seconds of the last failed generation execution; initialized at boot.' }),
     llmRequests: meter.createCounter('palique.llm.requests', { description: 'LLM chat completions by provider and outcome.' }),
     llmRequestDuration: meter.createHistogram('palique.llm.request.duration', { unit: 's',
       advice: { explicitBucketBoundaries: [0.25, 0.5, 1, 2, 5, 10, 30, 60, 120, 300, 600] },

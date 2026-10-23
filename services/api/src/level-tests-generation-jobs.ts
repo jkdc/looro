@@ -17,16 +17,24 @@ const lockKey = (languageID: string, level: string, weekId: number) => `level-te
 export async function runLevelTestGenerationJob(db: Database, env: NodeJS.ProcessEnv,
     options: GenerateOptions): Promise<GenerationJobResult> {
   const startedAt = performance.now();
-  const result = await runLevelTestGenerationJobOnce(db, env, options);
-  const status = result.status === 'approved' || result.status === 'draft' ? 'finished' :
-    result.status === 'failed' ? 'failed' : result.status === 'unknown' ? 'unknown' : null;
-  if (status) {
-    paliqueMetrics.generationJobs.add(1, { language: options.languageID, level: options.level, status });
-    paliqueMetrics.generationJobDuration.record((performance.now() - startedAt) / 1000,
-      { language: options.languageID, level: options.level });
-    if (status === 'finished') paliqueMetrics.generationLastSuccess.record(Date.now() / 1000);
+  let status: 'finished' | 'failed' | 'unknown' | null = null;
+  try {
+    const result = await runLevelTestGenerationJobOnce(db, env, options);
+    status = result.status === 'approved' || result.status === 'draft' ? 'finished' :
+      result.status === 'failed' ? 'failed' : result.status === 'unknown' ? 'unknown' : null;
+    return result;
+  } catch (error) {
+    status = 'failed';
+    throw error;
+  } finally {
+    if (status) {
+      paliqueMetrics.generationJobs.add(1, { language: options.languageID, level: options.level, status });
+      paliqueMetrics.generationJobDuration.record((performance.now() - startedAt) / 1000,
+        { language: options.languageID, level: options.level });
+      if (status === 'finished') paliqueMetrics.generationLastSuccess.record(Date.now() / 1000);
+      if (status === 'failed') paliqueMetrics.generationLastFailure.record(Date.now() / 1000);
+    }
   }
-  return result;
 }
 
 /** Serializes CLI and scheduler generation before any external provider call. */
