@@ -42,7 +42,7 @@ Acceptance: tests assert observable log/span/metric/rule behavior; config valida
 - [x] T2 — S1/S2: Sunday UTC scheduler default and documentation; route inline; complete; commit `d356082`; focused scheduler tests 12 passed and API TypeScript check passed.
 - [x] T3 — S1/S3: job/LLM failure-path duration and outcome metrics plus true no-op/bounded telemetry startup; route inline; complete; commit `a0b6b84`; focused tests 32 passed, 11 skipped (DB-dependent) and API TypeScript check passed.
 - [x] T4 — S1/S2: repair alert math, remove missing/stale-generation alert, retain failed-execution alert, add behavioral promtool tests and wire them into CI; route inline; complete; commits `5a3d7e8`, `1290515`; independent verification blocker fixed/rechecked; `make obs-check` passed.
-- [x] T5 — S1–S4: isolated API/CLI metric probe, use fixed role identities and refresh durable timestamps, reconcile original plan/OpenSpec/runbooks/report, run full applicable suites; route inline; complete; commits `258e6be` (implementation) and `PENDING` (final evidence/docs).
+- [x] T5 — S1–S4: isolated API/CLI metric probe, use fixed role identities and refresh durable timestamps, reconcile original plan/OpenSpec/runbooks/report, run full applicable suites; route inline; complete; commits `258e6be` (implementation) and `09b6af7` (final evidence/docs).
 
 Detailed red/green steps and exact commands are in `docs/superpowers/plans/2026-10-23-observability-remediation.md`.
 
