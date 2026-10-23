@@ -40,10 +40,11 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 | `npm --prefix services/api run check` | Correcto (`tsc --noEmit`). |
 | `make check` | Correcto: 138 pruebas Python; exporters y contratos multiplataforma al día. Python emitió `ResourceWarning` por conexiones SQLite sin cerrar en tests; no falló el comando y no se modificaron esos tests no relacionados. |
 | `make obs-check` | Correcto: Compose válido, 5 reglas Prometheus, tests de reglas correctos y Alertmanager válido. |
-| `make test-api` | Correcto: build/arranque de imagen compilada, smoke HTTP y **634/634 pruebas**, 0 fallos, 0 skips; al final eliminó solo `looro-smoke` y su volumen. |
+| `make test-api` | Verificación final tras cerrar los seguimientos: build/arranque de imagen compilada, smoke HTTP y **640/640 pruebas**, 0 fallos, 0 skips; al final eliminó solo `looro-smoke` y su volumen. La ejecución anterior de cierre había pasado 634/634 antes de incorporar las pruebas de composición. |
 | Prueba de política de `make test-api` con Docker simulado | Antes: un fallo de tests dejaba el stack sin teardown. Después: fallo limpia; `KEEP_SMOKE_STACK=1` retiene; éxito limpia; fallo del cleanup propaga error; un valor inválido falla antes de ejecutar Docker. |
 | Revisión independiente en archivos `git archive` de base y candidato | Correcto en pruebas focalizadas: build de ambos, 40/40 pruebas PostgreSQL admin/audit/attempt/week por revisión, 126 rutas equivalentes, 48 rechazos equivalentes y 5 probes de composición de arranque. El smoke compilado candidato pasó 1/1 y terminó con SIGTERM limpio. No se repitió la suite total ni el smoke de contenedor endurecido en esta revisión. |
 | Smoke enfocado después de corrección | Con una fila histórica sintética de otro identificador (`hits=77`), el smoke compilado pasó 1/1 y demostró que el contador aumentó exactamente en uno por la petición denegada. La consulta anterior se había reproducido como falso positivo sin enviar esa petición. |
+| Cierre de seguimiento de composición | `npx tsx --test tests/main-wiring.test.ts`: **6/6**, incluido registro de ambos manejadores y cierre ordenado al recibir `SIGTERM`; `npm --prefix services/api run check`: correcto. La nueva prueba se observó fallar antes de instrumentar el proceso del child y pasar después. |
 | `git diff --check` | Correcto. |
 
 ## Límites y riesgos restantes
@@ -54,7 +55,7 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 
 ## Dictamen independiente y seguimiento
 
-Revisión independiente: **PASS con advisories no bloqueantes**, contra `a87f3ef..387ecab`; no se encontraron regresiones causadas por el candidato. Se corrigieron el falso positivo posible del smoke y la ambigüedad del directorio de trabajo en README. Se difiere como mejora menor añadir pruebas persistentes para los cinco escenarios de composición real de `main()` que el revisor probó en scratch: el lifecycle extraído ya tiene pruebas propias y no se detectó fallo actual. La corrección posterior fue solo de test/documentación; se ejecutaron `npm --prefix services/api run check` y el smoke compilado focalizado 1/1, no se repitió la suite completa de 634.
+Revisión independiente inicial: **PASS con advisories no bloqueantes**, contra `a87f3ef..387ecab`; no encontró regresiones causadas por el candidato. Sus pruebas de composición pendientes se persistieron después en `fd5501d`. Una segunda revisión del rango `a87f3ef..d67f576` encontró únicamente dos seguimientos menores: este informe desactualizado y la falta de una prueba de señal. La prueba nueva en `ad1779d` verifica el registro de `SIGTERM` y `SIGINT` y ejercita el cierre real del lifecycle al emitir `SIGTERM`; el red/green se observó directamente. El type-check y la suite completa Docker/PostgreSQL se volvieron a ejecutar: `npm --prefix services/api run check` correcto y `make test-api` 640/640, 0 fallos y 0 skips. No quedan seguimientos de esa revisión abiertos. El cierre de señal se prueba a través del child de composición con dependencias controladas; el lifecycle real mantiene su cobertura unitaria separada.
 
 ## Commits de trabajo
 
@@ -65,3 +66,6 @@ Revisión independiente: **PASS con advisories no bloqueantes**, contra `a87f3ef
 - `eb70690` — lifecycle aislado y pruebas de ejecución.
 - `ed62393` — cleanup seguro del stack efímero, README, cierre condicional e informe de verificación.
 - `44ffcdb` — assertion exacta del contador del smoke y aclaración del cwd Make/Compose tras revisión independiente.
+- `fd5501d` — pruebas persistentes para la composición y fallos de arranque de `main()`.
+- `d67f576` — registro del resultado de las pruebas de composición.
+- `ad1779d` — cobertura de apagado por señal y registro SDD del seguimiento.
