@@ -37,8 +37,8 @@ Create cohesive route modules for API capabilities, extract only application ope
 - [x] T1 — Phase 0 compiled HTTP smoke, CI integration, README baseline; route: inline; status: complete; commit: `13f1be6`.
 - [x] T2 — Extract admin attempt read routes; route: inline; status: complete; commit: `159156a`.
 - [x] T3 — Extract remaining admin level-test routes and status/draft query operations; route: inline; status: complete; commit: `072512b`.
-- [x] T4 — Extract LLM config routes, inject environment, separate audit helper from CLI; route: inline; status: complete; commit: pending until created.
-- [ ] T5 — Isolate runtime lifecycle and test start/partial-failure/shutdown; route: inline; status: pending; commit: —
+- [x] T4 — Extract LLM config routes, inject environment, separate audit helper from CLI; route: inline; status: complete; commit: `2674ff0`.
+- [x] T5 — Isolate runtime lifecycle and test start/partial-failure/shutdown; route: inline; status: complete; commit: pending until created.
 - [ ] T6 — Smoke cleanup policy, close conditional report items, final documentation and integrated checks; route: inline; status: pending; commit: —
 
 ## Log
@@ -52,3 +52,4 @@ Create cohesive route modules for API capabilities, extract only application ope
 - L7 — Task split ruling: keep the level-test generation/review route group and the LLM-config routes in separate work units because they call different operations and preserve different response/audit/failure contracts. This avoids turning “complete scope” into one mixed-purpose refactor.
 - L8 — T3 proof: `npm run check` passed; compiled PostgreSQL integration tests `level-tests-admin.test.js` and `level-tests-policy.test.js` passed 56/56 with no skips. Generation and review routes remain on root Fastify with prior route order; status and draft SQL/projection now live in `level-tests-admin.ts`.
 - L9 — T4 RED/GREEN proof: the new two-app isolated-environment test first failed because both HTTP handlers read the process-global provider (`openai`) rather than the injected app setting (`glm`). After injection and route extraction, `npm run check` passed and compiled `level-tests-policy`, `admin-routes`, and `admins-admin` integration files passed 43/43 with no skips. The two LLM config instances returned independent environment defaults and left `process.env` unchanged; audit writes and CLI tests stayed green.
+- L10 — T5 RED/GREEN proof: the import test first failed because importing `main.ts` printed `DATABASE_URL is required` and exited 1. The refactored source now imports cleanly. `npm run check` passed; compiled Docker build and real HTTP smoke plus lifecycle/import tests passed 6/6 with no skips. Host `npm run build` could not overwrite pre-existing root-owned `services/api/dist` (permission denied); no attempt was made to delete or change those files, and the official Docker build compiled successfully. A first compiled test run exposed that production omits `tsx`; the test now selects compiled JS when available and source TS under tsx.

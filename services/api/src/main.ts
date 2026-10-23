@@ -1,6 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { finalizeDeferredGuestLinks } from './guest-minutes.js';
 import { createApp } from './app.js';
-import { connectDatabase } from './db.js';
+import { connectDatabase, type Database } from './db.js';
+import { createApiLifecycle } from './api-lifecycle.js';
 import { catalogFromEnvironment, SandboxPayments } from './payments.js';
 import { hasGoogleSignIn, pruneAuthenticationRecords } from './auth.js';
 import { readFile } from 'node:fs/promises';
@@ -23,139 +25,180 @@ import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { log } from './log.js';
 import { addDatabasePoolObservability, initGenerationMetrics, initObservability, shutdownObservability, startGenerationMetricsRefresh } from './observability.js';
 
-const databaseURL = process.env.DATABASE_URL;
-if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
-initObservability();
-const db = connectDatabase(databaseURL);
-addDatabasePoolObservability(db);
-await initGenerationMetrics(db);
-const stopGenerationMetricsRefresh = startGenerationMetricsRefresh(db);
-let hosted: HostedVoice | undefined;
-let hostedHelpers: HostedHelpers | undefined;
-let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>>;
-let generationScheduler: ReturnType<typeof createLevelTestScheduler> | undefined;
-try {
-  const generationConfig = parseLevelTestSchedulerConfig(process.env);
-  const origin = new URL(process.env.PUBLIC_ORIGIN ?? 'http://localhost:8080');
-  if (origin.username || origin.password || (origin.protocol !== 'https:' && !(origin.protocol === 'http:' && origin.hostname === 'localhost')))
-    throw new Error();
-  const key = process.env.STRIPE_TEST_SECRET_KEY, secret = process.env.STRIPE_TEST_WEBHOOK_SECRET;
-  const payments = key && secret ? new SandboxPayments(key, secret, catalogFromEnvironment(process.env), origin.origin) : undefined;
-  const appleClient = process.env.APPLE_CLIENT_ID, appleTeam = process.env.APPLE_TEAM_ID,
-    appleKey = process.env.APPLE_KEY_ID, appleFile = process.env.APPLE_PRIVATE_KEY_PATH;
-  const appleRevoker = appleClient && appleTeam && appleKey && appleFile ? new AppleTokenRevoker(db,
-    { clientID: appleClient, teamID: appleTeam, keyID: appleKey, privateKeyPEM: await readFile(appleFile, 'utf8') }) : undefined;
-  await appleRevoker?.validateConfiguration();
-  minuteCommerce = await configuredMinuteCommerce(db, process.env, { onFailure: code => log.error('minute_commerce_failure', { code }) });
-  const accessMode = process.env.HOSTED_VOICE_ACCESS ?? 'restricted-test';
-  if (!['restricted-test','public-minutes'].includes(accessMode)) throw new Error('Invalid hosted access mode.');
-  const publicMinuteAccess = accessMode==='public-minutes';
-  if (process.env.HOSTED_PAID_VALUE_ENABLED && !['true','false'].includes(process.env.HOSTED_PAID_VALUE_ENABLED))
-    throw new Error('Invalid paid AI value gate.');
-  const publicPaidAccess = process.env.HOSTED_PAID_VALUE_ENABLED === 'true';
-  if (publicPaidAccess && (!publicMinuteAccess || process.env.HOSTED_HELPERS_EXPERIMENTAL !== 'true' ||
-      process.env.HOSTED_VOICE_EXPERIMENTAL !== 'true')) throw new Error('Paid AI value requires public hosted voice and teaching.');
-  if (minuteCommerce?.salesEnabled && !publicPaidAccess) throw new Error('AI value sales require a configured paid conversation service.');
-  if (process.env.GUEST_MINUTES_ENABLED && !['true','false'].includes(process.env.GUEST_MINUTES_ENABLED))
-    throw new Error('Invalid guest minute gate.');
-  if (process.env.HOSTED_HELPERS_EXPERIMENTAL && !['true', 'false'].includes(process.env.HOSTED_HELPERS_EXPERIMENTAL))
-    throw new Error('Invalid helper gate.');
-  if (process.env.HOSTED_HELPERS_EXPERIMENTAL === 'true' &&
-    (process.env.HOSTED_VOICE_EXPERIMENTAL !== 'true' || process.env.HOSTED_VOICE_BILLING_UNIT !== 'milliseconds'))
-    throw new Error('Hosted helpers require minute-funded voice.');
-  if (process.env.HOSTED_VOICE_EXPERIMENTAL === 'true') {
-    const billingUnit = process.env.HOSTED_VOICE_BILLING_UNIT ?? 'nanoUSD';
-    if (billingUnit !== 'nanoUSD' && billingUnit !== 'milliseconds') throw new Error('Invalid hosted billing unit.');
-    const accounts = new Set((process.env.HOSTED_VOICE_ACCOUNT_ALLOWLIST ?? '').split(',').filter(Boolean));
-    if ([...accounts].some(account => !/^[a-f0-9-]{36}$/.test(account))) throw new Error();
-    const lifetimeFundingCapNano = BigInt(process.env.HOSTED_VOICE_LIFETIME_CAP_NANO ?? '0');
-    if (process.env.HOSTED_HELPERS_EXPERIMENTAL === 'true') {
-      hostedHelpers = new HostedHelpers(db, new OpenAIHostedResponses(process.env.OPENAI_API_KEY ?? ''), {
-        accountAllowlist: accounts, aggregateFundingCapNano: lifetimeFundingCapNano,publicMinuteAccess,publicPaidAccess,
-        helperBudgetNanoPerMinute: BigInt(process.env.HOSTED_HELPER_BUDGET_PER_MINUTE_NANO ?? '50000000'),
-        maxRequestsPerMinute: Number(process.env.HOSTED_HELPER_REQUESTS_PER_MINUTE ?? '24'),
-        maxSearchesPerSession: Number(process.env.HOSTED_HELPER_SEARCHES_PER_SESSION ?? '0'),
-        maxConcurrentPerSession: 2, maxConcurrentGlobal: 10, postSessionMilliseconds: 120_000,
-        inputFramingTokenAllowance: 4096, searchInputTokenAllowance: 1_050_000, timeoutMilliseconds: 30_000,
-      });
-      await hostedHelpers.expireBudgets();
-    }
-    hosted = new HostedVoice(db, new OpenAILiveProvider(process.env.OPENAI_API_KEY ?? ''),
-      { accountAllowlist: accounts, billingUnit, lifetimeFundingCapNano,publicMinuteAccess,publicPaidAccess, helpers: hostedHelpers,
-        onStartupFailure: diagnostic => log.warn('live_startup_failed', diagnostic) });
-    await hosted.start();
-  }
-  const accessConfig = accessRequestConfig(process.env);
-  const accessRequests = accessConfig ? new AccessRequests(db, accessConfig) : undefined;
-  const accountsConfig = accountAdmissionConfig(process.env);
-  const accounts = accountsConfig ? { admission: new AuthAdmission(db, accountsConfig) } : undefined;
-  const adminConfig = adminAuthConfig(process.env);
-  const admin = adminConfig ? (() => {
-    const admissionConfig = { hmacKey: adminConfig.hmacKey, proxyToken: adminConfig.proxyToken,
-      allowLocalLoopback: adminConfig.allowLocalLoopback };
-    const services: AdminAuthServices = { db, config: adminConfig };
-    return { services, admission: new AuthAdmission(db, admissionConfig) };
-  })() : undefined;
-  if (process.env.GUEST_MINUTES_ENABLED==='true' && (!accounts || !hosted?.publicMinuteAccess || !hostedHelpers))
-    throw new Error('Guest minutes require public minute voice, teaching and trusted admission.');
-  const guestMinuteAttestor = process.env.GUEST_MINUTES_ENABLED==='true' ? new InstallationGuestMinuteAttestor() : undefined;
-  const reportConfig = aiReportConfig(process.env);
-  const aiReports = reportConfig ? new AIReports(db, reportConfig) : undefined;
-  await pruneAccessRequests(db);
-  await pruneAuthenticationRecords(db);
-  await pruneAIReports(db);
-  await pruneUsageEvents(db);
-  await pruneAdminRecords(db);
-  const googleAndroidClientIDs = (process.env.GOOGLE_ANDROID_CLIENT_IDS ?? '').split(',').map(id => id.trim()).filter(Boolean);
-  const googleAndroidServerClientID = process.env.GOOGLE_ANDROID_SERVER_CLIENT_ID;
-  if (Boolean(googleAndroidServerClientID) !== Boolean(googleAndroidClientIDs.length) || googleAndroidClientIDs.length > 10 ||
-    [googleAndroidServerClientID, ...googleAndroidClientIDs].filter(Boolean).some(id => !/^[A-Za-z0-9-]+\.apps\.googleusercontent\.com$/.test(id!)))
-    throw new Error('Android Google identity configuration is incomplete.');
-  if (accounts && !hasGoogleSignIn({ googleClientID: process.env.GOOGLE_CLIENT_ID, googleAndroidServerClientID, googleAndroidClientIDs }) &&
-    !(appleClient && appleRevoker)) throw new Error('No account identity provider configured.');
-  if (generationConfig.enabled) generationScheduler = createLevelTestScheduler({ config: generationConfig, runWeek: async (weekId, signal, timeoutMs) => {
-    await runLevelTestCombinations(generationConfig, weekId, signal, async (languageID, level, jobWeek, jobSignal) => {
-      const result = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: jobWeek, signal: jobSignal, origin: 'automatic_worker' });
-      if (result.status === 'failed' || result.status === 'unknown')
-        log.warn('level_test_generation_job', { language: languageID, level, week: jobWeek, status: result.status,
-          error_code: result.errors?.[0] ?? 'generation_failed' });
-    }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
-      status: 'failed', error_code: code }), undefined, timeoutMs);
-  } });
-  const app = createApp({ db, environment: process.env,
-    generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
-    googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
-    minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
-    subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
-      { origin: origin.origin.replace(/\/$/, '') }) : undefined,
-    tokenProxy: tokenProxyConfig(process.env) && new TokenProxy(db, tokenProxyConfig(process.env)!) });
-  const cleanup = setInterval(() => {
-    void pruneAuthenticationRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
-    void pruneAccessRequests(db).catch(() => { log.error('retention_cleanup_failed'); });
-    void pruneAIReports(db).catch(() => { log.error('retention_cleanup_failed'); });
-    void pruneUsageEvents(db).catch(() => { log.error('retention_cleanup_failed'); });
-    void pruneAdminRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
-    void hostedHelpers?.expireBudgets().catch(() => { log.error('retention_cleanup_failed'); });
-  }, 15 * 60_000);
-  cleanup.unref();
-  let guestLinkFlight:Promise<unknown>|undefined;
-  const retryGuestLinks=()=>{if(!guestLinkFlight)guestLinkFlight=finalizeDeferredGuestLinks(db)
-    .catch(()=>{log.error('guest_allowance_retry_failed');}).finally(()=>{guestLinkFlight=undefined;});};
-  const guestLinkCleanup=setInterval(retryGuestLinks,60_000);guestLinkCleanup.unref();retryGuestLinks();
-  const close = async () => {
-    clearInterval(cleanup);clearInterval(guestLinkCleanup);stopGenerationMetricsRefresh();await generationScheduler?.stop();await guestLinkFlight; await app.close(); await hosted?.stop(); await minuteCommerce?.runner.stop();
-    await shutdownObservability();
-    await db.end(); process.exit(0);
+export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> {
+  const databaseURL = env.DATABASE_URL;
+  if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
+
+  let database: Database | undefined;
+  let stopGenerationMetricsRefresh: (() => void) | undefined;
+  let hosted: HostedVoice | undefined;
+  let hostedHelpers: HostedHelpers | undefined;
+  let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>> | undefined;
+  let generationScheduler: ReturnType<typeof createLevelTestScheduler> | undefined;
+  let app: ReturnType<typeof createApp> | undefined;
+  let cleanup: ReturnType<typeof setInterval> | undefined;
+  let guestLinkCleanup: ReturnType<typeof setInterval> | undefined;
+  let guestLinkFlight: Promise<unknown> | undefined;
+
+  const lifecycle = createApiLifecycle({
+    listen: async () => {
+      if (!app) throw new Error('API app was not constructed.');
+      await app.listen({ port: Number(env.PORT ?? 8080), host: '0.0.0.0' });
+    },
+    startWorkers: () => {
+      minuteCommerce?.runner.start();
+      generationScheduler?.start();
+      log.info('api_started');
+    },
+    shutdownSteps: [
+      () => {
+        if (cleanup) clearInterval(cleanup);
+        if (guestLinkCleanup) clearInterval(guestLinkCleanup);
+        stopGenerationMetricsRefresh?.();
+      },
+      async () => { await generationScheduler?.stop(); },
+      async () => { await guestLinkFlight; },
+      async () => { await app?.close(); },
+      async () => { await hosted?.stop(); },
+      async () => { await minuteCommerce?.runner.stop(); },
+      async () => { await shutdownObservability(); },
+      async () => { await database?.end(); },
+    ],
+  });
+
+  const closeOnSignal = async () => {
+    await lifecycle.shutdown();
+    process.exit(0);
   };
-  process.on('SIGTERM', close); process.on('SIGINT', close);
-  await app.listen({ port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
-  minuteCommerce?.runner.start();
-  generationScheduler?.start();
-  log.info('api_started');
-} catch {
-  log.error('startup_failed');
-  stopGenerationMetricsRefresh();
-  await generationScheduler?.stop(); await hosted?.stop(); await minuteCommerce?.runner.stop();
-  await shutdownObservability().catch(() => {});
-  await db.end(); process.exitCode = 1;
+
+  try {
+    initObservability(env);
+    const db = connectDatabase(databaseURL);
+    database = db;
+    addDatabasePoolObservability(db);
+    await initGenerationMetrics(db);
+    stopGenerationMetricsRefresh = startGenerationMetricsRefresh(db);
+
+    const generationConfig = parseLevelTestSchedulerConfig(env);
+    const origin = new URL(env.PUBLIC_ORIGIN ?? 'http://localhost:8080');
+    if (origin.username || origin.password || (origin.protocol !== 'https:' && !(origin.protocol === 'http:' && origin.hostname === 'localhost')))
+      throw new Error();
+    const key = env.STRIPE_TEST_SECRET_KEY, secret = env.STRIPE_TEST_WEBHOOK_SECRET;
+    const payments = key && secret ? new SandboxPayments(key, secret, catalogFromEnvironment(env), origin.origin) : undefined;
+    const appleClient = env.APPLE_CLIENT_ID, appleTeam = env.APPLE_TEAM_ID,
+      appleKey = env.APPLE_KEY_ID, appleFile = env.APPLE_PRIVATE_KEY_PATH;
+    const appleRevoker = appleClient && appleTeam && appleKey && appleFile ? new AppleTokenRevoker(db,
+      { clientID: appleClient, teamID: appleTeam, keyID: appleKey, privateKeyPEM: await readFile(appleFile, 'utf8') }) : undefined;
+    await appleRevoker?.validateConfiguration();
+    minuteCommerce = await configuredMinuteCommerce(db, env, { onFailure: code => log.error('minute_commerce_failure', { code }) });
+    const accessMode = env.HOSTED_VOICE_ACCESS ?? 'restricted-test';
+    if (!['restricted-test', 'public-minutes'].includes(accessMode)) throw new Error('Invalid hosted access mode.');
+    const publicMinuteAccess = accessMode === 'public-minutes';
+    if (env.HOSTED_PAID_VALUE_ENABLED && !['true', 'false'].includes(env.HOSTED_PAID_VALUE_ENABLED))
+      throw new Error('Invalid paid AI value gate.');
+    const publicPaidAccess = env.HOSTED_PAID_VALUE_ENABLED === 'true';
+    if (publicPaidAccess && (!publicMinuteAccess || env.HOSTED_HELPERS_EXPERIMENTAL !== 'true' ||
+        env.HOSTED_VOICE_EXPERIMENTAL !== 'true')) throw new Error('Paid AI value requires public hosted voice and teaching.');
+    if (minuteCommerce?.salesEnabled && !publicPaidAccess) throw new Error('AI value sales require a configured paid conversation service.');
+    if (env.GUEST_MINUTES_ENABLED && !['true', 'false'].includes(env.GUEST_MINUTES_ENABLED))
+      throw new Error('Invalid guest minute gate.');
+    if (env.HOSTED_HELPERS_EXPERIMENTAL && !['true', 'false'].includes(env.HOSTED_HELPERS_EXPERIMENTAL))
+      throw new Error('Invalid helper gate.');
+    if (env.HOSTED_HELPERS_EXPERIMENTAL === 'true' &&
+      (env.HOSTED_VOICE_EXPERIMENTAL !== 'true' || env.HOSTED_VOICE_BILLING_UNIT !== 'milliseconds'))
+      throw new Error('Hosted helpers require minute-funded voice.');
+    if (env.HOSTED_VOICE_EXPERIMENTAL === 'true') {
+      const billingUnit = env.HOSTED_VOICE_BILLING_UNIT ?? 'nanoUSD';
+      if (billingUnit !== 'nanoUSD' && billingUnit !== 'milliseconds') throw new Error('Invalid hosted billing unit.');
+      const accounts = new Set((env.HOSTED_VOICE_ACCOUNT_ALLOWLIST ?? '').split(',').filter(Boolean));
+      if ([...accounts].some(account => !/^[a-f0-9-]{36}$/.test(account))) throw new Error();
+      const lifetimeFundingCapNano = BigInt(env.HOSTED_VOICE_LIFETIME_CAP_NANO ?? '0');
+      if (env.HOSTED_HELPERS_EXPERIMENTAL === 'true') {
+        hostedHelpers = new HostedHelpers(db, new OpenAIHostedResponses(env.OPENAI_API_KEY ?? ''), {
+          accountAllowlist: accounts, aggregateFundingCapNano: lifetimeFundingCapNano, publicMinuteAccess, publicPaidAccess,
+          helperBudgetNanoPerMinute: BigInt(env.HOSTED_HELPER_BUDGET_PER_MINUTE_NANO ?? '50000000'),
+          maxRequestsPerMinute: Number(env.HOSTED_HELPER_REQUESTS_PER_MINUTE ?? '24'),
+          maxSearchesPerSession: Number(env.HOSTED_HELPER_SEARCHES_PER_SESSION ?? '0'),
+          maxConcurrentPerSession: 2, maxConcurrentGlobal: 10, postSessionMilliseconds: 120_000,
+          inputFramingTokenAllowance: 4096, searchInputTokenAllowance: 1_050_000, timeoutMilliseconds: 30_000,
+        });
+        await hostedHelpers.expireBudgets();
+      }
+      hosted = new HostedVoice(db, new OpenAILiveProvider(env.OPENAI_API_KEY ?? ''),
+        { accountAllowlist: accounts, billingUnit, lifetimeFundingCapNano, publicMinuteAccess, publicPaidAccess, helpers: hostedHelpers,
+          onStartupFailure: diagnostic => log.warn('live_startup_failed', diagnostic) });
+      await hosted.start();
+    }
+    const accessConfig = accessRequestConfig(env);
+    const accessRequests = accessConfig ? new AccessRequests(db, accessConfig) : undefined;
+    const accountsConfig = accountAdmissionConfig(env);
+    const accounts = accountsConfig ? { admission: new AuthAdmission(db, accountsConfig) } : undefined;
+    const adminConfig = adminAuthConfig(env);
+    const admin = adminConfig ? (() => {
+      const admissionConfig = { hmacKey: adminConfig.hmacKey, proxyToken: adminConfig.proxyToken,
+        allowLocalLoopback: adminConfig.allowLocalLoopback };
+      const services: AdminAuthServices = { db, config: adminConfig };
+      return { services, admission: new AuthAdmission(db, admissionConfig) };
+    })() : undefined;
+    if (env.GUEST_MINUTES_ENABLED === 'true' && (!accounts || !hosted?.publicMinuteAccess || !hostedHelpers))
+      throw new Error('Guest minutes require public minute voice, teaching and trusted admission.');
+    const guestMinuteAttestor = env.GUEST_MINUTES_ENABLED === 'true' ? new InstallationGuestMinuteAttestor() : undefined;
+    const reportConfig = aiReportConfig(env);
+    const aiReports = reportConfig ? new AIReports(db, reportConfig) : undefined;
+    await pruneAccessRequests(db);
+    await pruneAuthenticationRecords(db);
+    await pruneAIReports(db);
+    await pruneUsageEvents(db);
+    await pruneAdminRecords(db);
+    const googleAndroidClientIDs = (env.GOOGLE_ANDROID_CLIENT_IDS ?? '').split(',').map(id => id.trim()).filter(Boolean);
+    const googleAndroidServerClientID = env.GOOGLE_ANDROID_SERVER_CLIENT_ID;
+    if (Boolean(googleAndroidServerClientID) !== Boolean(googleAndroidClientIDs.length) || googleAndroidClientIDs.length > 10 ||
+      [googleAndroidServerClientID, ...googleAndroidClientIDs].filter(Boolean).some(id => !/^[A-Za-z0-9-]+\.apps\.googleusercontent\.com$/.test(id!)))
+      throw new Error('Android Google identity configuration is incomplete.');
+    if (accounts && !hasGoogleSignIn({ googleClientID: env.GOOGLE_CLIENT_ID, googleAndroidServerClientID, googleAndroidClientIDs }) &&
+      !(appleClient && appleRevoker)) throw new Error('No account identity provider configured.');
+    if (generationConfig.enabled) generationScheduler = createLevelTestScheduler({ config: generationConfig, runWeek: async (weekId, signal, timeoutMs) => {
+      await runLevelTestCombinations(generationConfig, weekId, signal, async (languageID, level, jobWeek, jobSignal) => {
+        const result = await runLevelTestGenerationJob(db, env, { languageID, level, weekIndex: jobWeek, signal: jobSignal, origin: 'automatic_worker' });
+        if (result.status === 'failed' || result.status === 'unknown')
+          log.warn('level_test_generation_job', { language: languageID, level, week: jobWeek, status: result.status,
+            error_code: result.errors?.[0] ?? 'generation_failed' });
+      }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
+        status: 'failed', error_code: code }), undefined, timeoutMs);
+    } });
+    app = createApp({ db, environment: env,
+      generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false },
+      auth: { googleClientID: env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
+        googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
+      minuteCommerce, accessRequests, accounts, admin, aiReports, guestMinuteAttestor,
+      subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
+        { origin: origin.origin.replace(/\/$/, '') }) : undefined,
+      tokenProxy: tokenProxyConfig(env) && new TokenProxy(db, tokenProxyConfig(env)!) });
+
+    cleanup = setInterval(() => {
+      void pruneAuthenticationRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
+      void pruneAccessRequests(db).catch(() => { log.error('retention_cleanup_failed'); });
+      void pruneAIReports(db).catch(() => { log.error('retention_cleanup_failed'); });
+      void pruneUsageEvents(db).catch(() => { log.error('retention_cleanup_failed'); });
+      void pruneAdminRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
+      void hostedHelpers?.expireBudgets().catch(() => { log.error('retention_cleanup_failed'); });
+    }, 15 * 60_000);
+    cleanup.unref();
+    const retryGuestLinks = () => {
+      if (!guestLinkFlight) guestLinkFlight = finalizeDeferredGuestLinks(db)
+        .catch(() => { log.error('guest_allowance_retry_failed'); }).finally(() => { guestLinkFlight = undefined; });
+    };
+    guestLinkCleanup = setInterval(retryGuestLinks, 60_000);
+    guestLinkCleanup.unref();
+    retryGuestLinks();
+    process.on('SIGTERM', closeOnSignal);
+    process.on('SIGINT', closeOnSignal);
+    await lifecycle.start();
+  } catch {
+    log.error('startup_failed');
+    try { await lifecycle.shutdown(); } catch { /* Keep the process failure visible without skipping remaining cleanup steps. */ }
+    process.exitCode = 1;
+  }
 }
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) void main();
