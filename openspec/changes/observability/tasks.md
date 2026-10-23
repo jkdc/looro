@@ -117,4 +117,4 @@ requirements and checks supersede the original generation alert design.
       failure timestamps every minute from API.
 - [x] Reconciled current plan, OpenSpec, runbook and historical audit/report
       references with the user-approved actual-failure-only alert requirement.
-- [ ] Record final full API/integration verification in `verify-report.md`.
+- [x] Record final focused/API integration, contracts and independent verification evidence in `verify-report.md` (2026-10-23).

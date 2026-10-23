@@ -182,13 +182,13 @@ Todas filtran `job="otel-collector", exported_job="palique-api"` y llevan `runbo
 | `LevelTestGenerationFailed` | `time() - max(palique_leveltest_generation_last_failure_unix_seconds) < 86400` | fallo real en las últimas 24h | warning |
 | ~~`LevelTestGenerationStale`~~ | Eliminada en la remediación 2026-10-23 | salida programada ausente/antigua no alerta | — |
 | `LlmFailuresSpike` | `(sum(increase(palique_llm_requests_total{status="failed"}[1h])) or vector(0)) > 5` | > 5 fallos/h | warning |
-| `DbPoolSaturated` | `max_over_time(palique_db_pool_connections{state="in_use"}[5m]) / max(palique_db_pool_max_connections) > 0.9` | > 90 % del pool | warning |
+| `DbPoolSaturated` | utilización mínima del pool durante 5m completos, al menos 20 muestras de `in_use`, agrupado por `job, exported_job` | > 90 % del pool durante 1m | warning |
 
 ### 4.4 SLOs internos (honestos, como periodico)
 
 | # | Objetivo | Query de cumplimiento | Limitación documentada |
 |---|---|---|---|
-| 1 | ≥ 99,5 % de peticiones sin 5xx al mes (presupuesto ≈ 3,6 h) | `1 - sum(rate(http_server_request_duration_seconds_count{...,http_response_status_code=~"5.."}[30d])) / sum(rate(http_server_request_duration_seconds_count{...}[30d]))` | evaluación manual; la retención 90d de D5 la hace posible |
+| 1 | ≥ 99,5 % de peticiones sin 5xx al mes (presupuesto ≈ 3,6 h) | `1 - (sum(rate(http_server_request_duration_seconds_count{...,http_response_status_code=~"5.."}[30d])) or vector(0)) / sum(rate(http_server_request_duration_seconds_count{...}[30d]))` | evaluación manual; la retención 90d de D5 la hace posible; requiere tráfico en la ventana |
 | 2 | p95 de GET < 500 ms | `histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{...,http_request_method="GET"}[5m])))` | sin alerta de latencia en esta fase |
 | 3 | semana de exámenes generada y publicada a tiempo | no medida por estas alertas | comprobar publicación aparte; ausencia de fallos no demuestra generación correcta |
 

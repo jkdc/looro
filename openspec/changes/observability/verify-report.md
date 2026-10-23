@@ -212,3 +212,13 @@ telemetry does not start the database refresh timer.
 The final verification commands/results for this remediation are recorded in
 the work-unit task document and commit history; this appendix intentionally
 does not rewrite the original live-stack evidence above.
+
+### Final remediation checks (2026-10-23)
+
+- Focused API tests: `tsx --test tests/observability.test.ts tests/http.test.ts tests/level-tests-scheduler.test.ts` — 38 passed, 2 PostgreSQL-only skipped.
+- API typecheck: `tsc --noEmit` — PASS.
+- Observability configuration and behavioral alert tests: `make obs-check` — PASS.
+- Isolated API integration stack: `make test-api` — exit 0 (625 tests; disposable stack cleaned up).
+- Cross-platform/data contracts: `make check` — PASS (138 Python tests and contract/exporter checks).
+- Independent verification: PASS. Scratch probes confirmed distinct API/CLI Prometheus series with stable role identities, 60-second refresh of durable success/failure timestamps, no timer/database work with telemetry disabled, and generation failure alert behavior. Pool short-startup-spike blocker was corrected and separately rechecked.
+- Environment limitation: native `gentle-ai` RDD status is unavailable in this workspace; no native review approval is claimed. PostgreSQL-only cases in the local focused test invocation were skipped, while the isolated integration suite passed.

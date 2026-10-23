@@ -115,8 +115,8 @@
 - [x] Safe isolated Collector exporter probe reproduced same-identity series overwrite; distinct fixed role IDs produced two separate series without per-run cardinality.
 - [x] Added failing resource-identity and timestamp-refresh tests before implementation; role IDs and periodic durable refresh now preserve CLI failure visibility.
 - [x] Reconciled plan, OpenSpec requirements/design/tasks, operational runbook and historical report; recorded actual-only failure alerting and functional rule-test commands.
-- [ ] Finish full focused TypeScript, typecheck, `make obs-check`, isolated `make test-api`, `make check`, and independent verification after the collision correction.
-- [ ] Commit this unit as `docs(observability): align contracts and verification evidence`.
+- [x] Finish focused TypeScript tests (38 passed, 2 PostgreSQL-only skipped), `tsc --noEmit`, `make obs-check`, isolated `make test-api` (exit 0; 625 tests), `make check` (138 tests), and independent verification (PASS).
+- [x] Commit implementation as `258e6be`; final documentation/tracker reconciliation is committed separately.
 
 ## Interfaces and Pre-flight
 
