@@ -5,7 +5,7 @@
 
 **Goal:** Close the privacy, alert-correctness, failure-instrumentation and HTTP trace gaps documented by the approved design without changing the observability stack or enabling generation by default.
 
-**Architecture:** Preserve manual OpenTelemetry instrumentation and the existing Prometheus/Tempo stack. Use safe route templates for HTTP telemetry, derive expected weekly-generation state from the enabled scheduler configuration and already-persisted results, and verify alert expressions with simulated Prometheus rules.
+**Architecture:** Preserve manual OpenTelemetry instrumentation and the existing Prometheus/Tempo stack. Use safe route templates for HTTP telemetry, retain Sunday opt-in scheduling, alert only on actual failed generation executions (not missing/stale output), and verify alert expressions with simulated Prometheus rules.
 
 **Tech Stack:** Node.js 22, TypeScript, Fastify 5, OpenTelemetry JS 3.x, PostgreSQL 17, Prometheus/promtool 2.54.1, Docker Compose.
 
@@ -15,7 +15,7 @@
 
 - Keep `LEVELTEST_GENERATE_ENABLED=false` when unspecified.
 - Use ISO weekday `7` (Sunday) as the default scheduler day; keep hour `4` UTC unless an explicit config overrides it.
-- The weekly generation deadline is four hours after the configured UTC schedule.
+- The earlier four-hour deadline applied to a proposed missing-generation alert and is withdrawn; no alert is emitted for a schedule with no observed execution.
 - Do not add a PostgreSQL migration or a durable activation marker.
 - Do not log request bodies, query strings, concrete path segments, credentials, IPs, account IDs, provider messages, or arbitrary exception objects.
 - Preserve public HTTP status/body compatibility; add correlation only through a backward-compatible surface.
@@ -29,7 +29,7 @@
 
 1. A request with PII in a path parameter or unmatched path must not export it to stdout or a span attribute.
 2. A log event must not permit caller-provided fields to overwrite reserved fields or add forbidden keys.
-3. First generation failure, failure before the first Prometheus scrape, disabled generation, and an API restart must not be confused with a healthy scheduled week.
+3. First generation failure, failure before the first Prometheus scrape, disabled generation, and an API restart must remain distinguishable; an absent scheduled run must not fire a generation alert.
 4. A real pool saturation interval and an isolated short spike must follow the documented pending/firing policy.
 5. No-5xx traffic, no traffic, direct 502 responses, telemetry-disabled startup, and failed DB seeding must remain distinguishable and compatible.
 
@@ -38,7 +38,7 @@
 - `services/api/src/log.ts`: logger field contracts and runtime reserved-key safety.
 - `services/api/src/app.ts`: request logs, request spans, status/error/context and direct-502 correlation.
 - `services/api/src/metrics.ts`, `observability.ts`, `main.ts`: domain metrics and telemetry lifecycle.
-- `services/api/src/level-tests-scheduler.ts`: UTC default and expected weekly calendar.
+- `services/api/src/level-tests-scheduler.ts`: Sunday UTC default; schedule does not imply a missing-run alert.
 - `services/api/src/level-tests-generation-jobs.ts`, `llm-config.ts`: result and duration measurements on failures.
 - `services/api/telemetry/alerts.yml`, `alerts.test.yml`, `grafana/dashboards/palique-overview.json`: operational conditions and their rule tests.
 - `services/api/tests/observability.test.ts`, `level-tests-scheduler.test.ts`, HTTP test files: regression evidence.
@@ -63,21 +63,18 @@
 - [x] Run `cd services/api && ./node_modules/.bin/tsc --noEmit`; expect exit 0.
 - [x] Commit this unit as `fix(observability): protect request telemetry and classify server spans` (`0def7bd`).
 
-### Task 2: Derive weekly generation health from schedule and persisted outcomes
+### Task 2: Set the Sunday generation default without missed-run alerting
 
-**Files:** `services/api/src/level-tests-scheduler.ts`, `metrics.ts`, `observability.ts`, `main.ts`, generation-related API tests, `tests/level-tests-scheduler.test.ts`, scheduler/alert OpenSpec and operations docs.
+**Files:** `services/api/src/level-tests-scheduler.ts`, Compose defaults, `tests/level-tests-scheduler.test.ts`, scheduler/operations docs.
 
-**Interfaces:** Scheduler continues to accept ISO `day`, UTC `hour`, languages and levels. Its defaults become `day=7`, `hour=4`, and `enabled=false`. Generation-state telemetry must distinguish disabled, pending, satisfied, overdue/missing and unavailable without high-cardinality labels or invented timestamps.
+**Interfaces:** Scheduler continues to accept ISO `day`, UTC `hour`, languages and levels. Its defaults become `day=7`, `hour=4`, and `enabled=false`. Missing or stale scheduled output is not an alert condition; only a real failed generation execution is alertable (Task 3/4).
 
-- [ ] Add deterministic tests for default `{enabled:false, day:7, hour:4}`, an explicit override, Sunday UTC calculation, the four-hour deadline, language/level coverage and startup after the deadline.
-- [ ] Add DB-fixture tests for each configured `(week, language, level)`: a valid stored week/finished result satisfies the schedule; failed, unknown, running, missing and unreadable state do not report success; a disabled scheduler emits no missed-week alert state.
-- [ ] Add tests for first failure before any Prometheus scrape, after API restart with existing DB rows, and for failed-history expiry at the documented 24-hour boundary.
-- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/level-tests-scheduler.test.ts tests/observability.test.ts`; observe the current Monday default/empty historical signal fail the new expectations.
-- [ ] Use the existing persisted jobs/week records to seed and refresh bounded in-memory observable metrics; keep DB query failures distinct from an empty result and avoid querying the DB inside a synchronous OTel callback.
+- [ ] Add deterministic tests for default `{enabled:false, day:7, hour:4}`, an explicit override, and Sunday UTC calculation.
+- [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/level-tests-scheduler.test.ts`; observe the current Monday default fail the new Sunday expectation.
 - [ ] Change only the unspecified weekday default to Sunday; keep enabled opt-in, keep hour 04:00 UTC, and preserve explicit schedule overrides.
-- [ ] Replace the one-time-success-only health signal with current-week per-combination schedule coverage and the approved four-hour grace.
-- [ ] Rerun both focused test files and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
-- [ ] Commit this unit as `feat(observability): detect missed weekly generation from persisted state`.
+- [ ] Update schedule documentation and compose defaults; do not add expected/missed-week telemetry.
+- [ ] Rerun the focused test file and `cd services/api && ./node_modules/.bin/tsc --noEmit`; all must pass.
+- [ ] Commit this unit as `fix(level-tests): default weekly generation to Sunday`.
 
 ### Task 3: Measure rejected jobs, LLM latency and disabled-telemetry startup correctly
 
@@ -98,13 +95,13 @@
 
 **Files:** `services/api/telemetry/alerts.yml`, new `services/api/telemetry/alerts.test.yml`, `services/api/telemetry/grafana/dashboards/palique-overview.json`, Makefile validation target(s), `.github/workflows/checks.yml`.
 
-**Interfaces:** Existing six rule names, severities and service selectors remain stable unless the schedule design requires one named rule to use the new weekly signal. Dashboard JSON remains provisioned and valid. Rule tests use the exact bundled Prometheus/promtool version 2.54.1.
+**Interfaces:** Keep the existing non-generation alert names, severities and service selectors stable. Remove `LevelTestGenerationStale`, retain `LevelTestGenerationFailed` for observed execution failures. Dashboard JSON remains provisioned and valid. Rule tests use the exact bundled Prometheus/promtool version 2.54.1.
 
-- [ ] Add isolated `promtool test rules` cases for every existing alert firing, not firing, and resolving where applicable; include the first failed event, weekly deadline, disabled schedule, saturation recovery, 200-only traffic, mixed status traffic, zero traffic and metric absence.
+- [ ] Add isolated `promtool test rules` cases for every remaining alert firing, not firing, and resolving where applicable; include the first failed event, stale/missing generation not alerting, saturation recovery, 200-only traffic, mixed status traffic, zero traffic and metric absence.
 - [ ] Run `promtool test rules services/api/telemetry/alerts.test.yml`; observe the existing pool, first-failure and no-5xx SLO counterexamples fail.
 - [ ] Change pool utilization to align capacity and in-use labels for the one-instance deployment and express sustained saturation with the approved five-minute policy.
 - [ ] Calculate no-5xx ratio as zero only when a positive total request rate exists; preserve no-traffic and no-metrics cases as distinct.
-- [ ] Change the failure/stale generation alerts to consume the persisted weekly/window signals from Task 2; retain independent LLM failure alert semantics without pretending the first sample is a measured counter delta.
+- [ ] Remove `LevelTestGenerationStale`; retain `LevelTestGenerationFailed` using actual failed-execution metrics, including first-event semantics. Retain independent LLM failure alert semantics without pretending the first sample is a measured counter delta.
 - [ ] Wire `promtool test rules` into `make obs-check` and the existing CI telemetry job; retain `promtool check rules` and `amtool check-config`.
 - [ ] Run rule tests, `make obs-check`, and dashboard JSON parsing; expect all cases pass and six rule syntax checks remain valid.
 - [ ] Commit this unit as `fix(observability): test alert behavior and correct PromQL math`.
@@ -117,7 +114,7 @@
 
 - [ ] Add a safe isolated API+CLI exporter test: run API-only export, then API plus generation CLI exports, and assert stable counters/gauges/resources without ID cardinality growth. Do not contact real providers or start deployed services.
 - [ ] Run the probe and classify the suspected resource collision as confirmed or not reproduced; only change identity if a wrong metric outcome reproduces, then add a failing regression and update all selectors together.
-- [ ] Update design/spec/plan examples to remove raw URL fields, make logger guarantees precise, describe Sunday UTC/opt-in/four-hour schedule and configured overrides, explain alert no-data states, and name `promtool check` (syntax) vs `promtool test rules` (behavior).
+- [ ] Update design/spec/plan examples to remove raw URL fields, make logger guarantees precise, describe Sunday UTC/opt-in scheduling without missing-run alerts, explain alert no-data states, and name `promtool check` (syntax) vs `promtool test rules` (behavior).
 - [ ] Update runbooks with the actual deadline, DB-unavailable state, per-combination interpretation and API-vs-Collector detection budget; append new proof to the verify report without rewriting old run history.
 - [ ] Run `cd services/api && ./node_modules/.bin/tsx --test tests/observability.test.ts tests/level-tests-scheduler.test.ts`, `cd services/api && ./node_modules/.bin/tsc --noEmit`, `make obs-check`, and `make test-api` in the isolated test stack.
 - [ ] Run `make check`; record unavailable platform checks or environment failures explicitly rather than claiming success.
@@ -125,7 +122,7 @@
 
 ## Interfaces and Pre-flight
 
-Task 1 owns `app.ts` request-log/span changes; no other task modifies that behavior except compatible response correlation in the same unit. Task 2 owns weekly schedule state emitted to metrics; Task 4 consumes that exact metric/status contract in alert rules. Task 3 owns execution-level failure/duration instruments; Task 4 consumes their stable names and labels. Task 5 only documents these settled interfaces.
+Task 1 owns `app.ts` request-log/span changes; no other task modifies that behavior except compatible response correlation in the same unit. Task 2 owns the Sunday scheduler default and no missing-run alert is derived from it. Task 3 owns execution-level failure/duration instruments; Task 4 consumes their stable names and labels and removes stale-generation alerting. Task 5 only documents these settled interfaces.
 
 No source generator or schema migration is needed. The existing branch is already `feature/observability`; do not create a worktree against another branch or alter remote state.
 
@@ -150,6 +147,7 @@ No source generator or schema migration is needed. The existing branch is alread
 - L1 — Original authorized request: “lanza sdd usando superpowers y resuelve todos los problemas que has encontrado y definido en el documento que has generado”.
 - L2 — User requirement: “la generación de examenes debería ocurrir los domingos por tanto siempre podemos saber si se han generado o no cada lunes o cada domingo unos horas despues de que corra el worker que los genera, te vale esta respuesta?”
 - L3 — User setting: “mantenemos el interruptor optativo”.
-- L4 — User approval of the four-hour deadline and written design: “ok”; “dale”.
+- L4 — The earlier design included a four-hour grace for a missing-generation alert; the later user requirement supersedes that alert behavior.
+- L5 — User change: “de momento creo que lo mejor es no tener alertas para la generación de examenes, en su defecto lo que sí quiero es que si falla la generación generar métricas y estas generen alertas. los ves acorde y coherente?” Confirmed and authorized for documentation and implementation: “me parece perfecto, lo ideal sería que actualices la documentación con esta nueva requisito y lo implementes”.
 - L5 — Baseline is commit `a5b103680feac26b2ac4242d081528e57a7e8a3d` on `feature/observability`; reviewed origin range was `707e9b4..a5b1036`.
 - L6 — Fresh builder check of the approved design returned `nothing important left`.

@@ -1,6 +1,6 @@
 # Diseño: corregir las garantías de observabilidad
 
-Este diseño resuelve los defectos confirmados en la revisión de la rama `feature/observability` y mantiene el stack existente. Las alertas de generación se basarán en el calendario configurado y en los resultados semanales persistidos, no en una fecha de activación ni en una migración nueva.
+Este diseño resuelve los defectos confirmados en la revisión de la rama `feature/observability` y mantiene el stack existente. La generación semanal mantiene su calendario optativo, pero la ausencia de una ejecución programada no genera una alerta; las alertas de generación se reservan para fallos reales observados y medidos.
 
 ## Propósito
 
@@ -12,7 +12,7 @@ Este cambio debe hacer que las garantías de privacidad, cobertura de alertas y 
 
 1. Nunca exportar rutas concretas o datos derivados de la petición en logs, métricas o atributos de spans.
 2. Hacer que las alertas de pool, generación, LLM y disponibilidad reflejen su semántica declarada y se prueben con datos temporales simulados.
-3. Detectar si falta la generación semanal configurada incluso cuando la generación no ha tenido ningún éxito previo o la API se reinició.
+3. Medir y alertar los fallos reales de generación, incluso si ocurren antes del primer scrape o el servidor se reinicia.
 4. Registrar duraciones y resultados también en los caminos de fallo, preservando errores, cuerpos HTTP, ausencia de reintentos y semántica de los jobs no-op.
 5. Asegurar que las trazas HTTP representen spans de servidor y clasifiquen correctamente los 5xx.
 6. Mantener compatibilidad del panel y los consumidores de respuestas HTTP 502 existentes.
@@ -33,8 +33,8 @@ Este cambio debe hacer que las garantías de privacidad, cobertura de alertas y 
 - El código y Compose usan ahora lunes (`1`) a las 04:00 UTC como valor predeterminado.
 - `LEVELTEST_GENERATE_ENABLED` sigue en `false` si no se configura explícitamente. No se habilita como parte de este cambio.
 - La generación procesa las combinaciones de idiomas y niveles configuradas.
-- El esquema ya conserva por semana, idioma y nivel el historial de jobs; las salidas semanales también son persistentes. Las pruebas deben tratar los resultados existentes legítimos como satisfechos y distinguir jobs `running`, `finished`, `failed` y `unknown`.
-- El timeout del worker es configurable y tiene un máximo acotado. El margen post-horario autorizado es **cuatro horas desde la fecha/hora UTC programada**.
+- El esquema ya conserva por semana, idioma y nivel el historial de jobs; las salidas semanales también son persistentes. Los registros duraderos de jobs pueden recuperar fallos observados después de un reinicio.
+- La fecha y hora UTC configuran cuándo se ejecuta el worker, no una condición para alertar cuando una ejecución está ausente.
 - Ninguna ruta, label, clave o mensaje libre controlado por una petición debe añadirse a telemetría.
 
 ## Enfoques considerados
@@ -47,30 +47,28 @@ Menos consultas de estado y cambios de esquema, pero no detecta de forma fiable 
 
 Proporciona una referencia duradera para una instalación sin historial, pero duplica información que el calendario semanal y los jobs ya persistidos permiten derivar. Amplía innecesariamente el esquema y contradice la restricción de no crear migraciones.
 
-### C. Derivar el resultado esperado del scheduler activo y del estado semanal persistido — seleccionado
+### C. Alertar por fallos reales de ejecución, no por ausencia de salida — seleccionado
 
-Usa exactamente la configuración semanal efectiva (día, hora, idiomas, niveles, enabled), los registros de jobs y los exámenes persistidos para la semana ISO que corresponde. La ventana vence cuatro horas después del instante programado. El estado se vuelve a calcular al arrancar y después del ciclo semanal, por lo que no depende de un timestamp en memoria que desaparece tras un reinicio.
+Mantiene el calendario semanal (domingo por defecto, 04:00 UTC) y el interruptor optativo, pero no calcula ni alerta estados de ejecución pendiente u omitida. Los fallos observados se registran en métricas con etiquetas acotadas; Prometheus alerta sobre esos fallos. Los registros duraderos de jobs permiten recuperar el primer fallo tras un reinicio cuando existe un registro persistido.
 
-Esta es la única opción que satisface el requisito de calendario dicho por el usuario, sobrevive al reinicio, respeta el interruptor optativo y no requiere migración. Los contadores existentes se conservan para volumen/tendencias, no como única fuente de una alerta de evento reciente.
+Esta opción evita alertas por worker deshabilitado, retrasado o no ejecutado y conserva la alerta útil de una ejecución que efectivamente falló. No requiere migración.
 
 ## Decisiones de diseño
 
 ### Calendario y condición de generación
 
 - Cambiar el día predeterminado a domingo (`7`) en el parser de configuración, el Compose local y documentación asociada; conservar la hora predeterminada existente de 04:00 UTC.
-- Conservar `LEVELTEST_GENERATE_ENABLED=false` por defecto en todas las superficies. Si está apagado, no se espera una generación y no se dispara el aviso de generación semanal omitida.
+- Conservar `LEVELTEST_GENERATE_ENABLED=false` por defecto en todas las superficies. Si está apagado, no se espera ejecución; la ausencia de resultados no genera una alerta.
 - Usar la configuración realmente cargada por el proceso: valores explícitos siguen prevaleciendo sobre los defaults. No leer ni cambiar el estado de despliegues remotos.
-- Para cada combinación configurada de idioma/nivel, considerar satisfecha la semana si existe un examen válido para esa semana o un job finalizado que la represente. Un job fallido, desconocido o todavía en ejecución no es un éxito.
-- Antes del deadline, la generación sigue pendiente, no fallida. Desde cuatro horas tras el horario configurado, la ausencia de cualquier combinación esperada se convierte en señal de generación omitida/fallida.
-- Mantener una señal de fallo reciente de 24 horas independiente de la comprobación de finalización semanal. Evitar depender de `increase()` sobre una serie que puede no haberse exportado antes de su primer evento; usar los jobs duraderos cuando sean la fuente de verdad.
-- Una lectura de BD fallida no equivale a cero fallos ni a generación satisfecha. Representar estado no disponible por separado y preservar la señal de fallo de ejecución que pueda observarse en el proceso.
-- Si la configuración del worker se deshabilita, suprimir solo las alertas de expectativa de generación futura; no reinterpretar como sanos los fallos históricos que aún caen en su ventana.
+- Registrar los fallos reales de generación con métricas de resultado; no derivar fallos de semanas sin resultados.
+- Mantener `LevelTestGenerationFailed` como alerta de fallos recientes. Debe poder detectar el primer fallo y, cuando exista un registro duradero, recuperar esa señal tras reinicio.
+- La desactivación del worker suprime cualquier expectativa de ejecución (no hay alerta por ausencia); un fallo histórico observado conserva su ventana normal de alerta.
 
 ### Alertas y ventanas
 
 - `DbPoolSaturated`: comparar utilization con la capacidad de la misma instancia (escalar expresamente el máximo para la topología actual de una instancia) y usar un valor sostenido durante cinco minutos más `for: 1m`. No usar `max_over_time` para afirmar continuidad.
 - `LevelTestGenerationFailed`: usar una señal que reconstruya el primer fallo, expire a las 24 horas y sobreviva al reinicio cuando existe registro duradero.
-- `LevelTestGenerationStale`: sustituir su criterio de «algún éxito en ocho días» por el calendario real, deadline y combinaciones activas. No mantener un estado inicial vacío que nunca sea evaluado.
+- `LevelTestGenerationStale`: eliminarla; el calendario no se utiliza para alertar por una salida semanal ausente o antigua.
 - `ApiHttp5xxRatioHigh` y el SLO: devolver 0 errores y SLO 1 cuando hay tráfico medible y no hay 5xx; conservar diferenciación de cero tráfico y ausencia de métricas.
 - `ApiMetricsMissing`: mantener heartbeat seguro del proceso y documentar de manera separada caída de la API y caída del Collector; la expiración temporal del Collector forma parte del presupuesto de detección.
 - `LlmFailuresSpike`: conservar el umbral de más de cinco fallos por hora, verificando que la primera observación por serie no se pierda.
