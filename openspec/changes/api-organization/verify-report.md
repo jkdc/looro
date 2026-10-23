@@ -57,4 +57,4 @@ Se compararon las declaraciones `app.<método>(<plantilla>)` del `app.ts` base (
 - `072512b` — rutas administrativas restantes y operaciones de estado/borradores.
 - `2674ff0` — entorno explícito, rutas de configuración LLM y auditoría.
 - `eb70690` — lifecycle aislado y pruebas de ejecución.
-- Pendiente al crear este informe: commit de cierre del harness y documentación.
+- `ed62393` — cleanup seguro del stack efímero, README, cierre condicional e informe de verificación.
