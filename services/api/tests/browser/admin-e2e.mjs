@@ -705,6 +705,39 @@ try {
       await page.unroute('**/v1/admin/level-tests/status**', handler);
     }
   });
+  await check('generation watcher batches more than 25 persisted run identities', async () => {
+    const key = 'palique.admin.generation-watch.v1';
+    const runs = Array.from({ length: 26 }, (_, index) => ({
+      runCorrelationId: `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`,
+      languageID: 'en', level: 'A1', weekId: 202643, requestedAt: Date.now()
+    }));
+    const batches = [];
+    const pattern = '**/v1/admin/level-tests/status**';
+    const handler = async route => {
+      const runIds = new URL(route.request().url()).searchParams.get('runIds');
+      if (!runIds) return route.continue();
+      const ids = runIds.split(',');
+      batches.push(ids);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        jobs: [], trackedRuns: ids.map(correlationId => ({ correlationId, registration: 'pending' })) }) });
+    };
+    await page.route(pattern, handler);
+    try {
+      await page.evaluate(({ key, runs }) => sessionStorage.setItem(key, JSON.stringify({ runs, results: [], weekId: 202643 })), { key, runs });
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#exam-weeks-card', { state: 'attached', timeout: 10_000 });
+      const deadline = Date.now() + 12_000;
+      while (batches.length < 2 && Date.now() < deadline) await page.waitForTimeout(100);
+      if (batches.length !== 2) throw new Error(`expected two status calls, got ${batches.length}; url=${page.url()}; title=${await page.textContent('#page-title')}; saved=${Boolean(await page.evaluate(key => sessionStorage.getItem(key), key))}; pageErrors=${observedPageErrors.slice(-3).join(' | ')}`);
+      if (batches.some(ids => ids.length > 25) || batches.map(ids => ids.length).sort((a, b) => a - b).join(',') !== '1,25')
+        throw new Error(`status request sizes=${batches.map(ids => ids.length).join(',')}`);
+      if (new Set(batches.flat()).size !== 26) throw new Error('one or more run identities were lost or duplicated');
+    } finally {
+      await page.unroute(pattern, handler);
+      await page.evaluate(key => sessionStorage.removeItem(key), key);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+    }
+  });
   await check('a finished run does not leak its timer into the next watch', async () => {
     // Regression: the direct tick after a launch used to leave the scheduled
     // timer alive; when it fired it cleared the NEW watch's timer handle and
@@ -1118,6 +1151,25 @@ try {
   await shot('19-policy-saved');
   await drainToasts();
 
+  await check('a late failed policy refresh cannot replace a different active view', async () => {
+    await page.fill('#pol-minutes', String(Number(await page.inputValue('#pol-minutes')) + 1));
+    await page.fill('#pol-reason', 'Stale view refresh regression');
+    let releaseRefresh, sawRefresh;
+    const refreshSeen = new Promise(resolve => { sawRefresh = resolve; });
+    const gate = new Promise(resolve => { releaseRefresh = resolve; });
+    await page.route('**/v1/admin/policy/welcome', async route => {
+      if (route.request().method() !== 'GET') return route.continue();
+      sawRefresh(); await gate; await route.abort();
+    });
+    await page.click('#pol-save'); await refreshSeen;
+    await page.goto(`${PANEL}/#overview`);
+    await page.waitForFunction(() => document.querySelector('#page-title')?.textContent === 'Resumen', undefined, { timeout: 10_000 });
+    releaseRefresh(); await page.waitForTimeout(300);
+    if ((await page.textContent('#page-title')) !== 'Resumen') throw new Error('late policy refresh replaced the current view');
+    if (await page.locator('#policy-refresh').count()) throw new Error('stale policy retry alert appeared in another view');
+    await page.unroute('**/v1/admin/policy/welcome');
+  });
+
   await page.goto(`${PANEL}/#plans`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#plans-save', { timeout: 10_000 });
   const plansViewBefore = (await page.textContent('#view')) ?? '';
@@ -1153,6 +1205,36 @@ try {
 
   await page.goto(`${PANEL}/#campaigns`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#camp-prepare', { timeout: 10_000 });
+  await check('a campaign prepare response cannot restore intent edited while it is pending', async () => {
+    const accountA = '11111111-1111-4111-8111-111111111111';
+    const accountB = '22222222-2222-4222-8222-222222222222';
+    let release;
+    let seen;
+    const intercepted = new Promise(resolve => { seen = resolve; });
+    const gate = new Promise(resolve => { release = resolve; });
+    const pattern = '**/v1/admin/campaigns';
+    const handler = async route => {
+      if (route.request().method() !== 'POST') return route.continue();
+      seen(); await gate;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        campaignID: '33333333-3333-4333-8333-333333333333', recipients: 1, minutesPerUser: 5,
+        confirmation: 'APPLY 33333333-3333-4333-8333-333333333333' }) });
+    };
+    await page.route(pattern, handler);
+    try {
+      await page.fill('#camp-account', accountA);
+      await page.fill('#camp-minutes', '5'); await page.fill('#camp-cap', '5000');
+      await page.fill('#camp-reason', 'Pending prepare intent regression');
+      await page.click('#camp-prepare'); await intercepted;
+      await page.fill('#camp-account', accountB); release();
+      await page.waitForTimeout(300);
+      if (await page.locator('#camp-apply').count()) throw new Error('stale preparation created an apply action after the audience changed');
+    } finally {
+      release(); await page.unroute(pattern, handler);
+      await page.goto(`${PANEL}/#campaigns`);
+      await page.waitForSelector('#camp-prepare', { timeout: 10_000 });
+    }
+  });
   await check('editing any campaign intent invalidates the prepared snapshot', async () => {
     if (!accountId) throw new Error('seeded account id unavailable');
     const prepare = async () => {
@@ -1229,6 +1311,18 @@ try {
     if (await page.isEnabled('#camp-prepare')) throw new Error('a second campaign can be prepared while the first outcome is uncertain');
     for (const selector of ['#aud-one', '#aud-all', '#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason'])
       if (await page.isEnabled(selector)) throw new Error(`intent field ${selector} is editable while outcome is uncertain`);
+    await page.goto(`${PANEL}/#overview`);
+    await page.waitForFunction(() => document.querySelector('#page-title')?.textContent === 'Resumen', undefined, { timeout: 10_000 });
+    await page.goto(`${PANEL}/#campaigns`);
+    await page.waitForSelector('#camp-apply:enabled', { timeout: 10_000 });
+    if (!(await page.textContent('#camp-result')).includes(uncertainCampaignID))
+      throw new Error('uncertain campaign identity was lost after route remount');
+    for (const selector of ['#camp-prepare', ...['#aud-one', '#aud-all', '#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason']])
+      if (await page.isEnabled(selector)) throw new Error(`intent control ${selector} unlocked after route remount`);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#camp-apply:enabled', { timeout: 10_000 });
+    if (!(await page.textContent('#camp-result')).includes(uncertainCampaignID))
+      throw new Error('uncertain campaign identity was lost after page reload');
     await page.click('#camp-apply');
     await page.waitForFunction(() => (document.querySelector('#camp-result')?.textContent ?? '').includes('Aplicada:'),
       undefined, { timeout: 15_000 });
@@ -1269,17 +1363,30 @@ try {
   await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('policy.update'),
     undefined, { timeout: 15_000 });
   await check('audit action exposes eq instead of unsupported contains', async () => {
+    const actionQueries = [];
+    const observeQuery = request => {
+      if (request.url().includes('/v1/admin/browse/admin_actions?'))
+        actionQueries.push(new URL(request.url()).searchParams.get('q_action'));
+    };
+    page.on('request', observeQuery);
     const operator = page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-operator');
     const values = await operator.locator('option').evaluateAll(nodes => nodes.map(node => node.value));
     if (values.join(',') !== 'eq') throw new Error(`action operators=${values.join(',')}`);
-    await page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-value').fill('campaign.apply');
+    const actionInput = page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-value');
+    await actionInput.pressSequentially('campaign.apply');
     await page.waitForFunction(() => {
       const rows = [...document.querySelectorAll('#browse-grid .tabulator-row')];
       return rows.length > 0 && rows.every(row => (row.textContent ?? '').includes('campaign.apply'));
     }, undefined, { timeout: 10_000 });
-    await page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-value').fill('');
+    await page.waitForTimeout(500);
+    await page.waitForFunction(() => [...document.querySelectorAll('#browse-grid .tabulator-row')]
+      .every(row => (row.textContent ?? '').includes('campaign.apply')));
+    await actionInput.press('Control+A'); await actionInput.press('Backspace');
     await page.waitForFunction(() => [...document.querySelectorAll('#browse-grid .tabulator-row')]
       .some(row => (row.textContent ?? '').includes('policy.update')), undefined, { timeout: 10_000 });
+    await page.waitForTimeout(350);
+    if (actionQueries.includes('eq:')) throw new Error('clearing the custom filter issued an empty eq query');
+    page.off('request', observeQuery);
   });
   await check('the audit table records every mutation with its motive', async () => {
     const audit = (await page.textContent('#browse-grid')) ?? '';

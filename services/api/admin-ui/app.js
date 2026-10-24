@@ -132,19 +132,23 @@ const validateFields = fields => {
   if (firstInvalid) { firstInvalid.focus(); return false; }
   return true;
 };
-const refreshAfterMutation = async (container, render, confirmation, retryId) => {
-  try { await render(container); toast(confirmation); }
+const refreshAfterMutation = async (container, render, confirmation, retryId, context) => {
+  const current = () => !context || context.isCurrent();
+  try { await render(container, context, true); if (current()) toast(confirmation); }
   catch (error) {
+    if (!current() || error.name === 'AbortError') return;
     const renderFailure = failure => {
+      if (!current()) return;
       container.innerHTML = `<div class="alert alert-warning mt-3" role="alert">
         <strong>${escapeHtml(confirmation)}</strong><p class="mb-2">La lectura no se pudo actualizar; los datos mostrados aún no están confirmados como recientes.</p>
         <span class="small">${escapeHtml(failure.code ?? failure.message ?? 'read_failed')}</span>
         <div><button class="btn btn-sm btn-outline-primary mt-2" id="${retryId}">Reintentar lectura</button></div></div>`;
       $(`#${retryId}`).onclick = async () => {
+        if (!current()) return;
         container.setAttribute('aria-busy', 'true');
-        try { await render(container); }
-        catch (nextFailure) { renderFailure(nextFailure); }
-        finally { container.setAttribute('aria-busy', 'false'); }
+        try { await render(container, context, true); }
+        catch (nextFailure) { if (current() && nextFailure.name !== 'AbortError') renderFailure(nextFailure); }
+        finally { if (current()) container.setAttribute('aria-busy', 'false'); }
       };
     };
     renderFailure(error);
@@ -384,6 +388,7 @@ async function renderBrowse(container, fixedTable, context) {
           return wrapper;
         },
         headerFilterFunc: () => true,
+        headerFilterLiveFilter: false,
         headerFilterParams: { operators: spec.operators }
       });
       return base;
@@ -418,7 +423,10 @@ async function renderBrowse(container, fixedTable, context) {
     tables.push(table);
     let lastFilterKey = '';
     table.on('dataFiltered', () => {
-      const filters = table.getFilters(true).filter(entry => entry.value !== '' && entry.value !== undefined);
+      const filters = table.getFilters(true).filter(entry => {
+        const value = typeof entry.value === 'object' ? entry.value?.value : entry.value;
+        return value !== '' && value !== undefined;
+      });
       const key = JSON.stringify(filters);
       if (key === lastFilterKey) return;
       lastFilterKey = key;
@@ -613,8 +621,13 @@ async function watchGenerationTick() {
   generationTicking = true;
   try {
     const runIds = watch.runs.map(run => run.runCorrelationId);
-    const status = await api('/v1/admin/level-tests/status?runIds=' + encodeURIComponent(runIds.join(',')),
-      { signal: owner.signal });
+    const responses = [];
+    for (let offset = 0; offset < runIds.length; offset += 25) {
+      const batch = runIds.slice(offset, offset + 25);
+      responses.push(await api('/v1/admin/level-tests/status?runIds=' + encodeURIComponent(batch.join(',')), { signal: owner.signal }));
+    }
+    const status = { jobs: responses.flatMap(response => Array.isArray(response.jobs) ? response.jobs : []),
+      trackedRuns: responses.flatMap(response => Array.isArray(response.trackedRuns) ? response.trackedRuns : []) };
     if (generationWatch !== watch) return;
     if (!owner.isCurrent()) return;
     const jobs = Array.isArray(status.jobs) ? status.jobs : [];
@@ -1255,8 +1268,9 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
 }
 
 /* ---- forms ---- */
-async function renderPolicy(container) {
-  const policy = await api('/v1/admin/policy/welcome');
+async function renderPolicy(container, context, afterMutation = false) {
+  const policy = await api('/v1/admin/policy/welcome', context && !afterMutation ? { signal: context.signal } : {});
+  if (context && !context.isCurrent()) return;
   container.innerHTML = `<div class="row"><div class="col-lg-6"><div class="card"><div class="card-body">
     <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-settings text-secondary"></i>Minutos de bienvenida</h3>
     <div class="mb-3"><label class="form-check form-switch">
@@ -1278,13 +1292,14 @@ async function renderPolicy(container) {
       await api('/v1/admin/policy/welcome', { method: 'PUT', body: JSON.stringify({
         version: policy.version, welcomeEnabled: $('#pol-enabled').checked,
         welcomeMinutes: Number($('#pol-minutes').value), reason: $('#pol-reason').value }) });
-      await refreshAfterMutation(container, renderPolicy, 'Política actualizada correctamente', 'policy-refresh');
-    } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
+      await refreshAfterMutation(container, renderPolicy, 'Política actualizada correctamente', 'policy-refresh', context);
+    } catch (error) { if ((!context || context.isCurrent()) && error.name !== 'AbortError') toast(`Error: ${error.code}`, 'danger'); }
   };
 }
 
-async function renderPlans(container) {
-  const { config, tiers } = await api('/v1/admin/plans');
+async function renderPlans(container, context, afterMutation = false) {
+  const { config, tiers } = await api('/v1/admin/plans', context && !afterMutation ? { signal: context.signal } : {});
+  if (context && !context.isCurrent()) return;
   const tierRows = tiers.map((tier, index) => `<div class="card-body border-top py-3">
     <h4 class="text-uppercase small text-secondary mb-2">Plan ${tier.tier}</h4>
     <div class="row">
@@ -1343,13 +1358,22 @@ async function renderPlans(container) {
         playProductID: tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'playProductID').value || null })) };
     try {
       await api('/v1/admin/plans', { method: 'PUT', body: JSON.stringify(payload) });
-      await refreshAfterMutation(container, renderPlans, 'Planes actualizados correctamente', 'plans-refresh');
-    } catch (error) { $('#plans-error').textContent = error.code === 'subscription_version_conflict' ?
+      await refreshAfterMutation(container, renderPlans, 'Planes actualizados correctamente', 'plans-refresh', context);
+    } catch (error) { if (context && !context.isCurrent()) return; $('#plans-error').textContent = error.code === 'subscription_version_conflict' ?
       'Conflicto de versión: recarga y reintenta.' : `Error: ${error.code}`; }
   };
 }
 
-async function renderCampaigns(container) {
+const PENDING_CAMPAIGN_STORAGE_KEY = 'palique.admin.pending-campaign.v1';
+function readPendingCampaign() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(PENDING_CAMPAIGN_STORAGE_KEY) || 'null');
+    if (!saved || !RUN_CORRELATION_ID.test(saved.campaignID) || typeof saved.confirmation !== 'string' ||
+        typeof saved.reason !== 'string' || saved.reason.length < 3) return null;
+    return saved;
+  } catch { return null; }
+}
+async function renderCampaigns(container, context) {
   container.innerHTML = `<div class="row"><div class="col-lg-8"><div class="card"><div class="card-body">
     <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-gift text-secondary"></i>Campaña de minutos</h3>
     <div class="mb-3"><label class="form-check">
@@ -1366,15 +1390,19 @@ async function renderCampaigns(container) {
     <button class="btn btn-primary" id="camp-prepare"><i class="ti ti-checklist me-1"></i>Preparar</button>
     <div id="camp-result" class="mt-3"></div>
   </div></div></div></div>`;
-  let preparedCampaign = null;
+  let preparedCampaign = readPendingCampaign();
+  let intentVersion = 0;
+  let preparationInFlight = false;
   const intentControls = ['#aud-one', '#aud-all', '#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason'];
   const lockIntent = locked => {
     for (const selector of intentControls) $(selector).disabled = locked;
     $('#camp-prepare').disabled = locked;
   };
   const invalidatePrepared = () => {
+    intentVersion++;
     if (!preparedCampaign) return;
     preparedCampaign = null;
+    lockIntent(false);
     const apply = $('#camp-apply');
     if (apply) apply.disabled = true;
     $('#camp-result').insertAdjacentHTML('beforeend', '<div class="alert alert-warning mt-2" role="status">La campaña preparada ya no coincide con los datos actuales. Vuelve a prepararla.</div>');
@@ -1387,7 +1415,42 @@ async function renderCampaigns(container) {
     $(selector).addEventListener('input', invalidatePrepared);
     $(selector).addEventListener('change', invalidatePrepared);
   }
+  const installApply = (campaign, uncertain = false) => {
+    preparedCampaign = campaign;
+    lockIntent(uncertain);
+    $('#camp-result').innerHTML = `<div class="alert ${uncertain ? 'alert-warning' : 'alert-info'} d-flex align-items-center gap-2">
+      <i class="ti ${uncertain ? 'ti-alert-triangle' : 'ti-info-circle'}"></i><span>${uncertain
+        ? `El resultado de la aplicación no se pudo confirmar. Reintenta esta misma campaña: ${escapeHtml(campaign.campaignID)}`
+        : `Preparada: <strong>${escapeHtml(campaign.recipients)}</strong> destinatarios, ${escapeHtml(campaign.minutesPerUser)} min/usuario (${number(campaign.recipients * campaign.minutesPerUser)} min totales). Campaña ${escapeHtml(campaign.campaignID)}`}
+        · confirmación <code>${escapeHtml(campaign.confirmation)}</code></span></div>
+      <button class="btn btn-warning" id="camp-apply">${uncertain ? 'Reintentar la misma campaña' : 'Aplicar (irreversible)'}</button>`;
+    $('#camp-apply').onclick = async () => {
+      if (!preparedCampaign || preparedCampaign.campaignID !== campaign.campaignID) return;
+      const apply = $('#camp-apply'); apply.disabled = true; lockIntent(true);
+      try { sessionStorage.setItem(PENDING_CAMPAIGN_STORAGE_KEY, JSON.stringify(campaign)); }
+      catch {
+        apply.disabled = false; lockIntent(false);
+        toast('No se pudo guardar la identidad de la campaña en esta sesión. No se ha enviado la aplicación.', 'danger');
+        return;
+      }
+      try {
+        const outcome = await api(`/v1/admin/campaigns/${campaign.campaignID}/apply`, { method: 'POST',
+          body: JSON.stringify({ confirmation: campaign.confirmation, reason: campaign.reason }) });
+        sessionStorage.removeItem(PENDING_CAMPAIGN_STORAGE_KEY);
+        preparedCampaign = null;
+        if (context && !context.isCurrent()) return;
+        lockIntent(false);
+        $('#camp-result').innerHTML += `<div class="alert alert-success">Aplicada: concedidos <strong>${outcome.granted}</strong>, omitidos ${outcome.skipped}.</div>`;
+      } catch {
+        if (context && !context.isCurrent()) return;
+        apply.disabled = false;
+        toast(`No se pudo confirmar el resultado de la campaña ${campaign.campaignID}. Puedes reintentar la misma campaña; no prepares otra.`, 'danger');
+      }
+    };
+  };
+  if (preparedCampaign) installApply(preparedCampaign, true);
   $('#camp-prepare').onclick = async () => {
+    if (preparationInFlight || preparedCampaign) return;
     const fields = [
       ...($('#aud-one').checked ? [{ input: '#camp-account', label: 'Cuenta',
         validate: value => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.trim()) }] : []),
@@ -1396,37 +1459,23 @@ async function renderCampaigns(container) {
       { input: '#camp-reason', label: 'Motivo', requiredText: true }
     ];
     if (!validateFields(fields)) return;
+    const requestVersion = intentVersion;
+    preparationInFlight = true;
+    $('#camp-prepare').disabled = true;
     try {
       const intent = { audience: $('#aud-one').checked ? [$('#camp-account').value.trim()] : 'all-current-users',
         minutesPerUser: Number($('#camp-minutes').value), maxTotalMinutes: Number($('#camp-cap').value),
         reason: $('#camp-reason').value };
       const summary = await api('/v1/admin/campaigns', { method: 'POST', body: JSON.stringify({
         ...intent }) });
-      preparedCampaign = { ...intent, campaignID: summary.campaignID, confirmation: summary.confirmation };
-      $('#camp-result').innerHTML = `<div class="alert alert-info d-flex align-items-center gap-2">
-        <i class="ti ti-info-circle"></i><span>Preparada: <strong>${summary.recipients}</strong> destinatarios,
-        ${summary.minutesPerUser} min/usuario (${number(summary.recipients * summary.minutesPerUser)} min totales).
-        Campaña <code>${summary.campaignID}</code> · confirmación <code class="small">${summary.confirmation}</code></span></div>
-        <button class="btn btn-warning" id="camp-apply"><i class="ti ti-alert-triangle me-1"></i>Aplicar (irreversible)</button>`;
-      $('#camp-apply').onclick = async () => {
-        if (!preparedCampaign || preparedCampaign.campaignID !== summary.campaignID) return;
-        const apply = $('#camp-apply');
-        apply.disabled = true;
-        lockIntent(true);
-        try {
-          const outcome = await api(`/v1/admin/campaigns/${summary.campaignID}/apply`, { method: 'POST',
-            body: JSON.stringify({ confirmation: summary.confirmation, reason: preparedCampaign.reason }) });
-          preparedCampaign = null;
-          lockIntent(false);
-          $('#camp-result').innerHTML += `<div class="alert alert-success d-flex align-items-center gap-2">
-            <i class="ti ti-circle-check"></i><span>Aplicada: concedidos <strong>${outcome.granted}</strong>,
-            omitidos ${outcome.skipped}.</span></div>`;
-        } catch (error) {
-          apply.disabled = false;
-          toast(`No se pudo confirmar el resultado de la campaña ${summary.campaignID}. Puedes reintentar la misma campaña; no prepares otra.`, 'danger');
-        }
-      };
-    } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
+      if (requestVersion !== intentVersion || (context && !context.isCurrent())) return;
+      const campaign = { ...intent, campaignID: summary.campaignID, confirmation: summary.confirmation,
+        recipients: summary.recipients, minutesPerUser: summary.minutesPerUser };
+      preparedCampaign = campaign;
+      $('#camp-result').innerHTML = `<div class="alert alert-info">Preparada: <strong>${summary.recipients}</strong> destinatarios, ${summary.minutesPerUser} min/usuario (${number(summary.recipients * summary.minutesPerUser)} min totales).</div>`;
+      installApply(campaign);
+    } catch (error) { if ((!context || context.isCurrent()) && error.name !== 'AbortError') toast(`Error: ${error.code}`, 'danger'); }
+    finally { preparationInFlight = false; if ((!context || context.isCurrent()) && !preparedCampaign) $('#camp-prepare').disabled = false; }
   };
 }
 
@@ -1520,13 +1569,13 @@ const VIEWS = {
   economy: { title: 'Economía', render: (container, _params, _id, context) => renderDashboard('economy', container, context) },
   usage: { title: 'Uso de la app', render: renderUsage },
   browse: { title: 'Explorador de tablas', render: (container, _params, _id, context) => renderBrowse(container, null, context) },
-  policy: { title: 'Política de bienvenida', render: renderPolicy },
+  policy: { title: 'Política de bienvenida', render: (container, _params, _id, context) => renderPolicy(container, context) },
   'exam-weeks': { title: 'Generar y revisar exámenes', render: (container, params, _id, context) => renderExamWeeksView(container, params, context) },
   'exam-results': { title: 'Resultados de exámenes', render: renderExamAttempts },
   'ia-config': { title: 'Configuración de IA', render: renderAiConfig },
   exam: { title: 'Revisión de examen', render: renderExamReview },
-  plans: { title: 'Planes y suscripciones', render: renderPlans },
-  campaigns: { title: 'Campañas', render: renderCampaigns },
+  plans: { title: 'Planes y suscripciones', render: (container, _params, _id, context) => renderPlans(container, context) },
+  campaigns: { title: 'Campañas', render: (container, _params, _id, context) => renderCampaigns(container, context) },
   audit: { title: 'Auditoría de acciones', render: (container, _params, _id, context) => renderBrowse(container, 'admin_actions', context) }
 };
 // Routes that moved when configuration and generation were split apart.
