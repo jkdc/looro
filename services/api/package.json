@@ -14,7 +14,8 @@
     "minutes-admin": "tsx --env-file-if-exists=.env src/minutes-admin.ts",
     "tokens-admin": "tsx --env-file-if-exists=.env src/tokens-admin.ts",
     "admins-admin": "tsx --env-file-if-exists=.env src/admins-admin.ts",
-    "test": "tsx --test --test-concurrency=1 tests/*.test.ts",
+    "test": "make -C ../.. test-api",
+    "test:unit": "tsx --test --test-concurrency=1 tests/*.test.ts",
     "check": "tsc --noEmit",
     "leveltests-generate": "tsx --env-file-if-exists=.env src/level-tests-generate.ts"
   },

@@ -24,22 +24,9 @@ jobs:
   server:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: app_test
-          POSTGRES_PASSWORD: local_ci_only
-          POSTGRES_DB: app_billing_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U app_test -d app_billing_test"
-          --health-interval 5s --health-timeout 3s --health-retries 10
     defaults:
       run:
         working-directory: services/api
-    env:
-      TEST_DATABASE_URL: postgresql://app_test:local_ci_only@localhost:5432/app_billing_test
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -52,9 +39,6 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: npm test
-      - name: Verify compiled API in isolated smoke stack
-        working-directory: .
-        run: make test-api
       # Compose interpolation needs the two required variables; nothing starts.
       - name: Validate observability configs
         env:

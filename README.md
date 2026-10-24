@@ -48,6 +48,8 @@ Once it is up:
 | `make psql` | psql console against the local database |
 | `make migrate` | Apply pending migrations |
 | `make test-api` | Full API integration suite in an isolated smoke stack (never touches your local data) |
+| `cd services/api && npm test` | Same isolated PostgreSQL-backed API suite; disposable DB volume is removed by default |
+| `cd services/api && npm run test:unit` | Fast, partial API tests; database-dependent tests may be skipped |
 | `make check` | Cross-platform contracts CI runs (generated content, Swift↔Kotlin) |
 | `make android-build` / `android-install` / `android-run` | Build, install and launch the debug APK on a connected device |
 | `make ios-build` / `ios-test` / `ios-device` | iOS simulator build, simulator test suite, install on a connected iPhone |
