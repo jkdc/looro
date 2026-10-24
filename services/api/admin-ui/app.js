@@ -1,4 +1,6 @@
 import { createDashboardCharts } from './features/dashboard-charts.js?v=1';
+import { BROWSE_UNARY_OPERATORS, normalizeBrowseFilters, browseFilterQuery } from './features/browse-filters.js?v=1';
+import { watchFailureStatus } from './features/generation-watch.js?v=1';
 
 /* Palique admin panel — vanilla JS over the /v1/admin API. No build step. */
 'use strict';
@@ -158,9 +160,9 @@ const originLabel = value => value === 'user_operator' ? 'Operador' : value === 
 let activeModalId = null;
 let modalInvoker = null;
 let cancelPendingReason = null;
-const openModal = id => {
+const openModal = (id, invoker = document.activeElement) => {
   const element = $(id);
-  modalInvoker = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  modalInvoker = invoker instanceof HTMLElement ? invoker : null;
   activeModalId = id;
   element.classList.add('show'); element.style.display = 'block';
   document.querySelector('.page').inert = true;
@@ -212,7 +214,7 @@ const detailHtml = (title, html) => {
 };
 $('#detail-close').addEventListener('click', () => closeModal('#detail-modal'));
 $('#detail-dismiss').addEventListener('click', () => closeModal('#detail-modal'));
-const ask = (title, target) => new Promise(resolve => {
+const ask = (title, target, invoker = document.activeElement) => new Promise(resolve => {
   $('#reason-title').textContent = title;
   $('#reason-input').value = target;
   const text = $('#reason-text'), ok = $('#reason-ok'), hint = $('#reason-hint');
@@ -235,7 +237,7 @@ const ask = (title, target) => new Promise(resolve => {
     closeModal('#reason-modal');
     resolve({ reason: '' });
   };
-  openModal('#reason-modal');
+  openModal('#reason-modal', invoker);
   ok.onclick = () => {
     if (!validate()) { text.focus(); return; }
     cancelPendingReason = null;
@@ -381,7 +383,14 @@ async function renderBrowse(container, fixedTable, context) {
           value.className = 'form-control form-control-sm browse-filter-value';
           value.setAttribute('aria-label', `Filtro ${field}`);
           value.placeholder = spec.type === 'timestamptz' ? 'AAAA-MM-DD' : 'Filtrar';
-          const update = () => success({ operator: operator.value, value: value.value });
+          const update = () => {
+            const unary = BROWSE_UNARY_OPERATORS.has(operator.value);
+            // is-null/not-null carry no operand: a typed leftover must never
+            // travel as `is-null:value` (the server rejects the whole read).
+            value.disabled = unary;
+            if (unary) value.value = '';
+            success({ operator: operator.value, value: unary ? '' : value.value });
+          };
           operator.addEventListener('change', update);
           value.addEventListener('input', update);
           wrapper.append(operator, value);
@@ -423,10 +432,7 @@ async function renderBrowse(container, fixedTable, context) {
     tables.push(table);
     let lastFilterKey = '';
     table.on('dataFiltered', () => {
-      const filters = table.getFilters(true).filter(entry => {
-        const value = typeof entry.value === 'object' ? entry.value?.value : entry.value;
-        return value !== '' && value !== undefined;
-      });
+      const filters = normalizeBrowseFilters(table.getFilters(true), catalog.tables[name].columns);
       const key = JSON.stringify(filters);
       if (key === lastFilterKey) return;
       lastFilterKey = key;
@@ -447,15 +453,11 @@ async function renderBrowse(container, fixedTable, context) {
     const controller = loadController;
     context.register(() => controller.abort());
     const name = fixedTable ?? $('#browse-table').value;
-    const query = new URLSearchParams({ limit: String(state.size), offset: String((state.page - 1) * state.size),
-      sort: state.sort, dir: state.dir });
-    for (const entry of state.filters) {
-      const spec = catalog.tables[name].columns[entry.field];
-      const filter = entry.value ?? {};
-      const operator = filter.operator;
-      if (!spec.operators.includes(operator)) continue;
-      query.set(`q_${entry.field}`, `${operator}:${String(filter.value ?? '')}`);
-    }
+    const query = browseFilterQuery(state.filters, catalog.tables[name].columns);
+    query.set('limit', String(state.size));
+    query.set('offset', String((state.page - 1) * state.size));
+    query.set('sort', state.sort);
+    query.set('dir', state.dir);
     $('#browse-grid').setAttribute('aria-busy', 'true');
     $('#browse-load-error').textContent = 'Cargando resultados…';
     try {
@@ -505,6 +507,7 @@ let generationWatch = restoreGenerationWatch(); // exact request identities surv
 let lastJobsSnapshot = [];
 let lastWatchStatus = '';
 let lastWatchTone = '';
+let lastWatchConfirmedAt = 0;    // last successful status read; a failed poll must not look confirmed
 let levelTestsRender = null;     // { container, view } — refreshed when a watched run ends
 const TERMINAL_JOB_STATES = new Set(['finished', 'failed', 'unknown']);
 
@@ -630,6 +633,8 @@ async function watchGenerationTick() {
       trackedRuns: responses.flatMap(response => Array.isArray(response.trackedRuns) ? response.trackedRuns : []) };
     if (generationWatch !== watch) return;
     if (!owner.isCurrent()) return;
+    lastWatchConfirmedAt = Date.now();
+    $('#jobs-monitor')?.removeAttribute('data-stale');
     const jobs = Array.isArray(status.jobs) ? status.jobs : [];
     const trackedRuns = Array.isArray(status.trackedRuns) ? status.trackedRuns : [];
     const byCorrelation = new Map(trackedRuns.map(entry => [entry.correlationId, entry]));
@@ -678,12 +683,21 @@ async function watchGenerationTick() {
       // ready for review / approve without a manual reload. Never repaint if
       // the operator moved to another view (they share the same container).
       if (levelTestsRender?.context.isCurrent() && $('#exam-weeks-card'))
-        void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view, levelTestsRender.context);
+        void renderExamWeeksSafely(levelTestsRender.container, levelTestsRender.view, levelTestsRender.context);
       return;
     }
     paint('text-primary');
-  } catch { /* polling is best effort; retry on the next tick */ }
-  finally { generationTicking = false; }
+  } catch (error) {
+    // Retrying is not enough: while the read is unconfirmed the monitor must
+    // say so instead of leaving the last "En marcha" looking current.
+    if (generationWatch === watch && owner.isCurrent() && error.name !== 'AbortError' && error.message !== 'unauthenticated') {
+      lastWatchStatus = watchFailureStatus(lastWatchConfirmedAt, GENERATION_POLL_MS);
+      lastWatchTone = 'text-warning';
+      const line = $('#launch-status');
+      if (line) { line.textContent = lastWatchStatus; line.className = 'small mt-1 fw-bold text-warning'; }
+      $('#jobs-monitor')?.setAttribute('data-stale', 'true');
+    }
+  } finally { generationTicking = false; }
   if (owner.isCurrent()) scheduleGenerationWatch();
 }
 
@@ -719,7 +733,7 @@ const MODERATION_COPY = {
     cancelled. */
 async function moderateWeek(week, action, trigger) {
   const copy = MODERATION_COPY[action];
-  const decision = await ask(copy.title, `${week.languageID} ${week.level} · semana ${week.weekId}`);
+  const decision = await ask(copy.title, `${week.languageID} ${week.level} · semana ${week.weekId}`, trigger);
   if (!decision.reason || decision.reason.trim().length < 3) return false;
   if (trigger) trigger.disabled = true;
   await api(`/v1/admin/level-tests/${encodeURIComponent(week.id)}/${action}`,
@@ -825,6 +839,36 @@ async function renderAiConfig(container) {
 }
 
 /* ---- generation: launch, monitor, listing and moderation (daily surface) ---- */
+// A reload after a filter/page action is not a route change: if its read fails,
+// the previous listing must stay visible *with* a persistent error and a retry
+// instead of leaving a silent stale table (or an unhandled rejection).
+function showWeeksReloadFailure(error, view, context, request) {
+  if (!context?.isCurrent() || levelTestsRender !== request || error?.name === 'AbortError' || error?.message === 'unauthenticated') return;
+  const slot = $('#weeks-reload-error');
+  if (!slot) return;
+  slot.innerHTML = `<div class="alert alert-danger mb-2" role="alert">
+    <strong>No se pudieron actualizar los exámenes.</strong> El listado visible puede estar desactualizado.
+    <span class="small">${escapeHtml(error.code ?? error.message ?? 'request_failed')}</span>
+    <button class="btn btn-sm btn-outline-primary ms-2" id="weeks-reload-retry">Reintentar</button></div>`;
+  $('#weeks-reload-retry').onclick = () => {
+    if (!context.isCurrent()) return;
+    slot.innerHTML = '<div class="text-secondary small" role="status">Reintentando…</div>';
+    void renderExamWeeksSafely($('#view'), view, context);
+  };
+}
+
+function renderExamWeeksSafely(container, view, context) {
+  $('#exam-weeks-card')?.setAttribute('aria-busy', 'true');
+  const pending = renderExamWeeksView(container, view, context);
+  const request = levelTestsRender;
+  const settle = () => {
+    if (context?.isCurrent() && levelTestsRender === request)
+      $('#exam-weeks-card')?.setAttribute('aria-busy', 'false');
+  };
+  pending.then(settle, error => { showWeeksReloadFailure(error, view, context, request); settle(); });
+  return pending;
+}
+
 async function renderExamWeeksView(container, view = {}, context = activeViewContext) {
   // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
   const now = new Date();
@@ -905,11 +949,11 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
         <div class="col-auto"><span class="text-secondary small" id="scheduler-note">Scheduler: ${status.schedule.enabled ? 'configurado' : 'no configurado'} · activo en este proceso: ${status.scheduler.activeInProcess ? 'sí' : 'no'}</span></div>
       </div>
       <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen: los aprobados y las semanas ya existentes se omiten. Para rehacer un borrador o una semana rechazada usa «Regenerar» en la tabla.</div>
-      <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
+      <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status" aria-live="polite">${escapeHtml(lastWatchStatus)}</div>
       ${jobHtml}
       <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>
-    <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
+    <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body"><div id="weeks-reload-error" aria-live="polite"></div>${filterBar}
     <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Origen</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
       <button class="btn btn-sm btn-outline-secondary" id="weeks-prev" ${weeks.offset === 0 ? 'disabled' : ''}>Anterior</button>
       <span class="text-secondary small">Exámenes ${weeks.total ? weeks.offset + 1 : 0}–${weeks.offset + weeks.items.length} de ${weeks.total}</span>
@@ -917,13 +961,13 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
     </div></div></div></div>`;
   $('#wf-apply').onclick = () => {
     const value = name => $('#wf-' + name)?.value.trim() ?? '';
-    void renderExamWeeksView(container, {
+    void renderExamWeeksSafely(container, {
       filters: { status: value('status'), language: value('language'), level: value('level'),
         week_from: value('week-from'), week_to: value('week-to'),
         created_from: value('created-from'), created_to: value('created-to') }, offset: 0 }, context);
   };
-  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksView(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }, context); };
-  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksView(container, { filters, offset: weeks.offset + weeks.limit }, context); };
+  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksSafely(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }, context); };
+  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksSafely(container, { filters, offset: weeks.offset + weeks.limit }, context); };
   for (const action of ['approve', 'reject', 'retire']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
     const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
@@ -1175,9 +1219,10 @@ async function renderExamReview(container, params = {}, rawId) {
     const button = $('#exam-' + action);
     if (!button) continue;
     button.onclick = async () => {
-      button.disabled = true;
       try {
-        if (await moderateWeek(week, action)) await renderExamReview(container, params, weekId);
+        // Never disable the trigger before the reason dialog: a disabled focused
+        // button loses focus, so cancelling could not return it to its invoker.
+        if (await moderateWeek(week, action, button)) await renderExamReview(container, params, weekId);
         else button.disabled = false;
       } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
     };
@@ -1189,8 +1234,30 @@ async function renderExamReview(container, params = {}, rawId) {
 // Renders may resolve out of order (fast filter after slow one): a stale
 // response must never overwrite the view painted by a newer one.
 let attemptsRenderEpoch = 0;
-async function renderExamAttempts(container, routeParams = {}, filters = {}) {
+function showAttemptsReloadFailure(error, params, filters, context, requestEpoch) {
+  if ((context && !context.isCurrent()) || requestEpoch !== attemptsRenderEpoch ||
+      error?.name === 'AbortError' || error?.message === 'unauthenticated') return;
+  const slot = $('#attempts-reload-error');
+  if (!slot) return;
+  slot.innerHTML = `<div class="alert alert-danger mb-2" role="alert">
+    <strong>No se pudieron actualizar los resultados.</strong> El listado visible puede estar desactualizado.
+    <span class="small">${escapeHtml(error.code ?? error.message ?? 'request_failed')}</span>
+    <button class="btn btn-sm btn-outline-primary ms-2" id="attempts-reload-retry">Reintentar</button></div>`;
+  $('#attempts-reload-retry').onclick = () => {
+    if ((context && !context.isCurrent()) || requestEpoch !== attemptsRenderEpoch) return;
+    slot.innerHTML = '<div class="text-secondary small" role="status">Reintentando…</div>';
+    void renderExamAttemptsSafely($('#view'), params, filters, context);
+  };
+}
+function renderExamAttemptsSafely(container, params, filters, context) {
+  const pending = renderExamAttempts(container, params, filters, context);
+  const requestEpoch = attemptsRenderEpoch;
+  pending.then(() => {}, error => showAttemptsReloadFailure(error, params, filters, context, requestEpoch));
+  return pending;
+}
+async function renderExamAttempts(container, routeParams = {}, filters = {}, context = null) {
   const epoch = ++attemptsRenderEpoch;
+  const current = () => !context || context.isCurrent();
   // Hash params (#exam-results?account=…) seed the filters on first entry;
   // later re-renders pass pagination in the same slot without an account.
   const merged = { ...filters };
@@ -1200,9 +1267,10 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
   const query = new URLSearchParams({ limit: '50', offset: String(offset) });
   for (const [key, value] of Object.entries(merged)) if (value) query.set(key, String(value));
   const [attempts, summary] = await Promise.all([
-    api('/v1/admin/level-test-attempts?' + query), api('/v1/admin/level-test-attempts/summary')
+    api('/v1/admin/level-test-attempts?' + query, context ? { signal: context.signal } : {}),
+    api('/v1/admin/level-test-attempts/summary', context ? { signal: context.signal } : {})
   ]);
-  if (epoch !== attemptsRenderEpoch) return;
+  if (epoch !== attemptsRenderEpoch || !current()) return;
   const studentEmail = merged.studentEmail || (merged.account ? attempts.items[0]?.email : null);
   // A re-render landing while the operator types must not wipe the draft input.
   const draftEmail = $('#wa-email')?.value ?? merged.email ?? '';
@@ -1235,20 +1303,22 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
       <div><div class="subheader text-secondary">Aprobados</div><strong>${summary.passed}</strong></div>
       <div><div class="subheader text-secondary">Nota media</div><strong>${summary.avgOverall === null ? '—' : summary.avgOverall + ' %'}</strong></div>
     </div></div></div></div>
-    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resultados de exámenes</h3></div><div class="card-body">${filterBar}
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resultados de exámenes</h3></div><div class="card-body"><div id="attempts-reload-error" aria-live="polite"></div>${filterBar}
     <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Intento</th><th>Alumno</th><th>Examen</th><th>Semana</th><th>Origen</th><th>Estado</th><th>Nota</th><th>Inicio</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
       <button class="btn btn-sm btn-outline-secondary" id="attempts-prev" ${attempts.offset === 0 ? 'disabled' : ''}>Anterior</button>
       <span class="text-secondary small">Resultados ${attempts.total ? attempts.offset + 1 : 0}–${attempts.offset + attempts.items.length} de ${attempts.total}</span>
       <button class="btn btn-sm btn-outline-secondary" id="attempts-next" ${attempts.items.length < attempts.limit ? 'disabled' : ''}>Siguiente</button>
     </div></div></div></div>`;
   $('#wa-apply').onclick = () => {
+    if (!current()) return;
     const value = id => $('#' + id)?.value.trim() ?? '';
-    renderExamAttempts(container, { offset: 0 }, { email: value('wa-email'), language: value('wa-language'),
+    const next = { email: value('wa-email'), language: value('wa-language'),
       state: value('wa-state'), passed: value('wa-passed'), week_from: value('wa-week-from'), week_to: value('wa-week-to'),
-      account: merged.account, studentEmail: studentEmail });
+      account: merged.account, studentEmail: studentEmail };
+    void renderExamAttemptsSafely(container, { offset: 0 }, next, context);
   };
-  $('#attempts-prev').onclick = () => { if (attempts.offset > 0) void renderExamAttempts(container, { offset: attempts.offset - attempts.limit }, merged); };
-  $('#attempts-next').onclick = () => { if (attempts.items.length === attempts.limit) void renderExamAttempts(container, { offset: attempts.offset + attempts.limit }, merged); };
+  $('#attempts-prev').onclick = () => { if (attempts.offset > 0) void renderExamAttemptsSafely(container, { offset: attempts.offset - attempts.limit }, merged, context); };
+  $('#attempts-next').onclick = () => { if (attempts.items.length === attempts.limit) void renderExamAttemptsSafely(container, { offset: attempts.offset + attempts.limit }, merged, context); };
   $('#wa-export').onclick = async () => {
     try { const response = await fetch('/v1/admin/level-test-attempts/export?' + query, { credentials: 'same-origin' });
       if (!response.ok) return toast('Error: ' + (await response.json().catch(() => ({}))).error?.code ?? 'export_failed', 'danger');
@@ -1571,7 +1641,7 @@ const VIEWS = {
   browse: { title: 'Explorador de tablas', render: (container, _params, _id, context) => renderBrowse(container, null, context) },
   policy: { title: 'Política de bienvenida', render: (container, _params, _id, context) => renderPolicy(container, context) },
   'exam-weeks': { title: 'Generar y revisar exámenes', render: (container, params, _id, context) => renderExamWeeksView(container, params, context) },
-  'exam-results': { title: 'Resultados de exámenes', render: renderExamAttempts },
+  'exam-results': { title: 'Resultados de exámenes', render: (container, params, _id, context) => renderExamAttempts(container, params, {}, context) },
   'ia-config': { title: 'Configuración de IA', render: renderAiConfig },
   exam: { title: 'Revisión de examen', render: renderExamReview },
   plans: { title: 'Planes y suscripciones', render: (container, _params, _id, context) => renderPlans(container, context) },

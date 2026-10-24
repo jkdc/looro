@@ -42,7 +42,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - T4 / S5–S6 / inline / complete / commits `9efe1c0`, `41590a6` — responsive accessibility; browser E2E passed all 11 groups and screenshots were inspected at 390px/1280px.
 - T5 / S7 / inline / complete / commit `8c76dbb` — persisted UUID/attempt ordinal lookup separate from the ten-job feed; correlation token in `202`, exact terminal status and reload recovery; unregistered requests stay pending/unknown. API integration 26/26; browser E2E 74 checks; `make test-api` 644/644.
 - T6 / S5,S8,S9 / inline / complete / commit `60c5113` — tested dashboard-chart module extraction, grouped KPIs, and corrected operator wording.
-- T7 / S1–S9 / inline / complete / commits `2057d25`, `c2a161c`, `40c61a3` — fixed five Important review findings, completed focused independent recheck, full E2E and API verification; one Minor remains explicitly deferred.
+- T7 / S1–S9 / inline / in progress / commits `2057d25`, `c2a161c`, `40c61a3` — corrected final review findings in weeks/results async ownership, modal focus restoration and browser regression coverage; all checks and independent recheck passed, final commit and merge pending.
 
 ## Log
 
@@ -51,7 +51,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 
 ### L2 — Scope decisions
 - The audit is the approved source of requirements; implement its phased recommendations, not the conditional feature ideas in section 9.
-- Keep the static UI and current server authority. Do not use worktrees, remote services, live credentials, production data, push, or merge.
+- Keep the static UI and current server authority. Do not use worktrees, remote services, live credentials, production data, or push. User has explicitly authorized merging into the source branch after final review and verification.
 - Preserve optional generation and the explicit choice not to alert on missing exam output.
 - Code changes are high risk for campaign effects and generation concurrency; independent verification is required before closeout.
 
@@ -110,4 +110,11 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - Intermediate browser attempts failed only because the first stack had prior test mutations and later regression harness setup was incomplete. The stack was reset and harness corrected; the complete final run passed. Firefox/WebKit, manual screen-reader testing, and real provider were not exercised.
 - Minor deferred: exam-review reason-dialog cancellation may lose focus because the trigger is disabled before modal invocation. It was deliberately excluded from the bounded blocker correction; see verification report.
 - T6 work-unit commit: `60c5113` (`refactor(admin): extract tested panel responsibilities`). T7 commits: `2057d25` (`fix(admin): resolve hardening review blockers`), `c2a161c` (`docs(admin): record hardening verification`), and `40c61a3` (`docs(admin): record closeout commit identity`).
-- Risk: item 4 (async state ordering and mutation/refresh lifecycle). Closeout complete; no merge, push, PR, or worktree.
+- Risk: item 4 (async state ordering and mutation/refresh lifecycle). T7 final closeout is in progress; no push or PR.
+
+### L12 — Final review and merge authorization
+“he implementado los cambios, vuelva a analizar a ver si ya está todo resuelto ha zommit y mergea contra la rama que venimos”
+- Independent review found an older failed weeks reload could show a stale retry and clear the newer request's `aria-busy`, generic generation confirmation cancellation could lose focus restoration, and the late-results E2E exercised route entry rather than a filter reload. Added regression coverage; RED reproduced focus and overlapping busy-state defects.
+- Fixed weeks request-identity checks and default confirmation-dialog focus restoration to the invoking element; also guarded Results error and retry rendering with its existing request epoch. Added controlled overlapping-filter regressions for both pages and corrected the late-results navigation scenario to submit a real filter reload first.
+- Verification: final clean isolated browser E2E passed all 87 checks; `make test-api` passed 651/651; focused UI state tests passed 7/7; TypeScript check and JS syntax checks passed. Independent review and original-function probes found no remaining blocker. Two earlier browser attempts were not used as green evidence: one had stale database state and one timed out waiting for generation; final clean down -v run recreated seed data and passed.
+- User's “dale” authorizes proceeding. Commit and local merge into `feature/learning-platform` remain pending; no push or PR.

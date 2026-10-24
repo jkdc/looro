@@ -89,6 +89,20 @@ const expectText = async (selector, needle) => {
   if (!text || !text.includes(needle))
     throw new Error(`"${needle}" not found in ${selector} (got: ${JSON.stringify(text?.slice(0, 120))})`);
 };
+// Selecting an operator must fail with the options the column really offers:
+// a bare selectOption only reports "did not find some options", which hides
+// whether the catalog dropped an operator or the header filter was mid-render.
+const selectOption = async (locator, value) => {
+  try {
+    await locator.locator(`option[value="${value}"]`).waitFor({ state: 'attached', timeout: 10_000 });
+    await locator.selectOption(value);
+  } catch (error) {
+    const snapshot = await locator.evaluate(node => ({
+      value: node.value, options: [...node.options].map(option => option.value),
+    })).catch(inner => `unreadable: ${inner.message}`);
+    throw new Error(`${error.message.split('\n')[0]} (${JSON.stringify(snapshot)})`);
+  }
+};
 
 try {
   // 1. Local operator login.
@@ -434,6 +448,31 @@ try {
     }
     if (!latestWon) throw new Error(`older week response replaced the filtered result (requests=${count})`);
   });
+  await check('a failed weeks reload preserves the listing, reports the stale read and retries', async () => {
+    const pattern = '**/v1/admin/level-tests/weeks?*';
+    const handler = route => route.fulfill({ status: 500, contentType: 'application/json',
+      body: JSON.stringify({ error: { code: 'weeks_unavailable' } }) });
+    await page.route(pattern, handler);
+    try {
+      await page.selectOption('#wf-status', 'draft');
+      await page.click('#wf-apply');
+      await page.waitForSelector('#weeks-reload-retry', { timeout: 10_000 });
+      await expectText('#weeks-reload-error', 'El listado visible puede estar desactualizado');
+      await expectText('#weeks-reload-error', 'weeks_unavailable');
+      if (!(await page.textContent('#exam-weeks-card'))?.includes('A1'))
+        throw new Error('failed reload discarded the previous listing');
+    } finally {
+      await page.unroute(pattern, handler);
+    }
+    await page.click('#weeks-reload-retry');
+    await page.waitForFunction(() => !(document.querySelector('#weeks-reload-error')?.textContent ?? '').length,
+      undefined, { timeout: 10_000 });
+    if (!(await page.textContent('#exam-weeks-card'))?.includes('A1'))
+      throw new Error('retry did not repaint the listing');
+    await page.selectOption('#wf-status', '');
+    await page.click('#wf-apply');
+    await page.waitForSelector(weekRow('A1'), { timeout: 10_000 });
+  });
   await check('current-week draft offers regeneration', async () => {
     if (!(await page.isVisible(weekRow('A1') + ' [data-week-regenerate]')))
       throw new Error('Regenerar button missing on current-week draft');
@@ -619,6 +658,73 @@ try {
   await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await shot('10b-generation-launch');
 
+  await check('cancelling the generation dialog restores focus to its trigger', async () => {
+    await page.click('#gen-launch');
+    await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
+      undefined, { timeout: 5_000 });
+    if (!(await page.locator('#gen-launch').evaluate(node => node === document.activeElement)))
+      throw new Error('focus did not return to the generation trigger');
+  });
+
+  await check('an older failed weeks reload cannot overwrite a newer pending or successful reload', async () => {
+    let releaseOld;
+    let releaseNew;
+    let oldRequested;
+    let newRequested;
+    const oldSeen = new Promise(resolve => { oldRequested = resolve; });
+    const newSeen = new Promise(resolve => { newRequested = resolve; });
+    const oldGate = new Promise(resolve => { releaseOld = resolve; });
+    const newGate = new Promise(resolve => { releaseNew = resolve; });
+    const oldPattern = '**/v1/admin/level-tests/weeks?*status=draft*';
+    const newPattern = '**/v1/admin/level-tests/weeks?*status=approved*';
+    const oldHandler = async route => {
+      oldRequested();
+      await oldGate;
+      await route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":{"code":"old_reload_failed"}}' })
+        .catch(() => { /* the request may be cancelled by route disposal */ });
+    };
+    const newHandler = async route => {
+      const response = await route.fetch();
+      newRequested();
+      await newGate;
+      await route.fulfill({ response }).catch(() => { /* the request may be cancelled by route disposal */ });
+    };
+    await page.route(oldPattern, oldHandler);
+    await page.route(newPattern, newHandler);
+    try {
+      await page.selectOption('#wf-status', 'draft');
+      await page.click('#wf-apply');
+      await oldSeen;
+      await page.selectOption('#wf-status', 'approved');
+      await page.click('#wf-apply');
+      await newSeen;
+      releaseOld();
+      await page.waitForTimeout(300);
+      if (!(await page.locator('#exam-weeks-card').getAttribute('aria-busy') === 'true'))
+        throw new Error('the older request cleared the latest request busy state');
+      if (await page.locator('#weeks-reload-retry').count())
+        throw new Error('the older request displayed its stale retry warning');
+      releaseNew();
+      await page.waitForFunction(() => document.querySelector('#exam-weeks-card')?.getAttribute('aria-busy') === 'false',
+        undefined, { timeout: 10_000 });
+      if (await page.locator('#weeks-reload-retry').count())
+        throw new Error('the stale request warning remained after the newer request succeeded');
+      await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
+        .some(row => row.textContent?.includes('approved')), undefined, { timeout: 10_000 });
+    } finally {
+      releaseOld?.();
+      releaseNew?.();
+      await page.unroute(oldPattern, oldHandler);
+      await page.unroute(newPattern, newHandler);
+    }
+    await page.selectOption('#wf-status', '');
+    await page.click('#wf-apply');
+    await page.waitForFunction(() => document.querySelector('#exam-weeks-card')?.getAttribute('aria-busy') === 'false',
+      undefined, { timeout: 10_000 });
+  });
+
   await check('the weeks table reports who triggered each generation', async () => {
     const rows = await page.$$eval('#exam-weeks-card tbody tr',
       trs => trs.map(tr => [...tr.cells].map(cell => (cell.textContent ?? '').trim())));
@@ -684,6 +790,17 @@ try {
     try {
       await page.goto(`${PANEL}/#overview`);
       await page.goto(`${PANEL}/#exam-weeks`);
+      // Call 2 is the injected failure: the panel must say the monitor lost
+      // confirmation while it keeps retrying, instead of leaving the previous
+      // "En marcha" looking current.
+      const failedPoll = Date.now() + 15_000;
+      while (behaviour.calls.length < 2 && Date.now() < failedPoll) await page.waitForTimeout(100);
+      await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('Sin confirmación'),
+        undefined, { timeout: 15_000 });
+      if (!((await page.getAttribute('#launch-status', 'class')) ?? '').includes('text-warning'))
+        throw new Error('stale generation line is not warning-toned');
+      if ((await page.getAttribute('#jobs-monitor', 'data-stale')) !== 'true')
+        throw new Error('jobs monitor was not marked stale after a failed poll');
       const deadline = Date.now() + 45_000;
       while (behaviour.calls.length < 5 && Date.now() < deadline) await page.waitForTimeout(250);
       if (behaviour.calls.length < 5) throw new Error(`only ${behaviour.calls.length} status calls in 45 s`);
@@ -696,6 +813,8 @@ try {
       }
       await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('→ finished'),
         undefined, { timeout: 15_000 });
+      if (((await page.textContent('#launch-status')) ?? '').includes('Sin confirmación'))
+        throw new Error('recovered poll kept the stale warning');
       const settled = behaviour.calls.length;
       await page.waitForTimeout(12_000);
       // One extra fetch is the post-terminal table refresh; a timer would add 2+.
@@ -851,6 +970,17 @@ try {
     await expectText('#exam-body', 'Reconocimiento');
   });
   await drainToasts();
+  await check('cancelling the review dialog returns focus to its trigger', async () => {
+    await page.click('#exam-approve');
+    await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
+      undefined, { timeout: 5_000 });
+    if (!(await page.locator('#exam-approve').evaluate(node => node === document.activeElement)))
+      throw new Error('focus did not return to the review action');
+    if (!((await page.textContent('#view')) ?? '').includes('draft'))
+      throw new Error('cancelling the dialog changed the draft');
+  });
   await page.click('#exam-approve');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Aprobado desde la página de revisión E2E');
@@ -947,6 +1077,98 @@ try {
   } else {
     failures.push('per-student deep link skipped: no attempt handle found');
   }
+  await check('a late results reload cannot replace a different active view', async () => {
+    let release;
+    let requested;
+    const requestSeen = new Promise(resolve => { requested = resolve; });
+    const gate = new Promise(resolve => { release = resolve; });
+    const pattern = '**/v1/admin/level-test-attempts?*';
+    const handler = async route => {
+      requested();
+      await gate;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        items: [{ attemptId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          accountId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', email: 'late@example.test',
+          languageID: 'en', level: 'A1', weekId: 202643, source: 'weekly', state: 'completed',
+          passed: true, overall: 100, startedAt: '2026-10-24T10:00:00.000Z' }],
+        total: 1, limit: 50, offset: 0 }) }).catch(() => { /* navigation aborts the read */ });
+    };
+    try {
+      await page.goto(`${PANEL}/#exam-weeks`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+      await page.click('a[href="#exam-results"]');
+      await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+      await page.route(pattern, handler);
+      await page.fill('#wa-email', 'late@example.test');
+      await page.click('#wa-apply');
+      await requestSeen;
+      await page.click('a[href="#plans"]');
+      await page.waitForSelector('#plans-save', { timeout: 10_000 });
+      release();
+      await page.waitForTimeout(500);
+      if ((await page.textContent('#page-title')) !== 'Planes y suscripciones')
+        throw new Error('late results reload replaced the current view title');
+      if (((await page.textContent('#view')) ?? '').includes('late@example.test'))
+        throw new Error('late results painted rows over the plans view');
+      if (!(await page.isVisible('#plans-save')))
+        throw new Error('late results render destroyed the plans view');
+    } finally {
+      release?.();
+      await page.unroute(pattern, handler);
+    }
+  });
+  await check('an older failed results filter cannot show a stale retry after a newer filter', async () => {
+    let releaseOld;
+    let releaseNew;
+    let oldRequested;
+    let newRequested;
+    const oldSeen = new Promise(resolve => { oldRequested = resolve; });
+    const newSeen = new Promise(resolve => { newRequested = resolve; });
+    const oldGate = new Promise(resolve => { releaseOld = resolve; });
+    const newGate = new Promise(resolve => { releaseNew = resolve; });
+    const oldPattern = '**/v1/admin/level-test-attempts?*email=older%40example.test*';
+    const newPattern = '**/v1/admin/level-test-attempts?*email=student%40example.test*';
+    const oldHandler = async route => {
+      oldRequested();
+      await oldGate;
+      await route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":{"code":"old_results_failed"}}' })
+        .catch(() => { /* the request may be cancelled by route disposal */ });
+    };
+    const newHandler = async route => {
+      const response = await route.fetch();
+      newRequested();
+      await newGate;
+      await route.fulfill({ response }).catch(() => { /* the request may be cancelled by route disposal */ });
+    };
+    try {
+      await page.goto(`${PANEL}/#exam-weeks`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+      await page.click('a[href="#exam-results"]');
+      await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+      await page.route(oldPattern, oldHandler);
+      await page.route(newPattern, newHandler);
+      await page.fill('#wa-email', 'older@example.test');
+      await page.click('#wa-apply');
+      await oldSeen;
+      await page.fill('#wa-email', 'student@example.test');
+      await page.click('#wa-apply');
+      await newSeen;
+      releaseOld();
+      await page.waitForTimeout(300);
+      if (await page.locator('#attempts-reload-retry').count())
+        throw new Error('the older results request displayed a stale retry warning');
+      releaseNew();
+      await page.waitForFunction(() => [...document.querySelectorAll('#view tbody tr')]
+        .some(row => row.textContent?.includes('student@example.test')), undefined, { timeout: 10_000 });
+      if (await page.locator('#attempts-reload-retry').count())
+        throw new Error('the stale warning remained after the newer results request succeeded');
+    } finally {
+      releaseOld?.();
+      releaseNew?.();
+      await page.unroute(oldPattern, oldHandler);
+      await page.unroute(newPattern, newHandler);
+    }
+  });
   // 11. Retiring an approved week: an explicit operator decision whose motive
   // stays on the week and whose effect is the week leaving the serving set.
   await page.goto(`${PANEL}/#exam-weeks`, { waitUntil: 'domcontentloaded' });
@@ -1051,6 +1273,38 @@ try {
     if (await guestHeader.count() !== 1) throw new Error('is_guest header missing');
     if (await guestHeader.locator('.tabulator-col-sorter').count() !== 0)
       throw new Error('non-orderable is_guest header renders a sorter');
+  });
+  await check('browse unary filters keep their operator without an operand', async () => {
+    const header = page.locator('#browse-grid .tabulator-col[tabulator-field="deleted_at"]');
+    const operator = header.locator('select.browse-filter-operator');
+    const value = header.locator('input.browse-filter-value');
+    const seen = [];
+    const pattern = '**/v1/admin/browse/accounts?*';
+    const handler = route => {
+      seen.push(new URL(route.request().url()).searchParams.get('q_deleted_at'));
+      return route.continue();
+    };
+    await page.route(pattern, handler);
+    try {
+      await selectOption(operator, 'is-null');
+      await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('student@example.test'),
+        undefined, { timeout: 10_000 });
+      if (!seen.includes('is-null:')) throw new Error(`is-null request missing (${seen.join(' | ')})`);
+      if (!(await value.isDisabled())) throw new Error('unary operator left its operand editable');
+      if ((await page.textContent('#browse-total'))?.trim() === '0 filas')
+        throw new Error('is-null dropped every seeded account');
+      await selectOption(operator, 'not-null');
+      await page.waitForFunction(() => (document.querySelector('#browse-total')?.textContent ?? '').trim() === '0 filas',
+        undefined, { timeout: 10_000 });
+      if (!seen.includes('not-null:')) throw new Error(`not-null request missing (${seen.join(' | ')})`);
+    } finally {
+      await page.unroute(pattern, handler);
+      // deleted_at is a timestamp column: it offers gte/lte/is-null/not-null but
+      // no `eq`. Returning to `gte` with an empty operand drops the filter.
+      await selectOption(operator, 'gte');
+      await page.waitForFunction(() => (document.querySelector('#browse-total')?.textContent ?? '').trim() !== '0 filas',
+        undefined, { timeout: 10_000 });
+    }
   });
   await check('browse ignores an older same-view response after a newer request wins', async () => {
     let releaseFirst;

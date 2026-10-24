@@ -138,6 +138,41 @@ shared/
 3. **Pantallas** (app): `LevelTestScreen` en Compose, entrada desde la barra
    CEFR de la pestaña Aprender. Grading siempre en dispositivo.
 
+## Política de pruebas (obligatoria)
+
+**Una suite verde no demuestra que el requisito esté cubierto.** Demuestra que
+lo que ya estaba probado sigue funcionando. Ningún cambio se considera
+terminado por ese hecho.
+
+Reglas no negociables:
+
+1. **Test-first en cada bugfix y feature.** Escribe primero la prueba que
+   reproduce el fallo, córrela y compruébalo: debe fallar por la razón correcta
+   (comportamiento ausente, no un error tipográfico). Si pasa antes del cambio,
+   esa prueba no prueba el cambio.
+2. **Cobertura por flujo, no por línea.** Cada cambio cubre, cuando aplique:
+   camino feliz, entrada vacía o inválida, error de red y error HTTP, respuesta
+   tardía o fuera de orden, cancelación o navegación durante una petición,
+   reintento, y estado vacío. Si hay UI, cubre también foco, teclado y el aviso
+   persistente al usuario.
+3. **Regresión obligatoria por hallazgo.** Todo defecto reportado en una
+   revisión añade una prueba que falla sin la corrección y pasa con ella. El
+   nombre de la prueba debe describir el defecto original.
+4. **Extrae y prueba la lógica pura.** La lógica de estado o de contrato que
+   pueda aislarse de `admin-ui/app.js` vive en `admin-ui/features/*.js` y se
+   cubre con pruebas Node en `services/api/tests/*.test.ts`. El E2E no sustituye
+   esta cobertura: un fallo de normalización debe fallar rápido, sin Docker.
+5. **E2E para los flujos reales del panel.** Navegación, respuestas tardías,
+   errores persistentes y reintentos se añaden a
+   `services/api/tests/browser/admin-e2e.mjs`. Una prueba unitaria no demuestra
+   que la vista montada se comporte bien.
+6. **No declares verde sin ejecutar.** Reporta qué se ejecutó y qué no. Si la
+   suite de API o el E2E no se pudieron correr, dilo explícitamente y no cierres
+   el change como verificado.
+7. **Pruebas deterministas.** No dependas del reloj, de red externa ni de
+   proveedores reales: inyecta o mockea el límite del sistema y usa fixtures
+   estables.
+
 ## Convenciones del repositorio
 
 - **Idioma**: código y comentarios en inglés; documentación de producto e
@@ -210,6 +245,9 @@ Todas las actions están pineadas por SHA.
    dispatcher custom (`llmAgent` en `llm-config.ts`).
 7. **Comentarios Kotlin anidados**: `/** ... /* ... */ ... */` rompe — no
    usar globs con `*` dentro de KDoc.
+8. **Confundir suite verde con requisito cubierto**: si el flujo nuevo
+   (error, respuesta tardía, navegación, reintento) no tiene una prueba que
+   falle sin el cambio, el requisito no está verificado.
 
 ## Flujo de trabajo recomendado para un agente
 
@@ -226,8 +264,10 @@ Todas las actions están pineadas por SHA.
    existe, y los ficheros vecinos del que vas a tocar.
 2. **Type-check temprano**: `npx tsc --noEmit` (server) o
    `./gradlew :app:compileDebugKotlin` (Android) antes de escribir tests.
-3. **Test-first cuando tenga sentido**: los motores puros (PlacementEngine,
-   LevelTestEngine, ExerciseEngine) son deterministas y testeables en JVM.
+3. **Test-first siempre**: primero la prueba que falla por el motivo correcto,
+   después la corrección mínima. Los motores puros (PlacementEngine,
+   LevelTestEngine, ExerciseEngine) y la lógica de UI extraída son deterministas
+   y testeables en JVM/Node.
 4. **Regenera, no edites**: si tocas `shared/*.json`, ejecuta el exporter.
 5. **Verifica todo lo que puedas**: suite del server con PG efímero, tests
    Android, `--check` de exporters. Reporta qué no pudiste verificar.
