@@ -24,7 +24,7 @@ let tables = [];
 const api = async (path, options = {}) => {
   let response;
   try { response = await fetch(path, { headers: { 'content-type': 'application/json' }, credentials: 'same-origin', ...options }); }
-  catch (error) { setApiStatus(false); throw error; }
+  catch (error) { if (error.name !== 'AbortError') setApiStatus(false); throw error; }
   setApiStatus(true);
   if (response.status === 401) { location.href = '/login.html'; throw new Error('unauthenticated'); }
   const body = await response.json().catch(() => ({}));
@@ -239,11 +239,12 @@ function mountChart(canvas, serie) {
   }));
 }
 
-async function renderDashboard(setName, container) {
+async function renderDashboard(setName, container, context) {
   const [snapshot, series] = await Promise.all([
-    setName === 'overview' ? api('/v1/admin/metrics') : Promise.resolve(null),
-    api(`/v1/admin/metrics/timeseries?set=${setName}&days=30`)
+    setName === 'overview' ? api('/v1/admin/metrics', { signal: context.signal }) : Promise.resolve(null),
+    api(`/v1/admin/metrics/timeseries?set=${setName}&days=30`, { signal: context.signal })
   ]);
+  if (!context.isCurrent()) return;
   let head = '';
   if (setName === 'overview' && snapshot) {
     const revenue = snapshot.orders.reduce((total, row) => total + row.totalMinor, 0);
@@ -268,7 +269,8 @@ async function renderDashboard(setName, container) {
   container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, CHART_TYPE[serie.name] ?? 'line')).join('')}</div>`;
   container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
   // Charts are created while the grid is still settling; re-measure once it has laid out.
-  requestAnimationFrame(() => { for (const chart of charts) chart.resize(); });
+  const frame = requestAnimationFrame(() => { if (context.isCurrent()) for (const chart of charts) chart.resize(); });
+  context.register(() => cancelAnimationFrame(frame));
 }
 
 /* ---- browse ---- */
@@ -289,10 +291,11 @@ function columnFormatter(name, spec) {
   if (BADGED_COLUMNS.has(name)) return badgeCell;
   return undefined;
 }
-async function renderBrowse(container, fixedTable) {
-  const catalog = await api('/v1/admin/browse');
-  const tables = Object.keys(catalog.tables);
-  const current = fixedTable ?? localStorage.getItem('browse.table') ?? tables[0];
+async function renderBrowse(container, fixedTable, context) {
+  const catalog = await api('/v1/admin/browse', { signal: context.signal });
+  if (!context.isCurrent()) return;
+  const tableNames = Object.keys(catalog.tables);
+  const current = fixedTable ?? localStorage.getItem('browse.table') ?? tableNames[0];
   container.innerHTML = `
     ${fixedTable ? '' : `<div class="mb-3 d-flex align-items-center gap-3">
       <select id="browse-table" class="form-select w-auto" data-icon="table"></select>
@@ -316,7 +319,7 @@ async function renderBrowse(container, fixedTable) {
       </div>
     </div>`;
   if (!fixedTable) {
-    $('#browse-table').innerHTML = tables.map(name => `<option value="${name}"${name === current ? ' selected' : ''}>${name}</option>`).join('');
+    $('#browse-table').innerHTML = tableNames.map(name => `<option value="${name}"${name === current ? ' selected' : ''}>${name}</option>`).join('');
     $('#browse-desc').textContent = catalog.tables[current].description;
   }
   const state = { page: 1, size: 25, sort: null, dir: null, filters: [] };
@@ -356,7 +359,7 @@ async function renderBrowse(container, fixedTable) {
       });
       return base;
     });
-    table?.destroy();
+    if (table) { table.destroy(); tables = tables.filter(item => item !== table); }
     table = new Tabulator('#browse-grid', {
       columns, layout: 'fitDataFill', sortMode: 'remote', placeholder: `<div class="empty p-3"><div class="empty-icon"><i class="ti ti-database-off"></i></div>
         <p class="empty-title">Sin filas</p><p class="empty-subtitle text-secondary">Ajusta los filtros o cambia de tabla.</p></div>`,
@@ -377,7 +380,14 @@ async function renderBrowse(container, fixedTable) {
     });
     await load();
   };
+  let loadSequence = 0;
+  let loadController = null;
   const load = async () => {
+    const sequence = ++loadSequence;
+    loadController?.abort();
+    loadController = new AbortController();
+    const controller = loadController;
+    context.register(() => controller.abort());
     const name = fixedTable ?? $('#browse-table').value;
     const query = new URLSearchParams({ limit: String(state.size), offset: String((state.page - 1) * state.size),
       sort: state.sort, dir: state.dir });
@@ -391,7 +401,8 @@ async function renderBrowse(container, fixedTable) {
     $('#browse-grid').setAttribute('aria-busy', 'true');
     $('#browse-load-error').textContent = 'Cargando resultados…';
     try {
-      const body = await api(`/v1/admin/browse/${name}?${query}`);
+      const body = await api(`/v1/admin/browse/${name}?${query}`, { signal: controller.signal });
+      if (!context.isCurrent() || sequence !== loadSequence) return;
       table.setData(body.rows);
       const maxPage = Math.max(1, Math.ceil(body.total / state.size));
       state.page = Math.min(state.page, maxPage);
@@ -401,14 +412,14 @@ async function renderBrowse(container, fixedTable) {
       $('#page-next').disabled = state.page >= maxPage;
       $('#browse-load-error').textContent = '';
     } catch (error) {
-      if (error.message !== 'unauthenticated') {
+      if (context.isCurrent() && sequence === loadSequence && error.message !== 'unauthenticated' && error.name !== 'AbortError') {
         $('#browse-load-error').innerHTML = `<div class="alert alert-danger mb-2" role="alert">
           No se pudieron actualizar los resultados; las filas visibles pueden estar desactualizadas.
           <span class="small">${escapeHtml(error.code ?? error.message)}</span>
           <button class="btn btn-sm btn-outline-primary ms-2" id="browse-retry">Reintentar</button></div>`;
         $('#browse-retry').onclick = () => { void load(); };
       }
-    } finally { $('#browse-grid').setAttribute('aria-busy', 'false'); }
+    } finally { if (context.isCurrent() && sequence === loadSequence) $('#browse-grid').setAttribute('aria-busy', 'false'); }
   };
   $('#page-prev').onclick = () => { if (state.page > 1) { state.page--; void load(); } };
   $('#page-next').onclick = () => { state.page++; void load(); };
@@ -495,6 +506,7 @@ const GENERATION_POLL_MS = 5_000;
 // the timer of the next one (that leaked a second 5 s loop per completion).
 let generationTimer = null;
 let generationTicking = false;
+let levelTestsRenderSequence = 0;
 
 function cancelGenerationTimer() {
   if (generationTimer) { clearTimeout(generationTimer); generationTimer = null; }
@@ -502,10 +514,17 @@ function cancelGenerationTimer() {
 
 function scheduleGenerationWatch() {
   if (!generationWatch || generationTimer) return;
-  generationTimer = setTimeout(() => {
+  const owner = levelTestsRender?.context;
+  if (!owner?.isCurrent()) return;
+  const timer = setTimeout(() => {
     generationTimer = null;
     void watchGenerationTick();
   }, GENERATION_POLL_MS);
+  generationTimer = timer;
+  owner.register(() => {
+    clearTimeout(timer);
+    if (generationTimer === timer) generationTimer = null;
+  });
 }
 
 async function watchGenerationTick() {
@@ -513,14 +532,17 @@ async function watchGenerationTick() {
   if (generationTicking) return;
   const watch = generationWatch;
   if (!watch) return;
+  const owner = levelTestsRender?.context;
+  if (!owner?.isCurrent()) { cancelGenerationTimer(); return; }
   // The monitor is the only place progress is visible. Leaving the view parks
   // the watch: no timer and no requests. renderExamWeeksView re-arms it when
   // the operator comes back, instead of a ghost timer polling in the dark.
   if (!$('#jobs-monitor')) return;
   generationTicking = true;
   try {
-    const status = await api('/v1/admin/level-tests/status');
+    const status = await api('/v1/admin/level-tests/status', { signal: owner.signal });
     if (generationWatch !== watch) return;
+    if (!owner.isCurrent()) return;
     const jobs = Array.isArray(status.jobs) ? status.jobs : [];
     lastJobsSnapshot = jobs;
     renderJobs(jobs);
@@ -535,7 +557,7 @@ async function watchGenerationTick() {
     for (const key of done) {
       const job = byKey.get(key);
       watch.results.push(`${key} → ${job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`);
-      toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
+      if (owner.isCurrent()) toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
         job.status === 'finished' ? 'success' : 'danger');
       watch.keys.delete(key);
     }
@@ -561,14 +583,14 @@ async function watchGenerationTick() {
       // The runner is done: refresh the weeks table so the new exams show up
       // ready for review / approve without a manual reload. Never repaint if
       // the operator moved to another view (they share the same container).
-      if (levelTestsRender && $('#exam-weeks-card'))
-        void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view);
+      if (levelTestsRender?.context.isCurrent() && $('#exam-weeks-card'))
+        void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view, levelTestsRender.context);
       return;
     }
     paint('text-primary');
   } catch { /* polling is best effort; retry on the next tick */ }
   finally { generationTicking = false; }
-  scheduleGenerationWatch();
+  if (owner.isCurrent()) scheduleGenerationWatch();
 }
 
 function startGenerationWatch(keys, weekId) {
@@ -704,7 +726,7 @@ async function renderAiConfig(container) {
 }
 
 /* ---- generation: launch, monitor, listing and moderation (daily surface) ---- */
-async function renderExamWeeksView(container, view = {}) {
+async function renderExamWeeksView(container, view = {}, context = activeViewContext) {
   // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
   const now = new Date();
   const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -712,13 +734,16 @@ async function renderExamWeeksView(container, view = {}) {
   monday.setUTCDate(monday.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
   const currentWeekId = monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
-  levelTestsRender = { container, view };
+  const renderState = { container, view, context, sequence: ++levelTestsRenderSequence };
+  levelTestsRender = renderState;
   const filters = view.filters ?? {};
   const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
   for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
   const [status, weeks] = await Promise.all([
-    api('/v1/admin/level-tests/status'), api('/v1/admin/level-tests/weeks?' + params)
+    api('/v1/admin/level-tests/status', { signal: context.signal }),
+    api('/v1/admin/level-tests/weeks?' + params, { signal: context.signal })
   ]);
+  if (!context.isCurrent() || levelTestsRender !== renderState) return;
   // Paint the freshest jobs immediately; the watcher keeps them current while
   // a generation launched from this session is still in flight.
   lastJobsSnapshot = Array.isArray(status.jobs) ? status.jobs : [];
@@ -795,20 +820,20 @@ async function renderExamWeeksView(container, view = {}) {
     void renderExamWeeksView(container, {
       filters: { status: value('status'), language: value('language'), level: value('level'),
         week_from: value('week-from'), week_to: value('week-to'),
-        created_from: value('created-from'), created_to: value('created-to') }, offset: 0 });
+        created_from: value('created-from'), created_to: value('created-to') }, offset: 0 }, context);
   };
-  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksView(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }); };
-  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksView(container, { filters, offset: weeks.offset + weeks.limit }); };
+  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksView(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }, context); };
+  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksView(container, { filters, offset: weeks.offset + weeks.limit }, context); };
   for (const action of ['approve', 'reject', 'retire']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
     const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
     button.disabled = true;
-    try { if (await moderateWeek(row, action)) await renderExamWeeksView(container, view); else button.disabled = false; }
-    catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+    try { if (await moderateWeek(row, action)) { if (context.isCurrent()) await renderExamWeeksView(container, view, context); } else button.disabled = false; }
+    catch (error) { if (context.isCurrent()) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; } }
   });
   // Repaint the watch state on re-render and keep ticking while mounted.
   renderJobs();
-  $('#latest-job-error')?.addEventListener('click', () => showJobError(job));
+  if ($('#latest-job-error')) context.listen($('#latest-job-error'), 'click', () => showJobError(job));
   scheduleGenerationWatch();
   $('#gen-launch').onclick = async () => {
     const languageID = $('#gen-language').value, levels = $('#gen-levels').value;
@@ -821,13 +846,13 @@ async function renderExamWeeksView(container, view = {}) {
       const launched = outcome.keys.filter(key => key.status === 'started');
       const approved = outcome.keys.filter(key => key.status === 'skipped_approved').length;
       const existing = outcome.keys.filter(key => key.status === 'skipped_existing').length;
-      toast(`Lanzados ${launched.length} examen(es)` +
+      if (context.isCurrent()) toast(`Lanzados ${launched.length} examen(es)` +
         (approved ? ` · ${approved} aprobados omitidos` : '') +
         (existing ? ` · ${existing} ya existentes (usa Regenerar)` : ''),
         launched.length ? 'success' : 'warning');
       startGenerationWatch(launched.map(key => `${key.languageID}:${key.level}`), currentWeekId);
-      void watchGenerationTick();
-    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
+      if (context.isCurrent()) void watchGenerationTick();
+    } catch (error) { if (context.isCurrent()) toast('Error: ' + (error.code || error.message), 'danger'); }
   };
   container.querySelectorAll('[data-week-regenerate]').forEach(button => button.onclick = async () => {
     const [languageID, level] = button.dataset.weekRegenerate.split(':');
@@ -836,9 +861,10 @@ async function renderExamWeeksView(container, view = {}) {
     button.disabled = true;
     try { await api('/v1/admin/level-tests/regenerate', { method: 'POST',
         body: JSON.stringify({ languageID, level, reason: decision.reason }) });
-      toast('Regeneración iniciada'); startGenerationWatch([`${languageID}:${level}`], currentWeekId);
-      void watchGenerationTick();
-    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+      if (context.isCurrent()) toast('Regeneración iniciada');
+      startGenerationWatch([`${languageID}:${level}`], currentWeekId);
+      if (context.isCurrent()) void watchGenerationTick();
+    } catch (error) { if (context.isCurrent()) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; } }
   });
 }
 
@@ -1401,20 +1427,20 @@ function contextMenu(tableName) {
 
 /* ---- router ---- */
 const VIEWS = {
-  overview: { title: 'Resumen', render: container => renderDashboard('overview', container) },
-  growth: { title: 'Crecimiento', render: container => renderDashboard('growth', container) },
-  voice: { title: 'Voz', render: container => renderDashboard('voice', container) },
-  economy: { title: 'Economía', render: container => renderDashboard('economy', container) },
+  overview: { title: 'Resumen', render: (container, _params, _id, context) => renderDashboard('overview', container, context) },
+  growth: { title: 'Crecimiento', render: (container, _params, _id, context) => renderDashboard('growth', container, context) },
+  voice: { title: 'Voz', render: (container, _params, _id, context) => renderDashboard('voice', container, context) },
+  economy: { title: 'Economía', render: (container, _params, _id, context) => renderDashboard('economy', container, context) },
   usage: { title: 'Uso de la app', render: renderUsage },
-  browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
+  browse: { title: 'Explorador de tablas', render: (container, _params, _id, context) => renderBrowse(container, null, context) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
-  'exam-weeks': { title: 'Generar y revisar exámenes', render: renderExamWeeksView },
+  'exam-weeks': { title: 'Generar y revisar exámenes', render: (container, params, _id, context) => renderExamWeeksView(container, params, context) },
   'exam-results': { title: 'Resultados de exámenes', render: renderExamAttempts },
   'ia-config': { title: 'Configuración de IA', render: renderAiConfig },
   exam: { title: 'Revisión de examen', render: renderExamReview },
   plans: { title: 'Planes y suscripciones', render: renderPlans },
   campaigns: { title: 'Campañas', render: renderCampaigns },
-  audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }
+  audit: { title: 'Auditoría de acciones', render: (container, _params, _id, context) => renderBrowse(container, 'admin_actions', context) }
 };
 // Routes that moved when configuration and generation were split apart.
 const LEGACY_ROUTES = { 'level-tests': 'exam-weeks' };
@@ -1425,8 +1451,9 @@ const LEGACY_ROUTES = { 'level-tests': 'exam-weeks' };
 // flight, and the latest hash always wins.
 let routing = false;
 let reroute = false;
+let activeViewContext = null;
 async function route() {
-  if (routing) { reroute = true; return; }
+  if (routing) { activeViewContext?.dispose(); reroute = true; return; }
   routing = true;
   try {
     do {
@@ -1436,6 +1463,9 @@ async function route() {
   } finally { routing = false; }
 }
 async function renderRoute() {
+  activeViewContext?.dispose();
+  const context = new AdminViewContext(() => activeViewContext === context);
+  activeViewContext = context;
   const [rawPath, routeQuery] = (location.hash.slice(1) || 'overview').split('?');
   const [routePath, detailId] = rawPath.split('/');
   if (LEGACY_ROUTES[routePath]) { location.replace(`#${LEGACY_ROUTES[routePath]}`); return; }
@@ -1453,15 +1483,15 @@ async function renderRoute() {
   const container = $('#view');
   container.setAttribute('aria-busy', 'true');
   container.innerHTML = '<div class="mt-3 progress progress-sm" role="status" aria-live="polite" aria-label="Cargando vista"><div class="progress-bar progress-bar-indeterminate"></div></div>';
-  try { await view.render(container, params, detailId); }
+  try { await view.render(container, params, detailId, context); }
   catch (error) {
-    if (error.message !== 'unauthenticated') {
+    if (context.isCurrent() && error.message !== 'unauthenticated' && error.name !== 'AbortError') {
       container.innerHTML = `<div class="alert alert-danger mt-3" role="alert"><i class="ti ti-alert-triangle me-2"></i>
         <strong>No se pudo cargar esta vista.</strong> ${escapeHtml(error.code ?? error.message ?? 'request_failed')}
         <div><button class="btn btn-sm btn-outline-primary mt-2" id="view-retry">Reintentar carga</button></div></div>`;
       $('#view-retry').onclick = () => route();
     }
-  } finally { container.setAttribute('aria-busy', 'false'); }
+  } finally { if (context.isCurrent()) container.setAttribute('aria-busy', 'false'); }
 }
 (function boot() {
   // Grouping is data: a heading appears whenever an entry opens a new group, so

@@ -117,6 +117,51 @@ try {
   });
   await shot('02-dashboard');
 
+  await check('view lifecycle disposes resources once and rejects late work', async () => {
+    const result = await page.evaluate(async () => {
+      if (typeof AdminViewContext !== 'function') return { available: false };
+      const context = new AdminViewContext();
+      let disposed = 0;
+      let events = 0;
+      let late = 0;
+      const target = new EventTarget();
+      context.listen(target, 'change', () => { events++; });
+      context.register(() => { disposed++; });
+      context.timeout(() => { late++; }, 20);
+      const wasCurrent = context.isCurrent();
+      target.dispatchEvent(new Event('change'));
+      context.dispose();
+      context.dispose();
+      target.dispatchEvent(new Event('change'));
+      await new Promise(resolve => setTimeout(resolve, 40));
+      return { available: true, disposed, events, late, wasCurrent, isCurrent: context.isCurrent() };
+    });
+    if (!result.available) throw new Error('AdminViewContext is not available');
+    if (result.disposed !== 1 || result.events !== 1 || result.late !== 0 || !result.wasCurrent || result.isCurrent)
+      throw new Error(`unexpected lifecycle result ${JSON.stringify(result)}`);
+  });
+
+  await check('leaving a view aborts its pending read without blocking the next route', async () => {
+    let release;
+    let requested;
+    const requestSeen = new Promise(resolve => { requested = resolve; });
+    const held = new Promise(resolve => { release = resolve; });
+    await page.route('**/v1/admin/browse', async route => {
+      requested();
+      await held;
+      try { await route.continue(); } catch { /* The view context may abort this read first. */ }
+    });
+    await page.evaluate(() => { location.hash = '#browse'; });
+    await requestSeen;
+    await page.evaluate(() => { location.hash = '#policy'; });
+    release();
+    await page.unroute('**/v1/admin/browse');
+    await page.waitForFunction(() => location.hash === '#policy' && Boolean(document.querySelector('#pol-enabled')),
+      undefined, { timeout: 5_000 });
+    if ((await page.textContent('#view'))?.includes('No se pudo cargar esta vista'))
+      throw new Error('aborted route painted an error over the current view');
+  });
+
   // 2. Configuration lives on its own view: the exam surfaces are grouped and
   // the generation view carries no provider form.
   await check('sidebar groups the exam surfaces with three entries', async () => {
@@ -266,6 +311,45 @@ try {
     if (!body.includes('draft') || !body.includes('A1') || !body.includes('A2'))
       throw new Error('seeded draft rows not visible');
     if (!body.includes('Exámenes generados')) throw new Error('listing card title missing');
+  });
+  await check('exam weeks ignores an older same-view response after a newer filter wins', async () => {
+    let releaseFirst;
+    let firstSeen;
+    const firstRequest = new Promise(resolve => { firstSeen = resolve; });
+    const delayed = new Promise(resolve => { releaseFirst = resolve; });
+    let count = 0;
+    await page.route('**/v1/admin/level-tests/weeks?*', async route => {
+      const response = await route.fetch();
+      const body = await response.json();
+      count++;
+      if (count === 1) {
+        firstSeen();
+        await delayed;
+        return route.fulfill({ response, json: body });
+      }
+      return route.fulfill({ response, json: { ...body, items: [], total: 0 } });
+    });
+    let latestWon = false;
+    try {
+      await page.click('#wf-apply');
+      await firstRequest;
+      await page.selectOption('#wf-status', 'draft');
+      await page.click('#wf-apply');
+      await page.waitForFunction(() => (document.querySelector('#exam-weeks-card')?.textContent ?? '').includes('Exámenes 0–0 de 0'),
+        undefined, { timeout: 5_000 });
+      releaseFirst();
+      await page.waitForTimeout(100);
+      latestWon = count >= 2 && !(await page.isVisible(weekRow('A1')));
+    } finally {
+      releaseFirst();
+      await page.unroute('**/v1/admin/level-tests/weeks?*');
+      if (await page.isVisible('#wf-status')) {
+        await page.selectOption('#wf-status', '');
+        await page.click('#wf-apply');
+        await page.waitForSelector(weekRow('A1'), { timeout: 5_000 });
+      }
+    }
+    if (!latestWon) throw new Error(`older week response replaced the filtered result (requests=${count})`);
   });
   await check('current-week draft offers regeneration', async () => {
     if (!(await page.isVisible(weekRow('A1') + ' [data-week-regenerate]')))
@@ -764,6 +848,36 @@ try {
     if (await guestHeader.count() !== 1) throw new Error('is_guest header missing');
     if (await guestHeader.locator('.tabulator-col-sorter').count() !== 0)
       throw new Error('non-orderable is_guest header renders a sorter');
+  });
+  await check('browse ignores an older same-view response after a newer request wins', async () => {
+    let releaseFirst;
+    let firstSeen;
+    const firstRequest = new Promise(resolve => { firstSeen = resolve; });
+    const delayed = new Promise(resolve => { releaseFirst = resolve; });
+    let count = 0;
+    await page.route('**/v1/admin/browse/accounts?*', async route => {
+      count++;
+      if (count === 1) {
+        firstSeen();
+        await delayed;
+        return route.fulfill({ json: { rows: [], total: 999 } });
+      }
+      return route.fulfill({ json: { rows: [], total: 2 } });
+    });
+    await page.selectOption('#page-size', '50');
+    await firstRequest;
+    const filter = page.locator('#browse-grid .browse-filter-value').first();
+    await filter.fill('student');
+    await page.waitForFunction(() => document.querySelector('#browse-total')?.textContent === '2 filas',
+      undefined, { timeout: 5_000 });
+    releaseFirst();
+    await page.waitForTimeout(100);
+    await page.unroute('**/v1/admin/browse/accounts?*');
+    if (count < 2 || (await page.textContent('#browse-total')) !== '2 filas')
+      throw new Error(`older result overwrote latest response (requests=${count}, total=${await page.textContent('#browse-total')})`);
+    await filter.fill('');
+    await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('student@example.test'),
+      undefined, { timeout: 5_000 });
   });
   await shot('18-browse-accounts');
   await check('browse read failures stay visible, preserve stale rows and retry without becoming healthy', async () => {
