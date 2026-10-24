@@ -135,7 +135,7 @@
 - [x] Improve dashboard hierarchy using existing operator tasks and label units/periods/statuses; no unapproved KPI, alert, RBAC or global search. Grouped existing KPIs into three operational areas and clarified current-vs-period context; no KPI/query changes.
 - [x] Align stale browser-test comments, operator help, footer audit claim, and admin documentation with observed behavior. Clarified exact generation run identity/pending semantics; replaced the overbroad footer audit statement with mutations-only wording.
 - [x] Verify module loading, static asset paths, CSP, route inventory, query results and existing behavior. Browser E2E: 77 checks passed; same-origin module and CSS returned HTTP 200 under `script-src 'self'`; existing routes/queries and syntax checks passed. Inspected 1280px dashboard screenshot; prior T4 screenshot evidence covers responsive navigation at 390px.
-- [x] Commit: `refactor(admin): extract tested panel responsibilities` (`PENDING`).
+- [x] Commit: `refactor(admin): extract tested panel responsibilities` (`60c5113`).
 
 ### Task 7: Closeout
 
@@ -143,11 +143,11 @@
 - Create: `openspec/changes/admin-panel-hardening/verify-report.md`.
 - Modify: `openspec/changes/admin-panel-hardening/tasks.md`, `odd/tasks/admin-panel-hardening.md`.
 
-- [ ] Run focused checks per task, full documented browser E2E, affected PostgreSQL suites and `make test-api` for API contract changes.
-- [ ] Run TypeScript check if server code changed and JavaScript syntax/module/CSP smoke checks.
-- [ ] Obtain independent high-risk verification of the campaign and generation units; fix blockers only within the authorized scope and re-run their tests.
-- [ ] Record exact outputs, failed/unavailable/skipped/manual checks, screenshots, reviewed commit boundary, and known limitations.
-- [ ] Commit: `docs(admin): record hardening verification`.
+- [x] Run focused checks per task and full documented browser E2E; `make test-api` passed 644/644.
+- [x] TypeScript check, JavaScript syntax checks, and `git diff --check` passed; no server contract changed in T7.
+- [x] Independent focused high-risk recheck passed all five original Important blockers on `60c5113..2057d25`; this was not a fresh whole-branch review.
+- [x] Record exact outcomes, intermediate failed attempts, screenshots, review boundary, and limitations in `openspec/changes/admin-panel-hardening/verify-report.md`. One non-blocking Minor focus-restoration item is deferred there.
+- [x] Commit: `docs(admin): record hardening verification` (T7 documentation closeout work unit).
 
 ## Commit boundaries
 
