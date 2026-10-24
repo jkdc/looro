@@ -50,6 +50,16 @@ test('English validation accepts lexical prompts with a foreign-language article
   assert.ok(!result.errors.some(error => error.code === 'language'));
 });
 
+test('English validation rejects French lexical content despite shared English cognates', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const result = validateGeneratedPool({ recognition: [{
+    kind: 'choice', prompt: 'Choisissez le mot correct pour cette phrase.',
+    options: ['heureux', 'triste', 'en colère', 'fatigué'], answers: ['heureux'],
+    explain: 'Heureux signifie que la personne est contente.'
+  }] }, blueprint.examShape, 'en', blueprint);
+  assert.ok(result.errors.some(error => error.code === 'language'));
+});
+
 test('English validation rejects clearly Cyrillic lexical content without adding Cyrillic language support', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
   const result = validateGeneratedPool({ recognition: [{

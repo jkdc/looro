@@ -265,7 +265,7 @@ const INSTRUCTION_MARKERS: Record<string, RegExp> = {
   nb: /\b(er|og|for|med|ikke|den|det|til)\b/gi,
   zh: /[\u4e00-\u9fff]/g,
 };
-const ENGLISH_LEXICAL_MARKERS = /\b(choose|select|complete|match|synonym|opposite|meaning|word|phrase|sentence|correct|missing)\b/i;
+const ENGLISH_LEXICAL_MARKERS = /\b(choose|select|complete|match|synonym|opposite|meaning|word|sentence|missing)\b/i;
 const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}]/u;
 
 function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean {

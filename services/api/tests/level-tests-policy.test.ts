@@ -509,12 +509,20 @@ test('manual approval rejects a rehashed English form with an invalid recognitio
   } finally { await app.close(); }
 });
 
-test('manual approval rejects rehashed English variants that share reading and listening stimuli', async () => {
+for (const section of ['reading', 'listening'] as const) test(`manual approval rejects variants sharing only their ${section} stimuli`, async () => {
   const { db, state } = database();
   await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
   const row = state.weeks[0]!, first = row.variants[0] as unknown as ExamSnapshot;
-  const duplicate = identifySnapshot({ ...structuredClone(first), variant: 2 }, 'llm', row.id) as ExamSnapshot;
-  row.variants[1] = duplicate as unknown as Record<string, unknown>;
+  const second = structuredClone(row.variants[1]) as unknown as ExamSnapshot;
+  const selectedIDs = section === 'reading' ? [...first.readingPassageIds] : [...first.listeningPassageIds];
+  if (section === 'reading') second.readingPassageIds = selectedIDs;
+  else second.listeningPassageIds = selectedIDs;
+  second.items = [...second.items.filter(item => item.section !== section), ...first.items.filter(item => item.section === section)];
+  second.passages = [...second.passages.filter(passage => !passage.id.startsWith(`llm-${section}-`)),
+    ...first.passages.filter(passage => selectedIDs.includes(passage.id))];
+  assert.notDeepEqual(second.items.map(item => item.id).sort(), first.items.map(item => item.id).sort(),
+    'keep the item-set diversity check valid so this test reaches the stimulus-set check');
+  row.variants[1] = identifySnapshot(second, 'llm', row.id) as unknown as Record<string, unknown>;
   const app = adminApp(db);
   try {
     assert.equal((await app.inject({ method: 'POST', url: `/v1/admin/level-tests/${row.id}/approve`,
