@@ -109,4 +109,4 @@
 - [x] Record confirmed acceptance checks without claiming psychometric validity; pilot totals remain teacher-reviewed targets.
 - [x] Run `npm test`, `npm run check`, `python3 scripts/export_leveltests.py --check`, and `make check`.
 - [x] Verify `git diff --check`, migration numbering, and preserve all pre-existing untracked files.
-- [ ] Commit docs with verification results.
+- [x] Work-unit documentation commit: `cb74704` (`docs(level-tests): record exam quality audit corrections`).
