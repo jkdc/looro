@@ -38,7 +38,9 @@ function canPublish(row: Generation): boolean {
     if (!model || !row.pool || !Array.isArray(row.variants) || !row.variants.length) return false;
     const excludedByEnglishJudge = row.language_id === 'en' && Array.isArray(row.review) && row.review.some(verdict =>
       typeof verdict === 'object' && verdict !== null && ['reject', 'flagged'].includes((verdict as { verdict?: string }).verdict ?? ''));
-    const validationModel = excludedByEnglishJudge ? { ...model, poolTarget: {
+    const validationModel = excludedByEnglishJudge ? { ...model, sections: {
+      ...model.sections, recognition: { ...model.sections.recognition, mix: undefined },
+    }, poolTarget: {
       recognition: model.examShape.recognition, writing: model.examShape.writing,
       readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
     } } : model;

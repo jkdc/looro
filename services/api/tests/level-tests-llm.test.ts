@@ -61,7 +61,7 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
     if (system.includes('quality reviewer') || system.includes('strict exam reviewer')) {
       const parsed = JSON.parse(user) as { items?: { id: string }[] } | { id: string }[];
       const items = Array.isArray(parsed) ? parsed : parsed.items ?? [];
-      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok' })) });
+      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok', reasonCode: 'answer_key', evidence: 'The marked answer matches the sentence.' })) });
     }
     const count = (pattern: RegExp, fallback: number) => Number(pattern.exec(user)?.[1] ?? fallback);
     const item = (id: string, kind: 'choice' | 'gap' = 'choice') => kind === 'choice'
@@ -83,7 +83,9 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
       }));
     if (user.includes('vocabulary and grammar')) {
       const requested = count(/Write (\d+) vocabulary and grammar items/, goodPool.recognition.length);
-      return stubReply(overrides?.recognition ?? Array.from({ length: requested }, (_, index) => item(`rec-${index}`)));
+      const mix = Object.fromEntries([...user.matchAll(/(\d+) (choice|gap)/g)].map(match => [match[2]!, Number(match[1])])) as Record<string, number>;
+      return stubReply(overrides?.recognition ?? Array.from({ length: requested }, (_, index) =>
+        item(`rec-${index}`, index < (mix.choice ?? requested) ? 'choice' : 'gap')));
     }
     if (user.includes('reading passages')) {
       const requested = count(/Write (\d+) distinct reading passages|Write (\d+) reading passages/, goodPool.reading.length);
@@ -110,7 +112,8 @@ const judgeRejectingFirst = () => async (_config: unknown, messages: { role: str
       { items?: { id?: string }[] } | { id?: string }[];
     const items = Array.isArray(raw) ? raw : raw.items ?? [];
     return stubReply({ items: items.map((item, index) => ({ id: item.id ?? 'missing',
-      verdict: index === 0 ? 'reject' : 'ok', reason: index === 0 ? 'The key is not supported.' : 'The item checks out.' })) });
+      verdict: index === 0 ? 'reject' : 'ok', reasonCode: index === 0 ? 'unsupported' : 'answer_key',
+      evidence: index === 0 ? 'The key is not supported by the passage.' : 'The marked answer matches the sentence.' })) });
   }
   return sectionTransport()(_config, messages);
 };

@@ -4,7 +4,7 @@ import type { PoolClient } from 'pg';
 import { LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
 import { chatCompletion, extractJson, resolveLlmConfig, LlmTransportError, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
-import { identifySnapshot, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
+import { identifySnapshot, MAX_LEVEL_TEST_SNAPSHOT_BYTES, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { levelTestSettings } from './level-test-settings.js';
 export { levelTestSettings } from './level-test-settings.js';
 import { validateGeneratedPool, type GeneratedPool, type RawGeneratedItem, type ValidationFailure } from './level-tests-validate.js';
@@ -24,6 +24,7 @@ export const LANGUAGE_NAMES: Record<string, string> = {
 
 export const PROMPT_VERSION = 2;
 export const JUDGE_VERSION = 2;
+const JUDGE_REASON_CODES = ['answer_key', 'ambiguity', 'unsupported', 'level_mismatch', 'format', 'explanation'] as const;
 const WEEKLY_THEMES = ['daily routines and habits', 'travel, transport and getting lost', 'work, studies and colleagues',
   'food, restaurants and going out', 'weather, seasons and plans', 'moving house and neighbours',
   'shopping stories and returns', 'sport, weekends and free time'];
@@ -145,7 +146,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
   if (section === 'recognition') {
     const options = sectionBlueprint?.options ?? 4;
     const mix = sectionBlueprint?.mix;
-    const mixInstruction = mix ? `Use this approximate choice/gap-fill pool mix: ${Object.entries(mix).map(([kind, target]) => `${target} ${kind}`).join(', ')}.` :
+    const mixInstruction = mix ? `Meet at least these blueprint candidate pool quotas: ${Object.entries(mix).map(([kind, target]) => `${target} ${kind}`).join(', ')}.` :
       'Use a balanced mixture of choice and gap-fill items.';
     user = [
       `Write ${count} vocabulary and grammar items at CEFR ${level} level in ${langName}.`,
@@ -363,7 +364,7 @@ async function judgeSection(
   items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
 ): Promise<{ id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }[]> {
   const reply = await call(config, buildJudgeMessages(section, languageID, level, items, model), signal);
-  return parseVerdicts(reply);
+  return parseVerdicts(reply, languageID === 'en');
 }
 
 // ---- orchestration ----
@@ -404,7 +405,9 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   const providerCall = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
   let tokensIn = 0, tokensOut = 0, usageComplete = true;
   const call: LlmCall = async (resolved, messages, signal) => {
-    const reply = await providerCall(resolved, messages, signal);
+    let reply: ChatReply;
+    try { reply = await providerCall(resolved, messages, signal); }
+    catch (error) { usageComplete = false; throw error; }
     if (typeof reply.tokensIn === 'number' && typeof reply.tokensOut === 'number') {
       tokensIn += reply.tokensIn;
       tokensOut += reply.tokensOut;
@@ -422,7 +425,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     } catch (error) {
       const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
       return { status: 'failed', languageID, level, weekId,
-        errors: [outcomeUnknown ? 'llm_outcome_unknown' : `${section}:provider_failed`] };
+        errors: [outcomeUnknown ? 'llm_outcome_unknown' : `${section}:provider_failed`], ...(usageComplete ? { tokensIn, tokensOut } : {}) };
     }
   }
 
@@ -448,11 +451,11 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   } catch (error) {
     const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
     return { status: 'failed', languageID, level, weekId,
-      errors: [outcomeUnknown ? 'llm_outcome_unknown' : 'section_repair_failed'] };
+      errors: [outcomeUnknown ? 'llm_outcome_unknown' : 'section_repair_failed'], ...(usageComplete ? { tokensIn, tokensOut } : {}) };
   }
   const final = validate();
   const finalFailures = [...final.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
-  if (!final.ok || finalFailures.length) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
+  if (!final.ok || finalFailures.length) return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}),
     errors: finalFailures.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
   let pool = final.pool;
 
@@ -473,9 +476,9 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       // English flagged content is excluded just like a rejection; it is not safe evidence for an exam.
     } catch (error) {
       if (options.signal?.aborted || (error instanceof LlmTransportError && error.code === "llm_outcome_unknown"))
-        return { status: "failed", languageID, level, weekId, tokensIn, tokensOut, errors: ["llm_outcome_unknown"] };
+        return { status: "failed", languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ["llm_outcome_unknown"] };
       if (settings.verifyMode === "strict") return { status: "failed", languageID, level, weekId,
-        tokensIn, tokensOut, errors: [`${section}: judge_failed_or_incomplete`] };
+        ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: [`${section}: judge_failed_or_incomplete`] };
       review.push(...items.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_unavailable' })));
     }
   }
@@ -483,28 +486,40 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   const hasRejectedItems = review.some(verdict => verdict.verdict === 'reject');
   if (hasRejectedItems || hasUntrustedEnglishItems) {
     pool = excludeJudgeUntrustedItems(pool, review, languageID === 'en');
-    const compositionModel = languageID === 'en' ? { ...model, poolTarget: {
+    const compositionModel = languageID === 'en' ? { ...model, sections: {
+      ...model.sections, recognition: { ...model.sections.recognition, mix: undefined },
+    }, poolTarget: {
       recognition: model.examShape.recognition, writing: model.examShape.writing,
       readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
     } } : model;
     const trimmed = validateCandidate(pool, compositionModel);
-    if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
+    if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}),
       errors: trimmed.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
     pool = trimmed.pool;
   }
 
   const generationId = config.sessionID!;
+  const blueprintHash = createHash('sha256').update(JSON.stringify(model)).digest('hex');
   const variants = composeVariants(pool, model, weekId, settings.variants).map(variant =>
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
       ...variant }, 'llm', generationId));
+  if (variants.some(variant => Buffer.byteLength(JSON.stringify(variant)) > MAX_LEVEL_TEST_SNAPSHOT_BYTES))
+    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['snapshot_too_large'] };
+  if (languageID === 'en' && variants.some(variant => !hasEnglishFormShape(variant, model)))
+    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_capacity'] };
   if (languageID === 'en' && new Set(variants.map(variant => variant.items.map(item => item.id).sort().join(','))).size < variants.length)
-    return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut, errors: ['insufficient_variant_diversity'] };
+    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_diversity'] };
+  if (languageID === 'en' && (
+    new Set(variants.map(variant => [...variant.readingPassageIds].sort().join(','))).size < variants.length ||
+    new Set(variants.map(variant => [...variant.listeningPassageIds].sort().join(','))).size < variants.length))
+    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_stimulus_diversity'] };
   const status = settings.publishMode === 'auto' ? 'approved' : 'draft';
   const approvedBy = settings.publishMode === 'auto' ? 'system:auto' : null;
 
   await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
     model: config.model, generator: `llm:${config.provider}`, review,
+    blueprintVersion: 1, blueprintHash,
     tokensIn: usageComplete ? tokensIn : null, tokensOut: usageComplete ? tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
     origin: options.origin });
 
@@ -554,7 +569,7 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
     'Check the whole task and language demand fit the level anchor and the section format; advanced vocabulary alone is not evidence of a higher level.',
     `Reject items that rely on these unsuitable/out-of-level targets: ${model.forbidden.join('; ')}.`,
     'Use ok only when all checks pass; use flagged when a material concern cannot be resolved; reject when incorrect, ambiguous, unsupported, or out of scope.',
-    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","reason":"one short evidence-based sentence"}]}. Return exactly one verdict for every supplied id.',
+    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","reasonCode":"answer_key"|"ambiguity"|"unsupported"|"level_mismatch"|"format"|"explanation","evidence":"one short observable reason, not hidden reasoning"}]}. Return exactly one verdict for every supplied id.',
   ].join(' ') : `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
   const user = JSON.stringify(english ? {
     section, canDoAnchor: model.canDoAnchor, sectionBlueprint: model.sections[section],
@@ -566,15 +581,19 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
   return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
 }
 
-interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }
+interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string; reasonCode?: string }
 
-function parseVerdicts(reply: ChatReply): JudgeVerdict[] {
-  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown }[] };
+function parseVerdicts(reply: ChatReply, strictEvidence = false): JudgeVerdict[] {
+  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown; reasonCode?: unknown; evidence?: unknown }[] };
   if (!Array.isArray(parsed?.items) || parsed.items.some(entry => !entry || typeof entry.id !== 'string' ||
-      !['ok', 'flagged', 'reject'].includes(entry.verdict as string))) throw new Error('judge_invalid_schema');
+      !['ok', 'flagged', 'reject'].includes(entry.verdict as string) || (strictEvidence &&
+        (!JUDGE_REASON_CODES.includes(entry.reasonCode as typeof JUDGE_REASON_CODES[number]) ||
+          typeof entry.evidence !== 'string' || entry.evidence.trim().length < 8 || entry.evidence.trim().length > 240))))
+    throw new Error('judge_invalid_schema');
   return parsed.items
     .map(entry => ({ id: entry.id as string, verdict: entry.verdict as 'ok' | 'flagged' | 'reject',
-      reason: typeof entry.reason === 'string' ? entry.reason : undefined }));
+      reason: strictEvidence ? (entry.evidence as string).trim() : typeof entry.reason === 'string' ? entry.reason : undefined,
+      ...(strictEvidence ? { reasonCode: entry.reasonCode as string } : {}) }));
 }
 
 function assignProvisionalIds(pool: GeneratedPool): void {
@@ -604,8 +623,12 @@ export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, week
     ...pool.listeningPassages.map((passage, index) => ({ id: `llm-listening-${index + 1}`, title: passage.title, text: passage.text })),
   ];
   for (let variant = 1; variant <= count; variant++) {
-    const recognition = stableBlock(flat.filter(item => item.section === 'recognition'),
-      'recognition', shape.recognition, weekId, variant, count);
+    const recognitionCandidates = flat.filter(item => item.section === 'recognition');
+    const recognitionMix = model.sections.recognition?.mix;
+    const recognition = recognitionMix
+      ? Object.entries(scaledKindMix(recognitionMix, shape.recognition)).flatMap(([kind, quota]) =>
+        stableBlock(recognitionCandidates.filter(item => item.kind === kind), `recognition:${kind}`, quota, weekId, variant, count))
+      : stableBlock(recognitionCandidates, 'recognition', shape.recognition, weekId, variant, count);
     const writing = stableBlock(flat.filter(item => item.section === 'writing'),
       'writing', shape.writing, weekId, variant, count);
     const readingOrder = stablePassageOrder(flat, 'reading', shape.readingPerPassage, weekId)
@@ -625,6 +648,31 @@ export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, week
       readingPassageIds: readingIds, listeningPassageIds: listeningIds });
   }
   return variants;
+}
+
+function scaledKindMix(mix: Partial<Record<string, number>>, total: number): Record<string, number> {
+  const entries = Object.entries(mix).filter(([, quota]) => typeof quota === 'number' && quota > 0)
+    .sort(([a], [b]) => codepointCompare(a, b));
+  const weight = entries.reduce((sum, [, quota]) => sum + quota!, 0);
+  if (!weight) return {};
+  const quotas = entries.map(([kind, amount]) => {
+    const exact = total * amount! / weight;
+    return { kind, count: Math.floor(exact), remainder: exact - Math.floor(exact) };
+  });
+  const remaining = total - quotas.reduce((sum, quota) => sum + quota.count, 0);
+  for (const quota of [...quotas].sort((a, b) => b.remainder - a.remainder || codepointCompare(a.kind, b.kind)).slice(0, remaining))
+    quota.count += 1;
+  return Object.fromEntries(quotas.map(({ kind, count }) => [kind, count]));
+}
+
+function hasEnglishFormShape(variant: GeneratedVariant, model: ExamModelEntry): boolean {
+  const shape = model.examShape;
+  const expectedTotal = shape.recognition + shape.writing + shape.readingPassages * shape.readingPerPassage +
+    shape.listeningPassages * shape.listeningPerPassage;
+  if (variant.items.length !== expectedTotal) return false;
+  const expectedMix = scaledKindMix(model.sections.recognition?.mix ?? {}, shape.recognition);
+  return Object.entries(expectedMix).every(([kind, amount]) =>
+    variant.items.filter(item => item.section === 'recognition' && item.kind === kind).length === amount);
 }
 
 function composeLegacyVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
@@ -742,7 +790,7 @@ async function currentWeekRow(sql: PoolClient | Database, languageID: string, le
 async function persistWeek(db: Database, input: {
   generationId: string; languageID: string; level: string; weekId: number;
   pool: GeneratedPool; variants: unknown[]; status: string;
-  model: string; generator: string; review: unknown[] | undefined;
+  model: string; generator: string; review: unknown[] | undefined; blueprintVersion: number; blueprintHash: string;
   tokensIn: number | null; tokensOut: number | null; approvedBy: string | null;
   verifyMode: string; force: boolean; origin: GenerationOrigin;
 }): Promise<void> {
@@ -757,12 +805,14 @@ async function persistWeek(db: Database, input: {
         [input.languageID, input.level, input.weekId]);
     }
     await sql.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, source, status, pool, variants,
-      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by, origin)
-      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
+      generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by, origin,
+      blueprint_version, blueprint_hash)
+      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
       [input.generationId, input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
        JSON.stringify(input.variants), input.generator, input.model, PROMPT_VERSION, JUDGE_VERSION,
        input.verifyMode, JSON.stringify(input.review ?? []), input.tokensIn, input.tokensOut,
-       input.status === 'approved' ? new Date() : null, input.approvedBy, input.origin]);
+       input.status === 'approved' ? new Date() : null, input.approvedBy, input.origin,
+       input.blueprintVersion, input.blueprintHash]);
   });
 }
 

@@ -12,7 +12,7 @@ const THRESHOLDS = { overall: 70, recognition: 60, reading: 50, listening: 50,
 const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key',
   LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'off', LEVELTEST_VARIANTS: '2' };
 const question = (kind = 'choice', seed = 'example') => ({ kind, prompt: `${seed}: She ___ a doctor.`,
-  options: kind === 'choice' ? ['is', 'are', 'am'] : [], answers: ['is'],
+  options: kind === 'choice' ? ['is', 'are', 'am', 'be'] : [], answers: ['is'],
   explain: 'She takes is.', unitID: 'en-foundations-u1' });
 const transport = async (_config: unknown, messages: { role: string; content: string }[]) => {
   const user = messages.find(message => message.role === 'user')!.content;
@@ -22,12 +22,13 @@ const transport = async (_config: unknown, messages: { role: string; content: st
   const body = section === 'reading' || section === 'listening'
     ? Array.from({ length: 6 }, (_, index) => ({ title: `Passage ${index}`, text: `${section} passage ${index}. She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning. Her sister is coming too, so they will have lunch together before the train leaves.`,
       items: Array.from({ length: 3 }, (_, questionIndex) => question('choice', `${section}-${index}-${questionIndex}`)) }))
-    : Array.from({ length: section === 'writing' ? 8 : 24 }, (_, index) => question(section === 'writing' ? 'gap' : 'choice', `${section}-${index}`));
+    : Array.from({ length: section === 'writing' ? 8 : 24 }, (_, index) => question(
+      section === 'writing' || (section === 'recognition' && index >= 16) ? 'gap' : 'choice', `${section}-${index}`));
   return { content: JSON.stringify(body), tokensIn: 0, tokensOut: 0 };
 };
 
 type WeekRow = { id: string; language_id: string; level: string; week_index: number;
-  status: string; pool: unknown; variants: Record<string, unknown>[] };
+  status: string; pool: unknown; variants: Record<string, unknown>[]; blueprint_version?: number; blueprint_hash?: string };
 
 /** PostgreSQL is external: retain projection, insertion and retirement semantics;
     generation, composition, snapshots and HTTP handlers remain real. */
@@ -52,7 +53,8 @@ function storedWeeks(initial: WeekRow[] = []) {
     if (sql.startsWith('INSERT INTO level_test_weeks')) {
       rows.push({ id: values[0] as string, language_id: values[1] as string,
         level: values[2] as string, week_index: values[3] as number, status: values[4] as string,
-        pool: JSON.parse(values[5] as string), variants: JSON.parse(values[6] as string) });
+        pool: JSON.parse(values[5] as string), variants: JSON.parse(values[6] as string),
+        blueprint_version: values[18] as number, blueprint_hash: values[19] as string });
       return { rows: [], rowCount: 1 };
     }
     throw new Error(`Unexpected test SQL: ${sql}`);
@@ -100,12 +102,17 @@ test('new generated snapshots preserve types, unit references, passages and effe
   const outcome = await generateWeeklyLevelTest({ db, env: ENV, transport },
     { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
   assert.equal(outcome.status, 'approved');
+  assert.equal(rows[0]?.blueprint_version, 1);
+  assert.match(rows[0]?.blueprint_hash ?? '', /^[a-f0-9]{64}$/);
   const exam = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   assert.deepEqual(exam.thresholds, THRESHOLDS);
   assert.equal(exam.items.length, 34);
-  for (const raw of exam.items) {
+  assert.equal(exam.items.filter(item => item.section === 'recognition' && item.kind === 'choice').length, 8);
+  assert.equal(exam.items.filter(item => item.section === 'recognition' && item.kind === 'gap').length, 4);
+  for (const [index, raw] of exam.items.entries()) {
     const item = metadata(raw);
-    assert.equal(item.kind, item.section === 'writing' ? 'gap' : 'choice');
+    const gap = item.section === 'writing' || item.section === 'recognition' && index >= 8 && index < 12;
+    assert.equal(item.kind, gap ? 'gap' : 'choice');
     assert.equal(item.unitID, 'en-foundations-u1');
   }
   const snapshot = metadata(exam);
@@ -121,6 +128,16 @@ test('new generated snapshots preserve types, unit references, passages and effe
     assert.ok(passage.text);
   }
   assert.deepEqual(exam, rows[0]!.variants[0]);
+});
+
+test('provider failure before usage is known does not report fabricated zero token totals', async () => {
+  const { db } = storedWeeks();
+  const result = await generateWeeklyLevelTest({ db, env: ENV,
+    transport: async () => { throw new Error('provider unavailable'); } },
+  { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
+  assert.equal(result.status, 'failed');
+  assert.equal('tokensIn' in result, false);
+  assert.equal('tokensOut' in result, false);
 });
 
 test('stored generated grading survives later bundled threshold edits', async () => {

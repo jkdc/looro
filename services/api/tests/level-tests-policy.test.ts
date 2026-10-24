@@ -11,6 +11,7 @@ import { readLlmConfigView, upsertLlmConfig } from '../src/llm-config-admin.js';
 import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
 import { parseLevelTestSchedulerConfig } from '../src/level-tests-scheduler.js';
 import { identifySnapshot, type ExamSnapshot } from '../src/level-test-snapshot.js';
+import type { GeneratedPool } from '../src/level-tests-validate.js';
 
 const NOW = new Date(), TOKEN = 'E'.repeat(43), ADMIN = '00000000-0000-4000-8000-000000000001';
 // Generation windows are defined relative to the clock, never to a frozen week.
@@ -21,10 +22,10 @@ const ADMIN_ENV = { ADMIN_HMAC_KEY: 'a'.repeat(64), ADMIN_PROXY_TOKEN: 'b'.repea
 const headers = { cookie: adminCookieHeader(TOKEN), origin: ADMIN_ENV.ADMIN_PUBLIC_ORIGIN,
   'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': ADMIN_ENV.ADMIN_PROXY_TOKEN };
 const item = (id: string, kind = 'choice') => ({ kind, prompt: `Question ${id}: she ___ a doctor.`,
-  options: kind === 'choice' ? ['is', 'are', 'am'] : [], answers: ['is'], explain: 'With she, the verb is is.', unitID: 'en-foundations-u1' });
+  options: kind === 'choice' ? ['is', 'are', 'am', 'be'] : [], answers: ['is'], explain: 'With she, the verb is is.', unitID: 'en-foundations-u1' });
 const paragraph = 'She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning. Her sister is coming too, so they will have lunch together before the train leaves.';
 const pool = (extraRecognition = 0) => ({
-  recognition: Array.from({ length: 24 + extraRecognition }, (_, i) => item(`recognition-${i}`)),
+  recognition: Array.from({ length: 24 + extraRecognition }, (_, i) => item(`recognition-${i}`, i < 16 + extraRecognition ? 'choice' : 'gap')),
   writing: Array.from({ length: 8 }, (_, i) => item(`writing-${i}`, 'gap')),
   reading: Array.from({ length: 6 }, (_, p) => ({ title: `Reading ${p}`, text: `Reading story ${p}. ${paragraph}`,
     items: Array.from({ length: 3 }, (_, i) => item(`reading-${p}-${i}`)) })),
@@ -38,7 +39,9 @@ const transport = (content = pool(), judge: (items: { id: string }[]) => unknown
   async (_config: unknown, messages: { role: string; content: string }[]) => {
     const user = messages[1]!.content;
     const body = messages[0]!.content.includes('quality reviewer') || messages[0]!.content.includes('strict exam reviewer')
-      ? judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items)
+      ? (() => { const result = judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items) as { items: { id: string; verdict: string; reasonCode?: string; evidence?: string }[] };
+        return { items: result.items.map(entry => ({ ...entry, reasonCode: entry.reasonCode ?? 'answer_key',
+          evidence: entry.evidence ?? 'The marked answer matches the supplied sentence.' })) }; })()
       : content[user.includes('vocabulary and grammar') ? 'recognition' : user.includes('reading passages')
         ? 'reading' : user.includes('listening passages') ? 'listening' : 'writing'];
     return { content: JSON.stringify(body), tokensIn: 1, tokensOut: 1 };
@@ -189,6 +192,13 @@ for (const failure of ['transport', 'incomplete', 'duplicate', 'unknown']) test(
   }));
   assert.equal(outcome.status, 'failed'); assert.equal(state.weeks.length, 0);
 });
+for (const field of ['reasonCode', 'evidence']) test(`strict judge rejects invalid ${field}`, async () => {
+  const { db, state } = database();
+  const outcome = await generate(db, ENV, transport(pool(), items => ({ items: items.map((item, index) => ({
+    id: item.id, verdict: 'ok', ...(index === 0 ? field === 'reasonCode' ? { reasonCode: 'freeform' } : { evidence: '        ' } : {}),
+  })) })));
+  assert.equal(outcome.status, 'failed'); assert.equal(state.weeks.length, 0);
+});
 test('strict removes rejects, keeps ids/unit references and composes the 34-item A1 form', async () => {
   const { db, state } = database();
   assert.equal((await generate(db, ENV, transport(pool(1), items => ({ items: items.map(item => ({
@@ -207,13 +217,25 @@ test('English generation fails closed when judge filtering leaves identical vari
   const { db, state } = database();
   const outcome = await generate(db, ENV, transport(pool(), items => ({ items: items.map(item => {
     const id = item.id;
-    const reject = id.startsWith('rec-') ? Number(id.slice(4)) < 12
+    const index = Number(id.slice(4));
+    const reject = id.startsWith('rec-') ? index < 8 || index >= 16 && index < 20
       : id.startsWith('wri-') ? Number(id.slice(4)) < 4
       : /^(rea|lis)-/.test(id) ? Number(id.split('-')[1]) < 3 : false;
     return { id, verdict: reject ? 'reject' : 'ok' };
   }) })));
   assert.equal(outcome.status, 'failed');
   assert.ok(outcome.errors?.includes('insufficient_variant_diversity'));
+  assert.equal(state.weeks.length, 0);
+});
+
+test('English generation fails closed when item variants share reading and listening stimuli', async () => {
+  const { db, state } = database();
+  const outcome = await generate(db, ENV, transport(pool(), items => ({ items: items.map(item => ({
+    id: item.id, verdict: /^(rea|lis)-[0-2]-0$/.test(item.id) ? 'reject' : 'ok',
+  })) })));
+
+  assert.equal(outcome.status, 'failed');
+  assert.ok(outcome.errors?.includes('insufficient_variant_stimulus_diversity'));
   assert.equal(state.weeks.length, 0);
 });
 
@@ -443,6 +465,22 @@ test('approval rejects tampered variants without publishing or auditing', async 
   try { assert.equal((await app.inject({ method: 'POST', url: `/v1/admin/level-tests/${state.weeks[0]!.id}/approve`, headers,
     payload: { reason: 'Reviewed content' } })).statusCode, 409);
     assert.equal(state.weeks[0]!.status, 'draft'); assert.equal(state.audit.length, 0);
+  } finally { await app.close(); }
+});
+
+test('manual approval accepts a judged pool that meets served form quotas after excluding one candidate', async () => {
+  const { db, state } = database();
+  const outcome = await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review', LEVELTEST_VERIFY: 'strict' },
+    transport(pool(), items => ({ items: items.map(item => ({ id: item.id,
+      verdict: item.id === 'rec-0' ? 'reject' : 'ok' })) })));
+  assert.equal(outcome.status, 'draft');
+  assert.equal((state.weeks[0]!.pool as GeneratedPool).recognition.filter(item => item.kind === 'choice').length, 15);
+  const app = adminApp(db);
+  try {
+    const response = await app.inject({ method: 'POST', url: `/v1/admin/level-tests/${state.weeks[0]!.id}/approve`,
+      headers, payload: { reason: 'Reviewed content' } });
+    assert.equal(response.statusCode, 200, response.payload);
+    assert.equal(state.weeks[0]!.status, 'approved');
   } finally { await app.close(); }
 });
 

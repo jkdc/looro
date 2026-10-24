@@ -81,6 +81,9 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     const options = strings(item.options);
     if (kind === 'choice') {
       if (options.length < 3) return fail(where, 'options', 'fewer than 3 options');
+      const expectedOptions = targetLanguage === 'en' ? blueprint?.sections[section]?.options ?? 4 : undefined;
+      if (expectedOptions !== undefined && options.length !== expectedOptions)
+        return fail(where, 'options', `expected ${expectedOptions} options`);
       if (new Set(options.map(o => normalize(o))).size !== options.length) return fail(where, 'options', 'duplicated options');
       if (answers.length !== 1) return fail(where, 'answer', 'choice needs exactly one correct answer');
       const correct = strings(item.answers)[0] ?? '';
@@ -110,6 +113,20 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
   writing.forEach((item, index) => acceptItem('writing', writingBucket, item, index));
   clean.recognition = recognitionBucket;
   clean.writing = writingBucket;
+
+  if (targetLanguage === 'en' && blueprint?.sections.recognition?.mix) {
+    const expected = blueprint.sections.recognition.mix;
+    const actual = recognitionBucket.reduce<Record<string, number>>((counts, item) => {
+      counts[item.kind] = (counts[item.kind] ?? 0) + 1;
+      return counts;
+    }, {});
+    const kinds = new Set([...Object.keys(expected), ...Object.keys(actual)]);
+    const mismatches = [...kinds].filter(kind => {
+      const minimum = expected[kind as keyof typeof expected];
+      return minimum === undefined ? (actual[kind] ?? 0) > 0 : (actual[kind] ?? 0) < minimum;
+    });
+    if (mismatches.length) errors.push({ section: 'recognition', code: 'mix', detail: 'candidate item-kind quotas are below the blueprint minimum' });
+  }
 
   const seenPassageTexts = { reading: new Set<string>(), listening: new Set<string>() };
   const acceptPassage = (kind: 'reading' | 'listening', minWords: number, maxWords: number,
@@ -192,7 +209,7 @@ function strings(value: unknown): string[] {
 /** Stopword heuristic: count target-language vs instruction-language markers. */
 const TARGET_MARKERS: Record<string, RegExp> = {
   en: /\b(the|is|are|was|were|has|have|do|does|did|will|would|can)\b/gi,
-  es: /\b(el|la|los|las|que|de|para|con|está|son|fue|había|pero|muy)\b/gi,
+  es: /\b(el|ella|la|los|las|que|de|para|con|está|son|fue|había|pero|muy|trabaja|casa)\b/gi,
   fr: /\b(le|la|les|est|était|pour|avec|dans|plus|que|qui|ne)\b/gi,
   de: /\b(der|die|das|ist|war|für|mit|und|nicht|auch|sich|haben)\b/gi,
   it: /\b(il|lo|la|gli|le|è|era|per|con|non|più|sono)\b/gi,
@@ -216,6 +233,14 @@ function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean 
   if (!target) return true;
   if (targetLanguage === 'zh') return target.test(text);
   const hits = (text.match(target) ?? []).length;
+  if (targetLanguage === 'en' && hits === 0) {
+    // Short lexical prompts often contain no English auxiliaries. Reject only
+    // when the text carries positive evidence of another supported language.
+    const nonEnglishHits = Object.entries(TARGET_MARKERS)
+      .filter(([language]) => language !== 'en' && language !== 'nb')
+      .reduce((total, [, marker]) => total + (text.match(marker) ?? []).length, 0);
+    return nonEnglishHits < 2;
+  }
   if (hits >= 2) return true;
   const instruction = INSTRUCTION_MARKERS[targetLanguage];
   if (instruction) {

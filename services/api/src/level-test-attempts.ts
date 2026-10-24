@@ -3,11 +3,10 @@ import type { FastifyInstance, FastifyRequest } from 'fastify';
 import { authenticate } from './auth.js';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
-import { identifySnapshot, type ExamSnapshot, type SnapshotContent } from './level-test-snapshot.js';
+import { identifySnapshot, MAX_LEVEL_TEST_SNAPSHOT_BYTES, type ExamSnapshot, type SnapshotContent } from './level-test-snapshot.js';
 
 const MAX_BATCH_RECORDS = 10;
 const MAX_BODY_BYTES = 256_000;
-const MAX_SNAPSHOT_BYTES = 96_000;
 const MAX_PAGE_SIZE = 100;
 const DEFAULT_PAGE_SIZE = 20;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -87,7 +86,7 @@ function validateSnapshot(value: unknown): SnapshotRecord {
       !Array.isArray(value.items) || value.items.length < 1 || value.items.length > 100) badSnapshot();
 
   const bytes = Buffer.byteLength(JSON.stringify(value));
-  if (bytes > MAX_SNAPSHOT_BYTES) badSnapshot();
+  if (bytes > MAX_LEVEL_TEST_SNAPSHOT_BYTES) badSnapshot();
   const passageIDs = new Set<string>();
   for (const passage of value.passages) {
     if (!isRecord(passage) || !exactKeys(passage, new Set(['id', 'title', 'text'])) ||

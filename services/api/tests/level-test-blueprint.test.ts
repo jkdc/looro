@@ -26,9 +26,31 @@ test('English blueprints carry typed level-specific passage ranges', () => {
 
 test('English validation rejects Spanish items even when no English markers occur', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
-  const spanishPool = { recognition: [{ kind:'choice', prompt:'Ella trabaja en casa.', options:['trabaja','comen','vivimos'], answers:['trabaja'], explain:'La frase dice que ella trabaja.' }] };
+  const spanishPool = { recognition: [{ kind:'choice', prompt:'Ella trabaja en casa.', options:['trabaja','comen','vivimos','lee'], answers:['trabaja'], explain:'La frase dice que ella trabaja.' }] };
   const result = validateGeneratedPool(spanishPool, blueprint.examShape, 'en', blueprint);
   assert.ok(result.errors.some(error => error.code === 'language'));
+});
+
+test('English validation accepts short lexical prompts without auxiliary markers', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const result = validateGeneratedPool({ recognition: [{
+    kind: 'choice', prompt: 'Choose a synonym for happy.', options: ['glad', 'sad', 'angry', 'tired'],
+    answers: ['glad'], explain: 'Happy and glad mean the same.'
+  }] }, blueprint.examShape, 'en', blueprint);
+
+  assert.ok(!result.errors.some(error => error.code === 'language'));
+});
+
+test('English validation enforces blueprint option count and candidate kind quotas', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const allChoiceThreeOptions = Array.from({ length: 24 }, (_, index) => ({
+    id: `rec-${index}`, kind: 'choice', prompt: `Which answer is correct for question ${index}?`,
+    options: ['one', 'two', 'three'], answers: ['one'], explain: 'The answer is one.'
+  }));
+  const result = validateGeneratedPool({ recognition: allChoiceThreeOptions }, blueprint.examShape, 'en', blueprint);
+
+  assert.ok(result.errors.some(error => error.section.startsWith('recognition[') && error.code === 'options'));
+  assert.ok(result.errors.some(error => error.section === 'recognition' && error.code === 'mix'));
 });
 
 test('non-English zero-marker validation retains its existing behavior', () => {
@@ -173,7 +195,8 @@ test('English composition returns longer forms and distinct deterministic varian
     answers: ['one'], explain: 'The text supports this answer.'
   });
   const pool: GeneratedPool = {
-    recognition: Array.from({ length: 24 }, (_, i) => item(`rec-${i}`, 'recognition')) as GeneratedPool['recognition'],
+    recognition: Array.from({ length: 24 }, (_, i) => ({ ...item(`rec-${i}`, 'recognition'),
+      kind: i < 16 ? 'choice' : 'gap' })) as GeneratedPool['recognition'],
     writing: Array.from({ length: 8 }, (_, i) => ({ ...item(`wri-${i}`, 'writing'), kind: 'gap' })) as GeneratedPool['writing'],
     readingPassages: Array.from({ length: 6 }, (_, i) => ({ title: `Reading ${i}`, text: `Reading stimulus ${i}`,
       items: Array.from({ length: 3 }, (_, j) => item(`rea-${i}-${j}`, 'reading')) as GeneratedPool['readingPassages'][number]['items'] })),
@@ -183,8 +206,11 @@ test('English composition returns longer forms and distinct deterministic varian
   const variants = composeVariants(pool, blueprint, 0, 3);
 
   assert.deepEqual(variants.map(variant => variant.items.length), [34, 34, 34]);
+  assert.deepEqual(variants.map(variant => variant.items.filter(candidate => candidate.section === 'recognition' && candidate.kind === 'choice').length), [8, 8, 8]);
+  assert.deepEqual(variants.map(variant => variant.items.filter(candidate => candidate.section === 'recognition' && candidate.kind === 'gap').length), [4, 4, 4]);
   assert.equal(new Set(variants.map(variant => variant.items.map(candidate => candidate.id).sort().join(','))).size, 3);
   assert.equal(new Set(variants.map(variant => variant.readingPassageIds.join(','))).size, 3);
+  assert.equal(new Set(variants.map(variant => variant.listeningPassageIds.join(','))).size, 3);
 });
 
 test('English composition excludes rejected and flagged judge items without mutating the source pool', () => {

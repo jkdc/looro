@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto';
 import type { LevelTestContentItem, LevelTestContentPassage } from './level-tests-content.generated.js';
 
+/** Shared serialized snapshot ceiling; kept below the sync request-body limit. */
+export const MAX_LEVEL_TEST_SNAPSHOT_BYTES = 192_000;
+
 /** Existing wire fields remain additive-compatible with schema version 1.
     Content revision and grading revision describe different, immutable contracts. */
 export interface SnapshotContent {

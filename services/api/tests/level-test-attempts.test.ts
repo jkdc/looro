@@ -109,6 +109,30 @@ integration('uploads accept the deterministic wire shape (optional keys absent)'
   } finally { await app.close(); }
 });
 
+integration('sync accepts a 58-item C1 exam snapshot above the former 96 KB generation limit', async () => {
+  const owner = await account(), original = bundledSnapshot();
+  // Full passage banks travel with the exam; a large but schema-valid bank must
+  // fit the same bound used by generation and remain below the 256 KB body cap.
+  const items = [...original.items, ...Array.from({ length: Math.max(0, 58 - original.items.length) }, (_, index) => {
+    const source = original.items[index % original.items.length]!;
+    return { ...source, id: `c1-expanded-${index}`, prompt: `${source.prompt} Additional item ${index}` };
+  })];
+  const snapshot = identifySnapshot({ ...original, level: 'C1', items, passages: original.passages.map(passage => ({ ...passage,
+    text: `${passage.text} ${'Additional context sentence. '.repeat(600)}` })) }, 'bundled');
+  assert.equal(snapshot.items.length, 58);
+  assert.equal(snapshot.level, 'C1');
+  const wire = JSON.parse(JSON.stringify({ snapshots: [snapshot], attempts: [attempt(snapshot)] }));
+  assert.ok(Buffer.byteLength(JSON.stringify(wire.snapshots[0])) > 96_000);
+  assert.ok(Buffer.byteLength(JSON.stringify(wire.snapshots[0])) < 192_000);
+  assert.ok(Buffer.byteLength(JSON.stringify(wire)) < 256_000);
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    const response = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync',
+      headers: { authorization: owner.authorization }, payload: wire });
+    assert.equal(response.statusCode, 200, response.body);
+  } finally { await app.close(); }
+});
+
 integration('attempt and event timestamps reject far-future clocks (R3-001)', async () => {
   const owner = await account(), snapshot = bundledSnapshot();
   const app = createApp({ db: db!, auth: {} });
