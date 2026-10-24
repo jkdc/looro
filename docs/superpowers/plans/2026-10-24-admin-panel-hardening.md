@@ -75,7 +75,7 @@
 - [x] Label global result KPIs explicitly without changing the result API or pretending they are selection-scoped.
 - [x] Add persistent accessible load/empty/error/retry feedback and truthful API connectivity status.
 - [x] Run focused Chromium browser E2E: 65 checks passed. Existing API endpoints for policy/plans were exercised through the real API in this suite; no backend contract code changed.
-- [ ] Commit: `fix(admin): make validation and errors recoverable`.
+- [x] Commit: `6f42b2c` (`fix(admin): make validation and errors recoverable`).
 
 ### Task 3: View lifecycle and resource ownership
 
