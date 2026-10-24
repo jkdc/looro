@@ -309,17 +309,17 @@
       "canDoAnchor": "Can use familiar everyday expressions, introduce themselves, and ask basic questions about personal details.",
       "poolTarget": {
         "recognition": 24,
-        "writing": 6,
-        "readingPassages": 4,
-        "listeningPassages": 4
+        "writing": 8,
+        "readingPassages": 6,
+        "listeningPassages": 6
       },
       "examShape": {
         "recognition": 12,
-        "writing": 3,
-        "readingPassages": 2,
+        "writing": 4,
+        "readingPassages": 3,
         "readingPerPassage": 3,
-        "listeningPassages": 2,
-        "listeningPerPassage": 2
+        "listeningPassages": 3,
+        "listeningPerPassage": 3
       },
       "sections": {
         "recognition": {
@@ -359,7 +359,7 @@
             70
           ],
           "format": "short announcement or two-turn dialogue",
-          "questions": 2,
+          "questions": 3,
           "skills": [
             "short announcements",
             "simple two-turn dialogue",
@@ -389,24 +389,24 @@
       "languageID": "en",
       "canDoAnchor": "Can complete routine tasks and communicate about familiar matters, simple past events, and plans.",
       "poolTarget": {
-        "recognition": 24,
-        "writing": 6,
-        "readingPassages": 4,
-        "listeningPassages": 4
+        "recognition": 28,
+        "writing": 8,
+        "readingPassages": 6,
+        "listeningPassages": 6
       },
       "examShape": {
-        "recognition": 12,
-        "writing": 3,
-        "readingPassages": 2,
-        "readingPerPassage": 3,
-        "listeningPassages": 2,
-        "listeningPerPassage": 2
+        "recognition": 14,
+        "writing": 4,
+        "readingPassages": 3,
+        "readingPerPassage": 4,
+        "listeningPassages": 3,
+        "listeningPerPassage": 3
       },
       "sections": {
         "recognition": {
           "mix": {
-            "choice": 16,
-            "gap": 8
+            "choice": 19,
+            "gap": 9
           },
           "skills": [
             "past simple",
@@ -425,7 +425,7 @@
             100
           ],
           "register": "short narratives, informal notes, and everyday descriptions",
-          "questions": 3,
+          "questions": 4,
           "skills": [
             "short narratives",
             "informal notes",
@@ -440,7 +440,7 @@
             80
           ],
           "format": "two- or three-turn dialogue with specific details",
-          "questions": 2,
+          "questions": 3,
           "skills": [
             "short dialogue",
             "announcements",
@@ -471,24 +471,24 @@
       "languageID": "en",
       "canDoAnchor": "Can handle most situations while travelling and can give reasons and opinions about familiar topics.",
       "poolTarget": {
-        "recognition": 24,
-        "writing": 6,
-        "readingPassages": 4,
-        "listeningPassages": 4
+        "recognition": 32,
+        "writing": 8,
+        "readingPassages": 6,
+        "listeningPassages": 6
       },
       "examShape": {
-        "recognition": 12,
-        "writing": 3,
-        "readingPassages": 2,
-        "readingPerPassage": 3,
-        "listeningPassages": 2,
-        "listeningPerPassage": 2
+        "recognition": 16,
+        "writing": 4,
+        "readingPassages": 3,
+        "readingPerPassage": 4,
+        "listeningPassages": 3,
+        "listeningPerPassage": 4
       },
       "sections": {
         "recognition": {
           "mix": {
-            "choice": 16,
-            "gap": 8
+            "choice": 21,
+            "gap": 11
           },
           "skills": [
             "present perfect",
@@ -507,7 +507,7 @@
             120
           ],
           "register": "opinion texts, evaluated narratives, and everyday problem-solving",
-          "questions": 3,
+          "questions": 4,
           "skills": [
             "opinions",
             "evaluated narratives",
@@ -522,7 +522,7 @@
             90
           ],
           "format": "dialogue with opinions, connected speech, or simple deduction",
-          "questions": 2,
+          "questions": 4,
           "skills": [
             "opinions",
             "deductions",
@@ -554,24 +554,24 @@
       "languageID": "en",
       "canDoAnchor": "Can interact with fluency, defend a viewpoint, and understand the main ideas of complex texts and speech.",
       "poolTarget": {
-        "recognition": 24,
-        "writing": 6,
-        "readingPassages": 4,
-        "listeningPassages": 4
+        "recognition": 36,
+        "writing": 8,
+        "readingPassages": 8,
+        "listeningPassages": 8
       },
       "examShape": {
-        "recognition": 12,
-        "writing": 3,
-        "readingPassages": 2,
-        "readingPerPassage": 3,
-        "listeningPassages": 2,
-        "listeningPerPassage": 2
+        "recognition": 18,
+        "writing": 4,
+        "readingPassages": 4,
+        "readingPerPassage": 4,
+        "listeningPassages": 4,
+        "listeningPerPassage": 4
       },
       "sections": {
         "recognition": {
           "mix": {
-            "choice": 16,
-            "gap": 8
+            "choice": 24,
+            "gap": 12
           },
           "skills": [
             "passive voice",
@@ -590,7 +590,7 @@
             140
           ],
           "register": "formal texts, narratives with inference, and argumentative extracts",
-          "questions": 3,
+          "questions": 4,
           "skills": [
             "formal texts",
             "argumentative extracts",
@@ -605,7 +605,7 @@
             100
           ],
           "format": "presentation or interview with connected speech and inference",
-          "questions": 2,
+          "questions": 4,
           "skills": [
             "presentations",
             "interviews",
@@ -636,24 +636,24 @@
       "languageID": "en",
       "canDoAnchor": "Can use English flexibly and effectively for social, academic, and professional purposes, including nuanced argument.",
       "poolTarget": {
-        "recognition": 24,
-        "writing": 6,
-        "readingPassages": 4,
-        "listeningPassages": 4
+        "recognition": 36,
+        "writing": 8,
+        "readingPassages": 8,
+        "listeningPassages": 8
       },
       "examShape": {
-        "recognition": 12,
-        "writing": 3,
-        "readingPassages": 2,
-        "readingPerPassage": 3,
-        "listeningPassages": 2,
-        "listeningPerPassage": 2
+        "recognition": 18,
+        "writing": 4,
+        "readingPassages": 4,
+        "readingPerPassage": 5,
+        "listeningPassages": 4,
+        "listeningPerPassage": 4
       },
       "sections": {
         "recognition": {
           "mix": {
-            "choice": 16,
-            "gap": 8
+            "choice": 24,
+            "gap": 12
           },
           "skills": [
             "inversion",
@@ -672,7 +672,7 @@
             180
           ],
           "register": "sustained formal, literary, or argumentative texts with implicit meaning",
-          "questions": 3,
+          "questions": 5,
           "skills": [
             "sustained argument",
             "implicit meaning",
@@ -687,7 +687,7 @@
             120
           ],
           "format": "speech, interview, or debate with nuanced inference",
-          "questions": 2,
+          "questions": 4,
           "skills": [
             "debate",
             "implicit intention",

@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
-import { buildSectionMessages, buildJudgeMessages, generationExamples, retryFailedSectionsOnce } from '../src/level-tests-llm.js';
+import { buildSectionMessages, buildJudgeMessages, generationExamples, retryFailedSectionsOnce,
+  sectionGenerationSpec, composeVariants } from '../src/level-tests-llm.js';
+import { validateGeneratedPool, type GeneratedPool } from '../src/level-tests-validate.js';
 
 test('English blueprint resolution prefers the exact language model over the wildcard', () => {
   const blueprint = resolveExamBlueprint('en', 'A1');
@@ -93,4 +95,73 @@ test('section repair stops when the repair call outcome is unknown', async () =>
   }), /llm_outcome_unknown/);
 
   assert.equal(calls, 1);
+});
+
+test('English CEFR forms and candidate pools follow separate report pilot targets', () => {
+  const targets = { A1: 34, A2: 39, B1: 44, B2: 54, C1: 58 };
+  for (const [level, expected] of Object.entries(targets)) {
+    const blueprint = resolveExamBlueprint('en', level)!;
+    const shape = blueprint.examShape;
+    const total = shape.recognition + shape.writing + shape.readingPassages * shape.readingPerPassage +
+      shape.listeningPassages * shape.listeningPerPassage;
+    assert.equal(total, expected, `${level} learner-facing form size`);
+    assert.equal(blueprint.poolTarget.recognition, shape.recognition * 2);
+    assert.equal(blueprint.poolTarget.writing, shape.writing * 2);
+    assert.equal(blueprint.poolTarget.readingPassages, shape.readingPassages * 2);
+    assert.equal(blueprint.poolTarget.listeningPassages, shape.listeningPassages * 2);
+  }
+});
+
+test('English section generation derives candidate count while the form retains its own shape', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+
+  assert.deepEqual(sectionGenerationSpec('recognition', blueprint), { count: 24, perPassage: 0 });
+  assert.deepEqual(sectionGenerationSpec('reading', blueprint), { count: 6, perPassage: 3 });
+  assert.equal(blueprint.examShape.recognition, 12);
+  assert.equal(blueprint.examShape.readingPassages, 3);
+});
+
+test('English validator refuses a form-sized pool when the candidate target is larger', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const item = (id: string, section: 'recognition' | 'writing' | 'reading' | 'listening', kind = 'choice') => ({
+    id, section, kind, prompt: `What does the story say in question ${id}?`,
+    options: kind === 'choice' ? ['The answer', 'A different answer', 'Another option', 'The last option'] : [],
+    answers: [kind === 'choice' ? 'The answer' : 'was'], explain: 'The text confirms the answer.'
+  });
+  const text = (day: string) => Array.from({ length: 4 }, () =>
+    `On ${day}, a student walks to the station with a friend and talks about the weather.`).join(' ');
+  const pool: GeneratedPool = {
+    recognition: Array.from({ length: 12 }, (_, i) => item(`rec-${i}`, 'recognition')) as GeneratedPool['recognition'],
+    writing: Array.from({ length: 4 }, (_, i) => item(`wri-${i}`, 'writing', 'gap')) as GeneratedPool['writing'],
+    readingPassages: ['Monday','Tuesday','Wednesday'].map((day, i) => ({ title: `Reading ${i}`, text: text(day),
+      items: Array.from({ length: 3 }, (_, j) => item(`rea-${i}-${j}`, 'reading')) as GeneratedPool['readingPassages'][number]['items'] })),
+    listeningPassages: ['Thursday','Friday','Saturday'].map((day, i) => ({ title: `Listening ${i}`, text: text(day),
+      items: Array.from({ length: 3 }, (_, j) => item(`lis-${i}-${j}`, 'listening')) as GeneratedPool['listeningPassages'][number]['items'] })),
+  };
+  const result = validateGeneratedPool(pool, blueprint.examShape, 'en', blueprint);
+
+  assert.equal(result.ok, false);
+  assert.deepEqual(new Set(result.errors.filter(error => error.code === 'minimum').map(error => error.section)),
+    new Set(['recognition', 'writing', 'reading', 'listening']));
+});
+
+test('English composition returns longer forms and distinct deterministic variants', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const item = (id: string, section: 'recognition' | 'writing' | 'reading' | 'listening') => ({
+    id, section, kind: 'choice', prompt: `Prompt for ${id}`, options: ['one','two','three','four'],
+    answers: ['one'], explain: 'The text supports this answer.'
+  });
+  const pool: GeneratedPool = {
+    recognition: Array.from({ length: 24 }, (_, i) => item(`rec-${i}`, 'recognition')) as GeneratedPool['recognition'],
+    writing: Array.from({ length: 8 }, (_, i) => ({ ...item(`wri-${i}`, 'writing'), kind: 'gap' })) as GeneratedPool['writing'],
+    readingPassages: Array.from({ length: 6 }, (_, i) => ({ title: `Reading ${i}`, text: `Reading stimulus ${i}`,
+      items: Array.from({ length: 3 }, (_, j) => item(`rea-${i}-${j}`, 'reading')) as GeneratedPool['readingPassages'][number]['items'] })),
+    listeningPassages: Array.from({ length: 6 }, (_, i) => ({ title: `Listening ${i}`, text: `Listening stimulus ${i}`,
+      items: Array.from({ length: 3 }, (_, j) => item(`lis-${i}-${j}`, 'listening')) as GeneratedPool['listeningPassages'][number]['items'] })),
+  };
+  const variants = composeVariants(pool, blueprint, 0, 3);
+
+  assert.deepEqual(variants.map(variant => variant.items.length), [34, 34, 34]);
+  assert.equal(new Set(variants.map(variant => variant.items.map(candidate => candidate.id).sort().join(','))).size, 3);
+  assert.equal(new Set(variants.map(variant => variant.readingPassageIds.join(','))).size, 3);
 });

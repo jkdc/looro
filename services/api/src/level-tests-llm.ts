@@ -71,6 +71,17 @@ const SECTION_SPECS: Record<SectionName, SectionSpec> = {
   writing:     { section: 'writing',     count: 3,  perPassage: 0 },
 };
 
+export function sectionGenerationSpec(section: SectionName, model: ExamModelEntry): Pick<SectionSpec, 'count' | 'perPassage'> {
+  if (section === 'recognition') return { count: model.poolTarget.recognition, perPassage: 0 };
+  if (section === 'writing') return { count: model.poolTarget.writing, perPassage: 0 };
+  const sectionBlueprint = model.sections[section];
+  return {
+    count: section === 'reading' ? model.poolTarget.readingPassages : model.poolTarget.listeningPassages,
+    perPassage: sectionBlueprint?.questions ?? (section === 'reading'
+      ? model.examShape.readingPerPassage : model.examShape.listeningPerPassage),
+  };
+}
+
 const SKILLS_BY_LEVEL: Record<string, Record<SectionName, string>> = {
   A1: {
     recognition: 'present simple, verb be, articles, plurals, possessives, basic questions',
@@ -257,7 +268,7 @@ async function generateSection(
   languageID: string, level: string, model: ExamModelEntry, weekId: number,
   repairFeedback: string[] = [], signal?: AbortSignal,
 ): Promise<SectionResult> {
-  const spec = SECTION_SPECS[section];
+  const spec = languageID === 'en' ? sectionGenerationSpec(section, model) : SECTION_SPECS[section];
   const fewShot = generationExamples(languageID, level, section);
   const messages = buildSectionMessages(section, languageID, level, spec.count, spec.perPassage, weekId, fewShot, model, repairFeedback);
   const reply = await call(config, messages, signal);
@@ -553,7 +564,7 @@ function assignProvisionalIds(pool: GeneratedPool): void {
 
 /** The K variants: same stable-hash block rotation as the deterministic
     composer, with the variant index salted into the hash. */
-function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
+export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
   const variants: GeneratedVariant[] = [];
   const flat = flattenPool(pool);
   const shape = {
@@ -566,21 +577,16 @@ function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: num
     ...pool.listeningPassages.map((passage, index) => ({ id: `llm-listening-${index + 1}`, title: passage.title, text: passage.text })),
   ];
   for (let variant = 1; variant <= count; variant++) {
-    const salt = `v${variant}`;
     const recognition = stableBlock(flat.filter(item => item.section === 'recognition'),
-      salt, shape.recognition, weekId);
+      'recognition', shape.recognition, weekId, variant, count);
     const writing = stableBlock(flat.filter(item => item.section === 'writing'),
-      salt, shape.writing, weekId);
-    const readingOrder = stablePassageOrder(flat, 'reading', shape.readingPerPassage, salt)
+      'writing', shape.writing, weekId, variant, count);
+    const readingOrder = stablePassageOrder(flat, 'reading', shape.readingPerPassage, weekId)
       .filter(passage => passage.id.startsWith('llm-reading-'));
-    const readingChunks = chunk(readingOrder, shape.readingPassages);
-    const readingBlock = readingChunks[weekId % readingChunks.length] ?? readingOrder;
-    const readingIds = (readingBlock.length === shape.readingPassages ? readingBlock : readingOrder.slice(0, shape.readingPassages)).map(passage => passage.id);
-    const listeningOrder = stablePassageOrder(flat, 'listening', shape.listeningPerPassage, salt)
+    const readingIds = stableSelection(readingOrder.map(passage => passage.id), shape.readingPassages, weekId, variant, count);
+    const listeningOrder = stablePassageOrder(flat, 'listening', shape.listeningPerPassage, weekId)
       .filter(passage => !readingIds.includes(passage.id));
-    const listeningChunks = chunk(listeningOrder, shape.listeningPassages);
-    const listeningBlock = listeningChunks[weekId % listeningChunks.length] ?? listeningOrder;
-    const listeningIds = (listeningBlock.length === shape.listeningPassages ? listeningBlock : listeningOrder.slice(0, shape.listeningPassages)).map(passage => passage.id);
+    const listeningIds = stableSelection(listeningOrder.map(passage => passage.id), shape.listeningPassages, weekId, variant, count);
     const items = [
       ...recognition,
       ...readingIds.flatMap(id => flat.filter(item => item.section === 'reading' && item.passageId === id).slice(0, shape.readingPerPassage)),
@@ -624,34 +630,33 @@ function flattenPool(pool: GeneratedPool): FlatItem[] {
   return items;
 }
 
-function stableBlock(items: FlatItem[], salt: string, count: number, weekId: number): FlatItem[] {
-  const ordered = [...items].sort((a, b) => hashOf(salt, a.id).localeCompare(hashOf(salt, b.id)));
-  const blocks: FlatItem[][] = [];
-  for (let start = 0; start < ordered.length; start += count) blocks.push(ordered.slice(start, start + count));
-  const block = blocks[weekId % blocks.length] ?? ordered;
-  return block.length === count ? block : ordered.slice(0, count);
+function stableBlock(items: FlatItem[], section: string, count: number, weekId: number,
+  variant: number, variantCount: number): FlatItem[] {
+  const ordered = [...items].sort((a, b) => codepointCompare(hashOf(`${section}:${weekId}`, a.id), hashOf(`${section}:${weekId}`, b.id)));
+  return stableSelection(ordered, count, weekId, variant, variantCount);
 }
 
-function stablePassageOrder(items: FlatItem[], section: string, perPassage: number, salt: string):
+function stablePassageOrder(items: FlatItem[], section: string, perPassage: number, weekId: number):
   { id: string }[] {
   const counts = new Map<string, number>();
   for (const item of items) if (item.section === section && item.passageId)
     counts.set(item.passageId, (counts.get(item.passageId) ?? 0) + 1);
   return [...counts.entries()].filter(([, count]) => count >= perPassage)
     .map(([id]) => ({ id }))
-    .sort((a, b) => hashOf(salt, a.id).localeCompare(hashOf(salt, b.id)));
+    .sort((a, b) => codepointCompare(hashOf(`${section}:${weekId}`, a.id), hashOf(`${section}:${weekId}`, b.id)));
 }
+
+function stableSelection<T>(ordered: T[], count: number, _weekId: number, variant: number, variantCount: number): T[] {
+  if (ordered.length <= count) return ordered.slice(0, count);
+  const start = Math.floor((variant - 1) * ordered.length / Math.max(variantCount, 1)) % ordered.length;
+  return Array.from({ length: count }, (_, offset) => ordered[(start + offset) % ordered.length]!);
+}
+
+function codepointCompare(a: string, b: string): number { return a < b ? -1 : a > b ? 1 : 0; }
 
 function hashOf(salt: string, id: string): string {
   return createHash('sha256').update(`${salt}|${id}`).digest('hex');
 }
-
-function chunk<T>(list: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let start = 0; start < list.length; start += size) out.push(list.slice(start, start + size));
-  return out;
-}
-
 
 async function currentWeekRow(sql: PoolClient | Database, languageID: string, level: string, weekId: number) {
   const rows = await sql.query(`SELECT status, variants FROM level_test_weeks

@@ -56,17 +56,51 @@ const stubReply = (body: unknown) => ({ content: JSON.stringify(body), tokensIn:
 /** Section-aware stub: routes based on the section name in the prompt. */
 const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
   async (_config: unknown, messages: { role: string; content: string }[]) => {
+    const system = messages.find(m => m.role === 'system')?.content ?? '';
     const user = messages.find(m => m.role === 'user')?.content ?? '';
-    if (user.includes('"section":"recognition"') || user.includes('vocabulary and grammar'))
-      return stubReply(overrides?.recognition ?? goodPool.recognition);
-    if (user.includes('"section":"reading"') || user.includes('reading passages'))
-      return stubReply(overrides?.reading ?? goodPool.reading);
-    if (user.includes('"section":"listening"') || user.includes('listening passages'))
-      return stubReply(overrides?.listening ?? goodPool.listening);
-    if (user.includes('"section":"writing"') || user.includes('production items'))
-      return stubReply(overrides?.writing ?? goodPool.writing);
-    // Judge call: approve everything.
-    return stubReply({ items: (JSON.parse(user) as { id: string }[]).map(item => ({ id: item.id, verdict: 'ok' })) });
+    if (system.includes('quality reviewer') || system.includes('strict exam reviewer')) {
+      const parsed = JSON.parse(user) as { items?: { id: string }[] } | { id: string }[];
+      const items = Array.isArray(parsed) ? parsed : parsed.items ?? [];
+      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok' })) });
+    }
+    const count = (pattern: RegExp, fallback: number) => Number(pattern.exec(user)?.[1] ?? fallback);
+    const item = (id: string, kind: 'choice' | 'gap' = 'choice') => kind === 'choice'
+      ? { id, ...goodItem, prompt: `She ___ a doctor in sentence ${id}.` }
+      : { id, ...goodGap, prompt: `Complete sentence ${id}: I have ___ idea.` };
+    const passageText = (kind: 'reading' | 'listening', index: number) => {
+      const range = /\((\d+)-(\d+) words each\)/.exec(user);
+      const minimum = Number(range?.[1] ?? (kind === 'reading' ? 60 : 40));
+      const target = Math.min(Number(range?.[2] ?? minimum + 10), minimum + 5);
+      const seed = `${kind} case ${index} The local planning team met to review a community project compare the available evidence and explain its recommendations to residents`;
+      const words = seed.split(' ');
+      return Array.from({ length: target }, (_, position) => words[position % words.length]).join(' ');
+    };
+    const passageQuestions = (kind: 'reading' | 'listening', passage: number, questions: number) =>
+      Array.from({ length: questions }, (_, index) => ({
+        kind: 'choice', prompt: `What detail is mentioned in the ${kind} passage ${passage}, question ${index}?`,
+        options: ['The team reviewed a project', 'The meeting was cancelled', 'The team changed its name', 'The residents left early'],
+        answers: ['The team reviewed a project'], explain: 'The text says the team reviewed a project.'
+      }));
+    if (user.includes('vocabulary and grammar')) {
+      const requested = count(/Write (\d+) vocabulary and grammar items/, goodPool.recognition.length);
+      return stubReply(overrides?.recognition ?? Array.from({ length: requested }, (_, index) => item(`rec-${index}`)));
+    }
+    if (user.includes('reading passages')) {
+      const requested = count(/Write (\d+) distinct reading passages|Write (\d+) reading passages/, goodPool.reading.length);
+      const questions = count(/Each passage has exactly (\d+) comprehension questions/, 3);
+      return stubReply(overrides?.reading ?? Array.from({ length: requested }, (_, index) => ({
+        title: `Reading ${index}`, text: passageText('reading', index), items: passageQuestions('reading', index, questions),
+      })));
+    }
+    if (user.includes('listening passages')) {
+      const requested = count(/Write (\d+) distinct listening passages|Write (\d+) listening passages/, goodPool.listening.length);
+      const questions = count(/Each passage has exactly (\d+) comprehension questions/, 2);
+      return stubReply(overrides?.listening ?? Array.from({ length: requested }, (_, index) => ({
+        title: `Listening ${index}`, text: passageText('listening', index), items: passageQuestions('listening', index, questions),
+      })));
+    }
+    const requested = count(/Write (\d+) short production items/, goodPool.writing.length);
+    return stubReply(overrides?.writing ?? Array.from({ length: requested }, (_, index) => item(`wri-${index}`, 'gap')));
   };
 
 const judgeRejectingFirst = () => async (_config: unknown, messages: { role: string; content: string }[]) => {
@@ -197,7 +231,7 @@ integration('generation persists approved variants and the endpoints serve them'
     assert.equal(generated.statusCode, 200);
     const body = generated.json();
     assert.equal(body.source ?? 'llm', 'llm');
-    assert.equal(body.items.length, 25);
+    assert.equal(body.items.length, 34);
     assert.equal(body.variant, 1);
     const etag = generated.headers.etag;
     // Same pinned variant → ETag revalidation; a different variant → fresh 200.
@@ -208,6 +242,8 @@ integration('generation persists approved variants and the endpoints serve them'
     assert.equal(other.statusCode, 200);
     assert.equal(other.json().variant, 2);
     assert.notEqual(other.headers.etag, etag);
+    assert.notDeepEqual(other.json().items.map((item: { id: string }) => item.id).sort(),
+      body.items.map((item: { id: string }) => item.id).sort());
 
     const hybrid = await app.inject({ method: 'GET', url: '/v1/level-tests/hybrid?language=en&level=A1' });
     assert.equal(hybrid.statusCode, 200);

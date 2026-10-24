@@ -139,13 +139,17 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
   listeningPassages.forEach((passage, index) => acceptPassage('listening', listeningWords[0], listeningWords[1], shape.listeningPerPassage, passage, index));
 
   // Section minimums: the exam shape must be coverable by the validated pool.
-  if (clean.recognition.length < Math.max(MINIMUMS.recognition, shape.recognition))
+  const recognitionTarget = targetLanguage === 'en' && blueprint ? blueprint.poolTarget.recognition : shape.recognition;
+  const writingTarget = targetLanguage === 'en' && blueprint ? blueprint.poolTarget.writing : shape.writing;
+  const readingTarget = targetLanguage === 'en' && blueprint ? blueprint.poolTarget.readingPassages : shape.readingPassages;
+  const listeningTarget = targetLanguage === 'en' && blueprint ? blueprint.poolTarget.listeningPassages : shape.listeningPassages;
+  if (clean.recognition.length < Math.max(MINIMUMS.recognition, recognitionTarget))
     errors.push({ section: 'recognition', code: 'minimum', detail: `${clean.recognition.length} valid items` });
-  if (clean.writing.length < Math.max(MINIMUMS.writing, shape.writing))
+  if (clean.writing.length < Math.max(MINIMUMS.writing, writingTarget))
     errors.push({ section: 'writing', code: 'minimum', detail: `${clean.writing.length} valid items` });
-  if (clean.readingPassages.length < Math.max(MINIMUMS.readingPassages, shape.readingPassages))
+  if (clean.readingPassages.length < Math.max(MINIMUMS.readingPassages, readingTarget))
     errors.push({ section: 'reading', code: 'minimum', detail: `${clean.readingPassages.length} valid passages` });
-  if (clean.listeningPassages.length < Math.max(MINIMUMS.listeningPassages, shape.listeningPassages))
+  if (clean.listeningPassages.length < Math.max(MINIMUMS.listeningPassages, listeningTarget))
     errors.push({ section: 'listening', code: 'minimum', detail: `${clean.listeningPassages.length} valid passages` });
 
   // Disjoint blocks per exam are enforced at composition; here we also refuse

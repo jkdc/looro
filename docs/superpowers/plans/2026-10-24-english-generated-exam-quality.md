@@ -94,13 +94,13 @@
 - Consumes: Blueprint shape and section validator.
 - Produces: English pilot form targets A1–C1 of 34/39/44/54/58 closed items; separately configured candidate pool and diversity evidence; existing response item schema.
 
-- [ ] Test requested candidate counts differ from served form counts and match English blueprint targets.
-- [ ] Test composition for every level against API/snapshot maximums and distinct candidate/stimulus sets across variants.
-- [ ] Observe RED for current 25-item form and same-set variants.
-- [ ] Implement expanded English shape and pool targets, valid-material quota checks, deterministic selection, overlap measurement, and explicit insufficient-pool failure.
-- [ ] Assert non-English shape remains unchanged and existing snapshot fields remain compatible.
-- [ ] Run exporter check and relevant composition/publication tests.
-- [ ] Commit task: `feat(level-tests): expand English generated exam form by CEFR level`.
+- [x] Test requested candidate counts differ from served form counts; observe RED: exported composition helpers missing and configured form remained 25 items.
+- [x] Test all English form totals and double-sized candidate targets (A1–C1), plus A1 variant item/stimulus set divergence.
+- [x] Implement English pool requests from `poolTarget`, per-level form sizing from `examShape`, and validator enforcement of post-filter candidate minima.
+- [x] Implement deterministic, spaced selection so configured variants differ when the pool exceeds one form; preserve wildcard/non-English shape behavior.
+- [x] Keep maximum form (58) below existing 100-item snapshot cap; update public API integration expectation to 34 A1 items.
+- [x] Run focused tests: 18 passed, 4 PostgreSQL tests skipped; API type-check and exporter `--check` passed.
+- [x] Commit task: `feat(level-tests): expand English generated exam form by CEFR level`.
 
 ### Task 5: Judge verdict and publication policy
 
