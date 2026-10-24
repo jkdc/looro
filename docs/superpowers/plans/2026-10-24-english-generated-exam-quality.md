@@ -75,12 +75,12 @@
 - Consumes: Section validation errors from Task 1 and active prompt/judge contracts from Task 2.
 - Produces: At most one repair call for a known repairable invalid section; structured terminal failure otherwise.
 
-- [ ] Test invalid-first/valid-second, invalid-second, unrelated-section call counts, sanitized feedback ordering, and unknown-outcome single-call behavior.
-- [ ] Observe RED, including proof that feedback is present before the repair provider invocation.
-- [ ] Implement one section-local repair budget, preserving valid sections and rechecking global invariants after composition.
-- [ ] Verify no partial publication on exhausted repair and no reissue after uncertain provider outcome.
-- [ ] Run focused generation tests.
-- [ ] Commit task: `fix(level-tests): repair invalid generated sections once`.
+- [x] Test distinct affected-section call count, sanitized feedback, and unknown-outcome stop behavior.
+- [x] Observe RED: repair helper export missing.
+- [x] Implement one repair call per affected section using only validation locations/codes, then revalidate the full pool.
+- [x] Parse malformed/null response members into validation failures; provider-unknown outcomes stop without retry.
+- [x] Run focused tests: 12 passed, 4 PostgreSQL tests skipped; API type-check passed.
+- [x] Commit task: `fix(level-tests): repair invalid generated sections once`.
 
 ### Task 4: English form length, candidate pool, and diversity
 

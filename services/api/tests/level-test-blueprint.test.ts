@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
-import { buildSectionMessages, buildJudgeMessages, generationExamples } from '../src/level-tests-llm.js';
+import { buildSectionMessages, buildJudgeMessages, generationExamples, retryFailedSectionsOnce } from '../src/level-tests-llm.js';
 
 test('English blueprint resolution prefers the exact language model over the wildcard', () => {
   const blueprint = resolveExamBlueprint('en', 'A1');
@@ -65,4 +65,32 @@ test('English judge prompt includes answer evidence, explanation, level fit, and
 test('English generation does not use arbitrary bundled learning items as unreviewed exam examples', () => {
   assert.deepEqual(generationExamples('en', 'B1', 'reading'), []);
   assert.equal(generationExamples('es', 'B1', 'recognition').length, 2);
+});
+
+test('section repair calls each affected section once and sends sanitized errors before retry', async () => {
+  const calls: { section: string; feedback: string[] }[] = [];
+  await retryFailedSectionsOnce([
+    { section: 'recognition[3]', code: 'answer', detail: 'untrusted provider text must not be forwarded' },
+    { section: 'reading[0]', code: 'passage', detail: 'another detail' },
+    { section: 'recognition[5]', code: 'options', detail: 'duplicate option' },
+  ], async (section, feedback) => { calls.push({ section, feedback }); });
+
+  assert.equal(calls.length, 2);
+  assert.deepEqual(calls.map(call => call.section), ['recognition', 'reading']);
+  assert.deepEqual(calls[0]?.feedback, ['recognition[3].answer', 'recognition[5].options']);
+  assert.ok(calls.every(call => !call.feedback.some(message => message.includes('untrusted'))));
+});
+
+test('section repair stops when the repair call outcome is unknown', async () => {
+  let calls = 0;
+
+  await assert.rejects(retryFailedSectionsOnce([
+    { section: 'recognition[0]', code: 'answer', detail: 'invalid' },
+    { section: 'reading[0]', code: 'passage', detail: 'invalid' },
+  ], async () => {
+    calls += 1;
+    throw new Error('llm_outcome_unknown');
+  }), /llm_outcome_unknown/);
+
+  assert.equal(calls, 1);
 });
