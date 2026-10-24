@@ -100,13 +100,13 @@
 
 **Interfaces:** Retain the existing navigation group IDs, route hashes, local assets and server behavior.
 
-- [ ] Test mobile menu/sign-out at 390px, route selection and accessible button names.
-- [ ] Test reason/detail dialog accessible name/role, focus containment, Escape cancellation, and focus return.
-- [ ] Test form labels/errors, `<main>` landmark, `aria-current`, visible row actions by keyboard/touch, and non-color state copy.
-- [ ] Test toast/status announcements and text/table summaries for rendered charts.
-- [ ] Implement CSS/layout using existing Tabler patterns; no canvas upload or new design framework.
-- [ ] Run browser suite and manually inspect screenshots at narrow and desktop widths; do not claim full WCAG certification.
-- [ ] Commit: `feat(admin): improve responsive accessible operations`.
+- [x] Test mobile menu/sign-out at 390px, route selection and accessible button names.
+- [x] Test reason/detail dialog accessible name/role, focus containment, Escape cancellation, and focus return.
+- [x] Test form labels/errors, `<main>` landmark, `aria-current`, visible row actions by keyboard/touch, and non-color state copy.
+- [x] Test toast/status announcements and text/table summaries for rendered charts.
+- [x] Implement CSS/layout using existing Tabler patterns; no canvas upload or new design framework.
+- [x] Run browser suite and manually inspect screenshots at narrow and desktop widths; do not claim full WCAG certification. E2E passed all 11 groups; visual inspection covered 390px mobile navigation and 1280px dashboard.
+- [x] Commit: `feat(admin): improve responsive accessible operations` (`9efe1c0`) plus focus-cancellation correction (`41590a6`).
 
 ### Task 5: Durable generation-run correlation
 
@@ -116,12 +116,12 @@
 
 **Interfaces:** Existing generation run UUID and attempt ordinal in migration 049 are the starting identity. Preserve launcher `202`, job locks, audit and current manual/automatic rules. Prefer additive exact-ID status lookup to a new job table.
 
-- [ ] Reproduce prior-terminal, delayed job registration, >10 unrelated job eviction, reload, and concurrent same-key runs against isolated PostgreSQL.
-- [ ] Specify how the UI obtains an exact run ID only after persistence confirms it; represent accepted-but-unregistered identity as pending/unknown without claiming terminal state.
-- [ ] Add exact-ID lookup separate from the recent jobs array; ensure old client shape remains valid.
-- [ ] Correlate UI terminal state and reload recovery to exact UUID/ordinal.
-- [ ] Verify concurrency and backward compatibility with API integration tests, browser tests, typecheck and `make test-api`.
-- [ ] Commit: `fix(admin): correlate generation status to persisted runs`.
+- [x] Reproduce prior-terminal, delayed job registration, >10 unrelated job eviction, reload, and concurrent same-key runs against isolated PostgreSQL.
+- [x] Specify how the UI obtains an exact run ID only after persistence confirms it; represent accepted-but-unregistered identity as pending/unknown without claiming terminal state. `runCorrelationId` is only a lookup token; the persisted run ID and ordinal appear only when the exact query returns a database row.
+- [x] Add exact-ID lookup separate from the recent jobs array; ensure old client shape remains valid. Optional `runIds` adds `trackedRuns`; requests without it retain the original status response shape.
+- [x] Correlate UI terminal state and reload recovery to exact UUID/ordinal; persist active correlation tokens in tab session storage and clear each only after its persisted run reaches terminal state.
+- [x] Verify concurrency and backward compatibility with API integration tests (26/26), browser E2E (74 checks), typecheck and `make test-api` (644/644).
+- [x] Commit: `fix(admin): correlate generation status to persisted runs` (`8c76dbb`). No migration was needed; migration 049 already provides a UUID and attempt ordinal per run.
 
 ### Task 6: Incremental organization and operational design
 
@@ -131,11 +131,11 @@
 
 **Interfaces:** ES modules preserve current globals only where required by vendors; entrypoint/hash/routes and CSP stay stable.
 
-- [ ] Identify code with a proven independent responsibility and move it without changing behavior; do not create empty folders or move the whole 1,300-line file mechanically.
-- [ ] Improve dashboard hierarchy using existing operator tasks and label units/periods/statuses; no unapproved KPI, alert, RBAC or global search.
-- [ ] Align stale browser-test comments, operator help, footer audit claim, and admin documentation with observed behavior.
-- [ ] Verify module loading, static asset paths, CSP, route inventory, query results and existing behavior.
-- [ ] Commit: `refactor(admin): extract tested panel responsibilities`.
+- [x] Identify code with a proven independent responsibility and move it without changing behavior; do not create empty folders or move the whole 1,300-line file mechanically. Extracted chart-card rendering, chart lifecycle and resize handling into `features/dashboard-charts.js`.
+- [x] Improve dashboard hierarchy using existing operator tasks and label units/periods/statuses; no unapproved KPI, alert, RBAC or global search. Grouped existing KPIs into three operational areas and clarified current-vs-period context; no KPI/query changes.
+- [x] Align stale browser-test comments, operator help, footer audit claim, and admin documentation with observed behavior. Clarified exact generation run identity/pending semantics; replaced the overbroad footer audit statement with mutations-only wording.
+- [x] Verify module loading, static asset paths, CSP, route inventory, query results and existing behavior. Browser E2E: 77 checks passed; same-origin module and CSS returned HTTP 200 under `script-src 'self'`; existing routes/queries and syntax checks passed. Inspected 1280px dashboard screenshot; prior T4 screenshot evidence covers responsive navigation at 390px.
+- [x] Commit: `refactor(admin): extract tested panel responsibilities` (`PENDING`).
 
 ### Task 7: Closeout
 

@@ -1,3 +1,5 @@
+import { createDashboardCharts } from './features/dashboard-charts.js?v=1';
+
 /* Palique admin panel — vanilla JS over the /v1/admin API. No build step. */
 'use strict';
 
@@ -19,7 +21,6 @@ const NAV = [
 ];
 const PALETTE = ['#206bc4', '#2fb344', '#f76707', '#a55aad', '#d63939', '#429ade'];
 const CHART_TYPE = { orders: 'bar', revenue_minor: 'bar', minutes_granted_ms: 'bar', minutes_consumed_ms: 'bar' };
-const charts = [];
 let tables = [];
 const api = async (path, options = {}) => {
   let response;
@@ -43,6 +44,8 @@ const usdNano = value => `$${(Number(value) / 1e9).toLocaleString('es', { maximu
 const usdMinor = value => `$${(Number(value) / 100).toLocaleString('es', { minimumFractionDigits: 2 })}`;
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+const dashboardCharts = createDashboardCharts({ Chart, palette: PALETTE, chartTypes: CHART_TYPE,
+  escapeHtml, number: value => new Intl.NumberFormat('es').format(Number(value)) });
 const dateCell = cell => {
   const raw = cell.getValue();
   if (!raw) return '<span class="text-secondary">—</span>';
@@ -259,39 +262,6 @@ const kpi = (label, value) => {
       <div class="h2 mb-0 mt-1">${value}</div></div>
     </div></div></div></div>`;
 };
-const chartCard = (title, type, serie) => {
-  const points = Array.isArray(serie?.points) ? serie.points : [];
-  const rows = points.map(point => `<tr><th scope="row">${escapeHtml(point.day)}</th><td>${number(point.value)}</td></tr>`).join('');
-  return `<div class="col-lg-6"><div class="card chart-card"><div class="card-body">
-    <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ${type === 'bar' ? 'ti-chart-column' : 'ti-chart-line'} text-secondary" aria-hidden="true"></i>${escapeHtml(title)}</h3>
-    <div class="chart-box"><canvas role="img" aria-label="Gráfico: ${escapeHtml(title)}"></canvas></div>
-    <details class="chart-data"><summary>Ver datos en tabla</summary><div class="table-responsive"><table class="table table-sm">
-      <caption class="visually-hidden">Datos de ${escapeHtml(title)}</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Valor</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="2">Sin datos disponibles.</td></tr>'}</tbody></table></div></details>
-  </div></div></div>`;
-};
-
-function mountChart(canvas, serie) {
-  const color = PALETTE[charts.length % PALETTE.length];
-  const context = canvas.getContext('2d');
-  const gradient = context.createLinearGradient(0, 0, 0, 220);
-  gradient.addColorStop(0, color + '33'); gradient.addColorStop(1, color + '05');
-  const type = CHART_TYPE[serie.name] ?? 'line';
-  charts.push(new Chart(canvas, {
-    type,
-    data: { labels: serie.points.map(point => point.day.slice(5)),
-      datasets: [{ label: serie.label, data: serie.points.map(point => point.value), tension: .35,
-        fill: type === 'line', backgroundColor: type === 'bar' ? color + 'cc' : gradient,
-        borderColor: color, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
-        borderRadius: type === 'bar' ? 3 : undefined, maxBarThickness: 28 }] },
-    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { display: false },
-        tooltip: { backgroundColor: '#1d273b', padding: 10, displayColors: false } },
-      scales: { x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } },
-        y: { beginAtZero: true, grid: { color: 'rgba(160,170,180,.15)' }, ticks: { font: { size: 10 }, maxTicksLimit: 6 } } } }
-  }));
-}
-
 async function renderDashboard(setName, container, context) {
   const [snapshot, series] = await Promise.all([
     setName === 'overview' ? api('/v1/admin/metrics', { signal: context.signal }) : Promise.resolve(null),
@@ -302,27 +272,32 @@ async function renderDashboard(setName, container, context) {
   if (setName === 'overview' && snapshot) {
     const revenue = snapshot.orders.reduce((total, row) => total + row.totalMinor, 0);
     const orders = snapshot.orders.reduce((total, row) => total + row.count, 0);
-    head = `<div class="row mb-3 g-3">
+    const group = (title, description, cards) => `<section class="dashboard-group" aria-label="${title}">
+      <div class="dashboard-group-heading"><h2 class="dashboard-group-title">${title}</h2><p>${description}</p></div>
+      <div class="row mb-3 g-3">${cards}</div></section>`;
+    head = group('Usuarios y actividad', 'Estado actual; las métricas con periodo lo indican en su etiqueta.', `
       ${kpi('Cuentas', number(snapshot.accounts.total))}
       ${kpi('Invitados', number(snapshot.accounts.guests))}
       ${kpi('Sesiones app vivas', number(snapshot.liveAppSessions))}
       ${kpi('Activos 30 días', number(snapshot.activeAccounts30d))}
+    `) + group('Servicio y consumo', 'Saldos expresados en tiempo; coste acumulado en los últimos 30 días.', `
       ${kpi('Minutos en wallets', msHuman(snapshot.minuteWallets.balanceMs))}
       ${kpi('Minutos reservados', msHuman(snapshot.minuteWallets.reservedMs))}
-      ${kpi('Órdenes / volumen', `${number(orders)} · ${usdMinor(revenue)}`)}
       ${kpi('Coste helpers 30d', usdNano(snapshot.helperRequests.cost30dNano))}
-      ${kpi('Waitlist', number(snapshot.waitlist))}
       ${kpi('Sesiones voz activas', number(snapshot.hostedSessions['active'] ?? 0))}
+    `) + group('Comercial y soporte', 'Cifras actuales salvo las métricas que indican un periodo.', `
+      ${kpi('Órdenes / volumen', `${number(orders)} · ${usdMinor(revenue)}`)}
+      ${kpi('Waitlist', number(snapshot.waitlist))}
       ${kpi('Suscripciones activas', number(snapshot.subscriptions.active + snapshot.subscriptions.trialing))}
       ${kpi('En prueba', number(snapshot.subscriptions.trialing))}
       ${kpi('Acciones admin', number(snapshot.adminActions))}
       ${kpi('Informes IA 30d', number(snapshot.aiReports.last30d))}
-    </div>`;
+    `);
   }
-  container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, CHART_TYPE[serie.name] ?? 'line', serie)).join('')}</div>`;
-  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
+  container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => dashboardCharts.card(serie.label, CHART_TYPE[serie.name] ?? 'line', serie)).join('')}</div>`;
+  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => dashboardCharts.mount(canvas, series.series[index]));
   // Charts are created while the grid is still settling; re-measure once it has laid out.
-  const frame = requestAnimationFrame(() => { if (context.isCurrent()) for (const chart of charts) chart.resize(); });
+  const frame = requestAnimationFrame(() => { if (context.isCurrent()) dashboardCharts.resize(); });
   context.register(() => cancelAnimationFrame(frame));
 }
 
@@ -1476,7 +1451,7 @@ async function renderUsage(container) {
       ${kpi('MAU', number(overview.mau))}
       ${kpi('Eventos 7 días', number(overview.events7d))}
     </div>
-    <div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, 'line', serie)).join('')}</div>
+    <div class="row row-cards g-3">${series.series.map(serie => dashboardCharts.card(serie.label, 'line', serie)).join('')}</div>
     <div class="row row-cards g-3 mt-1">
       <div class="col-lg-5"><div class="card"><div class="card-body">
         <h3 class="card-title"><i class="ti ti-flame text-secondary"></i>Funciones más usadas (7 días)</h3>
@@ -1493,8 +1468,8 @@ async function renderUsage(container) {
         </table></div>
       </div></div></div>
     </div>`;
-  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
-  requestAnimationFrame(() => { for (const chart of charts) chart.resize(); });
+  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => dashboardCharts.mount(canvas, series.series[index]));
+  requestAnimationFrame(() => dashboardCharts.resize());
 }
 
 /* ---- row actions ---- */
@@ -1605,8 +1580,7 @@ async function renderRoute() {
     if (active) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
-  for (const chart of charts) chart.destroy();
-  charts.length = 0;
+  dashboardCharts.destroy();
   for (const table of tables) table.destroy();
   tables = [];
   const container = $('#view');

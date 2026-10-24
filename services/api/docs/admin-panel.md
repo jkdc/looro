@@ -35,13 +35,18 @@ so every state looks the same.
 - **Dashboards** (`#overview`, `#growth`, `#voice`, `#economy`): KPI cards and
   30-day timeseries (accounts, waitlist, hosted sessions, helper cost,
   minutes granted/consumed, orders and volume) from fixed read-only queries.
+  The overview groups existing indicators into users/activity, service/consumption,
+  and commercial/support; labels and captions distinguish current totals from
+  bounded periods. Chart rendering is isolated in the tested
+  `admin-ui/features/dashboard-charts.js` module; the app entry remains same-origin
+  and uses the existing CSP and route hashes.
 - **Table browser** (`#browse`): any table declared in `src/admin-browse.ts`
   with server-side validated filters, ordering and pagination. Filters are
   always applied by the API; the client only paints.
 - **Per-user actions**: account detail (support triage report), single-user
   minute campaigns, waitlist deletion, forced close of an active hosted
-  session. Every mutation requires a reason and writes both the domain audit
-  (e.g. `minute_policy_audit`) and `admin_actions`.
+  session. Per-user data mutations require an operator reason and write the
+  relevant domain audit (e.g. `minute_policy_audit`) and `admin_actions`.
 - **Exam operations** (sidebar group `Exámenes`):
   - `#exam-weeks` — generation launcher, live job monitor, paginated weeks
     listing and audited draft moderation (approval and rejection). Rejected rows
@@ -74,9 +79,14 @@ so every state looks the same.
     Weeks and jobs are colour-coded by severity (green = usable, red = needs an
     operator, yellow = waiting or unknown). While a run started from the panel
     (or already `running` when the view mounts) is live, the monitor polls
-    `/v1/admin/level-tests/status` every 5 seconds, ignores a failed poll and
-    retries on the next tick, and stops on the first terminal state (then
-    refreshes the weeks table). Leaving the view parks the watch — no timer, no
+    `/v1/admin/level-tests/status` every 5 seconds using exact run-correlation
+    UUIDs. A request token is not shown as a persisted run ID until the exact
+    status lookup finds its database row; accepted-but-not-yet-registered runs
+    remain pending/unknown rather than matching a prior attempt for the same
+    week. Actual run UUID and attempt ordinal identify terminal state. Active
+    correlation tokens survive a page reload in tab-scoped session storage and
+    are cleared after their run reaches a terminal state. A failed poll is
+    retried on the next tick. Leaving the view parks the watch — no timer, no
     requests — and coming back resumes it. A job's error code is a button that
     opens a dialog with the coarse code, the sanitized per-section reasons from
     the last attempt, timestamps, attempts and the next step. Only messages the

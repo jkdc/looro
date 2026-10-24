@@ -45,6 +45,10 @@
 .table-card .tabulator { border: none; border-top: 1px solid var(--tblr-border-color); border-radius: 0; }
 
 /* ---- KPI tiles ---- */
+.dashboard-group { margin-bottom: 1.25rem; }
+.dashboard-group-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; margin-bottom: .6rem; }
+.dashboard-group-title { font-size: 1rem; font-weight: 600; margin: 0; }
+.dashboard-group-heading p { color: var(--tblr-secondary, #626976); font-size: .8125rem; margin: 0; }
 .kpi-icon {
   display: inline-flex; align-items: center; justify-content: center;
   width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.25rem;

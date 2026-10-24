@@ -6,6 +6,10 @@ audited draft moderation (approve/reject with mandatory reason), scheduler
 status wording, and publication into the public catalog. No real LLM provider,
 no external traffic, no production data.
 
+The suite also checks the overview's grouped indicator hierarchy, the audit
+scope stated in the panel footer, and same-origin ES-module loading under the
+admin Content Security Policy.
+
 ## What runs where
 
 | Piece | Where | Why |

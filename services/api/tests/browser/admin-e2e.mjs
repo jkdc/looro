@@ -1,4 +1,4 @@
-// T11 browser E2E (task 5): drives the real admin panel (served by Caddy from
+// T11 browser E2E (admin panel): drives the real admin panel (served by Caddy from
 // this repo) against the isolated compose stack in this directory — real API,
 // real PostgreSQL, stub LLM provider, seeded drafts. Asserts the T11 acceptance
 // surface exactly as specified:
@@ -46,6 +46,8 @@ const failures = [];
 // Diagnostics only: the last results-listing requests help explain a missed click.
 const observedAttemptRequests = [];
 const observedGenerationRunLookups = [];
+const observedAdminModuleResponses = [];
+const observedAdminStyleResponses = [];
 const check = async (name, assertion) => {
   try { await assertion(); console.log(`PASS  ${name}`); }
   catch (error) { failures.push(name); console.error(`FAIL  ${name}: ${error.message}`); }
@@ -58,6 +60,12 @@ const page = await browser.newPage();
 page.on('request', request => {
   if (request.url().includes('/v1/admin/level-test-attempts?')) observedAttemptRequests.push(request.url());
   if (request.url().includes('/v1/admin/level-tests/status?runIds=')) observedGenerationRunLookups.push(request.url());
+});
+page.on('response', response => {
+  if (response.url().includes('/features/dashboard-charts.js'))
+    observedAdminModuleResponses.push({ url: response.url(), status: response.status() });
+  if (response.url().includes('/app.css?v=9'))
+    observedAdminStyleResponses.push({ url: response.url(), status: response.status() });
 });
 // Unhandled errors explain a half-painted view; surface them instead of only
 // timing out on the missing selector.
@@ -111,11 +119,37 @@ try {
   await page.click('#login-btn');
   await page.waitForURL(`${PANEL}/`, { timeout: 10_000 });
   await page.waitForSelector('#nav', { timeout: 10_000 });
+  await page.waitForFunction(() => document.querySelectorAll('#nav a').length > 0 &&
+    document.querySelector('#api-status')?.textContent?.toLowerCase().includes('conectada') &&
+    document.querySelectorAll('#view .dashboard-group-title').length === 3,
+  undefined, { timeout: 10_000 });
   await page.waitForFunction(() => (document.querySelector('#api-status')?.textContent ?? '').toLowerCase().includes('conectada'),
     undefined, { timeout: 5_000 }).catch(() => {});
   await check('login establishes an operator session', async () => {
     if (!page.url().startsWith(PANEL)) throw new Error(`unexpected url ${page.url()}`);
     if (!(await page.textContent('#api-status'))?.toLowerCase().includes('conectada')) throw new Error(`API status is not reported as connected: ${await page.textContent('#api-status')}`);
+  });
+  await check('dashboard groups existing indicators by operational area and states its period', async () => {
+    const headings = await page.locator('#view h2.dashboard-group-title').allTextContents();
+    if (headings.join('|') !== 'Usuarios y actividad|Servicio y consumo|Comercial y soporte')
+      throw new Error(`dashboard groups=${headings.join('|')}`);
+    const text = (await page.textContent('#view')) ?? '';
+    for (const label of ['30 días', 'estado actual'])
+      if (!text.toLowerCase().includes(label)) throw new Error(`dashboard omits metric period ${label}`);
+    if (await page.locator('#view canvas').count() === 0) throw new Error('dashboard charts are missing');
+  });
+  await check('panel footer scopes the audit claim to recorded mutations', async () => {
+    const footer = (await page.locator('footer').textContent()) ?? '';
+    if (!footer.includes('las mutaciones quedan registradas en auditoría'))
+      throw new Error(`footer claim=${footer.trim()}`);
+  });
+  await check('dashboard module loads from same origin within the existing CSP', async () => {
+    const module = observedAdminModuleResponses.find(response => response.status === 200);
+    if (!module || !module.url.startsWith(PANEL)) throw new Error(`module response=${JSON.stringify(observedAdminModuleResponses)}`);
+    if (!observedAdminStyleResponses.some(response => response.status === 200 && response.url.startsWith(PANEL)))
+      throw new Error(`stylesheet response=${JSON.stringify(observedAdminStyleResponses)}`);
+    const policy = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+    if (!policy?.includes("script-src 'self'")) throw new Error(`CSP changed: ${policy}`);
   });
   await check('mobile shell exposes menu and sign-out with an active main landmark', async () => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -503,7 +537,7 @@ try {
   await check('regeneration accepted and the live status line reports the run', async () => {
     await expectText('.alert-success', 'Regeneración iniciada');
     // The watcher paints progress immediately (queued/running) and finishes with
-    // the terminal state of each key — no manual reload needed.
+    // the terminal state for each exact persisted run — no manual reload needed.
     await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').trim().length > 0,
       undefined, { timeout: 10_000 });
     await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('A2 → finished'),
