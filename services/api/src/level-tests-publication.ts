@@ -4,7 +4,7 @@ import { ServiceError } from './errors.js';
 import { recordAdminAction } from './admin-audit.js';
 import { identifySnapshot, type ExamSnapshot } from './level-test-snapshot.js';
 import { examModelFor } from './level-tests-llm.js';
-import { validateGeneratedPool, type GeneratedPool } from './level-tests-validate.js';
+import { englishServedFormFailure, validateGeneratedPool, type GeneratedPool } from './level-tests-validate.js';
 
 type Generation = { id: string; language_id: string; level: string; week_index: number;
   status: string; pool: GeneratedPool; variants: ExamSnapshot[]; judge_mode: string;
@@ -104,6 +104,7 @@ function canPublish(row: Generation): boolean {
       if (used.size !== passages.size) return false;
       if (exam.items.length !== shape.recognition + shape.writing + shape.readingPassages * shape.readingPerPassage + shape.listeningPassages * shape.listeningPerPassage) return false;
     }
+    if (row.language_id === 'en' && englishServedFormFailure(row.variants, model)) return false;
     return true;
   } catch { return false; }
 }

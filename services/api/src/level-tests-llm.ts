@@ -7,7 +7,7 @@ import { expiresAt, weekIndex } from './level-tests.js';
 import { identifySnapshot, MAX_LEVEL_TEST_SNAPSHOT_BYTES, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { levelTestSettings } from './level-test-settings.js';
 export { levelTestSettings } from './level-test-settings.js';
-import { validateGeneratedPool, type GeneratedPool, type RawGeneratedItem, type ValidationFailure } from './level-tests-validate.js';
+import { englishServedFormFailure, validateGeneratedPool, type GeneratedPool, type RawGeneratedItem, type ValidationFailure } from './level-tests-validate.js';
 import { resolveExamBlueprint, type ExamModelEntry } from './level-test-blueprint.js';
 
 /** Weekly level-verification test generation (level-tests-llm): four
@@ -24,6 +24,13 @@ export const LANGUAGE_NAMES: Record<string, string> = {
 
 export const PROMPT_VERSION = 2;
 export const JUDGE_VERSION = 2;
+const ENGLISH_PROMPT_VERSION = 3;
+const ENGLISH_JUDGE_VERSION = 3;
+export function generationVersionsFor(languageID: string): { promptVersion: number; judgeVersion: number } {
+  return languageID === 'en'
+    ? { promptVersion: ENGLISH_PROMPT_VERSION, judgeVersion: ENGLISH_JUDGE_VERSION }
+    : { promptVersion: PROMPT_VERSION, judgeVersion: JUDGE_VERSION };
+}
 const JUDGE_REASON_CODES = ['answer_key', 'ambiguity', 'unsupported', 'level_mismatch', 'format', 'explanation'] as const;
 const WEEKLY_THEMES = ['daily routines and habits', 'travel, transport and getting lost', 'work, studies and colleagues',
   'food, restaurants and going out', 'weather, seasons and plans', 'moving house and neighbours',
@@ -506,14 +513,12 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       ...variant }, 'llm', generationId));
   if (variants.some(variant => Buffer.byteLength(JSON.stringify(variant)) > MAX_LEVEL_TEST_SNAPSHOT_BYTES))
     return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['snapshot_too_large'] };
-  if (languageID === 'en' && variants.some(variant => !hasEnglishFormShape(variant, model)))
-    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_capacity'] };
-  if (languageID === 'en' && new Set(variants.map(variant => variant.items.map(item => item.id).sort().join(','))).size < variants.length)
-    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_diversity'] };
-  if (languageID === 'en' && (
-    new Set(variants.map(variant => [...variant.readingPassageIds].sort().join(','))).size < variants.length ||
-    new Set(variants.map(variant => [...variant.listeningPassageIds].sort().join(','))).size < variants.length))
-    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['insufficient_variant_stimulus_diversity'] };
+  const formFailure = languageID === 'en' ? englishServedFormFailure(variants, model) : null;
+  if (formFailure) {
+    const error = formFailure === 'mix' ? 'insufficient_variant_capacity'
+      : formFailure === 'variant_diversity' ? 'insufficient_variant_diversity' : 'insufficient_variant_stimulus_diversity';
+    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: [error] };
+  }
   const status = settings.publishMode === 'auto' ? 'approved' : 'draft';
   const approvedBy = settings.publishMode === 'auto' ? 'system:auto' : null;
 
@@ -665,16 +670,6 @@ function scaledKindMix(mix: Partial<Record<string, number>>, total: number): Rec
   return Object.fromEntries(quotas.map(({ kind, count }) => [kind, count]));
 }
 
-function hasEnglishFormShape(variant: GeneratedVariant, model: ExamModelEntry): boolean {
-  const shape = model.examShape;
-  const expectedTotal = shape.recognition + shape.writing + shape.readingPassages * shape.readingPerPassage +
-    shape.listeningPassages * shape.listeningPerPassage;
-  if (variant.items.length !== expectedTotal) return false;
-  const expectedMix = scaledKindMix(model.sections.recognition?.mix ?? {}, shape.recognition);
-  return Object.entries(expectedMix).every(([kind, amount]) =>
-    variant.items.filter(item => item.section === 'recognition' && item.kind === kind).length === amount);
-}
-
 function composeLegacyVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
   const variants: GeneratedVariant[] = [];
   const flat = flattenPool(pool);
@@ -804,12 +799,13 @@ async function persistWeek(db: Database, input: {
         WHERE language_id=$1 AND level=$2 AND week_index=$3 AND status <> 'retired'`,
         [input.languageID, input.level, input.weekId]);
     }
+    const versions = generationVersionsFor(input.languageID);
     await sql.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, source, status, pool, variants,
       generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by, origin,
       blueprint_version, blueprint_hash)
       VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
       [input.generationId, input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
-       JSON.stringify(input.variants), input.generator, input.model, PROMPT_VERSION, JUDGE_VERSION,
+       JSON.stringify(input.variants), input.generator, input.model, versions.promptVersion, versions.judgeVersion,
        input.verifyMode, JSON.stringify(input.review ?? []), input.tokensIn, input.tokensOut,
        input.status === 'approved' ? new Date() : null, input.approvedBy, input.origin,
        input.blueprintVersion, input.blueprintHash]);

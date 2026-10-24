@@ -2,7 +2,9 @@
 
 ## Quality boundary
 
-The English blueprint remains the single source of exam candidate and served-form quotas. Validate candidate structure before judge and validate the composed form after judge filtering. Enforce recognition kind ratios, option counts, unique item IDs, and distinct reading/listening stimuli across variants. These constraints do not affect non-English generation.
+The English blueprint remains the single source of exam candidate and served-form quotas. Validate candidate structure before judge and validate the composed form after judge filtering. Generation and manual approval call the same final-form validator for recognition kind ratios, unique item sets, and distinct reading/listening stimuli across variants. These constraints do not affect non-English generation or publication.
+
+English lexical fallback accepts explicit English task vocabulary and rejects non-Latin writing-system content rather than treating absence of foreign markers as proof of English. Material prompt/judge contract changes increment English-only persisted versions; existing non-English version identities remain unchanged.
 
 ## Snapshot contract
 

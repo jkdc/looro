@@ -82,7 +82,8 @@ function database() {
     if (sql.startsWith('INSERT INTO level_test_weeks')) {
       state.weeks.push({ id: v[0] as string, language_id: v[1] as string, level: v[2] as string,
         week_index: v[3] as number, status: v[4] as string, pool: JSON.parse(v[5] as string), variants: JSON.parse(v[6] as string),
-        judge_mode: v[11], review: JSON.parse(v[12] as string), tokens_in: v[13], tokens_out: v[14] }); return result(); }
+        prompt_version: v[9], judge_version: v[10], judge_mode: v[11], review: JSON.parse(v[12] as string),
+        tokens_in: v[13], tokens_out: v[14] }); return result(); }
     if (sql.startsWith("UPDATE level_test_weeks") && sql.includes("status=" + String.fromCharCode(39) + "retired" + String.fromCharCode(39))) {
       for (const row of state.weeks.filter(row => row.language_id === v[0] && row.level === v[1]
         && row.week_index === v[2] && row.status !== "retired")) row.status = "retired";
@@ -125,6 +126,13 @@ test('generation aggregates token usage across section and judge calls', async (
   assert.ok((outcome.tokensOut ?? 0) > 0);
   assert.equal(state.weeks[0]!.tokens_in, outcome.tokensIn);
   assert.equal(state.weeks[0]!.tokens_out, outcome.tokensOut);
+});
+
+test('generation persists the bumped English prompt and judge contract versions', async () => {
+  const { db, state } = database();
+  assert.equal((await generate(db)).status, 'approved');
+  assert.equal(state.weeks[0]!.prompt_version, 3);
+  assert.equal(state.weeks[0]!.judge_version, 3);
 });
 
 test('an unknown provider outcome is not retried by the section loop', async () => {
@@ -483,6 +491,35 @@ test('manual approval accepts a judged pool that meets served form quotas after 
       headers, payload: { reason: 'Reviewed content' } });
     assert.equal(response.statusCode, 200, response.payload);
     assert.equal(state.weeks[0]!.status, 'approved');
+  } finally { await app.close(); }
+});
+
+test('manual approval rejects a rehashed English form with an invalid recognition mix', async () => {
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  const row = state.weeks[0]!, exam = row.variants[0] as unknown as ExamSnapshot;
+  const choices = (row.pool as GeneratedPool).recognition.filter(item => item.kind === 'choice').slice(0, 12);
+  exam.items = [...exam.items.filter(item => item.section !== 'recognition'), ...choices];
+  row.variants[0] = identifySnapshot(exam, 'llm', row.id) as unknown as Record<string, unknown>;
+  const app = adminApp(db);
+  try {
+    assert.equal((await app.inject({ method: 'POST', url: `/v1/admin/level-tests/${row.id}/approve`,
+      headers, payload: { reason: 'Reviewed content' } })).statusCode, 409);
+    assert.equal(row.status, 'draft'); assert.equal(state.audit.length, 0);
+  } finally { await app.close(); }
+});
+
+test('manual approval rejects rehashed English variants that share reading and listening stimuli', async () => {
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  const row = state.weeks[0]!, first = row.variants[0] as unknown as ExamSnapshot;
+  const duplicate = identifySnapshot({ ...structuredClone(first), variant: 2 }, 'llm', row.id) as ExamSnapshot;
+  row.variants[1] = duplicate as unknown as Record<string, unknown>;
+  const app = adminApp(db);
+  try {
+    assert.equal((await app.inject({ method: 'POST', url: `/v1/admin/level-tests/${row.id}/approve`,
+      headers, payload: { reason: 'Reviewed content' } })).statusCode, 409);
+    assert.equal(row.status, 'draft'); assert.equal(state.audit.length, 0);
   } finally { await app.close(); }
 });
 

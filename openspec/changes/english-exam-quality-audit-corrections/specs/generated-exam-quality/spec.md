@@ -4,7 +4,11 @@
 
 ### Requirement: English generation follows the blueprint after review
 
-The system MUST validate candidate-kind quotas and option counts against the English blueprint before judge review. After judge filtering, generation MUST compose forms that meet the served-form mix and MUST fail closed if reading or listening stimulus diversity cannot be preserved across variants. Manual publication MUST apply the same candidate-versus-served-form distinction as automatic publication.
+The system MUST validate candidate-kind quotas and option counts against the English blueprint before judge review. After judge filtering, generation MUST compose forms that meet the served-form mix and MUST fail closed if reading or listening stimulus diversity cannot be preserved across variants. Manual publication MUST apply the same final-form mix and cross-variant item/stimulus diversity checks as automatic generation.
+
+### Requirement: English generation contract versions track prompt and judge changes
+
+When the English generation prompt or judge response contract changes materially, newly generated weeks MUST persist a new English prompt/judge version. Version changes MUST NOT alter the persisted version identity used by other languages.
 
 ### Requirement: Generation and synchronization share a snapshot size contract
 

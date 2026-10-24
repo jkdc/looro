@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
 import { buildSectionMessages, buildJudgeMessages, generationExamples, retryFailedSectionsOnce,
-  sectionGenerationSpec, composeVariants, excludeJudgeUntrustedItems } from '../src/level-tests-llm.js';
+  sectionGenerationSpec, composeVariants, excludeJudgeUntrustedItems, generationVersionsFor } from '../src/level-tests-llm.js';
 import { validateGeneratedPool, type GeneratedPool } from '../src/level-tests-validate.js';
 
 test('English blueprint resolution prefers the exact language model over the wildcard', () => {
@@ -39,6 +39,29 @@ test('English validation accepts short lexical prompts without auxiliary markers
   }] }, blueprint.examShape, 'en', blueprint);
 
   assert.ok(!result.errors.some(error => error.code === 'language'));
+});
+
+test('English validation accepts lexical prompts with a foreign-language article but clear English task evidence', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const result = validateGeneratedPool({ recognition: [{
+    kind: 'choice', prompt: 'Choose a synonym for a big house.', options: ['mansion', 'cabin', 'shed', 'tent'],
+    answers: ['mansion'], explain: 'A mansion is a very large house.'
+  }] }, blueprint.examShape, 'en', blueprint);
+  assert.ok(!result.errors.some(error => error.code === 'language'));
+});
+
+test('English validation rejects clearly Cyrillic lexical content without adding Cyrillic language support', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const result = validateGeneratedPool({ recognition: [{
+    kind: 'choice', prompt: 'Выберите синоним слова радостный.', options: ['весёлый', 'грустный', 'злой', 'уставший'],
+    answers: ['весёлый'], explain: 'Это означает радостный.'
+  }] }, blueprint.examShape, 'en', blueprint);
+  assert.ok(result.errors.some(error => error.code === 'language'));
+});
+
+test('English prompt and judge contracts have distinct persisted versions without changing other languages', () => {
+  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 3, judgeVersion: 3 });
+  assert.deepEqual(generationVersionsFor('es'), { promptVersion: 2, judgeVersion: 2 });
 });
 
 test('English validation enforces blueprint option count and candidate kind quotas', () => {

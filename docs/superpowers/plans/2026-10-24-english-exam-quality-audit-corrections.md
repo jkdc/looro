@@ -110,3 +110,21 @@
 - [x] Run `npm test`, `npm run check`, `python3 scripts/export_leveltests.py --check`, and `make check`.
 - [x] Verify `git diff --check`, migration numbering, and preserve all pre-existing untracked files.
 - [x] Work-unit documentation commit: `cb74704` (`docs(level-tests): record exam quality audit corrections`).
+
+### Task 6: Close final-review gaps in English publication, language detection, and version provenance
+
+**Files:**
+- Modify: `services/api/src/level-tests-publication.ts`, `services/api/src/level-tests-llm.ts`, `services/api/src/level-tests-validate.ts`.
+- Modify: `services/api/tests/level-tests-policy.test.ts`, `services/api/tests/level-test-blueprint.test.ts`, and generation persistence tests as needed.
+- Update: matching OpenSpec capability/tasks and this plan.
+
+**Interfaces:**
+- English manual approval and automatic generation must share final form checks for scaled recognition mix and cross-variant reading/listening stimulus diversity.
+- English lexical prompts with clear English task vocabulary remain valid; clearly non-English-script content is rejected without introducing support for that language.
+- New English prompt/judge contracts persist distinct versions; non-English version identities remain unchanged.
+
+- [x] Add regressions for manual approval of rehashed but wrong-mix and duplicate-stimulus forms, valid short English lexical prompts, clearly Cyrillic foreign content, and English/non-English persisted version identities.
+- [x] Run focused regressions and observe expected RED failures.
+- [x] Implement the shared English served-form contract, evidence-based lexical gate, and English-only version bump.
+- [x] Run focused tests (68/68), API type-check, isolated full suite (689/689, 0 skipped), and `make check`.
+- [x] Record final-review resolution; commit identity to be added after commit.

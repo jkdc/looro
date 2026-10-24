@@ -41,6 +41,44 @@ export interface GeneratedPool {
 export interface ValidationFailure { section: string; code: string; detail: string }
 export interface ValidationResult { ok: boolean; errors: ValidationFailure[]; pool: GeneratedPool }
 
+export interface EnglishServedForm {
+  items: { id: string; section: string; kind?: string }[];
+  readingPassageIds: string[];
+  listeningPassageIds: string[];
+}
+
+/** One final-form gate shared by automatic generation and manual approval. */
+export function englishServedFormFailure(variants: readonly EnglishServedForm[], model: ExamModelEntry):
+  'mix' | 'variant_diversity' | 'stimulus_diversity' | null {
+  const recognitionTotal = model.examShape.recognition;
+  const mix = model.sections.recognition?.mix ?? {};
+  const entries = Object.entries(mix).filter(([, value]) => typeof value === 'number' && value > 0)
+    .sort(([left], [right]) => left < right ? -1 : left > right ? 1 : 0);
+  const weight = entries.reduce((sum, [, value]) => sum + value!, 0);
+  const quotas = entries.map(([kind, value]) => {
+    const exact = recognitionTotal * value! / weight;
+    return { kind, count: Math.floor(exact), remainder: exact - Math.floor(exact) };
+  });
+  const remaining = recognitionTotal - quotas.reduce((sum, quota) => sum + quota.count, 0);
+  for (const quota of [...quotas].sort((a, b) => b.remainder - a.remainder ||
+    (a.kind < b.kind ? -1 : a.kind > b.kind ? 1 : 0)).slice(0, remaining)) quota.count += 1;
+  const expectedMix = Object.fromEntries(quotas.map(({ kind, count }) => [kind, count]));
+
+  for (const variant of variants) {
+    const total = model.examShape.recognition + model.examShape.writing +
+      model.examShape.readingPassages * model.examShape.readingPerPassage +
+      model.examShape.listeningPassages * model.examShape.listeningPerPassage;
+    if (variant.items.length !== total || Object.entries(expectedMix).some(([kind, count]) =>
+      variant.items.filter(item => item.section === 'recognition' && item.kind === kind).length !== count)) return 'mix';
+  }
+  if (new Set(variants.map(variant => variant.items.map(item => item.id).sort().join(','))).size < variants.length)
+    return 'variant_diversity';
+  if (new Set(variants.map(variant => [...variant.readingPassageIds].sort().join(','))).size < variants.length ||
+      new Set(variants.map(variant => [...variant.listeningPassageIds].sort().join(','))).size < variants.length)
+    return 'stimulus_diversity';
+  return null;
+}
+
 const MINIMUMS = { recognition: 12, writing: 3, readingPassages: 2, listeningPassages: 2 };
 const WORDS = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 const normalize = (text: string) => text.toLowerCase().replace(/[.,!?;:¿¡"“”«»…()]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -227,6 +265,8 @@ const INSTRUCTION_MARKERS: Record<string, RegExp> = {
   nb: /\b(er|og|for|med|ikke|den|det|til)\b/gi,
   zh: /[\u4e00-\u9fff]/g,
 };
+const ENGLISH_LEXICAL_MARKERS = /\b(choose|select|complete|match|synonym|opposite|meaning|word|phrase|sentence|correct|missing)\b/i;
+const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}]/u;
 
 function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean {
   const target = TARGET_MARKERS[targetLanguage];
@@ -234,8 +274,10 @@ function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean 
   if (targetLanguage === 'zh') return target.test(text);
   const hits = (text.match(target) ?? []).length;
   if (targetLanguage === 'en' && hits === 0) {
-    // Short lexical prompts often contain no English auxiliaries. Reject only
-    // when the text carries positive evidence of another supported language.
+    // Lexical prompts can lack English function words. Accept explicit English
+    // task vocabulary; do not infer English from the absence of foreign markers.
+    if (NON_LATIN_LETTER.test(text)) return false;
+    if (ENGLISH_LEXICAL_MARKERS.test(text)) return true;
     const nonEnglishHits = Object.entries(TARGET_MARKERS)
       .filter(([language]) => language !== 'en' && language !== 'nb')
       .reduce((total, [, marker]) => total + (text.match(marker) ?? []).length, 0);
