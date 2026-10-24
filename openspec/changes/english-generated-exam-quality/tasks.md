@@ -11,7 +11,7 @@
 
 ## Verification
 
-- `make test-api`: 669 passed, 0 failed on final implementation behavior.
+- `make test-api`: 673 passed, 0 failed on final implementation behavior.
 - `cd services/api && env -u TEST_DATABASE_URL node_modules/.bin/tsx --test tests/level-tests-llm.test.ts`
 - `cd services/api && ./node_modules/.bin/tsc --noEmit`
 - `python3 scripts/export_leveltests.py --check` when shared model JSON changes.

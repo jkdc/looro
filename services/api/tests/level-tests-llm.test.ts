@@ -288,11 +288,11 @@ integration('a generated week records who triggered the generation', async db =>
   const manual = await generateWeeklyLevelTest(
     { db, env: ENV_BASE, transport: sectionTransport() },
     { languageID: 'en', level: 'A2', force: true, origin: 'user_operator' });
-  assert.equal(manual.status, 'approved');
+  assert.equal(manual.status, 'approved', manual.errors?.join('; '));
   const automatic = await generateWeeklyLevelTest(
     { db, env: ENV_BASE, transport: sectionTransport() },
     { languageID: 'es', level: 'A2', force: true, origin: 'automatic_worker' });
-  assert.equal(automatic.status, 'approved');
+  assert.equal(automatic.status, 'approved', automatic.errors?.join('; '));
   const rows = (await db.query(`SELECT language_id, origin FROM level_test_weeks
     WHERE level='A2' AND status='approved' AND language_id IN ('en','es') ORDER BY language_id`)).rows;
   assert.deepEqual(rows.map(row => [row.language_id, row.origin]),
@@ -313,7 +313,7 @@ integration('unknown judge transport outcome stops generation in flag and strict
       },
     }, { languageID: 'fr', level: 'A1', weekIndex: 998001, origin: 'automatic_worker' });
     assert.equal(outcome.status, 'failed');
-    assert.ok(outcome.errors?.some(error => error.includes('llm_outcome_unknown')));
+    assert.ok(outcome.errors?.some(error => error.includes('llm_outcome_unknown')), outcome.errors?.join('; '));
     assert.equal(calls, 5);
     assert.equal((await db.query(`SELECT 1 FROM level_test_weeks WHERE language_id='fr' AND level='A1' AND week_index=998001`)).rowCount, 0);
   }
