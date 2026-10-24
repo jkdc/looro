@@ -42,7 +42,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - T4 / S5–S6 / inline / complete / commits `9efe1c0`, `41590a6` — responsive accessibility; browser E2E passed all 11 groups and screenshots were inspected at 390px/1280px.
 - T5 / S7 / inline / complete / commit `8c76dbb` — persisted UUID/attempt ordinal lookup separate from the ten-job feed; correlation token in `202`, exact terminal status and reload recovery; unregistered requests stay pending/unknown. API integration 26/26; browser E2E 74 checks; `make test-api` 644/644.
 - T6 / S5,S8,S9 / inline / complete / commit `60c5113` — tested dashboard-chart module extraction, grouped KPIs, and corrected operator wording.
-- T7 / S1–S9 / inline / complete / commits `2057d25`, `c2a161c` — fixed five Important review findings, completed focused independent recheck, full E2E and API verification; one Minor remains explicitly deferred.
+- T7 / S1–S9 / inline / complete / commits `2057d25`, `c2a161c`, `40c61a3` — fixed five Important review findings, completed focused independent recheck, full E2E and API verification; one Minor remains explicitly deferred.
 
 ## Log
 
@@ -109,5 +109,5 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - Verification: `make test-api` 644/644; `cd services/api && npm run check`; `node --check` on app.js and browser E2E; `git diff --check`. Focused independent reviewer recheck on `60c5113..2057d25` passed all five blockers and reproduced them on baseline; it was not a new whole-branch review.
 - Intermediate browser attempts failed only because the first stack had prior test mutations and later regression harness setup was incomplete. The stack was reset and harness corrected; the complete final run passed. Firefox/WebKit, manual screen-reader testing, and real provider were not exercised.
 - Minor deferred: exam-review reason-dialog cancellation may lose focus because the trigger is disabled before modal invocation. It was deliberately excluded from the bounded blocker correction; see verification report.
-- T6 work-unit commit: `60c5113` (`refactor(admin): extract tested panel responsibilities`). T7 commits: `2057d25` (`fix(admin): resolve hardening review blockers`) and `c2a161c` (`docs(admin): record hardening verification`).
-- Risk: item 4 (async state ordering and mutation/refresh lifecycle). Next: commit the report/tracker closeout; no merge, push, PR, or worktree.
+- T6 work-unit commit: `60c5113` (`refactor(admin): extract tested panel responsibilities`). T7 commits: `2057d25` (`fix(admin): resolve hardening review blockers`), `c2a161c` (`docs(admin): record hardening verification`), and `40c61a3` (`docs(admin): record closeout commit identity`).
+- Risk: item 4 (async state ordering and mutation/refresh lifecycle). Closeout complete; no merge, push, PR, or worktree.
