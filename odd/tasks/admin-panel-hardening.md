@@ -36,7 +36,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 ## Tasks
 
 - T0 / S1–S9 / inline / complete / commit `603f2d4` — baseline and specification artifacts; baseline API 640/640, browser 57 checks.
-- T1 / S1–S2 / inline / complete / commit pending — campaign snapshot invalidation, explicit same-ID retry after uncertain apply, and server-catalog browse filters/sorters. RED: E2E reproduced enabled stale apply, sortable `is_guest`, and rejected server-filter operators; lock-specific RED reproduced the ability to prepare a second campaign during uncertainty. GREEN: browser E2E 63/63; `make test-api` 640/640.
+- T1 / S1–S2 / inline / complete / commit `386b9a3` — campaign snapshot invalidation, explicit same-ID retry after uncertain apply, and server-catalog browse filters/sorters. RED: E2E reproduced enabled stale apply, sortable `is_guest`, and rejected server-filter operators; lock-specific RED reproduced the ability to prepare a second campaign during uncertainty. GREEN: browser E2E 63/63; `make test-api` 640/640.
 - T2 / S4–S5 / inline / pending / commit pending — form validation and errors.
 - T3 / S3–S4 / inline / pending / commit pending — lifecycle/disposal.
 - T4 / S5–S6 / inline / pending / commit pending — responsive accessibility.
@@ -57,17 +57,17 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 
 ### L3 — Progress
 - Created `feat/admin-panel-hardening` from `feature/learning-platform` at `30990b0`.
-- OpenSpec and Superpowers design artifacts created before production-code edits. Next: RED baseline tests and implementation task by task.
-- Implementation has not started; report, plans, screenshots, and pre-existing untracked files remain preserved. User overrode the default PR-chain prompt: continue with work-unit commits on the active branch, and do not create a PR without a later explicit request.
+- OpenSpec and Superpowers design artifacts created before production-code edits. T0 baseline and T1 campaign/browse work are complete; continue with T2.
+- The report, plans, screenshots, and pre-existing untracked files remain preserved. User overrode the default PR-chain prompt: continue with work-unit commits on the active branch, and do not create a PR without a later explicit request.
 - Baseline observed before implementation: `make test-api` reported 640 passed / 0 failed; documented browser E2E reported 57 passing checks. Both ran against disposable local services.
 - The browser runner's default evidence path overwrites tracked screenshots; those generated files were restored because the initial worktree had no tracked changes. Future E2E runs must set `E2E_EVIDENCE_DIR` to the ignored SDD workspace.
+
+### L4 — User workflow requirement
+“no me preguntes más esto, siempre haces commits sobre la rama donde estamos trabajando y no quiero que uses gentle-ai quiero que uses superpowers añadelo como requisito de desarrollo al proyecto”
+- Use Superpowers only; commit work units on the currently active branch; do not use worktrees or ask about PR chaining; push/PR/merge remain unauthorized unless separately requested.
 
 ### L5 — T1 campaign and browse integrity
 - RED: the browser suite reproduced stale campaign apply after editing audience/account/minutes/cap/reason and exposed sorting for non-orderable `is_guest`. Additional RED checks showed that uncertain apply left the form available to prepare a second campaign.
 - GREEN: prepared identity/confirmation/reason remain bound to the snapshot; the impact summary includes recipients and total minutes. Editing invalidates apply. An uncertain response retains the same campaign ID for explicit retry and locks intent fields/new preparation until success. Browse filter operator options come directly from API `operators`; unsupported controls/operators are omitted, sortable columns use `orderable`, and remote sort mode keeps pagination semantics aligned.
 - Verification: browser E2E passed 63/63 checks in Chromium against disposable PostgreSQL and the stub provider; full `make test-api` passed 640/640. One earlier browser run exposed a flaky pre-existing generation timer check; a fresh complete run passed it. Browser evidence is under `.superpowers/sdd/2026-10-24-admin-panel-hardening/evidence-t1-final3/`.
-- Next: commit T1 and continue T2.
-
-### L4 — User workflow requirement
-“no me preguntes más esto, siempre haces commits sobre la rama donde estamos trabajando y no quiero que uses gentle-ai quiero que uses superpowers añadelo como requisito de desarrollo al proyecto”
-- Use Superpowers only; commit work units on the currently active branch; do not use worktrees or ask about PR chaining; push/PR/merge remain unauthorized unless separately requested.
+- T1 work-unit commit: `386b9a3` (`fix(admin): preserve campaign and browse intent`). Next: continue T2.

@@ -59,7 +59,7 @@
 - [x] Test audit `action`, ledger `kind`, and non-orderable `is_guest` against the real catalog fixtures.
 - [x] Implement snapshot identity/impact display and catalog-derived filter/sort controls; disable unsupported sorting and use remote sort mode.
 - [x] Run focused browser E2E (63 checks passed) and `make test-api` (640/640).
-- [ ] Commit: `fix(admin): preserve campaign and browse intent`.
+- [x] Commit: `386b9a3` (`fix(admin): preserve campaign and browse intent`).
 
 ### Task 2: Validation, login and operator error states
 

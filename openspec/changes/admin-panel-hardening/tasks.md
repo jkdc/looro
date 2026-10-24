@@ -1,7 +1,7 @@
 # Implementation Tasks
 
 - [x] **T0 — Baseline and implementation contract** (`S1–S9`; inline): record current runner results and preserve the approved audit/spec before implementation. `make test-api`: 640/640; browser E2E: 57 checks passed. Commit: `603f2d4`.
-- [x] **T1 — Campaign and query integrity** (`S1–S2`; inline): immutable preparation/invalidations; catalog-driven browse controls; uncertain apply keeps the same ID and blocks creating another campaign. Browser E2E 63 checks, `make test-api` 640/640. Commit: pending.
+- [x] **T1 — Campaign and query integrity** (`S1–S2`; inline): immutable preparation/invalidations; catalog-driven browse controls; uncertain apply keeps the same ID and blocks creating another campaign. Browser E2E 63 checks, `make test-api` 640/640. Commit: `386b9a3`.
 - [ ] **T2 — Validation and operator error states** (`S4–S5`; inline): native form submission/field errors; bearer login network handling; distinguish mutation confirmation from refresh failure; global KPI labels. Commit: pending.
 - [ ] **T3 — View lifecycle and resource disposal** (`S3–S4`; inline): view context, stale-render guards, Tabulator/Chart/listener/timer disposal, loading/error/retry and truthful API status. Commit: pending.
 - [ ] **T4 — Responsive shell and functional accessibility** (`S5–S6`; inline): mobile navigation/sign-out, modal semantics/focus, labels/landmarks/visible actions, status announcements and chart equivalents. Commit: pending.
