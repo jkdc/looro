@@ -104,14 +104,15 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
   };
 
 const judgeRejectingFirst = () => async (_config: unknown, messages: { role: string; content: string }[]) => {
-  // The judge call is the one whose SYSTEM message is the strict reviewer.
   const systemMessage = messages.find(message => message.role === 'system')?.content ?? '';
-  if (systemMessage.includes('strict reviewer')) {
-    const exam = JSON.parse(messages[1]?.content ?? '{}') as { items?: { id?: string }[] };
-    const first = exam.items?.[0];
-    return stubReply({ items: [{ id: first?.id ?? 'x', verdict: 'reject', reason: 'bad item' }] });
+  if (systemMessage.includes('quality reviewer') || systemMessage.includes('strict exam reviewer')) {
+    const raw = JSON.parse(messages.find(message => message.role === 'user')?.content ?? '{}') as
+      { items?: { id?: string }[] } | { id?: string }[];
+    const items = Array.isArray(raw) ? raw : raw.items ?? [];
+    return stubReply({ items: items.map((item, index) => ({ id: item.id ?? 'missing',
+      verdict: index === 0 ? 'reject' : 'ok', reason: index === 0 ? 'The key is not supported.' : 'The item checks out.' })) });
   }
-  return stubReply(goodPool);
+  return sectionTransport()(_config, messages);
 };
 
 // ---- unit: crypto + resolution ----
@@ -265,13 +266,20 @@ integration('generation persists approved variants and the endpoints serve them'
   } finally { await app.close(); }
 });
 
-integration('strict judge removes rejected items and approves the trimmed exam', async db => {
+integration('strict judge excludes a genuinely rejected English item before serving the longer form', async db => {
   const outcome = await generateWeeklyLevelTest(
-    { db, env: { ...ENV_BASE, LEVELTEST_VERIFY: 'strict' }, transport: sectionTransport() },
-    { languageID: 'es', level: 'A1', force: true, origin: 'automatic_worker' });
+    { db, env: { ...ENV_BASE, LEVELTEST_VERIFY: 'strict' }, transport: judgeRejectingFirst() },
+    { languageID: 'en', level: 'A1', force: true, origin: 'automatic_worker' });
   assert.equal(outcome.status, 'approved');
-  const history = await db.query(`SELECT status FROM level_test_weeks WHERE language_id='es' AND level='A1'`);
+  const history = await db.query(`SELECT status, pool, variants, review FROM level_test_weeks WHERE language_id='en' AND level='A1' ORDER BY created_at DESC`);
   assert.ok(history.rows.length >= 1);
+  const row = history.rows[0] as { pool: { recognition: { id: string }[] }; variants: { items: { id: string }[] }[];
+    review: { id: string; verdict: string }[] };
+  const rejected = row.review.find(entry => entry.verdict === 'reject');
+  assert.ok(rejected);
+  assert.ok(!row.pool.recognition.some(item => item.id === rejected.id));
+  assert.equal(row.variants[0]?.items.length, 34);
+  assert.ok(!row.variants.some(variant => variant.items.some(item => item.id === rejected.id)));
 });
 
 

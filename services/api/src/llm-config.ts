@@ -94,7 +94,7 @@ export async function resolveLlmConfig(db: Database, env: NodeJS.ProcessEnv): Pr
 }
 
 export interface ChatMessage { role: 'system' | 'user'; content: string }
-export interface ChatReply { content: string; tokensIn: number; tokensOut: number }
+export interface ChatReply { content: string; tokensIn?: number; tokensOut?: number }
 
 /** One OpenAI-compatible chat completion. Any transport error after invocation
     has an unknown provider-side outcome and must not be retried automatically. */
@@ -130,8 +130,11 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
     }
     const content = payload.choices?.[0]?.message?.content;
     if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
-    const outcome: ChatReply = { content, tokensIn: payload.usage?.prompt_tokens ?? 0,
-      tokensOut: payload.usage?.completion_tokens ?? 0 };
+    const outcome: ChatReply = { content,
+      ...(typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens)
+        ? { tokensIn: payload.usage.prompt_tokens } : {}),
+      ...(typeof payload.usage?.completion_tokens === 'number' && Number.isFinite(payload.usage.completion_tokens)
+        ? { tokensOut: payload.usage.completion_tokens } : {}) };
     paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'ok' });
     if (typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens))
       paliqueMetrics.llmTokens.add(payload.usage.prompt_tokens, { provider: config.provider, direction: 'input' });

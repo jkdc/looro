@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
 import { buildSectionMessages, buildJudgeMessages, generationExamples, retryFailedSectionsOnce,
-  sectionGenerationSpec, composeVariants } from '../src/level-tests-llm.js';
+  sectionGenerationSpec, composeVariants, excludeJudgeUntrustedItems } from '../src/level-tests-llm.js';
 import { validateGeneratedPool, type GeneratedPool } from '../src/level-tests-validate.js';
 
 test('English blueprint resolution prefers the exact language model over the wildcard', () => {
@@ -164,4 +164,26 @@ test('English composition returns longer forms and distinct deterministic varian
   assert.deepEqual(variants.map(variant => variant.items.length), [34, 34, 34]);
   assert.equal(new Set(variants.map(variant => variant.items.map(candidate => candidate.id).sort().join(','))).size, 3);
   assert.equal(new Set(variants.map(variant => variant.readingPassageIds.join(','))).size, 3);
+});
+
+test('English composition excludes rejected and flagged judge items without mutating the source pool', () => {
+  const item = (id: string, section: 'recognition' | 'writing' | 'reading' | 'listening') => ({
+    id, section, kind: 'choice', prompt: `What does the text say about ${id}?`, options: ['The answer','A second answer','A third answer'],
+    answers: ['The answer'], explain: 'The passage supports the answer.'
+  });
+  const pool: GeneratedPool = {
+    recognition: [item('rec-1','recognition'), item('rec-2','recognition')] as GeneratedPool['recognition'],
+    writing: [item('wri-1','writing')] as GeneratedPool['writing'],
+    readingPassages: [{ title:'Reading', text:'The report explains this answer in context.', items:[item('rea-1','reading'),item('rea-2','reading')] as GeneratedPool['readingPassages'][number]['items'] }],
+    listeningPassages: [{ title:'Listening', text:'The speaker explains the answer clearly.', items:[item('lis-1','listening')] as GeneratedPool['listeningPassages'][number]['items'] }],
+  };
+
+  const filtered = excludeJudgeUntrustedItems(pool, [
+    { id: 'rec-2', verdict: 'flagged' }, { id: 'rea-2', verdict: 'reject' },
+  ], true);
+
+  assert.deepEqual(filtered.recognition.map(candidate => candidate.id), ['rec-1']);
+  assert.equal(filtered.readingPassages.length, 0); // Never publish a partial stimulus after excluding one question.
+  assert.equal(pool.recognition.length, 2);
+  assert.equal(pool.readingPassages[0]?.items.length, 2);
 });

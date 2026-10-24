@@ -20,9 +20,9 @@ const transport = async (_config: unknown, messages: { role: string; content: st
     : user.includes('reading passages') ? 'reading'
     : user.includes('listening passages') ? 'listening' : 'writing';
   const body = section === 'reading' || section === 'listening'
-    ? Array.from({ length: 2 }, (_, index) => ({ title: `Passage ${index}`, text: `${section} passage ${index}. She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning.`,
-      items: Array.from({ length: section === 'reading' ? 3 : 2 }, (_, questionIndex) => question('choice', `${section}-${index}-${questionIndex}`)) }))
-    : Array.from({ length: section === 'writing' ? 3 : 12 }, (_, index) => question(section === 'writing' ? 'gap' : 'choice', `${section}-${index}`));
+    ? Array.from({ length: 6 }, (_, index) => ({ title: `Passage ${index}`, text: `${section} passage ${index}. She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning. Her sister is coming too, so they will have lunch together before the train leaves.`,
+      items: Array.from({ length: 3 }, (_, questionIndex) => question('choice', `${section}-${index}-${questionIndex}`)) }))
+    : Array.from({ length: section === 'writing' ? 8 : 24 }, (_, index) => question(section === 'writing' ? 'gap' : 'choice', `${section}-${index}`));
   return { content: JSON.stringify(body), tokensIn: 0, tokensOut: 0 };
 };
 
@@ -102,7 +102,7 @@ test('new generated snapshots preserve types, unit references, passages and effe
   assert.equal(outcome.status, 'approved');
   const exam = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   assert.deepEqual(exam.thresholds, THRESHOLDS);
-  assert.equal(exam.items.length, 25);
+  assert.equal(exam.items.length, 34);
   for (const raw of exam.items) {
     const item = metadata(raw);
     assert.equal(item.kind, item.section === 'writing' ? 'gap' : 'choice');
@@ -167,7 +167,7 @@ test('current and hybrid retain legacy HTTP fields and pinned ETag revalidation'
       assert.equal(body.source, url.includes('level=A1') ? 'llm' : 'deterministic');
       assert.equal(body.schemaVersion, 1);
       assert.equal(body.version, 1);
-      assert.equal(body.items.length, 25);
+      assert.equal(body.items.length, url.includes('level=A1') ? 34 : 25);
       const again = await app.inject({ method: 'GET', url, headers: { 'if-none-match': first.headers.etag } });
       assert.equal(again.statusCode, 304);
     }

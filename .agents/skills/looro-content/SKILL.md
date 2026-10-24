@@ -13,6 +13,13 @@ the validators on the first try, keep the pedagogical bar of
 `docs/plan_mejoras_app_idiomas.md`, and update the few test assertions that
 pin content counts.
 
+This skill governs authored course and bundled assessment content only. Runtime
+LLM-generated level-test prompts, validation, judging, repair, and publication
+policy live in `services/api/src/level-tests-llm.ts` and its neighboring API
+modules; the runtime does not load this skill. Keep changes to those exam
+behaviors in the API implementation and tests rather than assuming this
+document changes model behavior.
+
 ## The pipeline (memorise this shape)
 
 ```

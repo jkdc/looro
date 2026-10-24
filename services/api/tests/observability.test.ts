@@ -347,8 +347,8 @@ test('chatCompletion does not invent token measurements when provider usage is a
   initDomainMetrics(provider.getMeter('test'));
   const reply = await chatCompletion(llmConfig, [{ role: 'user', content: 'hi' }], async () =>
     new Response(JSON.stringify({ choices: [{ message: { content: 'ok' } }] }), { status: 200 }));
-  assert.equal(reply.tokensIn, 0);
-  assert.equal(reply.tokensOut, 0);
+  assert.equal(reply.tokensIn, undefined);
+  assert.equal(reply.tokensOut, undefined);
   assert.equal((await collectSum(reader, 'palique.llm.tokens')).size, 0);
 });
 

@@ -36,9 +36,15 @@ function canPublish(row: Generation): boolean {
   try {
     const model = examModelFor(row.level, row.language_id);
     if (!model || !row.pool || !Array.isArray(row.variants) || !row.variants.length) return false;
+    const excludedByEnglishJudge = row.language_id === 'en' && Array.isArray(row.review) && row.review.some(verdict =>
+      typeof verdict === 'object' && verdict !== null && ['reject', 'flagged'].includes((verdict as { verdict?: string }).verdict ?? ''));
+    const validationModel = excludedByEnglishJudge ? { ...model, poolTarget: {
+      recognition: model.examShape.recognition, writing: model.examShape.writing,
+      readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
+    } } : model;
     const checked = validateGeneratedPool({ recognition: row.pool.recognition, writing: row.pool.writing,
-      reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, model.examShape, row.language_id,
-      row.language_id === 'en' ? model : undefined);
+      reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, validationModel.examShape, row.language_id,
+      row.language_id === 'en' ? validationModel : undefined);
     if (!checked.ok) return false;
     const pool = checked.pool;
     const expectedPassages = new Map<string, GeneratedPool['readingPassages'][number]>([
@@ -53,7 +59,8 @@ function canPublish(row: Generation): boolean {
       if (!Array.isArray(row.review)) return false;
       for (const id of expectedItems.keys()) {
         const verdicts = row.review.filter(verdict => verdict.id === id);
-        if (verdicts.length !== 1 || !['ok', 'flagged'].includes(verdicts[0]!.verdict)) return false;
+        const accepted = row.language_id === 'en' ? ['ok'] : ['ok', 'flagged'];
+        if (verdicts.length !== 1 || !accepted.includes(verdicts[0]!.verdict)) return false;
       }
     }
     const shape = model.examShape;

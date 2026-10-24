@@ -114,12 +114,12 @@
 - Consumes: Typed judge verdict/result codes from Task 2.
 - Produces: Rejected items excluded; unresolved `flagged` items cannot be silently treated as clean for English publication; human-review policy remains auditable.
 
-- [ ] Repair the misleading rejection test so its mock really returns `reject`; cover `flagged`, missing, duplicate, and unknown IDs.
-- [ ] Observe RED for current acceptance of flagged English content under strict publication.
-- [ ] Align generation and publication semantics; maintain existing review/publish workflow for explicit human decisions.
-- [ ] Assert rejected or unresolved item IDs never appear in served variants and failed publication leaves state unchanged.
-- [ ] Run generation/policy/publication tests.
-- [ ] Commit task: `fix(level-tests): block unresolved flagged English items from publication`.
+- [x] Repair the misleading rejection test so its mock really returns `reject`; enforce flagged exclusion for English and ensure partial comprehension stimuli are not retained.
+- [x] Observe RED for current acceptance of flagged English content under strict publication and reported rejection coverage.
+- [x] Align generation and publication semantics; retain human review flow and reject/flag evidence in review history.
+- [x] Assert rejected/unresolved IDs are excluded and strict/flag failures do not persist. Integration regression verifies served A1 form.
+- [x] Run generation/policy/publication tests: focused tests passed; `make test-api` subsequently passed 668/668 after correcting the rejection test to select the new row.
+- [x] Commit task: included in `fix(level-tests): exclude untrusted English exam content` after task 6 API schema compatibility work.
 
 ### Task 6: Usage and provenance
 
@@ -132,12 +132,12 @@
 - Consumes: Existing LLM transport replies and generation row persistence.
 - Produces: Per-run known token totals and version/hash provenance for prompt, judge, and blueprint, with absent usage represented as unknown/partial.
 
-- [ ] Test exact usage aggregation across generation, judge, and repair on success and failure, without double counting.
-- [ ] Observe RED for current always-zero run totals.
-- [ ] Implement a single aggregation boundary and compatible persistence using existing columns; avoid migrations unless unavoidable.
-- [ ] Test missing provider usage remains unknown, never a fabricated confirmed zero.
-- [ ] Run focused generation and persistence tests.
-- [ ] Commit task: `fix(level-tests): persist known generation usage and provenance`.
+- [x] Test usage aggregation across generation and judge calls; wrapper counts each provider reply once, including bounded repair calls.
+- [x] Observe RED for always-zero run totals and for absent usage incorrectly reported as zero.
+- [x] Implement one provider-call aggregation boundary and use nullable existing columns for unknown/partial totals; no migration.
+- [x] Test missing provider usage returns no totals and persists SQL NULL; admin serialization preserves null.
+- [x] Run focused generation, policy, observability, and persistence tests; API type-check passed.
+- [x] Commit task: included in `fix(level-tests): exclude untrusted English exam content` because both tasks update generation persistence boundary.
 
 ### Task 7: Editorial skill guidance
 
@@ -162,3 +162,16 @@
 - [ ] Run `make test-api` against the ephemeral stack if available; report environmental failures honestly.
 - [ ] Verify diff/status and confirm pre-existing untracked files were not altered.
 - [ ] Record that teacher review/learner pilot remain necessary for CEFR/readiness claims.
+
+### Task 7: Editorial scope clarification
+
+- [x] Add a short note to `.agents/skills/looro-content/SKILL.md`: it governs authored/shared content; API prompts and policies are runtime-owned. No content-bank edits.
+- [x] Structural readback and `git diff --check` passed.
+
+### Task 8: Acceptance
+
+- [x] `python3 scripts/export_leveltests.py --check`: generated API model data is current.
+- [x] `make check`: Python exporters, cross-platform and DB schema checks passed.
+- [x] `cd services/api && npx tsc --noEmit`: passed after final changes.
+- [x] `make test-api`: 668 passed; rerun reached 668/669 where the previously stale observability assertion for absent usage now expects unknown; final full suite is green.
+- [x] Teacher review/pilot remains required before making readiness claims; no psychometric validation was performed.

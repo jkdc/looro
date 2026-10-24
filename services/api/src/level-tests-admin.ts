@@ -72,7 +72,7 @@ export interface WeekListQuery {
 export interface WeekMeta {
   id: string; languageID: string; level: string; weekId: number; status: string;
   judgeMode: string; generator: string; model: string; variantCount: number;
-  tokensIn: number; tokensOut: number; createdAt: string; approvedAt: string | null; approvedBy: string | null;
+  tokensIn: number | null; tokensOut: number | null; createdAt: string; approvedAt: string | null; approvedBy: string | null;
   origin: string;
 }
 
@@ -130,7 +130,8 @@ const weekRow = (row: Record<string, unknown>): WeekMeta => ({
   weekId: row.week_index as number, status: row.status as string, judgeMode: row.judge_mode as string,
   generator: row.generator as string, model: row.model as string,
   variantCount: Array.isArray(row.variants) ? row.variants.length : 0,
-  tokensIn: Number(row.tokens_in ?? 0), tokensOut: Number(row.tokens_out ?? 0),
+  tokensIn: row.tokens_in == null ? null : Number(row.tokens_in),
+  tokensOut: row.tokens_out == null ? null : Number(row.tokens_out),
   createdAt: iso(row.created_at) as string, approvedAt: iso(row.approved_at) as string | null,
   approvedBy: (row.approved_by as string | null) ?? null, origin: (row.origin as string | undefined) ?? 'unknown',
 });

@@ -22,21 +22,23 @@ const headers = { cookie: adminCookieHeader(TOKEN), origin: ADMIN_ENV.ADMIN_PUBL
   'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': ADMIN_ENV.ADMIN_PROXY_TOKEN };
 const item = (id: string, kind = 'choice') => ({ kind, prompt: `Question ${id}: she ___ a doctor.`,
   options: kind === 'choice' ? ['is', 'are', 'am'] : [], answers: ['is'], explain: 'With she, the verb is is.', unitID: 'en-foundations-u1' });
-const paragraph = 'She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning.';
-const pool = (count = 12) => ({
-  recognition: Array.from({ length: count }, (_, i) => item(`recognition-${i}`)),
-  writing: Array.from({ length: 3 }, (_, i) => item(`writing-${i}`, 'gap')),
-  reading: Array.from({ length: 2 }, (_, p) => ({ title: `Reading ${p}`, text: `Reading story ${p}. ${paragraph}`,
+const paragraph = 'She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning. Her sister is coming too, so they will have lunch together before the train leaves.';
+const pool = (extraRecognition = 0) => ({
+  recognition: Array.from({ length: 24 + extraRecognition }, (_, i) => item(`recognition-${i}`)),
+  writing: Array.from({ length: 8 }, (_, i) => item(`writing-${i}`, 'gap')),
+  reading: Array.from({ length: 6 }, (_, p) => ({ title: `Reading ${p}`, text: `Reading story ${p}. ${paragraph}`,
     items: Array.from({ length: 3 }, (_, i) => item(`reading-${p}-${i}`)) })),
-  listening: Array.from({ length: 2 }, (_, p) => ({ title: `Listening ${p}`, text: `Listening message ${p}. ${paragraph}`,
-    items: Array.from({ length: 2 }, (_, i) => item(`listening-${p}-${i}`)) })),
+  listening: Array.from({ length: 6 }, (_, p) => ({ title: `Listening ${p}`, text: `Listening message ${p}. ${paragraph}`,
+    items: Array.from({ length: 3 }, (_, i) => item(`listening-${p}-${i}`)) })),
 });
 type Verdict = { id: string; verdict: string; reason?: string };
+const sectionTransport = () => transport();
 const transport = (content = pool(), judge: (items: { id: string }[]) => unknown = items => ({
   items: items.map(item => ({ id: item.id, verdict: 'ok' })) })) =>
   async (_config: unknown, messages: { role: string; content: string }[]) => {
     const user = messages[1]!.content;
-    const body = messages[0]!.content.includes('strict exam reviewer') ? judge(JSON.parse(user))
+    const body = messages[0]!.content.includes('quality reviewer') || messages[0]!.content.includes('strict exam reviewer')
+      ? judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items)
       : content[user.includes('vocabulary and grammar') ? 'recognition' : user.includes('reading passages')
         ? 'reading' : user.includes('listening passages') ? 'listening' : 'writing'];
     return { content: JSON.stringify(body), tokensIn: 1, tokensOut: 1 };
@@ -77,7 +79,7 @@ function database() {
     if (sql.startsWith('INSERT INTO level_test_weeks')) {
       state.weeks.push({ id: v[0] as string, language_id: v[1] as string, level: v[2] as string,
         week_index: v[3] as number, status: v[4] as string, pool: JSON.parse(v[5] as string), variants: JSON.parse(v[6] as string),
-        judge_mode: v[11], review: JSON.parse(v[12] as string) }); return result(); }
+        judge_mode: v[11], review: JSON.parse(v[12] as string), tokens_in: v[13], tokens_out: v[14] }); return result(); }
     if (sql.startsWith("UPDATE level_test_weeks") && sql.includes("status=" + String.fromCharCode(39) + "retired" + String.fromCharCode(39))) {
       for (const row of state.weeks.filter(row => row.language_id === v[0] && row.level === v[1]
         && row.week_index === v[2] && row.status !== "retired")) row.status = "retired";
@@ -97,6 +99,30 @@ function database() {
 }
 const generate = (db: Database, env = ENV, call = transport()) =>
   generateWeeklyLevelTest({ db, env, transport: call }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
+
+test('missing provider usage remains unknown instead of a confirmed zero', async () => {
+  const { db, state } = database();
+  const reply = sectionTransport();
+  const outcome = await generate(db, ENV, async (config, messages) => {
+    const result = await reply(config, messages);
+    return { content: result.content, tokensIn: undefined as unknown as number, tokensOut: undefined as unknown as number };
+  });
+  assert.equal(outcome.status, 'approved');
+  assert.equal(outcome.tokensIn, undefined);
+  assert.equal(outcome.tokensOut, undefined);
+  assert.equal(state.weeks[0]!.tokens_in, null);
+  assert.equal(state.weeks[0]!.tokens_out, null);
+});
+
+test('generation aggregates token usage across section and judge calls', async () => {
+  const { db, state } = database();
+  const outcome = await generate(db);
+  assert.equal(outcome.status, 'approved');
+  assert.ok((outcome.tokensIn ?? 0) > 0);
+  assert.ok((outcome.tokensOut ?? 0) > 0);
+  assert.equal(state.weeks[0]!.tokens_in, outcome.tokensIn);
+  assert.equal(state.weeks[0]!.tokens_out, outcome.tokensOut);
+});
 
 test('an unknown provider outcome is not retried by the section loop', async () => {
   const { db } = database();
@@ -163,30 +189,31 @@ for (const failure of ['transport', 'incomplete', 'duplicate', 'unknown']) test(
   }));
   assert.equal(outcome.status, 'failed'); assert.equal(state.weeks.length, 0);
 });
-test('strict removes rejects, keeps ids/unit references and composes exactly 25 surviving items', async () => {
+test('strict removes rejects, keeps ids/unit references and composes the 34-item A1 form', async () => {
   const { db, state } = database();
-  assert.equal((await generate(db, ENV, transport(pool(13), items => ({ items: items.map(item => ({
-    id: item.id, verdict: item.id === 'rec-0' ? 'reject' : 'ok' })) })))).status, 'approved');
+  assert.equal((await generate(db, ENV, transport(pool(1), items => ({ items: items.map(item => ({
+    id: item.id, verdict: item.id === 'recognition-0' ? 'reject' : 'ok' })) })))).status, 'approved');
   const items = state.weeks[0]!.variants[0]!.items as Record<string, unknown>[];
-  assert.equal(items.length, 25); assert.ok(!items.some(item => item.id === 'rec-0'));
+  assert.equal(items.length, 34); assert.ok(!items.some(item => item.id === 'recognition-0'));
   assert.ok(items.every(item => item.unitID === 'en-foundations-u1'));
 });
 for (const mode of ['strict', 'flag']) test(`${mode} rejects cannot publish an undersized exam`, async () => {
   const { db, state } = database();
   assert.equal((await generate(db, { ...ENV, LEVELTEST_VERIFY: mode }, transport(pool(), items => ({
-    items: items.map(item => ({ id: item.id, verdict: item.id === 'rec-0' ? 'reject' : 'ok' })) })))).status, 'failed');
+    items: items.map(item => ({ id: item.id, verdict: item.id.startsWith('rec-') && Number(item.id.slice(4)) < 13 ? 'reject' : 'ok' })) })))).status, 'failed');
   assert.equal(state.weeks.length, 0);
 });
-test('flag judge failure is advisory and visible in review', async () => {
+test('English flag judge failure cannot publish unreviewed items as clean content', async () => {
   const { db, state } = database();
-  assert.equal((await generate(db, { ...ENV, LEVELTEST_VERIFY: 'flag' }, transport(pool(), () => { throw new Error('fake unavailable'); }))).status, 'approved');
-  assert.ok((state.weeks[0]!.review as Verdict[]).some(v => v.verdict === 'flagged' && v.reason));
+  assert.equal((await generate(db, { ...ENV, LEVELTEST_VERIFY: 'flag' }, transport(pool(), () => { throw new Error('fake unavailable'); }))).status, 'failed');
+  assert.equal(state.weeks.length, 0);
 });
 test('strict flags are advisory when every item has a valid verdict', async () => {
   const { db, state } = database();
   assert.equal((await generate(db, ENV, transport(pool(), items => ({ items: items.map(item => ({
     id: item.id, verdict: item.id === 'rec-0' ? 'flagged' : 'ok', reason: 'review wording' })) })))).status, 'approved');
   assert.ok((state.weeks[0]!.review as Verdict[]).some(v => v.verdict === 'flagged'));
+  assert.ok(!(state.weeks[0]!.pool as { recognition: { id: string }[] }).recognition.some(v => v.id === 'rec-0'));
 });
 test('reading and listening judges receive the exact source passage', async () => {
   const { db } = database();

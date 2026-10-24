@@ -22,8 +22,8 @@ export const LANGUAGE_NAMES: Record<string, string> = {
   it: 'Italian', pt: 'Portuguese', nb: 'Norwegian Bokm\u00e5l', zh: 'Chinese (Mandarin, Simplified)',
 };
 
-export const PROMPT_VERSION = 1;
-export const JUDGE_VERSION = 1;
+export const PROMPT_VERSION = 2;
+export const JUDGE_VERSION = 2;
 const WEEKLY_THEMES = ['daily routines and habits', 'travel, transport and getting lost', 'work, studies and colleagues',
   'food, restaurants and going out', 'weather, seasons and plans', 'moving house and neighbours',
   'shopping stories and returns', 'sport, weekends and free time'];
@@ -401,9 +401,18 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   if (!config) return { status: 'failed', languageID, level, weekId, errors: ['no llm configuration'] };
   // One stable gateway session per generation run; reused as the generation id.
   config.sessionID = randomUUID();
-  const call = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
-
-  let tokensIn = 0, tokensOut = 0;
+  const providerCall = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
+  let tokensIn = 0, tokensOut = 0, usageComplete = true;
+  const call: LlmCall = async (resolved, messages, signal) => {
+    const reply = await providerCall(resolved, messages, signal);
+    if (typeof reply.tokensIn === 'number' && typeof reply.tokensOut === 'number') {
+      tokensIn += reply.tokensIn;
+      tokensOut += reply.tokensOut;
+    } else {
+      usageComplete = false;
+    }
+    return reply;
+  };
 
   // ---- generate sections independently ----
   const sectionResults = new Map<SectionName, SectionResult>();
@@ -419,12 +428,15 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   // ---- combine into a pool ----
   const buildPool = () => poolFromSectionResults(sectionResults);
+  const validateCandidate = (candidate: GeneratedPool, targetModel: ExamModelEntry = model) => {
+    return validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
+      reading: candidate.readingPassages, listening: candidate.listeningPassages }, targetModel.examShape, languageID,
+      languageID === 'en' ? targetModel : undefined);
+  };
   const validate = () => {
     const candidate = buildPool();
     assignProvisionalIds(candidate);
-    return validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
-      reading: candidate.readingPassages, listening: candidate.listeningPassages }, model.examShape, languageID,
-      languageID === 'en' ? model : undefined);
+    return validateCandidate(candidate);
   };
   const initial = validate();
   const initialFailures = [...initial.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
@@ -445,7 +457,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   let pool = final.pool;
 
   const settings = await levelTestSettings(deps.db, deps.env);
-  const review: JudgeVerdict[] = [], rejected = new Set<string>();
+  const review: JudgeVerdict[] = [];
   if (settings.verifyMode !== 'off') for (const section of SECTION_ORDER) {
     const items = sectionItems(pool, section);
     try {
@@ -458,7 +470,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       const missing = items.filter(item => !seen.has(item.id!));
       if (missing.length && settings.verifyMode === 'strict') throw new Error('judge_incomplete');
       review.push(...verdicts, ...missing.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_incomplete' })));
-      for (const verdict of verdicts) if (verdict.verdict === 'reject') rejected.add(verdict.id);
+      // English flagged content is excluded just like a rejection; it is not safe evidence for an exam.
     } catch (error) {
       if (options.signal?.aborted || (error instanceof LlmTransportError && error.code === "llm_outcome_unknown"))
         return { status: "failed", languageID, level, weekId, tokensIn, tokensOut, errors: ["llm_outcome_unknown"] };
@@ -467,15 +479,15 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       review.push(...items.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_unavailable' })));
     }
   }
-  if (rejected.size) {
-    pool.recognition = pool.recognition.filter(item => !rejected.has(item.id));
-    pool.writing = pool.writing.filter(item => !rejected.has(item.id));
-    for (const section of ['reading', 'listening'] as const) {
-      const key = section === 'reading' ? 'readingPassages' : 'listeningPassages';
-      pool[key] = pool[key].map(passage => ({ ...passage, items: passage.items.filter(item => !rejected.has(item.id)) }))
-        .filter(passage => passage.items.length >= (model.examShape[`${section}PerPassage`] ?? (section === 'reading' ? 3 : 2)));
-    }
-    const trimmed = validate();
+  const hasUntrustedEnglishItems = languageID === 'en' && review.some(verdict => verdict.verdict === 'flagged' || verdict.verdict === 'reject');
+  const hasRejectedItems = review.some(verdict => verdict.verdict === 'reject');
+  if (hasRejectedItems || hasUntrustedEnglishItems) {
+    pool = excludeJudgeUntrustedItems(pool, review, languageID === 'en');
+    const compositionModel = languageID === 'en' ? { ...model, poolTarget: {
+      recognition: model.examShape.recognition, writing: model.examShape.writing,
+      readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
+    } } : model;
+    const trimmed = validateCandidate(pool, compositionModel);
     if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
       errors: trimmed.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
     pool = trimmed.pool;
@@ -491,11 +503,11 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
     model: config.model, generator: `llm:${config.provider}`, review,
-    tokensIn, tokensOut, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
+    tokensIn: usageComplete ? tokensIn : null, tokensOut: usageComplete ? tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
     origin: options.origin });
 
   return { status: status as 'approved' | 'draft', languageID, level, weekId,
-    variants: variants.length, tokensIn, tokensOut };
+    variants: variants.length, ...(usageComplete ? { tokensIn, tokensOut } : {}) };
 }
 
 function sectionItems(pool: GeneratedPool, section: SectionName): (RawGeneratedItem & { passageText?: string })[] {
@@ -512,6 +524,18 @@ function poolFromSectionResults(results: Map<SectionName, SectionResult>): Gener
     writing: results.get('writing')?.items ?? [],
     readingPassages: results.get('reading')?.passages ?? [],
     listeningPassages: results.get('listening')?.passages ?? [],
+  };
+}
+
+export function excludeJudgeUntrustedItems(pool: GeneratedPool,
+  verdicts: { id: string; verdict: 'ok' | 'flagged' | 'reject' }[], excludeFlagged: boolean): GeneratedPool {
+  const excluded = new Set(verdicts.filter(verdict => verdict.verdict === 'reject' ||
+    (excludeFlagged && verdict.verdict === 'flagged')).map(verdict => verdict.id));
+  return {
+    recognition: pool.recognition.filter(item => !excluded.has(item.id)),
+    writing: pool.writing.filter(item => !excluded.has(item.id)),
+    readingPassages: pool.readingPassages.filter(passage => passage.items.every(item => !excluded.has(item.id))),
+    listeningPassages: pool.listeningPassages.filter(passage => passage.items.every(item => !excluded.has(item.id))),
   };
 }
 
@@ -668,7 +692,7 @@ async function persistWeek(db: Database, input: {
   generationId: string; languageID: string; level: string; weekId: number;
   pool: GeneratedPool; variants: unknown[]; status: string;
   model: string; generator: string; review: unknown[] | undefined;
-  tokensIn: number; tokensOut: number; approvedBy: string | null;
+  tokensIn: number | null; tokensOut: number | null; approvedBy: string | null;
   verifyMode: string; force: boolean; origin: GenerationOrigin;
 }): Promise<void> {
   await transaction(db, async (sql: PoolClient) => {
