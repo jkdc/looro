@@ -694,10 +694,11 @@ const MODERATION_COPY = {
 /** Shared moderation step: the listing and the review page approve, reject and
     retire through the same reason dialog and endpoints. Returns false when
     cancelled. */
-async function moderateWeek(week, action) {
+async function moderateWeek(week, action, trigger) {
   const copy = MODERATION_COPY[action];
   const decision = await ask(copy.title, `${week.languageID} ${week.level} · semana ${week.weekId}`);
   if (!decision.reason || decision.reason.trim().length < 3) return false;
+  if (trigger) trigger.disabled = true;
   await api(`/v1/admin/level-tests/${encodeURIComponent(week.id)}/${action}`,
     { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
   toast(copy.done);
@@ -902,8 +903,7 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
   for (const action of ['approve', 'reject', 'retire']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
     const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
-    button.disabled = true;
-    try { if (await moderateWeek(row, action)) { if (context.isCurrent()) await renderExamWeeksView(container, view, context); } else button.disabled = false; }
+    try { if (await moderateWeek(row, action, button)) { if (context.isCurrent()) await renderExamWeeksView(container, view, context); } else button.disabled = false; }
     catch (error) { if (context.isCurrent()) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; } }
   });
   // Repaint the watch state on re-render and keep ticking while mounted.
