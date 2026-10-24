@@ -498,6 +498,8 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
       ...variant }, 'llm', generationId));
+  if (languageID === 'en' && new Set(variants.map(variant => variant.items.map(item => item.id).sort().join(','))).size < variants.length)
+    return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut, errors: ['insufficient_variant_diversity'] };
   const status = settings.publishMode === 'auto' ? 'approved' : 'draft';
   const approvedBy = settings.publishMode === 'auto' ? 'system:auto' : null;
 
@@ -589,6 +591,7 @@ function assignProvisionalIds(pool: GeneratedPool): void {
 /** The K variants: same stable-hash block rotation as the deterministic
     composer, with the variant index salted into the hash. */
 export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
+  if (model.languageID !== 'en') return composeLegacyVariants(pool, model, weekId, count);
   const variants: GeneratedVariant[] = [];
   const flat = flattenPool(pool);
   const shape = {
@@ -622,6 +625,54 @@ export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, week
       readingPassageIds: readingIds, listeningPassageIds: listeningIds });
   }
   return variants;
+}
+
+function composeLegacyVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
+  const variants: GeneratedVariant[] = [];
+  const flat = flattenPool(pool);
+  const shape = { recognition: model.examShape.recognition ?? 12, writing: model.examShape.writing ?? 3,
+    readingPassages: model.examShape.readingPassages ?? 2, readingPerPassage: model.examShape.readingPerPassage ?? 3,
+    listeningPassages: model.examShape.listeningPassages ?? 2, listeningPerPassage: model.examShape.listeningPerPassage ?? 2 };
+  const passages = [
+    ...pool.readingPassages.map((passage, index) => ({ id: `llm-reading-${index + 1}`, title: passage.title, text: passage.text })),
+    ...pool.listeningPassages.map((passage, index) => ({ id: `llm-listening-${index + 1}`, title: passage.title, text: passage.text })),
+  ];
+  for (let variant = 1; variant <= count; variant++) {
+    const salt = `v${variant}`;
+    const recognition = legacyStableBlock(flat.filter(item => item.section === 'recognition'), salt, shape.recognition, weekId);
+    const writing = legacyStableBlock(flat.filter(item => item.section === 'writing'), salt, shape.writing, weekId);
+    const readingOrder = legacyPassageOrder(flat, 'reading', shape.readingPerPassage, salt).filter(p => p.id.startsWith('llm-reading-'));
+    const readingChunks = legacyChunk(readingOrder, shape.readingPassages);
+    const readingBlock = readingChunks[weekId % readingChunks.length] ?? readingOrder;
+    const readingIds = (readingBlock.length === shape.readingPassages ? readingBlock : readingOrder.slice(0, shape.readingPassages)).map(p => p.id);
+    const listeningOrder = legacyPassageOrder(flat, 'listening', shape.listeningPerPassage, salt).filter(p => !readingIds.includes(p.id));
+    const listeningChunks = legacyChunk(listeningOrder, shape.listeningPassages);
+    const listeningBlock = listeningChunks[weekId % listeningChunks.length] ?? listeningOrder;
+    const listeningIds = (listeningBlock.length === shape.listeningPassages ? listeningBlock : listeningOrder.slice(0, shape.listeningPassages)).map(p => p.id);
+    const items = [...recognition, ...readingIds.flatMap(id => flat.filter(item => item.section === 'reading' && item.passageId === id).slice(0, shape.readingPerPassage)),
+      ...listeningIds.flatMap(id => flat.filter(item => item.section === 'listening' && item.passageId === id).slice(0, shape.listeningPerPassage)), ...writing];
+    variants.push({ variant, items, passages: passages.filter(p => readingIds.includes(p.id) || listeningIds.includes(p.id)),
+      readingPassageIds: readingIds, listeningPassageIds: listeningIds });
+  }
+  return variants;
+}
+function legacyChunk<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i=0; i<items.length; i+=size) chunks.push(items.slice(i,i+size));
+  return chunks;
+}
+function legacyStableBlock(items: FlatItem[], salt: string, count: number, weekId: number): FlatItem[] {
+  const ordered = [...items].sort((a,b) => hashOf(salt,a.id).localeCompare(hashOf(salt,b.id)));
+  const blocks: FlatItem[][] = [];
+  for (let start=0; start<ordered.length; start+=count) blocks.push(ordered.slice(start,start+count));
+  const block = blocks[weekId % blocks.length] ?? ordered;
+  return block.length === count ? block : ordered.slice(0,count);
+}
+function legacyPassageOrder(items: FlatItem[], section: string, perPassage: number, salt: string): {id:string}[] {
+  const counts = new Map<string,number>();
+  for (const item of items) if(item.section===section && item.passageId) counts.set(item.passageId,(counts.get(item.passageId)??0)+1);
+  return [...counts.entries()].filter(([,count])=>count>=perPassage).map(([id])=>({id}))
+    .sort((a,b)=>hashOf(salt,a.id).localeCompare(hashOf(salt,b.id)));
 }
 
 interface GeneratedVariant extends Pick<SnapshotContent, 'items' | 'passages' | 'readingPassageIds' | 'listeningPassageIds'> { variant: number }

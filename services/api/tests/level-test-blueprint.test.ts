@@ -24,6 +24,20 @@ test('English blueprints carry typed level-specific passage ranges', () => {
   assert.deepEqual(c1?.sections.listening?.words, [60, 120]);
 });
 
+test('English validation rejects Spanish items even when no English markers occur', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  const spanishPool = { recognition: [{ kind:'choice', prompt:'Ella trabaja en casa.', options:['trabaja','comen','vivimos'], answers:['trabaja'], explain:'La frase dice que ella trabaja.' }] };
+  const result = validateGeneratedPool(spanishPool, blueprint.examShape, 'en', blueprint);
+  assert.ok(result.errors.some(error => error.code === 'language'));
+});
+
+test('duplicate passage rejection remains English-only', () => {
+  const passage = { title:'Reading', text:'This is the same reading text.', items:[] };
+  const result = validateGeneratedPool({ reading:[passage, passage] },
+    { recognition:0, writing:0, readingPassages:0, readingPerPassage:0, listeningPassages:0, listeningPerPassage:0 }, 'es');
+  assert.ok(!result.errors.some(error => error.code === 'duplicate_passage'));
+});
+
 test('other languages retain their existing wildcard model as a fallback', () => {
   const spanish = resolveExamBlueprint('es', 'A1');
 

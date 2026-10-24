@@ -203,6 +203,20 @@ for (const mode of ['strict', 'flag']) test(`${mode} rejects cannot publish an u
     items: items.map(item => ({ id: item.id, verdict: item.id.startsWith('rec-') && Number(item.id.slice(4)) < 13 ? 'reject' : 'ok' })) })))).status, 'failed');
   assert.equal(state.weeks.length, 0);
 });
+test('English generation fails closed when judge filtering leaves identical variants', async () => {
+  const { db, state } = database();
+  const outcome = await generate(db, ENV, transport(pool(), items => ({ items: items.map(item => {
+    const id = item.id;
+    const reject = id.startsWith('rec-') ? Number(id.slice(4)) < 12
+      : id.startsWith('wri-') ? Number(id.slice(4)) < 4
+      : /^(rea|lis)-/.test(id) ? Number(id.split('-')[1]) < 3 : false;
+    return { id, verdict: reject ? 'reject' : 'ok' };
+  }) })));
+  assert.equal(outcome.status, 'failed');
+  assert.ok(outcome.errors?.includes('insufficient_variant_diversity'));
+  assert.equal(state.weeks.length, 0);
+});
+
 test('English flag judge failure cannot publish unreviewed items as clean content', async () => {
   const { db, state } = database();
   assert.equal((await generate(db, { ...ENV, LEVELTEST_VERIFY: 'flag' }, transport(pool(), () => { throw new Error('fake unavailable'); }))).status, 'failed');

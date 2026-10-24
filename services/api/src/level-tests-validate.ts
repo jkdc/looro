@@ -126,9 +126,9 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
       return fail(where, 'passage', `passage length out of range (${words} words)`);
     if (bucket.length < minItems) return fail(where, 'passage', 'fewer valid questions than required');
     const fingerprint = normalize(text);
-    if (seenPassageTexts[kind].has(fingerprint))
+    if (targetLanguage === 'en' && seenPassageTexts[kind].has(fingerprint))
       return fail(where, 'duplicate_passage', 'repeated passage text within the same section');
-    seenPassageTexts[kind].add(fingerprint);
+    if (targetLanguage === 'en') seenPassageTexts[kind].add(fingerprint);
     const target = kind === 'reading' ? clean.readingPassages : clean.listeningPassages;
     target.push({ title: typeof passage.title === 'string' ? passage.title : '', text, items: bucket });
     return true;
@@ -220,7 +220,7 @@ function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean 
   const instruction = INSTRUCTION_MARKERS[targetLanguage];
   if (instruction) {
     const instructionHits = (text.match(instruction) ?? []).length;
-    return hits >= instructionHits;
+    return instructionHits === 0 ? hits >= 1 : hits >= instructionHits;
   }
   return hits >= 1;
 }

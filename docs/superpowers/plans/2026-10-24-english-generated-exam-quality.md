@@ -117,8 +117,8 @@
 - [x] Repair the misleading rejection test so its mock really returns `reject`; enforce flagged exclusion for English and ensure partial comprehension stimuli are not retained.
 - [x] Observe RED for current acceptance of flagged English content under strict publication and reported rejection coverage.
 - [x] Align generation and publication semantics; retain human review flow and reject/flag evidence in review history.
-- [x] Assert rejected/unresolved IDs are excluded and strict/flag failures do not persist. Integration regression verifies served A1 form.
-- [x] Run generation/policy/publication tests: focused tests passed; `make test-api` subsequently passed 668/668 after correcting the rejection test to select the new row.
+- [x] Assert rejected/unresolved IDs are excluded, partial comprehension stimuli are dropped, English variants fail closed when duplicates result, and strict/flag failures do not persist. Integration regression verifies served A1 form.
+- [x] Run generation/policy/publication tests: focused tests passed; `make test-api` passed 669/669 after correcting the rejection test to select the newest row. Independent scratch verification then found duplicate variants could still publish after filtering and non-English behavior drift; bounded correction added fail-closed diversity, isolated legacy selection, and English-only duplicate-passage rejection.
 - [x] Commit task: included in `fix(level-tests): exclude untrusted English exam content` after task 6 API schema compatibility work.
 
 ### Task 6: Usage and provenance
