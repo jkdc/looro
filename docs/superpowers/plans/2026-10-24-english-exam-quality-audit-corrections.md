@@ -126,5 +126,12 @@
 - [x] Add regressions for manual approval of rehashed but wrong-mix and duplicate-stimulus forms, valid short English lexical prompts, clearly Cyrillic foreign content, and English/non-English persisted version identities.
 - [x] Run focused regressions and observe expected RED failures.
 - [x] Implement the shared English served-form contract, evidence-based lexical gate, and English-only version bump.
-- [x] Run focused tests (68/68), API type-check, isolated full suite (689/689, 0 skipped), and `make check`.
-- [x] Record final-review resolution; commit identity to be added after commit.
+- [x] Run focused tests (70/70), API type-check, isolated full suite (691/691, 0 skipped), `make check`, and level-test export check.
+- [x] Independent final review and bounded recheck completed; French cognates were removed as English evidence. Work-unit commits: `6dcc86f` (shared publication gate, English evidence/versioning) and `7635969` (French false-positive and independent stimulus tests).
+
+## Log
+
+- L1 (2026-10-24): “implementa los cambios reqqueridos en este último comentario que has compartido”
+- L2: The first independent review found three acceptance gaps; implementation shared the final English form gate across generation and manual approval, added positive English lexical evidence plus non-Latin script rejection, and persisted English prompt/judge contract versions 3 while preserving other languages at 2. Regressions observed RED before implementation and GREEN afterward.
+- L3: Independent review found shared French cognates could satisfy lexical English evidence and requested separate reading/listening stimulus regressions. Removed `correct` and `phrase` as positive English markers; added a French lexical rejection and separate stimulus-only approval regressions that preserve distinct item sets. Targeted recheck closed both findings.
+- L4: Final evidence: 70/70 focused tests, API full suite 691/691 with zero skips on isolated PostgreSQL, type-check, root `make check` (138 Python tests), level-test export check, and `git diff --check` passed. The test stack removed its temporary database volume and network.
