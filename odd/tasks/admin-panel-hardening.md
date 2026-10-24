@@ -38,7 +38,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - T0 / S1–S9 / inline / complete / commit `603f2d4` — baseline and specification artifacts; baseline API 640/640, browser 57 checks.
 - T1 / S1–S2 / inline / complete / commit `386b9a3` — campaign snapshot invalidation, explicit same-ID retry after uncertain apply, and server-catalog browse filters/sorters. RED: E2E reproduced enabled stale apply, sortable `is_guest`, and rejected server-filter operators; lock-specific RED reproduced the ability to prepare a second campaign during uncertainty. GREEN: browser E2E 63/63; `make test-api` 640/640.
 - T2 / S4–S5 / inline / complete / commit `6f42b2c` — client validation, bearer network recovery, API connectivity, persistent read retry, confirmed mutation/failed refresh distinction, and global results scope.
-- T3 / S3–S4 / inline / pending / commit pending — lifecycle/disposal.
+- T3 / S3–S4 / inline / complete / commit `adca0e1` — lifecycle/disposal and latest-read ordering.
 - T4 / S5–S6 / inline / pending / commit pending — responsive accessibility.
 - T5 / S7 / inline / pending / commit pending — run correlation.
 - T6 / S5,S8,S9 / inline / pending / commit pending — extraction and polish.
@@ -77,3 +77,9 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - GREEN: login bearer handling catches network failures, re-enables retry, and never echoes credentials; shared validation identifies invalid fields and blocks requests; API badge reflects reachable/unreachable fetches; route and table failures expose persistent accessible retry states without turning stale rows into healthy/empty results; confirmed policy updates remain explicitly confirmed when refresh fails; result KPIs state their global scope.
 - Verification: browser E2E passed 65/65 checks on the disposable stack, including failure/retry paths. JavaScript syntax checks and `git diff --check` passed. Existing API contracts were exercised in E2E; no backend code changed. Browser evidence is under `.superpowers/sdd/2026-10-24-admin-panel-hardening/evidence-t2-green2/`.
 - T2 work-unit commit: `6f42b2c` (`fix(admin): make validation and errors recoverable`). Next: continue T3.
+
+### L7 — T3 view lifecycle and resource disposal
+- RED: browser E2E reproduced (1) missing lifecycle ownership/disposal, (2) a pending browse route that delayed navigation, (3) older exam-week results repainting over a newer filter, and (4) the parked generation watcher failing to resume because a cleared timer ID remained globally truthy.
+- GREEN: added `AdminViewContext` with abortable route reads, idempotent cleanup, listener/timer/resource registration and current-view checks. Dashboard, exam-weeks and browse reads now avoid writes after disposal; exam-weeks and browse discard superseded responses. Browse now registers Tabulator instances in the router-owned collection, so navigation destroys them. Generation mutations remain non-abortable; outcomes are only announced while the initiating view remains current, and watcher state can resume on return.
+- Verification: isolated Chromium browser E2E passed 69/69 checks; `node --check` passed for `app.js`, `view-context.js`, and `admin-e2e.mjs`; `git diff --check` passed. Evidence is under `.superpowers/sdd/2026-10-24-admin-panel-hardening/evidence-t3-final/` and the complete run is `.superpowers/sdd/2026-10-24-admin-panel-hardening/task-3-tests.log`.
+- T3 work-unit commit: `adca0e1` (`fix(admin): bind async work to view lifecycle`). The context stays a same-origin classic script next to `app.js` because the panel deliberately uses classic scripts and CSP disallows inline/module changes; no bundler or import rewrite is needed. Next: continue T4.

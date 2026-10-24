@@ -11,7 +11,8 @@ The browser runner's default evidence directory overwrites tracked screenshots. 
 
 ## Remaining verification
 
-- Run the focused RED→GREEN regression cases and relevant API tests with each implementation task.
+- T3: the isolated Chromium suite passed 69/69 checks, including resource disposal, navigation cancellation, exam-week same-view ordering, browse same-view ordering, generation watcher park/resume, and all prior admin workflows. `node --check` passed for `app.js`, `view-context.js`, and `admin-e2e.mjs`.
+- Run the focused RED→GREEN regression cases and relevant API tests with each remaining implementation task.
 - Re-run full browser E2E after shell/lifecycle/campaign changes.
 - Run `make test-api` and API typecheck for any changed backend contract, especially generation correlation.
 - Obtain an independent review of campaign and generation-concurrency changes.

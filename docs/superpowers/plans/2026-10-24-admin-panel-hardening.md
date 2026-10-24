@@ -80,18 +80,17 @@
 ### Task 3: View lifecycle and resource ownership
 
 **Files:**
-- Create if justified by imports: `services/api/admin-ui/core/view-context.js`.
+- Create: `services/api/admin-ui/view-context.js` (loaded as a same-origin classic script to preserve the existing CSP and script model).
 - Modify: `services/api/admin-ui/app.js` and affected browser tests.
 
 **Interfaces:** A view context exposes current/disposed state, read cancellation, resource/listener/timer registration and idempotent `dispose()`. Existing router remains the route authority.
 
-- [ ] Test resource registration/disposal exactly once and late `isCurrent()` rejection.
-- [ ] Test stale results, exam weeks and browse requests resolving after navigation and after newer same-route requests.
-- [ ] Test timer/listener cleanup and no rendering after disposal.
-- [ ] Implement only the minimal context required by the tests; pass it to the three proven views before considering other views.
-- [ ] Separate cancellable reads from mutations; never imply abort rolls back a server action.
-- [ ] Run browser race tests, JS syntax checks and the relevant panel suite.
-- [ ] Commit: `fix(admin): bind async work to view lifecycle`.
+- [x] Test resource registration/disposal exactly once and late `isCurrent()` rejection.
+- [x] Test browse reads resolving after navigation, and exam-weeks/browse requests resolving after newer same-route requests.
+- [x] Test timer/listener cleanup and no rendering after disposal.
+- [x] Implement the minimal context and use it in dashboard, exam-weeks and browse; cancellation applies only to reads, never server mutations.
+- [x] Run JavaScript syntax checks and the isolated Chromium panel suite (69/69 checks passed).
+- [x] Commit: `adca0e1` (`fix(admin): bind async work to view lifecycle`).
 
 ### Task 4: Responsive shell and accessibility
 
