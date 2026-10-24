@@ -148,10 +148,50 @@ const refreshAfterMutation = async (container, render, confirmation, retryId) =>
   }
 };
 const originLabel = value => value === 'user_operator' ? 'Operador' : value === 'automatic_worker' ? 'Automático' : '—';
-const openModal = id => { const element = $(id); element.classList.add('show'); element.style.display = 'block';
-  document.body.classList.add('modal-open'); };
-const closeModal = id => { const element = $(id); element.classList.remove('show'); element.style.display = '';
-  document.body.classList.remove('modal-open'); };
+let activeModalId = null;
+let modalInvoker = null;
+let cancelPendingReason = null;
+const openModal = id => {
+  const element = $(id);
+  modalInvoker = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  activeModalId = id;
+  element.classList.add('show'); element.style.display = 'block';
+  document.querySelector('.page').inert = true;
+  document.body.classList.add('modal-open');
+  const initialFocus = id === '#reason-modal' ? $('#reason-text') : $('#detail-close');
+  initialFocus?.focus();
+};
+const closeModal = id => {
+  const element = $(id);
+  if (activeModalId !== id) return;
+  element.classList.remove('show'); element.style.display = '';
+  document.body.classList.remove('modal-open');
+  document.querySelector('.page').inert = false;
+  activeModalId = null;
+  const invoker = modalInvoker;
+  modalInvoker = null;
+  if (invoker?.isConnected) invoker.focus();
+};
+document.addEventListener('keydown', event => {
+  if (!activeModalId) return;
+  const dialog = $(activeModalId);
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    if (activeModalId === '#reason-modal') cancelPendingReason?.();
+    else closeModal(activeModalId);
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusable = [...dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    .filter(element => element.getClientRects().length > 0);
+  if (!focusable.length) { event.preventDefault(); dialog.focus(); return; }
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+    event.preventDefault(); last.focus();
+  } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+    event.preventDefault(); first.focus();
+  }
+});
 const detail = (title, body) => {
   $('#detail-title').textContent = title;
   $('#detail-body').textContent = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
@@ -183,14 +223,19 @@ const ask = (title, target) => new Promise(resolve => {
   text.value = '';
   text.oninput = validate;
   validate();
+  cancelPendingReason = () => {
+    cancelPendingReason = null;
+    closeModal('#reason-modal');
+    resolve({ reason: '' });
+  };
   openModal('#reason-modal');
-  setTimeout(() => text.focus(), 200);
   ok.onclick = () => {
     if (!validate()) { text.focus(); return; }
+    cancelPendingReason = null;
     closeModal('#reason-modal');
     resolve({ reason: text.value.trim() });
   };
-  $('#reason-cancel').onclick = () => { closeModal('#reason-modal'); resolve({ reason: '' }); };
+  $('#reason-cancel').onclick = () => cancelPendingReason?.();
 });
 
 /* ---- dashboards ---- */
@@ -214,9 +259,17 @@ const kpi = (label, value) => {
       <div class="h2 mb-0 mt-1">${value}</div></div>
     </div></div></div></div>`;
 };
-const chartCard = (title, type) => `<div class="col-lg-6"><div class="card chart-card"><div class="card-body">
-  <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ${type === 'bar' ? 'ti-chart-column' : 'ti-chart-line'} text-secondary"></i>${title}</h3>
-  <div class="chart-box"><canvas></canvas></div></div></div></div>`;
+const chartCard = (title, type, serie) => {
+  const points = Array.isArray(serie?.points) ? serie.points : [];
+  const rows = points.map(point => `<tr><th scope="row">${escapeHtml(point.day)}</th><td>${number(point.value)}</td></tr>`).join('');
+  return `<div class="col-lg-6"><div class="card chart-card"><div class="card-body">
+    <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ${type === 'bar' ? 'ti-chart-column' : 'ti-chart-line'} text-secondary" aria-hidden="true"></i>${escapeHtml(title)}</h3>
+    <div class="chart-box"><canvas role="img" aria-label="Gráfico: ${escapeHtml(title)}"></canvas></div>
+    <details class="chart-data"><summary>Ver datos en tabla</summary><div class="table-responsive"><table class="table table-sm">
+      <caption class="visually-hidden">Datos de ${escapeHtml(title)}</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Valor</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="2">Sin datos disponibles.</td></tr>'}</tbody></table></div></details>
+  </div></div></div>`;
+};
 
 function mountChart(canvas, serie) {
   const color = PALETTE[charts.length % PALETTE.length];
@@ -266,7 +319,7 @@ async function renderDashboard(setName, container, context) {
       ${kpi('Informes IA 30d', number(snapshot.aiReports.last30d))}
     </div>`;
   }
-  container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, CHART_TYPE[serie.name] ?? 'line')).join('')}</div>`;
+  container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, CHART_TYPE[serie.name] ?? 'line', serie)).join('')}</div>`;
   container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
   // Charts are created while the grid is still settling; re-measure once it has laid out.
   const frame = requestAnimationFrame(() => { if (context.isCurrent()) for (const chart of charts) chart.resize(); });
@@ -282,8 +335,9 @@ function columnFormatter(name, spec) {
     const text = JSON.stringify(raw);
     return `<span class="cell-mono" title="${escapeHtml(text)}">${escapeHtml(text.slice(0, 24))}${text.length > 24 ? '…' : ''}</span>`;
   };
-  if (spec.type === 'boolean') return cell => cell.getValue() ? '<i class="ti ti-circle-check text-success"></i>' :
-    '<i class="ti ti-circle-minus text-secondary"></i>';
+  if (spec.type === 'boolean') return cell => cell.getValue()
+    ? '<span><i class="ti ti-circle-check text-success" aria-hidden="true"></i><span class="ms-1">Sí</span></span>'
+    : '<span><i class="ti ti-circle-minus text-secondary" aria-hidden="true"></i><span class="ms-1">No</span></span>';
   if (spec.type === 'uuid') return uuidCell;
   if (/_minor$/.test(name)) return moneyCell;
   if (/_nano$/.test(name)) return nanoCell;
@@ -298,7 +352,7 @@ async function renderBrowse(container, fixedTable, context) {
   const current = fixedTable ?? localStorage.getItem('browse.table') ?? tableNames[0];
   container.innerHTML = `
     ${fixedTable ? '' : `<div class="mb-3 d-flex align-items-center gap-3">
-      <select id="browse-table" class="form-select w-auto" data-icon="table"></select>
+      <select id="browse-table" class="form-select w-auto" data-icon="table" aria-label="Tabla de datos"></select>
       <span class="text-secondary" id="browse-desc"></span>
     </div>`}
     <div class="card table-card">
@@ -309,11 +363,11 @@ async function renderBrowse(container, fixedTable, context) {
       <div class="card-body"><div id="browse-load-error" aria-live="polite"></div><div id="browse-grid"></div></div>
       <div class="card-footer py-2 pager-bar">
         <div class="btn-group">
-          <button class="btn btn-sm" id="page-prev"><i class="ti ti-chevron-left"></i></button>
+          <button class="btn btn-sm" id="page-prev" aria-label="Página anterior"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
           <span class="btn btn-sm disabled" id="page-info"></span>
-          <button class="btn btn-sm" id="page-next"><i class="ti ti-chevron-right"></i></button>
+          <button class="btn btn-sm" id="page-next" aria-label="Página siguiente"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
         </div>
-        <select class="form-select form-select-sm w-auto" id="page-size">
+        <select class="form-select form-select-sm w-auto" id="page-size" aria-label="Filas por página">
           ${[10, 25, 50, 100].map(size => `<option${size === 25 ? ' selected' : ''}>${size}</option>`).join('')}
         </select>
       </div>
@@ -358,6 +412,27 @@ async function renderBrowse(container, fixedTable, context) {
         headerFilterParams: { operators: spec.operators }
       });
       return base;
+    });
+    if (name === 'accounts') columns.push({
+      title: 'Acciones', field: '_actions', headerSort: false,
+      formatter: cell => {
+        const row = cell.getRow().getData(), label = row.email ?? row.id;
+        return `<div class="row-actions"><button type="button" class="btn btn-sm btn-outline-primary" data-account-detail aria-label="Ver cuenta de ${escapeHtml(label)}">Detalle</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" data-account-results aria-label="Ver exámenes de ${escapeHtml(label)}">Exámenes</button></div>`;
+      },
+      cellClick: async (event, cell) => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        const row = cell.getRow().getData();
+        if (button.hasAttribute('data-account-results')) { location.hash = `#exam-results?account=${row.id}`; return; }
+        if (button.getAttribute('aria-busy') === 'true') return;
+        button.setAttribute('aria-busy', 'true');
+        try {
+          const report = await api(`/v1/admin/accounts/${row.id}`, { signal: context.signal });
+          if (context.isCurrent()) detail(`Cuenta ${row.email ?? row.id}`, report);
+        } catch (error) { if (context.isCurrent() && error.name !== 'AbortError') toast(`Error: ${error.code}`, 'danger'); }
+        finally { button.removeAttribute('aria-busy'); }
+      }
     });
     if (table) { table.destroy(); tables = tables.filter(item => item !== table); }
     table = new Tabulator('#browse-grid', {
@@ -784,13 +859,13 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
   const option = (value, label, current) =>
     '<option value="' + escapeHtml(value) + '"' + (value === current ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
   const filterBar = `<div class="row g-2 mb-2">
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-status">${option('', 'Estado: todos', filters.status)}${STATES.map(state => option(state, state, filters.status)).join('')}</select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-language">${option('', 'Idioma: todos', filters.language)}${LANGUAGE_CODES.map(lang => option(lang, lang, filters.language)).join('')}</select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-level">${option('', 'Nivel: todos', filters.level)}${CEFR_LEVELS.map(level => option(level, level, filters.level)).join('')}</select></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-from" placeholder="Creado ≥ AAAA-MM-DD" value="${escapeHtml(filters.created_from ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-to" placeholder="Creado ≤ AAAA-MM-DD" value="${escapeHtml(filters.created_to ?? '')}"></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-status" aria-label="Filtrar por estado">${option('', 'Estado: todos', filters.status)}${STATES.map(state => option(state, state, filters.status)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-language" aria-label="Filtrar por idioma">${option('', 'Idioma: todos', filters.language)}${LANGUAGE_CODES.map(lang => option(lang, lang, filters.language)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-level" aria-label="Filtrar por nivel">${option('', 'Nivel: todos', filters.level)}${CEFR_LEVELS.map(level => option(level, level, filters.level)).join('')}</select></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-from" aria-label="Semana desde" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-to" aria-label="Semana hasta" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-from" aria-label="Fecha de creación desde" placeholder="Creado ≥ AAAA-MM-DD" value="${escapeHtml(filters.created_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-to" aria-label="Fecha de creación hasta" placeholder="Creado ≤ AAAA-MM-DD" value="${escapeHtml(filters.created_to ?? '')}"></div>
     <div class="col-auto"><button class="btn btn-sm btn-primary" id="wf-apply">Filtrar</button></div>
   </div>`;
   container.innerHTML = `<div class="row row-cards">
@@ -1175,9 +1250,9 @@ async function renderPolicy(container) {
     <div class="mb-3"><label class="form-check form-switch">
       <input class="form-check-input" type="checkbox" id="pol-enabled" ${policy.welcomeEnabled ? 'checked' : ''}>
       <span class="form-check-label">Conceder minutos de bienvenida al registrarse</span></label></div>
-    <div class="mb-3"><label class="form-label">Minutos</label>
+    <div class="mb-3"><label class="form-label" for="pol-minutes">Minutos</label>
       <input type="number" min="0" max="1440" class="form-control" id="pol-minutes" value="${policy.welcomeMinutes}"></div>
-    <div class="mb-3"><label class="form-label">Motivo (obligatorio, queda auditado)</label>
+    <div class="mb-3"><label class="form-label" for="pol-reason">Motivo (obligatorio, queda auditado)</label>
       <textarea class="form-control" id="pol-reason" rows="2" maxlength="500"></textarea></div>
     <button class="btn btn-primary" id="pol-save"><i class="ti ti-device-floppy me-1"></i>Guardar</button>
     <span class="text-secondary ms-2">versión actual ${policy.version}</span>
@@ -1201,14 +1276,14 @@ async function renderPlans(container) {
   const tierRows = tiers.map((tier, index) => `<div class="card-body border-top py-3">
     <h4 class="text-uppercase small text-secondary mb-2">Plan ${tier.tier}</h4>
     <div class="row">
-      <div class="col"><label class="form-label">Minutos/mes</label>
-        <input type="number" min="15" max="100000" class="form-control" data-tier="${index}" data-field="monthlyMinutes" value="${tier.monthlyMinutes}"></div>
-      <div class="col"><label class="form-label">Tope de rollover (min)</label>
-        <input type="number" min="15" max="144000" class="form-control" data-tier="${index}" data-field="rolloverCapMinutes" value="${tier.rolloverCapMinutes}"></div>
-      <div class="col"><label class="form-label">Precio Stripe (price ID)</label>
-        <input class="form-control font-monospace" data-tier="${index}" data-field="stripePriceID" value="${tier.stripePriceID ?? ''}" placeholder="price_..."></div>
-      <div class="col"><label class="form-label">Producto Play</label>
-        <input class="form-control font-monospace" data-tier="${index}" data-field="playProductID" value="${tier.playProductID ?? ''}" placeholder="subscripción.producto"></div>
+      <div class="col"><label class="form-label" for="plans-tier-${index}-minutes">Minutos/mes</label>
+        <input id="plans-tier-${index}-minutes" type="number" min="15" max="100000" class="form-control" data-tier="${index}" data-field="monthlyMinutes" value="${tier.monthlyMinutes}"></div>
+      <div class="col"><label class="form-label" for="plans-tier-${index}-rollover">Tope de rollover (min)</label>
+        <input id="plans-tier-${index}-rollover" type="number" min="15" max="144000" class="form-control" data-tier="${index}" data-field="rolloverCapMinutes" value="${tier.rolloverCapMinutes}"></div>
+      <div class="col"><label class="form-label" for="plans-tier-${index}-stripe">Precio Stripe (price ID)</label>
+        <input id="plans-tier-${index}-stripe" class="form-control font-monospace" data-tier="${index}" data-field="stripePriceID" value="${tier.stripePriceID ?? ''}" placeholder="price_..."></div>
+      <div class="col"><label class="form-label" for="plans-tier-${index}-play">Producto Play</label>
+        <input id="plans-tier-${index}-play" class="form-control font-monospace" data-tier="${index}" data-field="playProductID" value="${tier.playProductID ?? ''}" placeholder="subscripción.producto"></div>
     </div></div>`).join('');
   container.innerHTML = `<div class="row"><div class="col-lg-8"><div class="card"><div class="card-body">
     <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-crown text-secondary"></i>Suscripciones y planes</h3>
@@ -1216,17 +1291,17 @@ async function renderPlans(container) {
       <div class="col"><label class="form-check form-switch mt-2">
         <input class="form-check-input" type="checkbox" id="plans-drip" ${config.freeDripEnabled ? 'checked' : ''}>
         <span class="form-check-label">Goteo gratuito mensual</span></label></div>
-      <div class="col"><label class="form-label">Minutos/mes del goteo</label>
+      <div class="col"><label class="form-label" for="plans-drip-minutes">Minutos/mes del goteo</label>
         <input type="number" min="0" max="60" class="form-control" id="plans-drip-minutes" value="${config.freeDripMinutes}"></div>
-      <div class="col"><label class="form-label">Tope de goteo (min)</label>
+      <div class="col"><label class="form-label" for="plans-drip-cap">Tope de goteo (min)</label>
         <input type="number" min="0" max="1440" class="form-control" id="plans-drip-cap" value="${config.freeDripRolloverCapMinutes}"></div>
-      <div class="col"><label class="form-label">Días de prueba</label>
+      <div class="col"><label class="form-label" for="plans-trial">Días de prueba</label>
         <input type="number" min="0" max="30" class="form-control" id="plans-trial" value="${config.trialDays}"></div>
-      <div class="col"><label class="form-label">Presupuesto vitalicio del goteo (0=sin tope)</label>
+      <div class="col"><label class="form-label" for="plans-budget">Presupuesto vitalicio del goteo (0=sin tope)</label>
         <input type="number" min="0" class="form-control" id="plans-budget" value="${config.lifetimeDripBudgetMinutes}"></div>
     </div></div>${tierRows}
     <div class="card-body border-top">
-      <div class="mb-3"><label class="form-label">Motivo (obligatorio, queda auditado)</label>
+      <div class="mb-3"><label class="form-label" for="plans-reason">Motivo (obligatorio, queda auditado)</label>
         <textarea class="form-control" id="plans-reason" rows="2" maxlength="500"></textarea></div>
       <button class="btn btn-primary" id="plans-save"><i class="ti ti-device-floppy me-1"></i>Guardar planes</button>
       <span class="text-secondary ms-2">versión actual ${config.version}</span>
@@ -1268,13 +1343,13 @@ async function renderCampaigns(container) {
     <div class="mb-3"><label class="form-check">
       <input class="form-check-input" type="radio" name="aud" id="aud-one" checked> <span class="form-check-label">Un único usuario (UUID)</span></label>
       <label class="form-check"><input class="form-check-input" type="radio" name="aud" id="aud-all"> <span class="form-check-label">Todos los usuarios actuales</span></label></div>
-    <div class="mb-3" id="aud-account-wrap"><label class="form-label">Cuenta</label>
+    <div class="mb-3" id="aud-account-wrap"><label class="form-label" for="camp-account">Cuenta</label>
       <input class="form-control font-monospace" id="camp-account" placeholder="uuid"></div>
-    <div class="row"><div class="col"><label class="form-label">Minutos por usuario</label>
+    <div class="row"><div class="col"><label class="form-label" for="camp-minutes">Minutos por usuario</label>
       <input type="number" min="1" class="form-control" id="camp-minutes" value="5"></div>
-      <div class="col"><label class="form-label">Tope total (minutos)</label>
+      <div class="col"><label class="form-label" for="camp-cap">Tope total (minutos)</label>
       <input type="number" min="1" class="form-control" id="camp-cap" value="5000"></div></div>
-    <div class="mb-3 mt-3"><label class="form-label">Motivo (obligatorio)</label>
+    <div class="mb-3 mt-3"><label class="form-label" for="camp-reason">Motivo (obligatorio)</label>
       <textarea class="form-control" id="camp-reason" rows="2" maxlength="500"></textarea></div>
     <button class="btn btn-primary" id="camp-prepare"><i class="ti ti-checklist me-1"></i>Preparar</button>
     <div id="camp-result" class="mt-3"></div>
@@ -1364,7 +1439,7 @@ async function renderUsage(container) {
       ${kpi('MAU', number(overview.mau))}
       ${kpi('Eventos 7 días', number(overview.events7d))}
     </div>
-    <div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label)).join('')}</div>
+    <div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, 'line', serie)).join('')}</div>
     <div class="row row-cards g-3 mt-1">
       <div class="col-lg-5"><div class="card"><div class="card-body">
         <h3 class="card-title"><i class="ti ti-flame text-secondary"></i>Funciones más usadas (7 días)</h3>
@@ -1452,7 +1527,18 @@ const LEGACY_ROUTES = { 'level-tests': 'exam-weeks' };
 let routing = false;
 let reroute = false;
 let activeViewContext = null;
+function setMobileMenu(open, restoreFocus = false) {
+  const sidebar = document.querySelector('.navbar-vertical');
+  const button = $('#mobile-menu-toggle');
+  if (!sidebar || !button) return;
+  sidebar.classList.toggle('mobile-open', open);
+  $('#sidebar-menu').classList.toggle('show', open);
+  button.setAttribute('aria-expanded', String(open));
+  button.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  if (!open && restoreFocus && button.getClientRects().length) button.focus();
+}
 async function route() {
+  setMobileMenu(false, Boolean(document.querySelector('.navbar-vertical.mobile-open')));
   if (routing) { activeViewContext?.dispose(); reroute = true; return; }
   routing = true;
   try {
@@ -1472,10 +1558,16 @@ async function renderRoute() {
   const view = VIEWS[routePath] ?? VIEWS.overview;
   const params = Object.fromEntries(new URLSearchParams(routeQuery ?? ''));
   $('#page-title').textContent = view.title;
+  $('#mobile-page-title').textContent = view.title;
   document.title = `${view.title} · Palique Admin`;
   // The review page belongs to the generation surface: keep it highlighted.
   const navPath = routePath === 'exam' ? 'exam-weeks' : routePath;
-  for (const link of document.querySelectorAll('#nav a.nav-link')) link.classList.toggle('active', link.hash === `#${navPath}`);
+  for (const link of document.querySelectorAll('#nav a.nav-link')) {
+    const active = link.hash === `#${navPath}`;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
   for (const chart of charts) chart.destroy();
   charts.length = 0;
   for (const table of tables) table.destroy();
@@ -1504,12 +1596,21 @@ async function renderRoute() {
     return heading + `<li class="nav-item"><a class="nav-link" href="#${item.id}">
     <span class="nav-link-icon"><i class="ti ${item.icon}"></i></span><span class="nav-link-title">${item.label}</span></a></li>`;
   }).join('');
+  $('#mobile-menu-toggle').onclick = () => setMobileMenu($('#mobile-menu-toggle').getAttribute('aria-expanded') !== 'true');
+  $('#nav').addEventListener('click', event => { if (event.target.closest('a.nav-link')) setMobileMenu(false, true); });
+  window.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && document.querySelector('.navbar-vertical.mobile-open')) {
+      event.preventDefault(); setMobileMenu(false, true);
+    }
+  });
   api('/v1/admin/me').then(me => {
     const name = me.email ?? me.adminID;
     $('#whoami').textContent = name;
     $('#avatar').textContent = (me.email ?? 'A')[0].toUpperCase();
   }).catch(() => {});
-  $('#signout').onclick = async () => { try { await api('/v1/admin/auth/sign-out', { method: 'POST', body: '{}' }); } catch {} location.href = '/login.html'; };
+  const signOut = async () => { try { await api('/v1/admin/auth/sign-out', { method: 'POST', body: '{}' }); } catch {} location.href = '/login.html'; };
+  $('#signout').onclick = signOut;
+  $('#mobile-signout').onclick = signOut;
   window.addEventListener('hashchange', route);
   route();
 })();

@@ -115,6 +115,42 @@ try {
     if (!page.url().startsWith(PANEL)) throw new Error(`unexpected url ${page.url()}`);
     if (!(await page.textContent('#api-status'))?.toLowerCase().includes('conectada')) throw new Error(`API status is not reported as connected: ${await page.textContent('#api-status')}`);
   });
+  await check('mobile shell exposes menu and sign-out with an active main landmark', async () => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    try {
+      if (await page.locator('main#view').count() !== 1) throw new Error('main landmark is missing');
+      if (!(await page.isVisible('#mobile-menu-toggle'))) throw new Error('mobile navigation control is missing');
+      if (await page.getByRole('button', { name: 'Abrir menú' }).count() !== 1) throw new Error('mobile navigation button lacks an accessible name');
+      if (!(await page.isVisible('#mobile-signout'))) throw new Error('mobile sign-out is unavailable');
+      await page.click('#mobile-menu-toggle');
+      if (await page.getAttribute('#mobile-menu-toggle', 'aria-expanded') !== 'true') throw new Error('menu did not report expanded state');
+      if (await page.getByRole('button', { name: 'Cerrar menú' }).count() !== 1) throw new Error('open menu button does not expose its close action');
+      await shot('mobile-menu-open-390');
+      await page.click('a[href="#policy"]');
+      await page.waitForSelector('#pol-enabled', { timeout: 5_000 });
+      if (await page.getAttribute('a[href="#policy"]', 'aria-current') !== 'page') throw new Error('active route is not exposed to assistive technology');
+      if (await page.getAttribute('#mobile-menu-toggle', 'aria-expanded') !== 'false') throw new Error('menu did not close after navigation');
+      if (!(await page.locator('#mobile-menu-toggle').evaluate(node => node === document.activeElement))) throw new Error('navigation did not return focus to the menu button');
+      await shot('mobile-policy-390');
+      await page.click('#mobile-menu-toggle');
+      await page.keyboard.press('Escape');
+      if (await page.getAttribute('#mobile-menu-toggle', 'aria-expanded') !== 'false') throw new Error('Escape did not close the mobile menu');
+      if (!(await page.locator('#mobile-menu-toggle').evaluate(node => node === document.activeElement))) throw new Error('closing mobile menu did not restore focus');
+    } finally {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(`${PANEL}/#overview`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => document.querySelectorAll('#view canvas').length > 0, undefined, { timeout: 10_000 }).catch(() => {});
+    }
+  });
+  await check('admin shell reflows at narrow, tablet, and desktop widths', async () => {
+    for (const width of [320, 390, 768, 1024]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.waitForTimeout(50);
+      const size = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+      if (size.scroll > size.client) throw new Error(`horizontal page overflow at ${width}px (${size.scroll}/${size.client})`);
+    }
+    await page.setViewportSize({ width: 1280, height: 900 });
+  });
   await shot('02-dashboard');
 
   await check('view lifecycle disposes resources once and rejects late work', async () => {
@@ -292,12 +328,23 @@ try {
   await check('a generation error opens a dialog with the real reasons', async () => {
     await page.click('#jobs-monitor [data-job-error]');
     await page.waitForSelector('#detail-modal.show', { timeout: 5_000 });
+    const dialog = page.locator('#detail-modal');
+    const labelledBy = await dialog.getAttribute('aria-labelledby');
+    const semanticFailure = await dialog.getAttribute('role') !== 'dialog' || await dialog.getAttribute('aria-modal') !== 'true' ||
+      !labelledBy || !(await page.locator(`#${labelledBy}`).count());
     await expectText('#detail-body', 'generation_failed');
     await expectText('#detail-body', 'Detalle del último intento');
     await expectText('#detail-body', 'reading: only 2 passages (needed 4)');
     await expectText('#detail-body', 'writing: empty response');
     await shot('10e-job-error');
-    await page.click('#detail-close');
+    await page.keyboard.press('Escape');
+    const closed = await page.waitForFunction(() => !document.querySelector('#detail-modal')?.classList.contains('show'), undefined, { timeout: 1_000 }).then(() => true).catch(() => false);
+    if (!closed) await page.click('#detail-close');
+    if (!closed) throw new Error('Escape did not dismiss the detail dialog');
+    const focusRestored = await page.locator('#jobs-monitor [data-job-error]').first().evaluate(node => node === document.activeElement);
+    if (semanticFailure) throw new Error('detail dialog lacks accessible name or modal semantics');
+    if (!focusRestored)
+      throw new Error('detail dialog did not return focus to its invoker');
   });
 
   // 6. Generated-exams listing: seeded drafts visible with the regenerate
@@ -369,6 +416,29 @@ try {
   await page.click('#reason-cancel');
   await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
     undefined, { timeout: 5_000 });
+    await check('reason dialog traps keyboard focus, Escape cancels, and restores its invoker', async () => {
+      const trigger = weekRow('A1') + ' [data-week-approve]';
+      await page.click(trigger);
+      await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+      const dialog = page.locator('#reason-modal');
+      const labelledBy = await dialog.getAttribute('aria-labelledby');
+      const semanticFailure = await dialog.getAttribute('role') !== 'dialog' || await dialog.getAttribute('aria-modal') !== 'true' ||
+        !labelledBy || !(await page.locator(`#${labelledBy}`).count());
+      await page.keyboard.press('Shift+Tab');
+      const focusTrapped = await dialog.evaluate(node => node.contains(document.activeElement));
+      await page.keyboard.press('Escape');
+      const escapeClosed = await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
+        undefined, { timeout: 1_000 }).then(() => true).catch(() => false);
+      if (!escapeClosed) await page.click('#reason-cancel');
+      await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
+        undefined, { timeout: 5_000 });
+      const focusRestored = await page.locator(trigger).evaluate(node => node === document.activeElement);
+      if (semanticFailure) throw new Error('reason dialog lacks accessible name or modal semantics');
+      if (!focusTrapped) throw new Error('Shift+Tab moved focus outside the dialog');
+      if (!escapeClosed) throw new Error('Escape did not cancel the reason dialog');
+      if (!focusRestored) throw new Error('closing the reason dialog did not restore focus');
+      if (!(await page.textContent(weekRow('A1')))?.includes('draft')) throw new Error('cancel initiated moderation');
+    });
   await page.click(weekRow('A1') + ' [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Aprobado tras revisión E2E de navegador');
@@ -393,6 +463,7 @@ try {
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
   await check('rejection toast confirms', async () => {
     await expectText('.alert-success', 'Borrador rechazado');
+    if (await page.getAttribute('.alert-success', 'role') !== 'status') throw new Error('success toast is not announced as a status');
   });
   await check('draft rejected and rejection retained', async () => {
     await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
@@ -804,6 +875,8 @@ try {
       if (!text.includes(label)) throw new Error(`KPI ${label} missing`);
     const canvases = await page.$$eval('#view canvas', nodes => nodes.length);
     if (canvases < 3) throw new Error(`only ${canvases} charts mounted`);
+    if (await page.locator('#view canvas[role="img"][aria-label]').count() < 3) throw new Error('charts lack accessible names');
+    if (await page.locator('#view details.chart-data').count() < 3) throw new Error('chart data tables are missing');
   });
   await shot('15-overview');
 
@@ -839,9 +912,25 @@ try {
   await check('table browser lists the seeded account and its total', async () => {
     const grid = (await page.textContent('#browse-grid')) ?? '';
     if (!grid.includes('student@example.test')) throw new Error('seeded account row missing');
+    const booleanText = await page.locator('#browse-grid .tabulator-row').filter({ hasText: 'student@example.test' })
+      .locator('.tabulator-cell[tabulator-field="is_guest"]').textContent();
+    if (!['Sí', 'No'].includes(booleanText?.trim() ?? '')) throw new Error(`boolean state lacks text: ${booleanText}`);
     const total = (await page.textContent('#browse-total')) ?? '';
     if (!/\d+/.test(total)) throw new Error(`total=${total}`);
+    const detailButton = page.locator('#browse-grid [data-account-detail]');
+    if (await detailButton.count() < 1) throw new Error('account detail is only available through the row context menu');
+    if (!(await detailButton.first().getAttribute('aria-label'))?.includes('student@example.test'))
+      throw new Error('account row action does not have a row-specific accessible name');
+    if (!(await page.locator('#browse-grid [data-account-results]').first().getAttribute('aria-label'))?.includes('student@example.test'))
+      throw new Error('account exam action is not visible and named per row');
+    await detailButton.first().click();
+    await page.waitForSelector('#detail-modal.show', { timeout: 5_000 });
+    await expectText('#detail-title', 'Cuenta student@example.test');
+    await page.click('#detail-close');
+    if (!(await detailButton.first().evaluate(node => node === document.activeElement))) throw new Error('row detail did not restore focus to its action');
     if (await page.isVisible('#browse-grid [data-page]')) throw new Error('unexpected pager markup');
+    if (!(await page.getAttribute('#page-prev', 'aria-label')) || !(await page.getAttribute('#page-next', 'aria-label')))
+      throw new Error('icon-only pager controls do not have accessible names');
   });
   await check('table browser does not sort non-orderable account columns', async () => {
     const guestHeader = page.locator('#browse-grid .tabulator-col[tabulator-field="is_guest"]');
@@ -905,8 +994,11 @@ try {
   await page.click('#pol-save');
   await page.waitForSelector('#pol-minutes-error', { timeout: 5_000 });
   await check('invalid welcome-policy values and missing reason send no request', async () => {
+    if (await page.getByLabel('Minutos', { exact: true }).count() !== 1) throw new Error('welcome minutes field lacks an associated label');
     if (policyWrites.length) throw new Error(`invalid number sent ${policyWrites.length} policy request(s)`);
     if (await page.getAttribute('#pol-minutes', 'aria-invalid') !== 'true') throw new Error('invalid minutes not identified');
+    if (!(await page.getAttribute('#pol-minutes', 'aria-describedby'))?.includes('pol-minutes-error'))
+      throw new Error('minutes error is not associated with its field');
     await expectText('#pol-minutes-error', 'Minutos');
     await page.fill('#pol-minutes', '5');
     await page.click('#pol-save');
@@ -1118,6 +1210,13 @@ try {
   await check('the remaining views never raised a page error', async () => {
     const fresh = observedPageErrors.slice(errorsBeforeSurfaces);
     if (fresh.length) throw new Error(fresh.join(' | '));
+  });
+  await check('mobile sign-out remains available and returns to operator login', async () => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    if (!(await page.isVisible('#mobile-signout'))) throw new Error('mobile sign-out is unavailable');
+    await page.click('#mobile-signout');
+    await page.waitForURL('**/login.html', { timeout: 5_000 });
+    if (!(await page.isVisible('#login-form'))) throw new Error('sign-out did not return to login');
   });
 } catch (error) {
   failures.push(`scenario aborted: ${error.message}`);

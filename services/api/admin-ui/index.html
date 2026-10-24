@@ -12,14 +12,14 @@
 </head>
 <body class="theme-light">
 <div class="page">
-  <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+  <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark" aria-label="Navegación principal">
     <div class="container-fluid">
       <h1 class="navbar-brand mb-0">
         <span class="nav-link-icon d-inline-block"><i class="ti ti-player-play"></i></span>
         <span>Palique<span class="text-secondary"> · Admin</span></span>
       </h1>
       <div class="collapse navbar-collapse" id="sidebar-menu">
-        <ul class="navbar-nav pt-lg-3" id="nav"></ul>
+        <nav aria-label="Secciones de administración"><ul class="navbar-nav pt-lg-3" id="nav"></ul></nav>
         <div class="mt-auto pb-3 px-2 text-secondary small" id="sidebar-foot">
           <span class="badge bg-secondary-lt" id="api-status" role="status" aria-live="polite">Comprobando API…</span>
         </div>
@@ -27,6 +27,13 @@
     </div>
   </aside>
   <div class="page-wrapper">
+    <header class="admin-mobile-header d-lg-none">
+      <button type="button" class="btn btn-outline-secondary" id="mobile-menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="sidebar-menu">
+        <i class="ti ti-menu-2" aria-hidden="true"></i>
+      </button>
+      <h2 class="page-title mb-0 text-truncate" id="mobile-page-title">Resumen</h2>
+      <button type="button" class="btn btn-outline-secondary" id="mobile-signout" aria-label="Salir de la cuenta">Salir</button>
+    </header>
     <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
       <div class="container-xl">
         <div class="navbar-nav flex-row align-items-center">
@@ -42,7 +49,7 @@
       </div>
     </header>
     <div class="page-body">
-      <div class="container-xl" id="view"></div>
+      <main class="container-xl" id="view" tabindex="-1"></main>
     </div>
     <footer class="footer footer-transparent d-print-none py-3">
       <div class="container-xl text-secondary text-center small">
@@ -51,7 +58,7 @@
     </footer>
   </div>
 </div>
-<div class="modal modal-blur fade" id="detail-modal" tabindex="-1">
+<div class="modal modal-blur fade" id="detail-modal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="detail-title">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header"><h5 class="modal-title" id="detail-title">Detalle</h5>
@@ -61,12 +68,12 @@
     </div>
   </div>
 </div>
-<div class="modal modal-blur fade" id="reason-modal" tabindex="-1">
+<div class="modal modal-blur fade" id="reason-modal" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="reason-title" aria-describedby="reason-hint">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header"><h5 class="modal-title" id="reason-title">Motivo</h5></div>
       <div class="modal-body">
-        <div class="mb-3"><label class="form-label">Objetivo (solo lectura)</label>
+        <div class="mb-3"><label class="form-label" for="reason-input">Objetivo (solo lectura)</label>
           <input class="form-control-plaintext fw-bold" id="reason-input" readonly tabindex="-1"></div>
         <label class="form-label" for="reason-text">Motivo (obligatorio, auditado)</label>
         <textarea class="form-control" id="reason-text" rows="3" maxlength="500" aria-describedby="reason-hint"></textarea>

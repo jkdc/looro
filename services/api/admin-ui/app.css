@@ -68,6 +68,13 @@
 /* ---- login ---- */
 .login-brand { font-weight: 700; letter-spacing: -.02em; }
 .chart-box canvas { max-width: 100%; }
+.chart-data { margin-top: .75rem; font-size: .8125rem; }
+.chart-data summary { cursor: pointer; color: var(--tblr-primary, #206bc4); }
+.chart-data table { margin-top: .5rem; }
+.row-actions { display: flex; flex-wrap: wrap; gap: .25rem; }
+.row-actions .btn { white-space: nowrap; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+summary:focus-visible { outline: 3px solid var(--tblr-primary, #206bc4); outline-offset: 2px; }
 
 /* ---- exam review page ---- */
 .exam-variant-meta {
@@ -128,6 +135,33 @@
 }
 #nav .nav-group:first-child .nav-link { border-top: none; padding-top: .25rem; }
 #nav .nav-item .nav-link { border-radius: 4px; }
+
+/* ---- responsive operator shell ---- */
+.admin-mobile-header { display: none; }
+@media (max-width: 991.98px) {
+  .page-wrapper { margin-left: 0 !important; width: 100%; min-width: 0; }
+  .admin-mobile-header {
+    position: sticky; top: 0; z-index: 1050; display: flex; align-items: center; gap: .5rem;
+    min-height: 3.75rem; padding: .5rem .75rem; background: var(--tblr-bg-surface, #fff);
+    border-bottom: 1px solid var(--tblr-border-color); box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+  }
+  .admin-mobile-header .page-title { flex: 1; min-width: 0; font-size: 1rem; }
+  .admin-mobile-header .btn { flex: 0 0 auto; }
+  .navbar-vertical { display: none !important; }
+  .navbar-vertical.mobile-open {
+    display: flex !important; position: fixed; inset: 0 auto 0 0; z-index: 1040;
+    width: min(84vw, 20rem); max-width: 20rem; overflow-y: auto; box-shadow: 0 0 0 100vmax rgba(15, 23, 42, .45);
+  }
+  .navbar-vertical.mobile-open .navbar-collapse { display: flex !important; }
+  #view { padding-left: .75rem; padding-right: .75rem; }
+  .chart-box { height: 190px; }
+  .table-responsive { overscroll-behavior-x: contain; }
+}
+@media (max-width: 359.98px) {
+  .admin-mobile-header { gap: .35rem; padding-left: .5rem; padding-right: .5rem; }
+  .admin-mobile-header .btn { padding-left: .45rem; padding-right: .45rem; }
+  .admin-mobile-header .page-title { font-size: .9rem; }
+}
 
 /* ---- detail and generation job error dialog ---- */
 /* JSON payloads keep their indentation; CSP forbids inline style attributes. */
