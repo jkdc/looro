@@ -129,6 +129,50 @@ test('gate 1 accepts a well-formed pool and rejects broken items', () => {
   assert.ok(broken.errors.some(error => error.section === 'reading' && error.code === 'minimum'));
 });
 
+test('gate 1 reports null item members as structured errors instead of throwing', () => {
+  const malformed = {
+    ...goodPool,
+    recognition: [null, ...goodPool.recognition.slice(1)],
+  };
+
+  const result = validateGeneratedPool(malformed, { recognition: 12, writing: 3, readingPassages: 2,
+    readingPerPassage: 3, listeningPassages: 2, listeningPerPassage: 2 }, 'en');
+
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some(error => error.section === 'recognition[0]' && error.code === 'item'));
+});
+
+test('English writing section rejects recognition-only choice items', () => {
+  const invalidWriting = Array.from({ length: 3 }, (_, index) => ({
+    ...goodItem,
+    prompt: `Choose the missing word for writing item ${index}.`,
+  }));
+
+  const result = validateGeneratedPool({ ...goodPool, writing: invalidWriting },
+    { recognition: 12, writing: 3, readingPassages: 2, readingPerPassage: 3,
+      listeningPassages: 2, listeningPerPassage: 2 }, 'en');
+
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some(error => error.section.startsWith('writing[') && error.code === 'kind'));
+});
+
+test('English pool rejects duplicate reading stimuli even when their questions differ', () => {
+  const duplicateReading = {
+    ...goodReading,
+    items: goodReading.items.map((item, index) => ({
+      ...item,
+      prompt: `Different question ${index}: what does the passage mention?`,
+    })),
+  };
+
+  const result = validateGeneratedPool({ ...goodPool, reading: [goodReading, duplicateReading] },
+    { recognition: 12, writing: 3, readingPassages: 2, readingPerPassage: 3,
+      listeningPassages: 2, listeningPerPassage: 2 }, 'en');
+
+  assert.equal(result.ok, false);
+  assert.ok(result.errors.some(error => error.section === 'reading[1]' && error.code === 'duplicate_passage'));
+});
+
 // ---- integration: generation + storage + serving ----
 
 integration('generation persists approved variants and the endpoints serve them', async db => {

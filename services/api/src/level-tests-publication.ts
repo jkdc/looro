@@ -34,10 +34,11 @@ export async function approveGeneratedWeek(db: Database, id: string, adminID: st
 }
 function canPublish(row: Generation): boolean {
   try {
-    const model = examModelFor(row.level);
+    const model = examModelFor(row.level, row.language_id);
     if (!model || !row.pool || !Array.isArray(row.variants) || !row.variants.length) return false;
     const checked = validateGeneratedPool({ recognition: row.pool.recognition, writing: row.pool.writing,
-      reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, model.examShape, row.language_id);
+      reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, model.examShape, row.language_id,
+      row.language_id === 'en' ? model : undefined);
     if (!checked.ok) return false;
     const pool = checked.pool;
     const expectedPassages = new Map<string, GeneratedPool['readingPassages'][number]>([
@@ -55,8 +56,7 @@ function canPublish(row: Generation): boolean {
         if (verdicts.length !== 1 || !['ok', 'flagged'].includes(verdicts[0]!.verdict)) return false;
       }
     }
-    const shape = { recognition: 12, writing: 3, readingPassages: 2, readingPerPassage: 3,
-      listeningPassages: 2, listeningPerPassage: 2, ...model.examShape };
+    const shape = model.examShape;
     const variants = new Set<number>();
     for (const exam of row.variants) {
       if (!Number.isSafeInteger(exam.variant) || !exam.variant || exam.variant < 1 || variants.has(exam.variant) || exam.variant > 5 ||

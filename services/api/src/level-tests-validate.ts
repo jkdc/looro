@@ -1,4 +1,5 @@
 import type { LevelTestContentItem, LevelTestSection } from './level-tests-content.generated.js';
+import type { ExamModelEntry, ExamSectionName, ExamShape } from './level-test-blueprint.js';
 
 /** Gate 1 of the LLM generation pipeline (level-tests-llm): deterministic
     validation of a generated pool. Mirrors the exporter's rules — schema,
@@ -44,11 +45,8 @@ const MINIMUMS = { recognition: 12, writing: 3, readingPassages: 2, listeningPas
 const WORDS = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 const normalize = (text: string) => text.toLowerCase().replace(/[.,!?;:¿¡"“”«»…()]/g, ' ').replace(/\s+/g, ' ').trim();
 
-export interface ExamShape { recognition: number; writing: number; readingPassages: number;
-  readingPerPassage: number; listeningPassages: number; listeningPerPassage: number }
-
-export function validateGeneratedPool(pool: unknown, examShape: Record<string, number>,
-  targetLanguage: string): ValidationResult {
+export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShape>,
+  targetLanguage: string, blueprint?: ExamModelEntry): ValidationResult {
   const shape = {
     recognition: examShape.recognition ?? 12, writing: examShape.writing ?? 3,
     readingPassages: examShape.readingPassages ?? 2, readingPerPassage: examShape.readingPerPassage ?? 3,
@@ -56,18 +54,24 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
   };
   const errors: ValidationFailure[] = [];
   const clean: GeneratedPool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
-  const raw = (pool ?? {}) as Record<string, unknown>;
-  const recognition = arrayed(raw.recognition);
-  const writing = arrayed(raw.writing);
-  const readingPassages = arrayed(raw.reading);
-  const listeningPassages = arrayed(raw.listening);
+  const raw = record(pool);
+  if (!raw) errors.push({ section: 'pool', code: 'object', detail: 'expected a pool object' });
+  const recognition = arrayed(raw?.recognition);
+  const writing = arrayed(raw?.writing);
+  const readingPassages = arrayed(raw?.reading);
+  const listeningPassages = arrayed(raw?.listening);
 
   const seenPrompts = new Set<string>();
   const seenIds = new Set<string>();
-  const acceptItem = (section: LevelTestSection, bucket: LevelTestContentItem[], item: RawGeneratedItem, index: number): boolean => {
+  const acceptItem = (section: LevelTestContentItem['section'], bucket: LevelTestContentItem[], value: unknown, index: number): boolean => {
     const where = `${section}[${index}]`;
+    const fields = record(value);
+    if (!fields) return fail(where, 'item', 'expected an item object');
+    const item = fields as unknown as RawGeneratedItem;
     const kind = item.kind ?? (Array.isArray(item.options) ? 'choice' : 'written');
     if (!['choice', 'gap', 'written', 'order'].includes(kind)) return fail(where, 'kind', 'unsupported exercise kind');
+    if (targetLanguage === 'en' && !englishSectionKinds(section).includes(kind as string))
+      return fail(where, 'kind', 'exercise kind is not permitted in this section');
     if (item.id && item.id !== 'pending' && seenIds.has(item.id)) return fail(where, 'id', 'duplicate item id');
     const prompt = typeof item.prompt === 'string' ? item.prompt.trim() : '';
     const answers = strings(item.answers);
@@ -84,6 +88,8 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
     } else {
       if (!answers.length) return fail(where, 'answer', 'no accepted answers');
       if (answers.length > 4) return fail(where, 'answer', 'too many accepted answers');
+      if (kind === 'order' && (answers.length !== 1 || WORDS(answers[0] ?? '') < 3))
+        return fail(where, 'answer', 'order exercises need exactly one answer of at least three words');
     }
     const explain = typeof item.explain === 'string' ? item.explain.trim() : '';
     if (explain.length < 8) return fail(where, 'explain', 'missing or too short');
@@ -105,9 +111,13 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
   clean.recognition = recognitionBucket;
   clean.writing = writingBucket;
 
+  const seenPassageTexts = { reading: new Set<string>(), listening: new Set<string>() };
   const acceptPassage = (kind: 'reading' | 'listening', minWords: number, maxWords: number,
-                         minItems: number, passage: RawGeneratedPassage, index: number): boolean => {
+                         minItems: number, value: unknown, index: number): boolean => {
     const where = `${kind}[${index}]`;
+    const fields = record(value);
+    if (!fields) return fail(where, 'passage', 'expected a passage object');
+    const passage = fields as RawGeneratedPassage;
     const text = typeof passage.text === 'string' ? passage.text.trim() : '';
     const words = text ? WORDS(text) : 0;
     const bucket: LevelTestContentItem[] = [];
@@ -115,12 +125,18 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
     if (words < minWords || words > maxWords)
       return fail(where, 'passage', `passage length out of range (${words} words)`);
     if (bucket.length < minItems) return fail(where, 'passage', 'fewer valid questions than required');
+    const fingerprint = normalize(text);
+    if (seenPassageTexts[kind].has(fingerprint))
+      return fail(where, 'duplicate_passage', 'repeated passage text within the same section');
+    seenPassageTexts[kind].add(fingerprint);
     const target = kind === 'reading' ? clean.readingPassages : clean.listeningPassages;
     target.push({ title: typeof passage.title === 'string' ? passage.title : '', text, items: bucket });
     return true;
   };
-  readingPassages.forEach((passage, index) => acceptPassage('reading', 30, 220, shape.readingPerPassage, passage, index));
-  listeningPassages.forEach((passage, index) => acceptPassage('listening', 20, 200, shape.listeningPerPassage, passage, index));
+  const readingWords = blueprint?.sections.reading?.words ?? [30, 220];
+  const listeningWords = blueprint?.sections.listening?.words ?? [20, 200];
+  readingPassages.forEach((passage, index) => acceptPassage('reading', readingWords[0], readingWords[1], shape.readingPerPassage, passage, index));
+  listeningPassages.forEach((passage, index) => acceptPassage('listening', listeningWords[0], listeningWords[1], shape.listeningPerPassage, passage, index));
 
   // Section minimums: the exam shape must be coverable by the validated pool.
   if (clean.recognition.length < Math.max(MINIMUMS.recognition, shape.recognition))
@@ -134,9 +150,9 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
 
   // Disjoint blocks per exam are enforced at composition; here we also refuse
   // pools where reading and listening drew on the same source text.
-  const readingTexts = new Set(clean.readingPassages.map(p => normalize(p.text ?? '').slice(0, 120)));
+  const readingTexts = new Set(clean.readingPassages.map(p => normalize(p.text ?? '')));
   for (const passage of clean.listeningPassages)
-    if (readingTexts.has(normalize(passage.text ?? '').slice(0, 120)))
+    if (readingTexts.has(normalize(passage.text ?? '')))
       errors.push({ section: 'listening', code: 'overlap', detail: 'a listening passage duplicates a reading passage' });
 
   return { ok: errors.length === 0, errors, pool: clean };
@@ -147,8 +163,22 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
   }
 }
 
-function arrayed(value: unknown): RawGeneratedItem[] {
-  return Array.isArray(value) ? value as RawGeneratedItem[] : [];
+function record(value: unknown): Record<string, unknown> | undefined {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown> : undefined;
+}
+
+function arrayed(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function englishSectionKinds(section: ExamSectionName): string[] {
+  switch (section) {
+    case 'recognition': return ['choice', 'gap'];
+    case 'writing': return ['gap', 'written', 'order'];
+    case 'reading':
+    case 'listening': return ['choice', 'gap'];
+  }
 }
 
 function strings(value: unknown): string[] {

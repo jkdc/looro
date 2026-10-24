@@ -302,6 +302,314 @@
         "temas cotidianos simples",
         "ironía compleja sin contexto"
       ]
+    },
+    {
+      "level": "A1",
+      "languageID": "en",
+      "canDoAnchor": "Can use familiar everyday expressions, introduce themselves, and ask basic questions about personal details.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "present simple",
+            "be",
+            "articles and plurals",
+            "basic questions",
+            "possessives",
+            "everyday vocabulary"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            50,
+            90
+          ],
+          "register": "everyday notices, messages, and simple descriptions",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            35,
+            70
+          ],
+          "format": "short announcement or two-turn dialogue",
+          "questions": 2
+        },
+        "writing": {
+          "promptLanguage": "English adapted to level",
+          "response": "controlled short production; accept natural variants"
+        }
+      },
+      "forbidden": [
+        "complex past narration",
+        "irony",
+        "formal register",
+        "political topics"
+      ]
+    },
+    {
+      "level": "A2",
+      "languageID": "en",
+      "canDoAnchor": "Can complete routine tasks and communicate about familiar matters, simple past events, and plans.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "past simple",
+            "comparatives",
+            "going to future",
+            "quantifiers",
+            "time prepositions",
+            "past continuous"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            60,
+            100
+          ],
+          "register": "short narratives, informal notes, and everyday descriptions",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            40,
+            80
+          ],
+          "format": "two- or three-turn dialogue with specific details",
+          "questions": 2
+        },
+        "writing": {
+          "promptLanguage": "English adapted to level",
+          "response": "controlled short production; accept natural variants"
+        }
+      },
+      "forbidden": [
+        "subjunctive",
+        "mixed conditionals",
+        "complex irony",
+        "specialist jargon"
+      ]
+    },
+    {
+      "level": "B1",
+      "languageID": "en",
+      "canDoAnchor": "Can handle most situations while travelling and can give reasons and opinions about familiar topics.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "present perfect",
+            "first and second conditional",
+            "used to",
+            "relative clauses",
+            "modal deduction",
+            "connectors"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            70,
+            120
+          ],
+          "register": "opinion texts, evaluated narratives, and everyday problem-solving",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            50,
+            90
+          ],
+          "format": "dialogue with opinions, connected speech, or simple deduction",
+          "questions": 2
+        },
+        "writing": {
+          "promptLanguage": "English adapted to level",
+          "response": "controlled short production; accept natural variants"
+        }
+      },
+      "forbidden": [
+        "pluperfect subjunctive",
+        "stylistic inversion",
+        "uncontextualized irony",
+        "highly local slang"
+      ]
+    },
+    {
+      "level": "B2",
+      "languageID": "en",
+      "canDoAnchor": "Can interact with fluency, defend a viewpoint, and understand the main ideas of complex texts and speech.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "passive voice",
+            "reported speech",
+            "third conditional",
+            "wish clauses",
+            "phrasal verbs",
+            "connectors"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            80,
+            140
+          ],
+          "register": "formal texts, narratives with inference, and argumentative extracts",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            50,
+            100
+          ],
+          "format": "presentation or interview with connected speech and inference",
+          "questions": 2
+        },
+        "writing": {
+          "promptLanguage": "English adapted to level",
+          "response": "controlled short production; accept natural variants"
+        }
+      },
+      "forbidden": [
+        "uncontextualized stylistic inversion",
+        "highly local colloquialisms",
+        "unsupported irony"
+      ]
+    },
+    {
+      "level": "C1",
+      "languageID": "en",
+      "canDoAnchor": "Can use English flexibly and effectively for social, academic, and professional purposes, including nuanced argument.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "inversion",
+            "cleft sentences",
+            "formal connectors",
+            "nuanced modality",
+            "collocations",
+            "ellipsis"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            100,
+            180
+          ],
+          "register": "sustained formal, literary, or argumentative texts with implicit meaning",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            60,
+            120
+          ],
+          "format": "speech, interview, or debate with nuanced inference",
+          "questions": 2
+        },
+        "writing": {
+          "promptLanguage": "English adapted to level",
+          "response": "controlled short production; accept natural variants"
+        }
+      },
+      "forbidden": [
+        "simple everyday-only material",
+        "unsupported irony",
+        "questions answerable only from specialist knowledge"
+      ]
     }
   ]
 }

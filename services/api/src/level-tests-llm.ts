@@ -1,13 +1,14 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { transaction, type Database } from './db.js';
 import type { PoolClient } from 'pg';
-import { EXAM_MODELS, LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
+import { LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
 import { chatCompletion, extractJson, resolveLlmConfig, LlmTransportError, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
 import { identifySnapshot, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { levelTestSettings } from './level-test-settings.js';
 export { levelTestSettings } from './level-test-settings.js';
 import { validateGeneratedPool, type GeneratedPool, type RawGeneratedItem } from './level-tests-validate.js';
+import { resolveExamBlueprint, type ExamModelEntry } from './level-test-blueprint.js';
 
 /** Weekly level-verification test generation (level-tests-llm): four
     independent section calls (recognition, reading, listening, writing),
@@ -28,15 +29,9 @@ const WEEKLY_THEMES = ['daily routines and habits', 'travel, transport and getti
   'shopping stories and returns', 'sport, weekends and free time'];
 const MAX_SECTION_RETRIES = 1;
 
-export interface ExamModelEntry { level: string; languageID: string; canDoAnchor: string;
-  poolTarget: { recognition: number; writing: number; readingPassages: number; listeningPassages: number };
-  examShape: Record<string, number>; sections: Record<string, unknown>; forbidden: string[] }
-
-export function examModelFor(level: string): ExamModelEntry | undefined {
-  const models = EXAM_MODELS as unknown as { levels: ExamModelEntry[] };
-  return models.levels.find(entry => entry.level === level &&
-    (entry.languageID === '*' || entry.languageID === 'en' || entry.languageID === 'es'));
-}
+export { type ExamModelEntry } from './level-test-blueprint.js';
+export const examModelFor = (level: string, languageID = 'en'): ExamModelEntry | undefined =>
+  resolveExamBlueprint(languageID, level);
 
 const DEFAULT_THRESHOLDS = { overall: 70, recognition: 60, reading: 50, listening: 50, writing: 50 };
 
@@ -273,7 +268,7 @@ export interface GenerationOutcome {
 export async function generateWeeklyLevelTest(deps: GenerateDeps, options: GenerateOptions): Promise<GenerationOutcome> {
   const { languageID, level } = options;
   const weekId = options.weekIndex ?? weekIndex(options.now ?? new Date());
-  const model = examModelFor(level);
+  const model = examModelFor(level, languageID);
   if (!model) return { status: 'failed', languageID, level, weekId, errors: ['no exam model'] };
 
   const existing = await currentWeekRow(deps.db, languageID, level, weekId);
@@ -331,7 +326,8 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   assignProvisionalIds(pool);
 
   const validate = () => validateGeneratedPool({ recognition: pool.recognition, writing: pool.writing,
-    reading: pool.readingPassages, listening: pool.listeningPassages }, model.examShape, languageID);
+    reading: pool.readingPassages, listening: pool.listeningPassages }, model.examShape, languageID,
+    languageID === 'en' ? model : undefined);
   const initial = validate();
   if (!initial.ok) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
     errors: initial.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
