@@ -147,7 +147,7 @@
 - [x] TypeScript check, JavaScript syntax checks, and `git diff --check` passed; no server contract changed in T7.
 - [x] Independent focused high-risk recheck passed all five original Important blockers on `60c5113..2057d25`; this was not a fresh whole-branch review.
 - [x] Record exact outcomes, intermediate failed attempts, screenshots, review boundary, and limitations in `openspec/changes/admin-panel-hardening/verify-report.md`. One non-blocking Minor focus-restoration item is deferred there.
-- [x] Commit: `docs(admin): record hardening verification` (T7 documentation closeout work unit).
+- [x] Commit: `docs(admin): record hardening verification` (`c2a161c`).
 
 ## Commit boundaries
 

@@ -45,6 +45,6 @@ The final browser screenshots and run artifacts are in the ignored workspace `.s
 ## Delivery record
 
 - T7 implementation commit: `2057d25` (`fix(admin): resolve hardening review blockers`).
-- T7 report/tracker changes are included in the documentation closeout commit for this work unit.
+- T7 report/tracker documentation closeout commit: `c2a161c` (`docs(admin): record hardening verification`).
 - No push, pull request, merge, or worktree was used.
 - Risk: item 4 (async state ordering and mutation/refresh lifecycle).
