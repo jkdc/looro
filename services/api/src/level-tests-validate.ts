@@ -220,7 +220,7 @@ function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean 
   const instruction = INSTRUCTION_MARKERS[targetLanguage];
   if (instruction) {
     const instructionHits = (text.match(instruction) ?? []).length;
-    return instructionHits === 0 ? hits >= 1 : hits >= instructionHits;
+    return targetLanguage === 'en' && instructionHits === 0 ? hits >= 1 : hits >= instructionHits;
   }
   return hits >= 1;
 }

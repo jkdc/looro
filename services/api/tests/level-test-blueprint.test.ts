@@ -31,6 +31,13 @@ test('English validation rejects Spanish items even when no English markers occu
   assert.ok(result.errors.some(error => error.code === 'language'));
 });
 
+test('non-English zero-marker validation retains its existing behavior', () => {
+  const spanishPool = { recognition: [{ kind:'choice', prompt:'Ella trabaja en casa.', options:['trabaja','comen','vivimos'], answers:['trabaja'], explain:'La frase dice que ella trabaja.' }] };
+  const result = validateGeneratedPool(spanishPool,
+    { recognition:1, writing:0, readingPassages:0, readingPerPassage:0, listeningPassages:0, listeningPerPassage:0 }, 'es');
+  assert.ok(!result.errors.some(error => error.code === 'language'));
+});
+
 test('duplicate passage rejection remains English-only', () => {
   const passage = { title:'Reading', text:'This is the same reading text.', items:[] };
   const result = validateGeneratedPool({ reading:[passage, passage] },
