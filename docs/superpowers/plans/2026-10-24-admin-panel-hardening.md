@@ -44,7 +44,7 @@
 - [x] Record evidence limits: this baseline is Chromium + disposable PostgreSQL/stub provider and does not certify manual assistive technology or Firefox/WebKit.
 - [x] Commit the report, synthetic audit annexes, design/spec/plan and this baseline as one documentation-only work unit.
 - [ ] For each behavior task, add its failing regression immediately before implementation and observe RED; do not land standalone test-only commits that leave the branch failing.
-- [ ] Commit: `docs(admin): establish panel hardening baseline`.
+- [x] Commit: `603f2d4` (`docs(admin): establish panel hardening baseline`).
 
 ### Task 1: Campaign snapshot and browse query contracts
 
@@ -55,10 +55,10 @@
 
 **Interfaces:** Consumes server browse catalog (`operators`, `orderable`, `defaultOrder`) and existing campaign prepare/apply responses; no endpoint contract change.
 
-- [ ] Test campaign prepare then edit each intent-affecting field and assert apply is unavailable until re-prepare; assert uncertain apply never produces a second prepare/apply request.
-- [ ] Test audit `action`, ledger `kind`, and non-orderable `is_guest` against the real catalog fixtures.
-- [ ] Implement snapshot identity/confirmation display and catalog-derived filter/sort controls; remove conflicting client-only ordering of paginated results.
-- [ ] Run focused browser and API browse tests.
+- [x] Test campaign prepare then edit each intent-affecting field and assert apply is unavailable until re-prepare; assert uncertain apply never produces a second prepare/apply request. After uncertainty, form controls lock while the same campaign can be explicitly retried.
+- [x] Test audit `action`, ledger `kind`, and non-orderable `is_guest` against the real catalog fixtures.
+- [x] Implement snapshot identity/impact display and catalog-derived filter/sort controls; disable unsupported sorting and use remote sort mode.
+- [x] Run focused browser E2E (63 checks passed) and `make test-api` (640/640).
 - [ ] Commit: `fix(admin): preserve campaign and browse intent`.
 
 ### Task 2: Validation, login and operator error states

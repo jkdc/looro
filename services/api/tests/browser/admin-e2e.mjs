@@ -735,6 +735,12 @@ try {
     if (!/\d+/.test(total)) throw new Error(`total=${total}`);
     if (await page.isVisible('#browse-grid [data-page]')) throw new Error('unexpected pager markup');
   });
+  await check('table browser does not sort non-orderable account columns', async () => {
+    const guestHeader = page.locator('#browse-grid .tabulator-col[tabulator-field="is_guest"]');
+    if (await guestHeader.count() !== 1) throw new Error('is_guest header missing');
+    if (await guestHeader.locator('.tabulator-col-sorter').count() !== 0)
+      throw new Error('non-orderable is_guest header renders a sorter');
+  });
   await shot('18-browse-accounts');
 
   await page.goto(`${PANEL}/#policy`, { waitUntil: 'domcontentloaded' });
@@ -790,15 +796,42 @@ try {
 
   await page.goto(`${PANEL}/#campaigns`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#camp-prepare', { timeout: 10_000 });
+  await check('editing any campaign intent invalidates the prepared snapshot', async () => {
+    if (!accountId) throw new Error('seeded account id unavailable');
+    const prepare = async () => {
+      await page.click('#camp-prepare');
+      await page.waitForSelector('#camp-apply:enabled', { timeout: 10_000 });
+    };
+    await page.fill('#camp-account', accountId);
+    await page.fill('#camp-minutes', '5');
+    await page.fill('#camp-cap', '5000');
+    await page.fill('#camp-reason', 'Snapshot check');
+    await prepare();
+    const edits = [
+      { edit: () => page.fill('#camp-account', `${accountId.slice(0, -1)}${accountId.endsWith('1') ? '2' : '1'}`), reset: () => page.fill('#camp-account', accountId) },
+      { edit: () => page.fill('#camp-minutes', '6'), reset: () => page.fill('#camp-minutes', '5') },
+      { edit: () => page.fill('#camp-cap', '5001'), reset: () => page.fill('#camp-cap', '5000') },
+      { edit: () => page.fill('#camp-reason', 'Changed snapshot reason'), reset: () => page.fill('#camp-reason', 'Snapshot check') },
+      { edit: () => page.click('#aud-all'), reset: () => page.click('#aud-one') }
+    ];
+    for (const { edit, reset } of edits) {
+      await edit();
+      if (await page.locator('#camp-apply').isEnabled())
+        throw new Error('prepared campaign remained applicable after intent changed');
+      await reset();
+      await prepare();
+    }
+  });
   await check('a minute campaign prepares and applies to one account', async () => {
     if (!accountId) throw new Error('seeded account id unavailable');
+    await page.click('#aud-one');
     await page.fill('#camp-account', accountId);
     await page.fill('#camp-minutes', '5');
     await page.fill('#camp-reason', 'Campaña de prueba E2E');
     await page.click('#camp-prepare');
     await page.waitForSelector('#camp-apply', { timeout: 10_000 });
     const prepared = (await page.textContent('#camp-result')) ?? '';
-    if (!prepared.includes('Preparada:') || !prepared.includes('5 min/usuario'))
+    if (!prepared.includes('Preparada:') || !prepared.includes('5 min/usuario') || !prepared.includes('5 min totales'))
       throw new Error(`prepare result=${prepared.slice(0, 120)}`);
     await page.click('#camp-apply');
     await page.waitForFunction(() => (document.querySelector('#camp-result')?.textContent ?? '').includes('Aplicada:'),
@@ -809,9 +842,88 @@ try {
   });
   await shot('21-campaign-applied');
 
+  let uncertainCampaignID = '';
+  await check('an uncertain campaign response retries the same persisted campaign only', async () => {
+    const prepareRequests = [];
+    const applyRequests = [];
+    page.on('request', request => {
+      if (request.url().endsWith('/v1/admin/campaigns') && request.method() === 'POST') prepareRequests.push(request.url());
+      if (request.url().includes('/v1/admin/campaigns/') && request.url().endsWith('/apply')) applyRequests.push(request.url());
+    });
+    await page.fill('#camp-minutes', '3');
+    await page.fill('#camp-reason', 'Retry same prepared campaign');
+    await page.click('#camp-prepare');
+    await page.waitForSelector('#camp-apply:enabled', { timeout: 10_000 });
+    const preparedText = (await page.textContent('#camp-result')) ?? '';
+    uncertainCampaignID = preparedText.match(/Campaña\s+([0-9a-f-]{36})/)?.[1] ?? '';
+    if (!uncertainCampaignID) throw new Error('prepared campaign identity is not visible');
+    let hideFirstResponse = true;
+    await page.route('**/v1/admin/campaigns/*/apply', async route => {
+      if (!hideFirstResponse) return route.continue();
+      hideFirstResponse = false;
+      const response = await route.fetch();
+      await route.fulfill({ response, status: 504, body: JSON.stringify({ error: 'response_lost' }) });
+    });
+    await page.click('#camp-apply');
+    await page.waitForSelector('#camp-apply:enabled', { timeout: 10_000 });
+    const uncertainText = (await page.textContent('#camp-result')) ?? '';
+    if (!uncertainText.includes(uncertainCampaignID) || !(await page.isEnabled('#camp-apply')))
+      throw new Error('uncertain outcome did not retain the same campaign for explicit retry');
+    if (await page.isEnabled('#camp-prepare')) throw new Error('a second campaign can be prepared while the first outcome is uncertain');
+    for (const selector of ['#aud-one', '#aud-all', '#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason'])
+      if (await page.isEnabled(selector)) throw new Error(`intent field ${selector} is editable while outcome is uncertain`);
+    await page.click('#camp-apply');
+    await page.waitForFunction(() => (document.querySelector('#camp-result')?.textContent ?? '').includes('Aplicada:'),
+      undefined, { timeout: 15_000 });
+    await page.unroute('**/v1/admin/campaigns/*/apply');
+    const expectedURL = `${PANEL}/v1/admin/campaigns/${uncertainCampaignID}/apply`;
+    if (prepareRequests.length !== 1) throw new Error(`prepared ${prepareRequests.length} campaigns after uncertainty`);
+    if (applyRequests.length !== 2 || applyRequests.some(url => url !== expectedURL))
+      throw new Error(`retry used ${JSON.stringify(applyRequests)} instead of the original campaign only`);
+    if (!(await page.isEnabled('#camp-prepare'))) throw new Error('campaign form did not unlock after confirmed completion');
+  });
+
+  await page.goto(`${PANEL}/#browse`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#browse-table', { timeout: 10_000 });
+  await page.selectOption('#browse-table', 'minute_entries');
+  await page.waitForSelector('#browse-grid .tabulator-col[tabulator-field="kind"] .browse-filter-operator', { timeout: 10_000 });
+  await check('ledger kind exposes only catalog operators and filters through the server', async () => {
+    const operator = page.locator('#browse-grid .tabulator-col[tabulator-field="kind"] .browse-filter-operator');
+    const values = await operator.locator('option').evaluateAll(nodes => nodes.map(node => node.value));
+    if (values.join(',') !== 'eq,in') throw new Error(`kind operators=${values.join(',')}`);
+    await page.locator('#browse-grid .tabulator-col[tabulator-field="kind"] .browse-filter-value').fill('gift');
+    await page.waitForFunction(() => {
+      const rows = [...document.querySelectorAll('#browse-grid .tabulator-row')];
+      return rows.length > 0 && rows.every(row => row.querySelector('[tabulator-field="kind"]')?.textContent.trim() === 'gift');
+    }, undefined, { timeout: 10_000 });
+  });
+  await check('retrying the same campaign creates one minute-ledger grant', async () => {
+    const body = await page.evaluate(async id => {
+      const query = new URLSearchParams({ q_reference: `contains:gift:${id}:` });
+      const response = await fetch(`/v1/admin/browse/minute_entries?${query}`, { credentials: 'same-origin' });
+      if (!response.ok) throw new Error(`ledger query failed with HTTP ${response.status}`);
+      return response.json();
+    }, uncertainCampaignID);
+    if (body.total !== 1 || body.rows.length !== 1 || !body.rows[0].reference.includes(`gift:${uncertainCampaignID}:`))
+      throw new Error(`same campaign produced ${body.total} minute-ledger rows`);
+  });
+
   await page.goto(`${PANEL}/#audit`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => (document.querySelector('#browse-grid')?.textContent ?? '').includes('policy.update'),
     undefined, { timeout: 15_000 });
+  await check('audit action exposes eq instead of unsupported contains', async () => {
+    const operator = page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-operator');
+    const values = await operator.locator('option').evaluateAll(nodes => nodes.map(node => node.value));
+    if (values.join(',') !== 'eq') throw new Error(`action operators=${values.join(',')}`);
+    await page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-value').fill('campaign.apply');
+    await page.waitForFunction(() => {
+      const rows = [...document.querySelectorAll('#browse-grid .tabulator-row')];
+      return rows.length > 0 && rows.every(row => (row.textContent ?? '').includes('campaign.apply'));
+    }, undefined, { timeout: 10_000 });
+    await page.locator('#browse-grid .tabulator-col[tabulator-field="action"] .browse-filter-value').fill('');
+    await page.waitForFunction(() => [...document.querySelectorAll('#browse-grid .tabulator-row')]
+      .some(row => (row.textContent ?? '').includes('policy.update')), undefined, { timeout: 10_000 });
+  });
   await check('the audit table records every mutation with its motive', async () => {
     const audit = (await page.textContent('#browse-grid')) ?? '';
     for (const action of ['policy.update', 'plans.update', 'campaign.prepare', 'campaign.apply'])

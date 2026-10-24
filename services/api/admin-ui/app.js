@@ -261,21 +261,38 @@ async function renderBrowse(container, fixedTable) {
     const schema = catalog.tables[name];
     state.page = 1; state.sort = schema.defaultOrder.column; state.dir = schema.defaultOrder.direction; state.filters = [];
     const columns = Object.entries(schema.columns).map(([field, spec]) => {
+      const orderable = schema.orderable.includes(field);
       const base = { title: field.replaceAll('_', ' '), field,
-        sorter: spec.type === 'jsonb' ? undefined : 'local',
+        headerSort: orderable,
+        sorter: orderable ? (spec.type === 'text' ? 'string' : 'number') : false,
         formatter: columnFormatter(field, spec),
         width: spec.type === 'timestamptz' ? 140 : spec.type === 'uuid' ? 110 : undefined };
-      if (spec.type === 'boolean') Object.assign(base, { headerFilter: 'select', headerFilterFunc: '=',
-        headerFilterParams: { values: { '': 'todos', true: 'sí', false: 'no' } } });
-      else if (spec.type === 'text') Object.assign(base, { headerFilter: 'input', headerFilterFunc: 'like' });
-      else if (spec.type === 'timestamptz') Object.assign(base, { headerFilter: 'input', headerFilterFunc: '>=',
-        headerFilterPlaceholder: '≥ AAAA-MM-DD' });
-      else if (spec.type !== 'jsonb') Object.assign(base, { headerFilter: 'input', headerFilterFunc: '=' });
+      if (spec.operators.length) Object.assign(base, {
+        headerFilter: (cell, onRendered, success, cancel, params) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'd-flex gap-1';
+          const operator = document.createElement('select');
+          operator.className = 'form-select form-select-sm browse-filter-operator';
+          operator.setAttribute('aria-label', `Operador ${field}`);
+          operator.innerHTML = params.operators.map(value => `<option value="${value}">${value}</option>`).join('');
+          const value = document.createElement('input');
+          value.className = 'form-control form-control-sm browse-filter-value';
+          value.setAttribute('aria-label', `Filtro ${field}`);
+          value.placeholder = spec.type === 'timestamptz' ? 'AAAA-MM-DD' : 'Filtrar';
+          const update = () => success({ operator: operator.value, value: value.value });
+          operator.addEventListener('change', update);
+          value.addEventListener('input', update);
+          wrapper.append(operator, value);
+          return wrapper;
+        },
+        headerFilterFunc: () => true,
+        headerFilterParams: { operators: spec.operators }
+      });
       return base;
     });
     table?.destroy();
     table = new Tabulator('#browse-grid', {
-      columns, layout: 'fitDataFill', placeholder: `<div class="empty p-3"><div class="empty-icon"><i class="ti ti-database-off"></i></div>
+      columns, layout: 'fitDataFill', sortMode: 'remote', placeholder: `<div class="empty p-3"><div class="empty-icon"><i class="ti ti-database-off"></i></div>
         <p class="empty-title">Sin filas</p><p class="empty-subtitle text-secondary">Ajusta los filtros o cambia de tabla.</p></div>`,
       rowContextMenu: contextMenu(name)
     });
@@ -300,8 +317,10 @@ async function renderBrowse(container, fixedTable) {
       sort: state.sort, dir: state.dir });
     for (const entry of state.filters) {
       const spec = catalog.tables[name].columns[entry.field];
-      const operator = spec.type === 'text' ? 'contains' : spec.type === 'timestamptz' ? 'gte' : 'eq';
-      query.set(`q_${entry.field}`, `${operator}:${String(entry.value)}`);
+      const filter = entry.value ?? {};
+      const operator = filter.operator;
+      if (!spec.operators.includes(operator)) continue;
+      query.set(`q_${entry.field}`, `${operator}:${String(filter.value ?? '')}`);
     }
     try {
       const body = await api(`/v1/admin/browse/${name}?${query}`);
@@ -1144,25 +1163,57 @@ async function renderCampaigns(container) {
     <button class="btn btn-primary" id="camp-prepare"><i class="ti ti-checklist me-1"></i>Preparar</button>
     <div id="camp-result" class="mt-3"></div>
   </div></div></div></div>`;
-  for (const radio of ['#aud-one', '#aud-all']) $(radio).onchange = () => { $('#aud-account-wrap').style.display = $('#aud-one').checked ? '' : 'none'; };
+  let preparedCampaign = null;
+  const intentControls = ['#aud-one', '#aud-all', '#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason'];
+  const lockIntent = locked => {
+    for (const selector of intentControls) $(selector).disabled = locked;
+    $('#camp-prepare').disabled = locked;
+  };
+  const invalidatePrepared = () => {
+    if (!preparedCampaign) return;
+    preparedCampaign = null;
+    const apply = $('#camp-apply');
+    if (apply) apply.disabled = true;
+    $('#camp-result').insertAdjacentHTML('beforeend', '<div class="alert alert-warning mt-2" role="status">La campaña preparada ya no coincide con los datos actuales. Vuelve a prepararla.</div>');
+  };
+  for (const selector of ['#aud-one', '#aud-all']) $(selector).onchange = () => {
+    $('#aud-account-wrap').style.display = $('#aud-one').checked ? '' : 'none';
+    invalidatePrepared();
+  };
+  for (const selector of ['#camp-account', '#camp-minutes', '#camp-cap', '#camp-reason']) {
+    $(selector).addEventListener('input', invalidatePrepared);
+    $(selector).addEventListener('change', invalidatePrepared);
+  }
   $('#camp-prepare').onclick = async () => {
     try {
-      const summary = await api('/v1/admin/campaigns', { method: 'POST', body: JSON.stringify({
-        audience: $('#aud-one').checked ? [$('#camp-account').value.trim()] : 'all-current-users',
+      const intent = { audience: $('#aud-one').checked ? [$('#camp-account').value.trim()] : 'all-current-users',
         minutesPerUser: Number($('#camp-minutes').value), maxTotalMinutes: Number($('#camp-cap').value),
-        reason: $('#camp-reason').value }) });
+        reason: $('#camp-reason').value };
+      const summary = await api('/v1/admin/campaigns', { method: 'POST', body: JSON.stringify({
+        ...intent }) });
+      preparedCampaign = { ...intent, campaignID: summary.campaignID, confirmation: summary.confirmation };
       $('#camp-result').innerHTML = `<div class="alert alert-info d-flex align-items-center gap-2">
         <i class="ti ti-info-circle"></i><span>Preparada: <strong>${summary.recipients}</strong> destinatarios,
-        ${summary.minutesPerUser} min/usuario. Confirmación <code class="small">${summary.confirmation}</code></span></div>
+        ${summary.minutesPerUser} min/usuario (${number(summary.recipients * summary.minutesPerUser)} min totales).
+        Campaña <code>${summary.campaignID}</code> · confirmación <code class="small">${summary.confirmation}</code></span></div>
         <button class="btn btn-warning" id="camp-apply"><i class="ti ti-alert-triangle me-1"></i>Aplicar (irreversible)</button>`;
       $('#camp-apply').onclick = async () => {
+        if (!preparedCampaign || preparedCampaign.campaignID !== summary.campaignID) return;
+        const apply = $('#camp-apply');
+        apply.disabled = true;
+        lockIntent(true);
         try {
           const outcome = await api(`/v1/admin/campaigns/${summary.campaignID}/apply`, { method: 'POST',
-            body: JSON.stringify({ confirmation: summary.confirmation, reason: $('#camp-reason').value }) });
+            body: JSON.stringify({ confirmation: summary.confirmation, reason: preparedCampaign.reason }) });
+          preparedCampaign = null;
+          lockIntent(false);
           $('#camp-result').innerHTML += `<div class="alert alert-success d-flex align-items-center gap-2">
             <i class="ti ti-circle-check"></i><span>Aplicada: concedidos <strong>${outcome.granted}</strong>,
             omitidos ${outcome.skipped}.</span></div>`;
-        } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
+        } catch (error) {
+          apply.disabled = false;
+          toast(`No se pudo confirmar el resultado de la campaña ${summary.campaignID}. Puedes reintentar la misma campaña; no prepares otra.`, 'danger');
+        }
       };
     } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
   };
