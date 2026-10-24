@@ -41,7 +41,7 @@ const transport = (content = pool(), judge: (items: { id: string }[]) => unknown
     const body = messages[0]!.content.includes('quality reviewer') || messages[0]!.content.includes('strict exam reviewer')
       ? (() => { const result = judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items) as { items: { id: string; verdict: string; reasonCode?: string; evidence?: string }[] };
         return { items: result.items.map(entry => ({ ...entry, reasonCode: entry.reasonCode ?? 'answer_key',
-          evidence: entry.evidence ?? 'The marked answer matches the supplied sentence.' })) }; })()
+          evidence: Object.hasOwn(entry, 'evidence') ? entry.evidence : 'The marked answer matches the supplied sentence.' })) }; })()
       : content[user.includes('vocabulary and grammar') ? 'recognition' : user.includes('reading passages')
         ? 'reading' : user.includes('listening passages') ? 'listening' : 'writing'];
     return { content: JSON.stringify(body), tokensIn: 1, tokensOut: 1 };
@@ -192,10 +192,12 @@ for (const failure of ['transport', 'incomplete', 'duplicate', 'unknown']) test(
   }));
   assert.equal(outcome.status, 'failed'); assert.equal(state.weeks.length, 0);
 });
-for (const field of ['reasonCode', 'evidence']) test(`strict judge rejects invalid ${field}`, async () => {
+for (const field of ['reasonCode', 'evidence', 'missingEvidence', 'oversizedEvidence']) test(`strict judge rejects invalid ${field}`, async () => {
   const { db, state } = database();
   const outcome = await generate(db, ENV, transport(pool(), items => ({ items: items.map((item, index) => ({
-    id: item.id, verdict: 'ok', ...(index === 0 ? field === 'reasonCode' ? { reasonCode: 'freeform' } : { evidence: '        ' } : {}),
+    id: item.id, verdict: 'ok', ...(index === 0 ? field === 'reasonCode' ? { reasonCode: 'freeform' }
+      : field === 'missingEvidence' ? { evidence: undefined }
+        : field === 'oversizedEvidence' ? { evidence: 'x'.repeat(241) } : { evidence: '        ' } : {}),
   })) })));
   assert.equal(outcome.status, 'failed'); assert.equal(state.weeks.length, 0);
 });
