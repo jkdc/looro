@@ -134,7 +134,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     }
     const explain = typeof item.explain === 'string' ? item.explain.trim() : '';
     if (explain.length < 8) return fail(where, 'explain', 'missing or too short');
-    if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage))
+    if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage, prompt))
       return fail(where, 'language', 'the item does not look like the target language');
     seenPrompts.add(fingerprint);
     if (item.id) seenIds.add(item.id);
@@ -266,19 +266,27 @@ const INSTRUCTION_MARKERS: Record<string, RegExp> = {
   zh: /[\u4e00-\u9fff]/g,
 };
 const ENGLISH_LEXICAL_MARKERS = /\b(choose|select|complete|match|synonym|opposite|meaning|word|sentence|missing)\b/i;
+const ENGLISH_GRAMMATICAL_MARKERS = new Set([
+  'for', 'from', 'with', 'you', 'your', 'yours', 'our', 'their', 'theirs',
+  'she', 'they', 'been', 'being',
+]);
 const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}\s]/u;
 
-function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean {
+function looksLikeTargetLanguage(text: string, targetLanguage: string, prompt: string): boolean {
   const target = TARGET_MARKERS[targetLanguage];
   if (!target) return true;
   if (targetLanguage === 'zh') return target.test(text);
   const hits = (text.match(target) ?? []).length;
   if (targetLanguage === 'en' && hits === 0) {
-    // Lexical prompts can lack English function words. Accept explicit English
-    // task vocabulary; do not infer English from the absence of foreign markers.
+    // Short prompts can lack the legacy stopwords. Require positive task or
+    // grammatical evidence, never just the absence of foreign markers.
     if (NON_LATIN_LETTER.test(text)) return false;
     if (ENGLISH_LEXICAL_MARKERS.test(text)) return true;
-    return false;
+    // A short accepted answer alone cannot establish the prompt's language.
+    // Whole Unicode tokens prevent "forêt" from matching "for". Only uppercase
+    // "I" is English evidence; lowercase "i" is a conjunction in other languages.
+    const words = prompt.match(/\p{L}[\p{L}\p{M}]*/gu) ?? [];
+    return words.some(word => word === 'I' || ENGLISH_GRAMMATICAL_MARKERS.has(word.toLowerCase()));
   }
   if (hits >= 2) return true;
   const instruction = INSTRUCTION_MARKERS[targetLanguage];

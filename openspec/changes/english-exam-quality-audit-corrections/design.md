@@ -4,7 +4,9 @@
 
 The English blueprint remains the single source of exam candidate and served-form quotas. Validate candidate structure before judge and validate the composed form after judge filtering. Generation and manual approval call the same final-form validator for recognition kind ratios, unique item sets, and distinct reading/listening stimuli across variants. These constraints do not affect non-English generation or publication.
 
-English lexical fallback accepts explicit English task vocabulary and rejects non-Latin writing-system content rather than treating absence of foreign markers as proof of English. Material prompt/judge contract changes increment English-only persisted versions; existing non-English version identities remain unchanged.
+English fallback accepts explicit English task vocabulary or grammatical evidence in the prompt (selected pronouns, possessives, auxiliaries, prepositions), after rejecting non-Latin writing-system content. Grammatical markers use complete Unicode letter/mark tokens so `forêt` does not match `for`; standalone `I` is case-sensitive so foreign lowercase `i` is not accepted. Shared words such as `am`, `he`, `my`, `mine`, `ours`, and `we` are not sufficient evidence. Accepted answers alone cannot supply the new grammatical evidence. This avoids depending on particular instruction verbs without treating absence of foreign markers as proof of English. The existing lexical markers, legacy stopword counts, and non-English behavior stay unchanged.
+
+The deterministic check is deliberately heuristic: arbitrary fragments with no recognized evidence still fail closed. It is not a universal language classifier. Deferring ambiguous items to the existing judge was rejected for this bounded correction because the judge is optional (`verifyMode=off`), and therefore is not a mandatory language gate. No new dependency or provider call is introduced. Material prompt/judge contract changes increment English-only persisted versions; these grammatical-evidence changes do not modify those contracts or non-English version identities.
 
 ## Snapshot contract
 

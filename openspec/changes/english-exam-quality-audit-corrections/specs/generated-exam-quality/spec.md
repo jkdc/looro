@@ -20,7 +20,9 @@ Every English judge result MUST contain a recognized closed reason code and non-
 
 ### Requirement: English lexical validation requires positive English evidence
 
-English lexical prompts without English function-word markers MUST be accepted when they contain explicit English task vocabulary, including when their formatting uses line breaks or tabs. They MUST be rejected when they contain neither that vocabulary nor other positive English markers; absence of foreign-language markers MUST NOT count as evidence that the content is English. This fallback MUST remain English-only.
+English prompts without the legacy English stopword markers MUST be accepted when they contain explicit English task vocabulary or positive grammatical evidence in the prompt, including when their formatting uses line breaks or tabs. Grammatical evidence MUST NOT require a particular task verb: `Pick an antonym for happy.` / `sad`, `Find an antonym for happy.` / `sad`, `Fill in: I ___ happy.` / `am`, and `I ___ coffee every morning.` / `drink` MUST be retained. New grammatical markers MUST match complete Unicode letter/mark tokens; lowercase foreign `i` and accented `forêt` MUST NOT establish English evidence. Shared foreign words such as German `am`, Spanish `he`, and Polish `my` MUST NOT be sufficient grammatical evidence, nor may an isolated accepted answer such as Norwegian `for` establish the prompt's language. Content lacking both lexical and grammatical evidence MUST fail closed; absence of foreign-language markers MUST NOT count as English evidence. This fallback MUST remain English-only.
+
+This is a bounded deterministic language heuristic, not a guarantee of acceptance or identification of arbitrary English fragments. Semantic correctness and level fit remain subject to the configured judge and human review.
 
 ### Requirement: Generated exams retain blueprint provenance
 

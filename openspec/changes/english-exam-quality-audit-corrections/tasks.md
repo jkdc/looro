@@ -12,6 +12,8 @@
 - [x] Require positive English lexical evidence, accept ordinary line-break/tab whitespace, and reject unsupported foreign Latin content when English evidence is absent.
 - [x] Version the changed English prompt and judge contracts without changing non-English version identities.
 - [x] Reject English-looking French cognates and independently test reading-only/listening-only stimulus duplication while preserving distinct item sets.
+- [x] Retain valid alternative English instructions and fill-in sentences through Unicode-token grammatical evidence; keep lowercase foreign `i`, accented/decomposed `forêt`, mixed non-Latin text, and existing foreign-language controls rejected.
+- [x] Verify the grammatical-evidence correction: 87 focused tests, 708/708 full isolated API tests with zero skips, API type-check, 138 Python tests and repository contract/export checks. Independent review's collision finding was corrected and the bounded recheck closed it.
 
 Work-unit commits: `6dcc86f`, `7635969`.
 

@@ -41,6 +41,64 @@ test('English validation accepts short lexical prompts without auxiliary markers
   assert.ok(!result.errors.some(error => error.code === 'language'));
 });
 
+for (const { section, kind, prompt, answer, options } of [
+  { section: 'recognition', kind: 'choice', prompt: 'Pick an antonym for happy.', answer: 'sad', options: ['sad', 'glad', 'joyful', 'cheerful'] },
+  { section: 'recognition', kind: 'choice', prompt: 'Find an antonym for happy.', answer: 'sad', options: ['sad', 'glad', 'joyful', 'cheerful'] },
+  { section: 'writing', kind: 'gap', prompt: 'Fill in: I ___ happy.', answer: 'am' },
+  { section: 'recognition', kind: 'gap', prompt: 'I ___ coffee every morning.', answer: 'drink' },
+  { section: 'writing', kind: 'gap', prompt: 'Your passport ___, please?', answer: 'number' },
+  { section: 'recognition', kind: 'choice', prompt: 'Pick an antonym FOR happy.', answer: 'sad', options: ['sad', 'glad', 'joyful', 'cheerful'] }
+]) {
+  test(`English validation retains grammatical task content: ${prompt}`, () => {
+    const blueprint = resolveExamBlueprint('en', 'A1')!;
+    const result = validateGeneratedPool({ [section]: [{
+      kind, prompt, options, answers: [answer], explain: 'The accepted answer completes the task.'
+    }] }, blueprint.examShape, 'en', blueprint);
+
+    assert.deepEqual(result.errors.filter(error => error.code === 'language'), []);
+    const items = section === 'writing' ? result.pool.writing : result.pool.recognition;
+    assert.equal(items.length, 1);
+    assert.equal(items[0]?.prompt, prompt);
+    assert.deepEqual(items[0]?.answers, [answer]);
+  });
+}
+
+for (const prompt of [
+  'Forêt dense et calme.',
+  'Fore\u0302t dense et calme.',
+  'Wybierz i dopasuj przymiotnik.',
+  'Iñigo busca alegría.',
+  'I выбираю синоним слова радостный.'
+]) {
+  test(`English grammatical evidence does not misclassify foreign text: ${prompt}`, () => {
+    const blueprint = resolveExamBlueprint('en', 'A1')!;
+    const result = validateGeneratedPool({ recognition: [{
+      kind: 'choice', prompt, options: ['heureux', 'triste', 'fâché', 'fatigué'], answers: ['heureux'],
+      explain: 'This explanation must not establish the language of the task.'
+    }] }, blueprint.examShape, 'en', blueprint);
+
+    assert.ok(result.errors.some(error => error.section === 'recognition[0]' && error.code === 'language'));
+    assert.deepEqual(result.pool.recognition, []);
+  });
+}
+
+for (const [prompt, answer] of [
+  ['Ich warte am ___.', 'Bahnhof'],
+  ['He comprado ___.', 'pan'],
+  ['My wybieramy synonim.', 'radosny'],
+  ['Vi venter ___ deg.', 'for']
+]) {
+  test(`English grammatical evidence rejects foreign word collisions: ${prompt}`, () => {
+    const blueprint = resolveExamBlueprint('en', 'A1')!;
+    const result = validateGeneratedPool({ recognition: [{
+      kind: 'gap', prompt, answers: [answer], explain: 'This task must remain rejected as foreign content.'
+    }] }, blueprint.examShape, 'en', blueprint);
+
+    assert.ok(result.errors.some(error => error.section === 'recognition[0]' && error.code === 'language'));
+    assert.deepEqual(result.pool.recognition, []);
+  });
+}
+
 test('English lexical validation accepts line breaks and tabs as prompt whitespace', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
   for (const prompt of ['Choose a synonym for:\nhappy.', 'Choose a synonym for:\thappy.']) {
