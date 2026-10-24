@@ -41,6 +41,32 @@ test('English validation accepts short lexical prompts without auxiliary markers
   assert.ok(!result.errors.some(error => error.code === 'language'));
 });
 
+test('English lexical validation accepts line breaks and tabs as prompt whitespace', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  for (const prompt of ['Choose a synonym for:\nhappy.', 'Choose a synonym for:\thappy.']) {
+    const result = validateGeneratedPool({ recognition: [{
+      kind: 'choice', prompt, options: ['glad', 'sad', 'angry', 'tired'], answers: ['glad'],
+      explain: 'Happy and glad mean the same.'
+    }] }, blueprint.examShape, 'en', blueprint);
+
+    assert.ok(!result.errors.some(error => error.code === 'language'), `Expected whitespace in ${JSON.stringify(prompt)} to be accepted`);
+  }
+});
+
+test('English lexical validation rejects foreign Latin text without positive English evidence', () => {
+  const blueprint = resolveExamBlueprint('en', 'A1')!;
+  for (const item of [
+    { prompt: 'Selecciona un sinónimo: feliz.', answers: ['alegre'], explain: 'Feliz significa alegre.' },
+    { prompt: 'Wybierz synonim słowa szczęśliwy.', answers: ['radosny'], explain: 'Szczęśliwy znaczy radosny.' }
+  ]) {
+    const result = validateGeneratedPool({ recognition: [{
+      kind: 'choice', ...item, options: [item.answers[0], 'sad', 'angry', 'tired']
+    }] }, blueprint.examShape, 'en', blueprint);
+
+    assert.ok(result.errors.some(error => error.code === 'language'), `Expected foreign Latin text ${JSON.stringify(item.prompt)} to be rejected`);
+  }
+});
+
 test('English validation accepts lexical prompts with a foreign-language article but clear English task evidence', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
   const result = validateGeneratedPool({ recognition: [{

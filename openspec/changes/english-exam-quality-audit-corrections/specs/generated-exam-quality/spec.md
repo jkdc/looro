@@ -18,6 +18,10 @@ The system MUST reject a generated snapshot before persistence when its serializ
 
 Every English judge result MUST contain a recognized closed reason code and non-whitespace evidence of 8–240 characters. Invalid, missing, or unbounded evidence MUST fail closed. Evidence MUST be observable and concise, not hidden chain-of-thought.
 
+### Requirement: English lexical validation requires positive English evidence
+
+English lexical prompts without English function-word markers MUST be accepted when they contain explicit English task vocabulary, including when their formatting uses line breaks or tabs. They MUST be rejected when they contain neither that vocabulary nor other positive English markers; absence of foreign-language markers MUST NOT count as evidence that the content is English. This fallback MUST remain English-only.
+
 ### Requirement: Generated exams retain blueprint provenance
 
 Every newly generated week MUST persist blueprint version and SHA-256 hash together. Existing rows MAY retain both fields as NULL; partially populated provenance MUST be rejected.

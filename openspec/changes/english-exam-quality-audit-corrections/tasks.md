@@ -9,7 +9,7 @@
 ## Final review corrections
 
 - [x] Share final English served-form validation between generation and manual approval.
-- [x] Require positive English lexical evidence or reject clear non-English scripts in the English fallback.
+- [x] Require positive English lexical evidence, accept ordinary line-break/tab whitespace, and reject unsupported foreign Latin content when English evidence is absent.
 - [x] Version the changed English prompt and judge contracts without changing non-English version identities.
 - [x] Reject English-looking French cognates and independently test reading-only/listening-only stimulus duplication while preserving distinct item sets.
 

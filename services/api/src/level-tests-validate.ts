@@ -266,7 +266,7 @@ const INSTRUCTION_MARKERS: Record<string, RegExp> = {
   zh: /[\u4e00-\u9fff]/g,
 };
 const ENGLISH_LEXICAL_MARKERS = /\b(choose|select|complete|match|synonym|opposite|meaning|word|sentence|missing)\b/i;
-const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}]/u;
+const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}\s]/u;
 
 function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean {
   const target = TARGET_MARKERS[targetLanguage];
@@ -278,10 +278,7 @@ function looksLikeTargetLanguage(text: string, targetLanguage: string): boolean 
     // task vocabulary; do not infer English from the absence of foreign markers.
     if (NON_LATIN_LETTER.test(text)) return false;
     if (ENGLISH_LEXICAL_MARKERS.test(text)) return true;
-    const nonEnglishHits = Object.entries(TARGET_MARKERS)
-      .filter(([language]) => language !== 'en' && language !== 'nb')
-      .reduce((total, [, marker]) => total + (text.match(marker) ?? []).length, 0);
-    return nonEnglishHits < 2;
+    return false;
   }
   if (hits >= 2) return true;
   const instruction = INSTRUCTION_MARKERS[targetLanguage];
