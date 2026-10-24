@@ -47,6 +47,11 @@ const fewShotFor = (languageID: string, level: string, section: string): LevelTe
   return pool.filter(item => item.section === section).slice(0, 2);
 };
 
+export function generationExamples(languageID: string, level: string, section: string): LevelTestContentItem[] {
+  // The bundled English learning pool is not an exam-reviewed reference corpus.
+  return languageID === 'en' ? [] : fewShotFor(languageID, level, section);
+}
+
 const weeklyTheme = (weekId: number): string => WEEKLY_THEMES[weekId % WEEKLY_THEMES.length] ?? 'general';
 
 // ---- section definitions ----
@@ -100,11 +105,14 @@ const SKILLS_BY_LEVEL: Record<string, Record<SectionName, string>> = {
   },
 };
 
-function sectionPrompt(section: SectionName, languageID: string, level: string,
+export function buildSectionMessages(section: SectionName, languageID: string, level: string,
                        count: number, perPassage: number, weekId: number,
-                       fewShot: LevelTestContentItem[]): { role: 'system' | 'user'; content: string }[] {
+                       fewShot: LevelTestContentItem[], model: ExamModelEntry): { role: 'system' | 'user'; content: string }[] {
+  if (languageID !== 'en') return legacySectionMessages(section, languageID, level, count, perPassage, weekId, fewShot);
   const langName = LANGUAGE_NAMES[languageID] ?? languageID;
-  const skills = SKILLS_BY_LEVEL[level]?.[section] ?? 'general language competence';
+  const englishBlueprint = model;
+  const sectionBlueprint = englishBlueprint?.sections[section];
+  const skills = sectionBlueprint?.skills?.join(', ') ?? SKILLS_BY_LEVEL[level]?.[section] ?? 'general language competence';
   const theme = weeklyTheme(weekId);
   const fewShotJson = fewShot.length ? `Example items (style anchor — do NOT copy): ${JSON.stringify(fewShot)}` : '';
 
@@ -113,33 +121,54 @@ function sectionPrompt(section: SectionName, languageID: string, level: string,
     'Return ONLY a valid JSON array — no prose, no code fences, no markdown.',
     'Every item must have exactly one indisputably correct answer and plausible-but-clearly-wrong distractors.',
     'Every `explain` teaches the rule in one short sentence in the target language.',
+    ...(englishBlueprint ? [
+      `Assessment anchor: ${englishBlueprint.canDoAnchor}`,
+      `Do not use these out-of-level or unsuitable targets: ${englishBlueprint.forbidden.join('; ')}.`,
+      'Do not simulate higher proficiency with rare vocabulary alone; match the task demand and context to the stated level.',
+      'Do not require specialist or unstated cultural knowledge to answer.',
+    ] : []),
     'Nothing offensive, political, or branded.',
   ].join(' ');
 
   let user: string;
   if (section === 'recognition') {
+    const options = sectionBlueprint?.options ?? 4;
+    const mix = sectionBlueprint?.mix;
+    const mixInstruction = mix ? `Use this approximate choice/gap-fill pool mix: ${Object.entries(mix).map(([kind, target]) => `${target} ${kind}`).join(', ')}.` :
+      'Use a balanced mixture of choice and gap-fill items.';
     user = [
       `Write ${count} vocabulary and grammar items at CEFR ${level} level in ${langName}.`,
-      `Skills to test: ${skills}.`,
-      `Item types: mix of choice (with ${4} options, exactly 1 correct) and gap-fill.`,
+      `Task family: ${sectionBlueprint?.taskFamily ?? 'vocabulary and grammar in context'}. Skills to test: ${skills}.`,
+      `${mixInstruction} Choice items use ${options} options with exactly 1 correct answer.`,
       `Weekly theme for context: ${theme}.`,
       fewShotJson,
       `Reply as JSON array: [{"kind":"choice"|"gap","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]`,
     ].join('\n');
   } else if (section === 'reading') {
+    const [minWords, maxWords] = sectionBlueprint?.words ?? [60, 120];
+    const register = sectionBlueprint?.register ?? 'level-appropriate';
+    const questionCount = sectionBlueprint?.questions ?? perPassage;
+    const focus = level === 'A1' || level === 'A2' ? 'gist and clear details' :
+      level === 'B1' ? 'gist, details, and simple inference' : 'detail, inference, intention, and viewpoint';
     user = [
-      `Write ${count} reading passages (60-120 words each) in ${langName} at CEFR ${level} level.`,
+      `Write ${count} distinct reading passages (${minWords}-${maxWords} words each) in ${langName} at CEFR ${level} level.`,
+      `Register and task family: ${register}; ${sectionBlueprint?.taskFamily ?? 'comprehension of connected text'}. Assess ${focus}; avoid repeating the same question target within or across passages.`,
       `Content focus: ${skills}. Weekly theme: ${theme}.`,
-      `Each passage has exactly ${perPassage} comprehension questions (choice with 4 options).`,
+      `Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the passage.`,
       fewShotJson,
       `Reply as JSON array: [{"title":"...","text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
     ].join('\n');
   } else if (section === 'listening') {
+    const [minWords, maxWords] = sectionBlueprint?.words ?? [40, 90];
+    const format = sectionBlueprint?.format ?? 'natural spoken language';
+    const questionCount = sectionBlueprint?.questions ?? perPassage;
+    const focus = level === 'A1' || level === 'A2' ? 'gist and clear details' :
+      level === 'B1' ? 'gist, details, and simple inference' : 'detail, inference, intention, and viewpoint';
     user = [
-      `Write ${count} listening passages (40-90 words each) in ${langName} at CEFR ${level} level.`,
-      `Content focus: ${skills}. Weekly theme: ${theme}.`,
-      `These will be read aloud — use natural spoken language.`,
-      `Each passage has exactly ${perPassage} comprehension questions (choice with 4 options).`,
+      `Write ${count} distinct listening passages (${minWords}-${maxWords} words each) in ${langName} at CEFR ${level} level.`,
+      `Format and task family: ${format}; ${sectionBlueprint?.taskFamily ?? 'spoken comprehension'}. Assess ${focus}; vary speakers and situations without making the answer depend on visual clues.`,
+      `Task family: ${sectionBlueprint?.taskFamily ?? 'controlled short production'}. Content focus: ${skills}. Weekly theme: ${theme}.`,
+      `These will be read aloud — use natural spoken language. Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the spoken text.`,
       fewShotJson,
       `Reply as JSON array: [{"text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
     ].join('\n');
@@ -147,13 +176,63 @@ function sectionPrompt(section: SectionName, languageID: string, level: string,
     user = [
       `Write ${count} short production items at CEFR ${level} level in ${langName}.`,
       `Content focus: ${skills}. Weekly theme: ${theme}.`,
-      `Each item gives an instruction in the learner's language and expects a short answer in ${langName}.`,
+      `Each item gives a short instruction in ${englishBlueprint ? 'English adapted to the target level' : "the learner's language"} and expects a short answer in ${langName}.`,
       `Accept 1-3 valid variants per item.`,
       fewShotJson,
       `Reply as JSON array: [{"kind":"written","prompt":"Write...","answers":["variant1","variant2"],"explain":"..."}]`,
     ].join('\n');
   }
   return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
+}
+
+function legacySectionMessages(section: SectionName, languageID: string, level: string,
+  count: number, perPassage: number, weekId: number,
+  fewShot: LevelTestContentItem[]): { role: 'system' | 'user'; content: string }[] {
+  const langName = LANGUAGE_NAMES[languageID] ?? languageID;
+  const skills = SKILLS_BY_LEVEL[level]?.[section] ?? 'general language competence';
+  const theme = weeklyTheme(weekId);
+  const fewShotJson = fewShot.length ? `Example items (style anchor — do NOT copy): ${JSON.stringify(fewShot)}` : '';
+  const system = [
+    `You are a certified exam item writer for CEFR ${level} ${langName} tests.`,
+    'Return ONLY a valid JSON array — no prose, no code fences, no markdown.',
+    'Every item must have exactly one indisputably correct answer and plausible-but-clearly-wrong distractors.',
+    'Every `explain` teaches the rule in one short sentence in the target language.',
+    'Nothing offensive, political, or branded.',
+  ].join(' ');
+  let user: string;
+  if (section === 'recognition') {
+    user = [
+      `Write ${count} vocabulary and grammar items at CEFR ${level} level in ${langName}.`,
+      `Skills to test: ${skills}.`,
+      `Item types: mix of choice (with ${4} options, exactly 1 correct) and gap-fill.`,
+      `Weekly theme for context: ${theme}.`, fewShotJson,
+      `Reply as JSON array: [{"kind":"choice"|"gap","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]`,
+    ].join('\n');
+  } else if (section === 'reading') {
+    user = [
+      `Write ${count} reading passages (60-120 words each) in ${langName} at CEFR ${level} level.`,
+      `Content focus: ${skills}. Weekly theme: ${theme}.`,
+      `Each passage has exactly ${perPassage} comprehension questions (choice with 4 options).`, fewShotJson,
+      `Reply as JSON array: [{"title":"...","text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
+    ].join('\n');
+  } else if (section === 'listening') {
+    user = [
+      `Write ${count} listening passages (40-90 words each) in ${langName} at CEFR ${level} level.`,
+      `Content focus: ${skills}. Weekly theme: ${theme}.`,
+      'These will be read aloud — use natural spoken language.',
+      `Each passage has exactly ${perPassage} comprehension questions (choice with 4 options).`, fewShotJson,
+      `Reply as JSON array: [{"text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
+    ].join('\n');
+  } else {
+    user = [
+      `Write ${count} short production items at CEFR ${level} level in ${langName}.`,
+      `Content focus: ${skills}. Weekly theme: ${theme}.`,
+      `Each item gives an instruction in the learner's language and expects a short answer in ${langName}.`,
+      'Accept 1-3 valid variants per item.', fewShotJson,
+      `Reply as JSON array: [{"kind":"written","prompt":"Write...","answers":["variant1","variant2"],"explain":"..."}]`,
+    ].join('\n');
+  }
+  return [{ role: 'system', content: system }, { role: 'user', content: user }];
 }
 
 // ---- per-section generation ----
@@ -172,8 +251,8 @@ async function generateSection(
   languageID: string, level: string, model: ExamModelEntry, weekId: number, signal?: AbortSignal,
 ): Promise<SectionResult> {
   const spec = SECTION_SPECS[section];
-  const fewShot = fewShotFor(languageID, level, section);
-  const messages = sectionPrompt(section, languageID, level, spec.count, spec.perPassage, weekId, fewShot);
+  const fewShot = generationExamples(languageID, level, section);
+  const messages = buildSectionMessages(section, languageID, level, spec.count, spec.perPassage, weekId, fewShot, model);
 
   const errors: string[] = [];
   let lastReply: ChatReply | undefined;
@@ -234,13 +313,10 @@ async function generateSection(
 
 async function judgeSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
-  languageID: string, level: string, items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
+  languageID: string, level: string, model: ExamModelEntry,
+  items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
 ): Promise<{ id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }[]> {
-  const langName = LANGUAGE_NAMES[languageID] ?? languageID;
-  const system = `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
-  const user = JSON.stringify(items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
-    options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })));
-  const reply = await call(config, [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }], signal);
+  const reply = await call(config, buildJudgeMessages(section, languageID, level, items, model), signal);
   return parseVerdicts(reply);
 }
 
@@ -338,7 +414,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   if (settings.verifyMode !== 'off') for (const section of SECTION_ORDER) {
     const items = sectionItems(pool, section);
     try {
-      const verdicts = await judgeSection(call, config, section, languageID, level, items, options.signal);
+      const verdicts = await judgeSection(call, config, section, languageID, level, model, items, options.signal);
       const expected = new Set(items.map(item => item.id)), seen = new Set<string>();
       for (const verdict of verdicts) {
         if (!expected.has(verdict.id) || seen.has(verdict.id)) throw new Error('judge_invalid_ids');
@@ -395,14 +471,29 @@ function sectionItems(pool: GeneratedPool, section: SectionName): (RawGeneratedI
   return [];
 }
 
-function buildJudgeMessages(level: string, model: ExamModelEntry, pool: GeneratedPool) {
-  const system = [
-    `You are a strict exam reviewer for CEFR ${level} language tests.`,
-    'For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible for the level, and is the explain accurate?',
-    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","reason":"one short sentence"}]}. Verdict every single id.',
-  ].join(' ');
-  return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: JSON.stringify({
-    canDoAnchor: model.canDoAnchor, items: pool }) }];
+export function buildJudgeMessages(section: SectionName, languageID: string, level: string,
+  items: (RawGeneratedItem & { passageText?: string })[], model: ExamModelEntry) {
+  const langName = LANGUAGE_NAMES[languageID] ?? languageID;
+  const english = languageID === 'en';
+  const system = english ? [
+    `You are a careful quality reviewer for English CEFR ${level} ${section} exam items.`,
+    `Use this level anchor: ${model.canDoAnchor}`,
+    'For every item, verify that exactly one marked answer is correct and no distractor is also defensible.',
+    'For comprehension, verify the answer is supported by the supplied passage and the question does not require outside knowledge.',
+    'Check that the explanation is accurate and supports the key; check distractors are plausible but clearly wrong.',
+    'Check the whole task and language demand fit the level anchor and the section format; advanced vocabulary alone is not evidence of a higher level.',
+    `Reject items that rely on these unsuitable/out-of-level targets: ${model.forbidden.join('; ')}.`,
+    'Use ok only when all checks pass; use flagged when a material concern cannot be resolved; reject when incorrect, ambiguous, unsupported, or out of scope.',
+    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","reason":"one short evidence-based sentence"}]}. Return exactly one verdict for every supplied id.',
+  ].join(' ') : `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
+  const user = JSON.stringify(english ? {
+    section, canDoAnchor: model.canDoAnchor, sectionBlueprint: model.sections[section],
+    forbidden: model.forbidden,
+    items: items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
+      options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })),
+  } : items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
+    options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })));
+  return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
 }
 
 interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }

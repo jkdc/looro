@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
+import { buildSectionMessages, buildJudgeMessages, generationExamples } from '../src/level-tests-llm.js';
 
 test('English blueprint resolution prefers the exact language model over the wildcard', () => {
   const blueprint = resolveExamBlueprint('en', 'A1');
@@ -27,4 +28,41 @@ test('other languages retain their existing wildcard model as a fallback', () =>
   assert.ok(spanish);
   assert.equal(spanish.languageID, '*');
   assert.equal(spanish.examShape.recognition, 12);
+});
+
+test('English section prompt uses blueprint anchor, level-specific length, register, and exclusions', () => {
+  const a1 = resolveExamBlueprint('en', 'A1')!;
+  const c1 = resolveExamBlueprint('en', 'C1')!;
+  const a1Text = buildSectionMessages('reading', 'en', 'A1', 2, 3, 0, [], a1)
+    .map(message => message.content).join('\n');
+  const c1Text = buildSectionMessages('reading', 'en', 'C1', 2, 3, 0, [], c1)
+    .map(message => message.content).join('\n');
+
+  assert.match(a1Text, /50-90 words/);
+  assert.match(a1Text, /introduce themselves/i);
+  assert.match(a1Text, /everyday notices/i);
+  assert.match(c1Text, /100-180 words/);
+  assert.match(c1Text, /implicit meaning/i);
+  assert.match(c1Text, /simple everyday-only material/i);
+});
+
+test('English judge prompt includes answer evidence, explanation, level fit, and the full passage', () => {
+  const blueprint = resolveExamBlueprint('en', 'C1')!;
+  const messages = buildJudgeMessages('reading', 'en', 'C1', [{
+    id: 'rea-0-0', section: 'reading', kind: 'choice', prompt: 'Why did the panel change its recommendation?',
+    options: ['The evidence changed', 'The budget doubled', 'A new law passed'], answers: ['The evidence changed'],
+    explain: 'The final paragraph says the evidence changed.', passageText: 'After reviewing the new evidence, the panel revised its recommendation.'
+  }], blueprint);
+
+  assert.match(messages[0]?.content ?? '', /exactly one marked answer is correct/i);
+  assert.match(messages[0]?.content ?? '', /supported by the supplied passage/i);
+  assert.match(messages[0]?.content ?? '', /explanation.*accurate/i);
+  assert.match(messages[0]?.content ?? '', /outside knowledge/i);
+  assert.match(messages[1]?.content ?? '', /Can use English flexibly/i);
+  assert.match(messages[1]?.content ?? '', /After reviewing the new evidence/);
+});
+
+test('English generation does not use arbitrary bundled learning items as unreviewed exam examples', () => {
+  assert.deepEqual(generationExamples('en', 'B1', 'reading'), []);
+  assert.equal(generationExamples('es', 'B1', 'recognition').length, 2);
 });

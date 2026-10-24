@@ -1,7 +1,7 @@
 # Tasks: English Generated Exam Quality and Length
 
 - [x] T1 — Capture English blueprint/form-shape and validator regressions; route: inline; committed after RED→GREEN verification.
-- [ ] T2 — Connect typed English blueprint to generation and section validation; route: inline.
+- [x] T2 — Connect typed English blueprint to generation and section validation; route: inline; prompts/judge now use can-do, skill, format, and level-specific constraints.
 - [ ] T3 — Implement one bounded, validated repair cycle per section; route: inline.
 - [ ] T4 — Expand English pool and served form separately; enforce diversity/capacity; route: inline.
 - [ ] T5 — Strengthen active judge and flagged publication policy with real rejection coverage; route: inline.

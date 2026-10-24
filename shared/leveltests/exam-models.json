@@ -335,7 +335,8 @@
             "possessives",
             "everyday vocabulary"
           ],
-          "options": 4
+          "options": 4,
+          "taskFamily": "grammar and vocabulary in familiar contexts"
         },
         "reading": {
           "words": [
@@ -343,7 +344,14 @@
             90
           ],
           "register": "everyday notices, messages, and simple descriptions",
-          "questions": 3
+          "questions": 3,
+          "skills": [
+            "signs",
+            "short notes",
+            "simple descriptions",
+            "gist and explicit detail"
+          ],
+          "taskFamily": "brief functional texts"
         },
         "listening": {
           "words": [
@@ -351,11 +359,22 @@
             70
           ],
           "format": "short announcement or two-turn dialogue",
-          "questions": 2
+          "questions": 2,
+          "skills": [
+            "short announcements",
+            "simple two-turn dialogue",
+            "key information"
+          ],
+          "taskFamily": "short everyday speech"
         },
         "writing": {
           "promptLanguage": "English adapted to level",
-          "response": "controlled short production; accept natural variants"
+          "response": "controlled short production; accept natural variants",
+          "skills": [
+            "familiar words",
+            "basic sentence completion"
+          ],
+          "taskFamily": "controlled short production"
         }
       },
       "forbidden": [
@@ -397,7 +416,8 @@
             "time prepositions",
             "past continuous"
           ],
-          "options": 4
+          "options": 4,
+          "taskFamily": "grammar and vocabulary in routine contexts"
         },
         "reading": {
           "words": [
@@ -405,7 +425,14 @@
             100
           ],
           "register": "short narratives, informal notes, and everyday descriptions",
-          "questions": 3
+          "questions": 3,
+          "skills": [
+            "short narratives",
+            "informal notes",
+            "everyday descriptions",
+            "main idea and specific details"
+          ],
+          "taskFamily": "brief connected everyday texts"
         },
         "listening": {
           "words": [
@@ -413,11 +440,23 @@
             80
           ],
           "format": "two- or three-turn dialogue with specific details",
-          "questions": 2
+          "questions": 2,
+          "skills": [
+            "short dialogue",
+            "announcements",
+            "specific details"
+          ],
+          "taskFamily": "everyday spoken interaction"
         },
         "writing": {
           "promptLanguage": "English adapted to level",
-          "response": "controlled short production; accept natural variants"
+          "response": "controlled short production; accept natural variants",
+          "skills": [
+            "past events",
+            "plans",
+            "comparisons"
+          ],
+          "taskFamily": "controlled sentence production"
         }
       },
       "forbidden": [
@@ -459,7 +498,8 @@
             "modal deduction",
             "connectors"
           ],
-          "options": 4
+          "options": 4,
+          "taskFamily": "grammar and vocabulary in connected discourse"
         },
         "reading": {
           "words": [
@@ -467,7 +507,14 @@
             120
           ],
           "register": "opinion texts, evaluated narratives, and everyday problem-solving",
-          "questions": 3
+          "questions": 3,
+          "skills": [
+            "opinions",
+            "evaluated narratives",
+            "practical problem-solving",
+            "simple inference"
+          ],
+          "taskFamily": "connected practical and opinion texts"
         },
         "listening": {
           "words": [
@@ -475,11 +522,24 @@
             90
           ],
           "format": "dialogue with opinions, connected speech, or simple deduction",
-          "questions": 2
+          "questions": 2,
+          "skills": [
+            "opinions",
+            "deductions",
+            "connected speech",
+            "gist and detail"
+          ],
+          "taskFamily": "spoken interaction with linked turns"
         },
         "writing": {
           "promptLanguage": "English adapted to level",
-          "response": "controlled short production; accept natural variants"
+          "response": "controlled short production; accept natural variants",
+          "skills": [
+            "experiences",
+            "opinions",
+            "reasons and examples"
+          ],
+          "taskFamily": "controlled written production"
         }
       },
       "forbidden": [
@@ -521,7 +581,8 @@
             "phrasal verbs",
             "connectors"
           ],
-          "options": 4
+          "options": 4,
+          "taskFamily": "grammar and vocabulary in nuanced context"
         },
         "reading": {
           "words": [
@@ -529,7 +590,14 @@
             140
           ],
           "register": "formal texts, narratives with inference, and argumentative extracts",
-          "questions": 3
+          "questions": 3,
+          "skills": [
+            "formal texts",
+            "argumentative extracts",
+            "inference",
+            "attitude"
+          ],
+          "taskFamily": "sustained formal and argumentative texts"
         },
         "listening": {
           "words": [
@@ -537,11 +605,24 @@
             100
           ],
           "format": "presentation or interview with connected speech and inference",
-          "questions": 2
+          "questions": 2,
+          "skills": [
+            "presentations",
+            "interviews",
+            "connected speech",
+            "inference"
+          ],
+          "taskFamily": "spoken discourse with varied speakers"
         },
         "writing": {
           "promptLanguage": "English adapted to level",
-          "response": "controlled short production; accept natural variants"
+          "response": "controlled short production; accept natural variants",
+          "skills": [
+            "formal connectors",
+            "argument structure",
+            "nuanced modality"
+          ],
+          "taskFamily": "controlled formal production"
         }
       },
       "forbidden": [
@@ -582,7 +663,8 @@
             "collocations",
             "ellipsis"
           ],
-          "options": 4
+          "options": 4,
+          "taskFamily": "grammar and vocabulary in complex authentic-style contexts"
         },
         "reading": {
           "words": [
@@ -590,7 +672,14 @@
             180
           ],
           "register": "sustained formal, literary, or argumentative texts with implicit meaning",
-          "questions": 3
+          "questions": 3,
+          "skills": [
+            "sustained argument",
+            "implicit meaning",
+            "viewpoint",
+            "synthesis"
+          ],
+          "taskFamily": "sustained formal, literary, and argumentative texts"
         },
         "listening": {
           "words": [
@@ -598,11 +687,24 @@
             120
           ],
           "format": "speech, interview, or debate with nuanced inference",
-          "questions": 2
+          "questions": 2,
+          "skills": [
+            "debate",
+            "implicit intention",
+            "viewpoint",
+            "nuanced inference"
+          ],
+          "taskFamily": "extended speech and discussion"
         },
         "writing": {
           "promptLanguage": "English adapted to level",
-          "response": "controlled short production; accept natural variants"
+          "response": "controlled short production; accept natural variants",
+          "skills": [
+            "collocation",
+            "formal register",
+            "precise connectors"
+          ],
+          "taskFamily": "controlled advanced production"
         }
       },
       "forbidden": [

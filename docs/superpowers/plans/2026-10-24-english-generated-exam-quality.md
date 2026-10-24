@@ -58,12 +58,12 @@
 - Consumes: Typed resolved English blueprint from Task 1.
 - Produces: Capturable prompts that use per-level targets and an active judge rubric requiring concise evidence, using server IDs and closed result codes.
 
-- [ ] Test captured A1/C1 generation and judge messages for the actual level-specific requirements and correct passage/question context.
-- [ ] Observe RED with the current fixed prompt and active judge.
-- [ ] Connect blueprint fields to prompt construction; remove dead/duplicated judge construction only after its guarantees are represented in tests.
-- [ ] Test correction/explanation correctness, supported answer evidence, plausible distractors, level/task fit, and format rubric result parsing.
-- [ ] Run focused generation tests.
-- [ ] Commit task: `feat(level-tests): align English generation prompts and judge with blueprint`.
+- [x] Test captured A1/C1 generation and judge messages for the actual level-specific requirements and correct passage/question context.
+- [x] Observe RED with the fixed prompt/judge: new prompt functions were not exported.
+- [x] Connect blueprint fields to English prompt and active judge; leave other languages on their previous prompt path.
+- [x] Add judge prompt requirements for correction support, passage evidence, distractors, level/task fit, and format; remove the unused alternate judge builder.
+- [x] Run focused generation tests: 12 passed, 4 PostgreSQL tests skipped; API type-check and exporter check passed.
+- [x] Commit task: `feat(level-tests): align English generation prompts and judge with blueprint`.
 
 ### Task 3: Bounded per-section repair
 

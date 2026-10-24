@@ -22,6 +22,7 @@ export interface CandidatePoolTarget {
 export interface ExamSectionBlueprint {
   mix?: Partial<Record<ExerciseKind, number>>;
   skills?: string[];
+  taskFamily?: string;
   options?: number;
   words?: [number, number];
   register?: string;
