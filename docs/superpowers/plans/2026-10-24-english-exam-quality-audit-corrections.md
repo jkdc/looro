@@ -132,6 +132,26 @@
 - [x] Run focused blueprint tests (24/24), API type-check, isolated full API suite (693/693, zero skipped), `make check` (138 Python tests), level-test export check, and diff check. Existing Python `ResourceWarning`s about unclosed SQLite connections appeared during `make check`; the command passed.
 - [x] Work-unit commit: `3d8093e` (`fix(level-tests): tighten English lexical validation`).
 
+### Task 7: Preserve grammatical English evidence without requiring particular task verbs
+
+**Files:**
+- Modify: `services/api/src/level-tests-validate.ts`
+- Modify: `services/api/tests/level-test-blueprint.test.ts`
+- Update: matching OpenSpec spec/design/tasks and this plan.
+
+**Interfaces:**
+- Keep `validateGeneratedPool` synchronous and retain its public result shape.
+- Add English-only grammatical evidence after the existing script guard, without changing task verbs, legacy stopword counts, non-English validation, dependencies, or judge configuration.
+- Tokenize complete Unicode letter/mark sequences; recognize capitalized standalone `I` separately from lowercase foreign `i`.
+- Only the prompt supplies new grammatical evidence. Exclude known cross-language collisions (`am`, `he`, `my`, `mine`, `ours`, `we`) from sufficient new evidence.
+- Preserve existing foreign-language rejection and newline/tab controls. This remains a bounded language heuristic, not proof of arbitrary English-language identity.
+
+- [x] Add failing public-validator regressions for alternative lexical instructions and fill-in sentences; assert both language errors and retention in the clean pool.
+- [x] Cover lowercase Polish `i`, accented/decomposed French `forêt`, and non-Latin content with an English pronoun as rejection controls.
+- [x] Observe RED (six valid-English failures), add grammatical English evidence, then observe GREEN. The independent review's four foreign collision regressions also observed RED before correction; corrected focused blueprint/publication tests pass 87/87.
+- [x] Run focused tests (87/87), API type-check, final isolated PostgreSQL suite (708/708, zero skipped), contract/export checks (138 Python tests), and independent review plus bounded recheck. The earlier candidate's 704/704 suite is not used as proof of the final correction.
+- [x] Record observed verification and work-unit commit: `3b8ac32` (`fix(level-tests): recognize grammatical English task evidence`).
+
 ## Log
 
 - L1 (2026-10-24): “implementa los cambios reqqueridos en este último comentario que has compartido”
@@ -141,3 +161,8 @@
 - L5 (2026-10-24): “pasa a resolver los 2 problemas detectados”
 - L6: The final review identified two reproducible lexical-gate defects: control whitespace was classified as non-Latin, and absence of foreign markers was still accepted as English evidence. Regression tests reproduce both; the fallback now permits whitespace and fails closed without positive English evidence.
 - L7: Verification passed: focused 24/24; isolated API 693/693, zero skipped, with the ephemeral PostgreSQL volume and network removed; API type-check; root `make check` (138); export check; diff check. `make check` emitted existing SQLite `ResourceWarning`s but exited successfully. Commit: `3d8093e`.
+- L8 (2026-10-24): “resuelvelo”
+- L9: Ruling: supplement English lexical evidence with general grammatical evidence instead of adding individual task verbs or restoring the permissive Latin fallback. Unicode tokens avoid interpreting `forêt` as `for`, and capitalized `I` avoids accepting Polish `i`. The optional judge cannot serve as an implicit mandatory language gate, so ambiguous inputs still fail closed. This fixes the reported valid-English patterns without claiming universal language classification.
+- L10: Independent review reproduced newly accepted German `am`, Spanish `he`, Polish `my`, and an isolated Norwegian answer `for`. One bounded correction removes colliding sufficient markers and restricts the new evidence to the prompt. Four added regressions failed before that correction and pass afterward; the original valid-English cases remain retained.
+- L11: Final verification: 87/87 focused tests; TypeScript passed; 708/708 complete API tests with zero skips on disposable PostgreSQL, with database volume and network removed; `make check` passed 138 Python tests and repository contracts, retaining existing SQLite ResourceWarnings; level-test exporter and diff checks passed. Independent bounded recheck closed all four foreign-collision cases while retaining all four reported English cases.
+- L12: Work-unit commit: `3b8ac32`. Risk: none; the change is confined to requested English validation behavior, with no public payload, non-English marker, prompt/judge version, dependency, database, or deployment changes.
