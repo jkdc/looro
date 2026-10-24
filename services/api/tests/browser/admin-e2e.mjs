@@ -45,6 +45,7 @@ const executablePath = join(cacheDir, builds[0], 'chrome-linux64', 'chrome');
 const failures = [];
 // Diagnostics only: the last results-listing requests help explain a missed click.
 const observedAttemptRequests = [];
+const observedGenerationRunLookups = [];
 const check = async (name, assertion) => {
   try { await assertion(); console.log(`PASS  ${name}`); }
   catch (error) { failures.push(name); console.error(`FAIL  ${name}: ${error.message}`); }
@@ -56,6 +57,7 @@ const browser = await chromium.launch({ executablePath, headless: true,
 const page = await browser.newPage();
 page.on('request', request => {
   if (request.url().includes('/v1/admin/level-test-attempts?')) observedAttemptRequests.push(request.url());
+  if (request.url().includes('/v1/admin/level-tests/status?runIds=')) observedGenerationRunLookups.push(request.url());
 });
 // Unhandled errors explain a half-painted view; surface them instead of only
 // timing out on the missing selector.
@@ -526,12 +528,51 @@ try {
     if (await page.isEnabled('#reason-ok')) throw new Error('confirm enabled with an empty reason');
   });
   await page.fill('#reason-text', 'Lanzado en E2E para B1');
+  let releaseFirstLookup;
+  let notifyFirstLookup;
+  const firstLookupStarted = new Promise(resolve => { notifyFirstLookup = resolve; });
+  let blockFirstLookup = true;
+  await page.route('**/v1/admin/level-tests/status?runIds=*', async route => {
+    if (!blockFirstLookup) return route.continue();
+    blockFirstLookup = false;
+    await new Promise(resolve => { releaseFirstLookup = resolve; notifyFirstLookup(); });
+    await route.continue().catch(() => {});
+  });
+  const launchResponsePromise = page.waitForResponse(response =>
+    new URL(response.url()).pathname.endsWith('/v1/admin/level-tests/generate'));
   await page.click('#reason-ok');
+  const launchResponse = await launchResponsePromise;
+  const launchBody = await launchResponse.json();
+  const b1Launch = launchBody.keys.find(key => key.level === 'B1' && key.status === 'started');
+  if (!b1Launch?.runCorrelationId) throw new Error('accepted generation omitted its request correlation token');
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
-  await check('generation launch runs the missing level and reports it', async () => {
+  await check('generation watcher resumes the exact run after a page reload', async () => {
     await expectText('.alert-success', 'Lanzados 1');
-    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').trim().length > 0,
-      undefined, { timeout: 10_000 });
+    try {
+      await Promise.race([firstLookupStarted, page.waitForTimeout(10_000).then(() => {
+        throw new Error('the generation watcher did not request its exact run identity');
+      })]);
+      if (!observedGenerationRunLookups.some(url => url.includes(b1Launch.runCorrelationId)))
+        throw new Error(`the watcher did not query ${b1Launch.runCorrelationId}`);
+      const navigation = page.reload({ waitUntil: 'domcontentloaded' });
+      releaseFirstLookup();
+      await navigation;
+      await page.waitForSelector('#nav', { timeout: 10_000 });
+      if (page.url().includes('#exam-weeks')) await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+      else {
+        await page.click('a[href="#exam-weeks"]');
+        await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+      }
+      await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('B1 → finished'),
+        undefined, { timeout: 120_000 });
+      const exactLookups = observedGenerationRunLookups.filter(url => url.includes(b1Launch.runCorrelationId));
+      if (exactLookups.length < 2) throw new Error(`reload did not resume lookup for ${b1Launch.runCorrelationId}`);
+    } finally {
+      releaseFirstLookup?.();
+      await page.unroute('**/v1/admin/level-tests/status?runIds=*');
+    }
+  });
+  await check('generation launch reports the new persisted run as finished', async () => {
     await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('B1 → finished'),
       undefined, { timeout: 120_000 });
   });
@@ -593,16 +634,19 @@ try {
       ? real.jobs[0] : { languageID: 'en', level: 'A1', weekId: 0, attempts: 1 };
     const terminal = behaviour.terminal(call);
     const stamp = new Date().toISOString();
-    const job = { ...base, status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
+    const job = { ...base, runId: base.runId ?? '00000000-0000-4000-8000-000000000001', attemptOrdinal: 1,
+      status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
       errors: [], startedAt: stamp, finishedAt: terminal ? stamp : null, updatedAt: stamp };
-    await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job } });
+    const runIds = new URL(route.request().url()).searchParams.get('runIds')?.split(',').filter(Boolean) ?? [];
+    const trackedRuns = runIds.map(correlationId => ({ correlationId, registration: 'registered', run: { ...job, runId: correlationId } }));
+    await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job, ...(runIds.length ? { trackedRuns } : {}) } });
   };
   await check('generation watch polls every 5 s and survives a failed poll', async () => {
     // call 1 is the mount fetch; 2 fails (the watch must retry); 3-4 running;
     // 5 terminal. Every gap must be the configured cadence.
     const behaviour = { calls: [], failCalls: [2], terminal: call => call >= 5 };
     const handler = statusMock(behaviour);
-    await page.route('**/v1/admin/level-tests/status', handler);
+    await page.route('**/v1/admin/level-tests/status**', handler);
     try {
       await page.goto(`${PANEL}/#overview`);
       await page.goto(`${PANEL}/#exam-weeks`);
@@ -624,7 +668,7 @@ try {
       if (behaviour.calls.length > settled + 1)
         throw new Error(`${behaviour.calls.length - settled} polls after the terminal state`);
     } finally {
-      await page.unroute('**/v1/admin/level-tests/status', handler);
+      await page.unroute('**/v1/admin/level-tests/status**', handler);
     }
   });
   await check('a finished run does not leak its timer into the next watch', async () => {
@@ -641,11 +685,14 @@ try {
         ? real.jobs[0] : { languageID: 'en', level: 'A1', weekId: 0, attempts: 1 };
       const terminal = call === 1;
       const stamp = new Date().toISOString();
-      const job = { ...base, status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
+      const job = { ...base, runId: base.runId ?? '00000000-0000-4000-8000-000000000002', attemptOrdinal: 1,
+        status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
         errors: [], startedAt: stamp, finishedAt: terminal ? stamp : null, updatedAt: stamp };
-      await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job } });
+      const runIds = new URL(route.request().url()).searchParams.get('runIds')?.split(',').filter(Boolean) ?? [];
+      const trackedRuns = runIds.map(correlationId => ({ correlationId, registration: 'registered', run: { ...job, runId: correlationId } }));
+      await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job, ...(runIds.length ? { trackedRuns } : {}) } });
     };
-    await page.route('**/v1/admin/level-tests/status', handler);
+    await page.route('**/v1/admin/level-tests/status**', handler);
     try {
       await drainToasts();
       await page.click(weekRow('A2') + ' [data-week-regenerate]');
@@ -662,7 +709,7 @@ try {
           throw new Error(`poll gap ${gap} ms outside 4-9 s (leaked timer); page errors: ${observedPageErrors.join(' | ') || 'none'}`);
       }
     } finally {
-      await page.unroute('**/v1/admin/level-tests/status', handler);
+      await page.unroute('**/v1/admin/level-tests/status**', handler);
       // The live watch resolves against the real status on its next tick.
       await page.waitForFunction(() => !(document.querySelector('#launch-status')?.textContent ?? '').includes('En marcha'),
         undefined, { timeout: 20_000 }).catch(() => {});
@@ -672,7 +719,7 @@ try {
   await check('leaving the generation view parks the watch instead of polling on', async () => {
     const behaviour = { calls: [], failCalls: [], terminal: () => false };
     const handler = statusMock(behaviour);
-    await page.route('**/v1/admin/level-tests/status', handler);
+    await page.route('**/v1/admin/level-tests/status**', handler);
     try {
       await page.goto(`${PANEL}/#overview`);
       await page.goto(`${PANEL}/#exam-weeks`);
@@ -686,7 +733,7 @@ try {
       if (behaviour.calls.length > parked + 1)
         throw new Error(`${behaviour.calls.length - parked} status calls after leaving the view; page errors: ${observedPageErrors.join(' | ') || 'none'}`);
     } finally {
-      await page.unroute('**/v1/admin/level-tests/status', handler);
+      await page.unroute('**/v1/admin/level-tests/status**', handler);
       await page.goto(`${PANEL}/#exam-weeks`);
       await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
     }

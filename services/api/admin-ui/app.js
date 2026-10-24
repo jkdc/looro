@@ -504,7 +504,21 @@ async function renderBrowse(container, fixedTable, context) {
 }
 
 /* ---- level-tests view: generation watch state (module scope survives re-renders) ---- */
-let generationWatch = null;      // { keys: Set<'lang:level'>, weekId, timer }
+const GENERATION_WATCH_STORAGE_KEY = 'palique.admin.generation-watch.v1';
+const GENERATION_REGISTRATION_TIMEOUT_MS = 120_000;
+const RUN_CORRELATION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function restoreGenerationWatch() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(GENERATION_WATCH_STORAGE_KEY) || 'null');
+    if (!saved || !Array.isArray(saved.runs) || !Number.isSafeInteger(saved.weekId)) return null;
+    const runs = saved.runs.filter(run => run && RUN_CORRELATION_ID.test(run.runCorrelationId) &&
+      typeof run.languageID === 'string' && typeof run.level === 'string' && Number.isSafeInteger(run.weekId) &&
+      Number.isFinite(run.requestedAt));
+    if (!runs.length) return null;
+    return { runs, results: Array.isArray(saved.results) ? saved.results.filter(result => typeof result === 'string') : [], weekId: saved.weekId };
+  } catch { return null; }
+}
+let generationWatch = restoreGenerationWatch(); // exact request identities survive a page reload in this tab
 let lastJobsSnapshot = [];
 let lastWatchStatus = '';
 let lastWatchTone = '';
@@ -576,6 +590,14 @@ function renderJobs(jobs = lastJobsSnapshot) {
 // to stay far from the panel's 600/hour admission limit during a long run.
 const GENERATION_POLL_MS = 5_000;
 
+function persistGenerationWatch() {
+  try {
+    if (generationWatch?.runs.length) sessionStorage.setItem(GENERATION_WATCH_STORAGE_KEY,
+      JSON.stringify({ runs: generationWatch.runs, results: generationWatch.results, weekId: generationWatch.weekId }));
+    else sessionStorage.removeItem(GENERATION_WATCH_STORAGE_KEY);
+  } catch { /* exact run polling remains available during this page lifetime */ }
+}
+
 // One timer and one in-flight poll for the whole watch, owned here instead of
 // on the watch object: a timer left over from a finished run must never clear
 // the timer of the next one (that leaked a second 5 s loop per completion).
@@ -615,32 +637,40 @@ async function watchGenerationTick() {
   if (!$('#jobs-monitor')) return;
   generationTicking = true;
   try {
-    const status = await api('/v1/admin/level-tests/status', { signal: owner.signal });
+    const runIds = watch.runs.map(run => run.runCorrelationId);
+    const status = await api('/v1/admin/level-tests/status?runIds=' + encodeURIComponent(runIds.join(',')),
+      { signal: owner.signal });
     if (generationWatch !== watch) return;
     if (!owner.isCurrent()) return;
     const jobs = Array.isArray(status.jobs) ? status.jobs : [];
-    lastJobsSnapshot = jobs;
-    renderJobs(jobs);
-    // The run log is newest first, so the first row per key is the live attempt.
-    const byKey = new Map();
-    for (const job of jobs) {
-      const key = `${job.languageID}:${job.level}`;
-      if (!watch.keys.has(key) || job.weekId !== watch.weekId || byKey.has(key)) continue;
-      byKey.set(key, job);
+    const trackedRuns = Array.isArray(status.trackedRuns) ? status.trackedRuns : [];
+    const byCorrelation = new Map(trackedRuns.map(entry => [entry.correlationId, entry]));
+    const trackedJobs = trackedRuns.filter(entry => entry.registration === 'registered').map(entry => entry.run);
+    lastJobsSnapshot = [...new Map([...jobs, ...trackedJobs].map(job => [job.runId ?? `${job.languageID}:${job.level}:${job.weekId}:${job.attempts}`, job])).values()];
+    renderJobs(lastJobsSnapshot);
+    const pending = [], running = [], done = [];
+    for (const run of watch.runs) {
+      const entry = byCorrelation.get(run.runCorrelationId);
+      if (entry?.registration === 'registered' && TERMINAL_JOB_STATES.has(entry.run.status)) {
+        const job = entry.run;
+        const key = `${run.languageID}:${run.level}`;
+        watch.results.push(`${key} → ${job.status} (#${job.attemptOrdinal})${job.errorCode ? ` (${job.errorCode})` : ''}`);
+        done.push(run.runCorrelationId);
+        if (owner.isCurrent()) toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
+          job.status === 'finished' ? 'success' : 'danger');
+      } else if (entry?.registration === 'registered') {
+        running.push(`${run.languageID}:${run.level}`);
+      } else {
+        pending.push(Date.now() - run.requestedAt >= GENERATION_REGISTRATION_TIMEOUT_MS
+          ? `${run.languageID}:${run.level} (sin registro; estado desconocido)`
+          : `${run.languageID}:${run.level}`);
+      }
     }
-    const done = [...watch.keys].filter(key => byKey.get(key) && TERMINAL_JOB_STATES.has(byKey.get(key).status));
-    for (const key of done) {
-      const job = byKey.get(key);
-      watch.results.push(`${key} → ${job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`);
-      if (owner.isCurrent()) toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
-        job.status === 'finished' ? 'success' : 'danger');
-      watch.keys.delete(key);
-    }
-    const running = [...watch.keys].filter(key => byKey.get(key)?.status === 'running');
-    const queued = [...watch.keys].filter(key => !byKey.get(key));
+    if (done.length) watch.runs = watch.runs.filter(run => !done.includes(run.runCorrelationId));
+    persistGenerationWatch();
     lastWatchStatus = [
       running.length ? `En marcha: ${running.join(', ')}` : '',
-      queued.length ? `En cola: ${queued.join(', ')}` : '',
+      pending.length ? `Pendiente: ${pending.join(', ')}` : '',
       watch.results.join(' · '),
     ].filter(Boolean).join(' — ') || 'Esperando al runner de generación…';
     const line = $('#launch-status');
@@ -650,9 +680,10 @@ async function watchGenerationTick() {
       line.textContent = lastWatchStatus;
       line.className = `small mt-1 fw-bold ${tone}`;
     };
-    if (!watch.keys.size) {
+    if (!watch.runs.length) {
       generationWatch = null;
       cancelGenerationTimer();
+      persistGenerationWatch();
       lastWatchStatus = `Completado: ${watch.results.join(' · ')}`;
       paint(watch.results.every(result => result.includes('→ finished')) ? 'text-success' : 'text-danger');
       // The runner is done: refresh the weeks table so the new exams show up
@@ -668,16 +699,20 @@ async function watchGenerationTick() {
   if (owner.isCurrent()) scheduleGenerationWatch();
 }
 
-function startGenerationWatch(keys, weekId) {
-  if (!keys.length) return;
+function startGenerationWatch(runs, weekId) {
+  const validRuns = runs.filter(run => run && RUN_CORRELATION_ID.test(run.runCorrelationId));
+  if (!validRuns.length) return;
   if (generationWatch && generationWatch.weekId === weekId) {
     // Same week: merge keys and keep the pending tick, so a re-render never
     // leaves two timers polling the same status endpoint.
-    generationWatch = { ...generationWatch, keys: new Set([...generationWatch.keys, ...keys]) };
+    const merged = new Map(generationWatch.runs.map(run => [run.runCorrelationId, run]));
+    for (const run of validRuns) merged.set(run.runCorrelationId, run);
+    generationWatch = { ...generationWatch, runs: [...merged.values()] };
   } else {
     cancelGenerationTimer();
-    generationWatch = { keys: new Set(keys), results: [], weekId };
+    generationWatch = { runs: validRuns, results: [], weekId };
   }
+  persistGenerationWatch();
   lastWatchStatus = ''; lastWatchTone = '';
   scheduleGenerationWatch();
 }
@@ -825,8 +860,9 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
   lastJobsSnapshot = Array.isArray(status.jobs) ? status.jobs : [];
   // Also pick up runs started elsewhere (scheduler, CLI, another operator) so a
   // reload never leaves the operator blind about an in-flight generation.
-  const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId);
-  if (runningJobs.length) startGenerationWatch(runningJobs.map(job => `${job.languageID}:${job.level}`), currentWeekId);
+  const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId && job.runId);
+  if (runningJobs.length) startGenerationWatch(runningJobs.map(job => ({ runCorrelationId: job.runId,
+    languageID: job.languageID, level: job.level, weekId: job.weekId, requestedAt: Date.now() })), currentWeekId);
   const job = status.latestJob;
   const jobHtml = job
     ? '<hr><strong>Último job:</strong> ' + badgeCell({ getValue: () => job.status }) + ' · ' +
@@ -925,7 +961,8 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
         (approved ? ` · ${approved} aprobados omitidos` : '') +
         (existing ? ` · ${existing} ya existentes (usa Regenerar)` : ''),
         launched.length ? 'success' : 'warning');
-      startGenerationWatch(launched.map(key => `${key.languageID}:${key.level}`), currentWeekId);
+      startGenerationWatch(launched.map(key => ({ runCorrelationId: key.runCorrelationId, languageID: key.languageID,
+        level: key.level, weekId: currentWeekId, requestedAt: Date.now() })), currentWeekId);
       if (context.isCurrent()) void watchGenerationTick();
     } catch (error) { if (context.isCurrent()) toast('Error: ' + (error.code || error.message), 'danger'); }
   };
@@ -934,10 +971,10 @@ async function renderExamWeeksView(container, view = {}, context = activeViewCon
     const decision = await ask('Regenerar examen', languageID + ':' + level);
     if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
     button.disabled = true;
-    try { await api('/v1/admin/level-tests/regenerate', { method: 'POST',
+    try { const outcome = await api('/v1/admin/level-tests/regenerate', { method: 'POST',
         body: JSON.stringify({ languageID, level, reason: decision.reason }) });
       if (context.isCurrent()) toast('Regeneración iniciada');
-      startGenerationWatch([`${languageID}:${level}`], currentWeekId);
+      startGenerationWatch([{ runCorrelationId: outcome.runCorrelationId, languageID, level, weekId: currentWeekId, requestedAt: Date.now() }], currentWeekId);
       if (context.isCurrent()) void watchGenerationTick();
     } catch (error) { if (context.isCurrent()) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; } }
   });
@@ -1608,7 +1645,8 @@ async function renderRoute() {
     $('#whoami').textContent = name;
     $('#avatar').textContent = (me.email ?? 'A')[0].toUpperCase();
   }).catch(() => {});
-  const signOut = async () => { try { await api('/v1/admin/auth/sign-out', { method: 'POST', body: '{}' }); } catch {} location.href = '/login.html'; };
+  const signOut = async () => { try { await api('/v1/admin/auth/sign-out', { method: 'POST', body: '{}' }); } catch {};
+    try { sessionStorage.removeItem(GENERATION_WATCH_STORAGE_KEY); } catch {} location.href = '/login.html'; };
   $('#signout').onclick = signOut;
   $('#mobile-signout').onclick = signOut;
   window.addEventListener('hashchange', route);

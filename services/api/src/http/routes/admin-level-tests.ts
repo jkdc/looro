@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify';
+import { randomUUID } from 'node:crypto';
 import type { Database } from '../../db.js';
 import { transaction } from '../../db.js';
 import { ServiceError } from '../../errors.js';
@@ -34,6 +35,13 @@ const uuid = (value: string): string => {
     throw new ServiceError('invalid_request');
   return value;
 };
+const runIdsFromQuery = (value: unknown): string[] | undefined => {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || value.length > 1024) throw new ServiceError('invalid_request');
+  const ids = value.split(',').map(id => uuid(id).toLowerCase());
+  if (!ids.length || ids.length > 25 || new Set(ids).size !== ids.length) throw new ServiceError('invalid_request');
+  return ids;
+};
 
 /** Routes which launch or inspect generation weeks; registered on the root app. */
 export function registerAdminLevelTestGenerationRoutes(app: FastifyInstance,
@@ -68,9 +76,10 @@ export function registerAdminLevelTestGenerationRoutes(app: FastifyInstance,
     await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.regenerate',
       `${languageID}:${level}:${weekId}`, reason, { languageID, level, weekId }));
     // Fire-and-forget remains intentional: the job module serializes and records failure.
-    void runLevelTestGenerationJob(db, env, { languageID, level, weekIndex: weekId, force: true, origin: 'user_operator' })
+    const runCorrelationId = randomUUID();
+    void runLevelTestGenerationJob(db, env, { languageID, level, weekIndex: weekId, force: true, origin: 'user_operator' }, runCorrelationId)
       .catch(() => undefined);
-    return reply.code(202).send({ started: true });
+    return reply.code(202).send({ started: true, runCorrelationId });
   });
   app.post('/v1/admin/level-tests/generate', { bodyLimit: 4096 }, async (request, reply) => {
     assertCsrf(request);
@@ -100,7 +109,8 @@ export function registerAdminLevelTestReviewRoutes(app: FastifyInstance,
   app.get('/v1/admin/level-tests/status', async (request, reply) => {
     assertPageOrigin(request);
     await authenticateAdmin(request);
-    const result = await levelTestGenerationStatus(db, generationStatus);
+    const runIds = runIdsFromQuery((request.query as Record<string, unknown>).runIds);
+    const result = await levelTestGenerationStatus(db, generationStatus, runIds);
     reply.header('cache-control', 'no-store');
     return result;
   });

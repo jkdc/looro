@@ -15,11 +15,11 @@ const lockKey = (languageID: string, level: string, weekId: number) => `level-te
     finished (recording the last-success timestamp), failed and unknown are
     counted too; 'busy' and 'exists' are idempotent no-ops that record nothing. */
 export async function runLevelTestGenerationJob(db: Database, env: NodeJS.ProcessEnv,
-    options: GenerateOptions): Promise<GenerationJobResult> {
+    options: GenerateOptions, runCorrelationId?: string): Promise<GenerationJobResult> {
   const startedAt = performance.now();
   let status: 'finished' | 'failed' | 'unknown' | null = null;
   try {
-    const result = await runLevelTestGenerationJobOnce(db, env, options);
+    const result = await runLevelTestGenerationJobOnce(db, env, options, runCorrelationId);
     status = result.status === 'approved' || result.status === 'draft' ? 'finished' :
       result.status === 'failed' ? 'failed' : result.status === 'unknown' ? 'unknown' : null;
     return result;
@@ -39,7 +39,7 @@ export async function runLevelTestGenerationJob(db: Database, env: NodeJS.Proces
 
 /** Serializes CLI and scheduler generation before any external provider call. */
 async function runLevelTestGenerationJobOnce(
-  db: Database, env: NodeJS.ProcessEnv, options: GenerateOptions,
+  db: Database, env: NodeJS.ProcessEnv, options: GenerateOptions, runCorrelationId?: string,
 ): Promise<GenerationJobResult> {
   const weekId = options.weekIndex;
   if (!Number.isSafeInteger(weekId) || (weekId as number) < 0) throw new Error('invalid_generation_week');
@@ -79,7 +79,7 @@ async function runLevelTestGenerationJobOnce(
       return { status: 'failed', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['attempt_limit_reached'] };
 
     const attempt = (prior?.attempts ?? 0) + 1;
-    const runId = await startRun(client, options, weekId!, attempt);
+    const runId = await startRun(client, options, weekId!, attempt, runCorrelationId);
     let outcome: GenerationOutcome;
     try {
       outcome = await generateWeeklyLevelTest({ db, env }, { ...options, weekIndex: weekId, signal: options.signal });
@@ -113,8 +113,11 @@ function safeCode(value: string | undefined): string {
   return value && /^[a-z0-9_]{1,80}$/.test(value) ? value : 'generation_failed';
 }
 
-async function startRun(client: PoolClient, options: GenerateOptions, weekId: number, attempt: number): Promise<string> {
-  const id = randomUUID();
+async function startRun(client: PoolClient, options: GenerateOptions, weekId: number, attempt: number,
+  runCorrelationId?: string): Promise<string> {
+  const id = runCorrelationId ?? randomUUID();
+  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(id))
+    throw new Error('invalid_generation_run_id');
   await client.query(`INSERT INTO level_test_generation_jobs(id, language_id, level, week_index, state, attempts, started_at, updated_at)
     VALUES($1,$2,$3,$4,'running',$5,now(),now())`,
   [id, options.languageID, options.level, weekId, attempt]);

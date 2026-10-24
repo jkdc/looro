@@ -177,7 +177,8 @@ integration('regenerate accepts the current unpublished week and runs a job', as
   const response = await post('/v1/admin/level-tests/regenerate',
     { languageID: 'en', level: 'A1', reason: 'rebuilding weak listening pool' });
   assert.equal(response.statusCode, 202);
-  assert.deepEqual(response.json(), { started: true });
+  assert.equal(response.json().started, true);
+  assert.match(response.json().runCorrelationId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   await new Promise(resolve => setTimeout(resolve, 300));
   const jobs = (await db!.query(`SELECT state FROM level_test_generation_jobs
     WHERE language_id='en' AND level='A1' AND week_index=$1`, [CURRENT])).rows;
@@ -264,7 +265,18 @@ integration('generation launch accepts a single level', async () => {
   const response = await post('/v1/admin/level-tests/generate',
     { languageID: 'es', levels: ['B1'], reason: 'single level launch' });
   assert.equal(response.statusCode, 202);
-  assert.deepEqual(response.json().keys, [{ languageID: 'es', level: 'B1', status: 'started' }]);
+  const key = response.json().keys[0];
+  assert.deepEqual({ languageID: key.languageID, level: key.level, status: key.status },
+    { languageID: 'es', level: 'B1', status: 'started' });
+  assert.match(key.runCorrelationId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.equal('runId' in key, false, 'the 202 must not claim a run ID before its row is persisted');
+  let run: { id: string; attempts: number } | undefined;
+  for (let i = 0; i < 20; i++) {
+    run = (await db!.query('SELECT id, attempts FROM level_test_generation_jobs WHERE id=$1', [key.runCorrelationId])).rows[0];
+    if (run) break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.deepEqual(run, { id: key.runCorrelationId, attempts: 1 }, 'the exact correlation must become the persisted run UUID');
 });
 
 integration('generation launch validates language, levels, week and reason', async () => {
@@ -316,6 +328,104 @@ integration('the status endpoint exposes the last generation jobs', async () => 
   assert.equal(failed.errorCode, 'generation_failed');
   assert.ok(Array.isArray(failed.errors) && failed.errors.length === 1);
   assert.match(failed.errors[0], /^[a-z0-9_.,()%:\- ]+$/);
+});
+
+integration('an accepted but unregistered generation remains pending rather than matching an older terminal job', async () => {
+  const runWeek = CURRENT;
+  const lockKey = `level-test-generation:en:A1:${CURRENT}`;
+  const holder = await db!.connect();
+  const oldRunID = randomUUID();
+  try {
+    await db!.query(`INSERT INTO level_test_generation_jobs(id,language_id,level,week_index,state,attempts,error_code,started_at,finished_at,updated_at)
+      VALUES($1,'en','A1',$2,'failed',3,'generation_failed',now()-interval '2 hours',now()-interval '1 hour',now()-interval '1 hour')`,
+    [oldRunID, runWeek]);
+    await holder.query('SELECT pg_advisory_lock(hashtextextended($1,0))', [lockKey]);
+    const response = await post('/v1/admin/level-tests/generate',
+      { languageID: 'en', levels: ['A1'], reason: 'correlate the accepted request' });
+    assert.equal(response.statusCode, 202);
+    const key = response.json().keys[0];
+    assert.notEqual(key.runCorrelationId, oldRunID);
+    const status = await app().inject({ method: 'GET',
+      url: `/v1/admin/level-tests/status?runIds=${encodeURIComponent(key.runCorrelationId)}`, headers: await session() });
+    assert.equal(status.statusCode, 200);
+    assert.deepEqual(status.json().trackedRuns, [{ correlationId: key.runCorrelationId, registration: 'pending' }]);
+    assert.equal((await db!.query('SELECT 1 FROM level_test_generation_jobs WHERE id=$1', [key.runCorrelationId])).rowCount, 0);
+  } finally {
+    await holder.query('SELECT pg_advisory_unlock(hashtextextended($1,0))', [lockKey]);
+    holder.release();
+  }
+});
+
+integration('exact generation status resolves a persisted run after it leaves the ten-job recent window', async () => {
+  const runID = randomUUID(), targetWeek = CURRENT - 2;
+  await db!.query(`INSERT INTO level_test_generation_jobs(id,language_id,level,week_index,state,attempts,error_code,started_at,finished_at,updated_at)
+    VALUES($1,'en','A1',$2,'failed',7,'generation_failed',now()-interval '2 days',now()-interval '1 day',now()-interval '1 day')`,
+  [runID, targetWeek]);
+  for (let i = 0; i < 11; i++) {
+    await db!.query(`INSERT INTO level_test_generation_jobs(language_id,level,week_index,state,attempts,started_at,finished_at,updated_at)
+      VALUES('es','B2',$1,'finished',$2,now(),now(),now()+interval '1 day')`, [CURRENT + i, i + 1]);
+  }
+  const response = await app().inject({ method: 'GET',
+    url: `/v1/admin/level-tests/status?runIds=${encodeURIComponent(runID)}`, headers: await session() });
+  assert.equal(response.statusCode, 200);
+  const body = response.json();
+  assert.equal(body.jobs.some((job: { id?: string }) => job.id === runID), false);
+  assert.ok(Array.isArray(body.trackedRuns), 'exact lookups must be returned separately from the recent jobs window');
+  const tracked = body.trackedRuns[0];
+  assert.equal(tracked.correlationId, runID);
+  assert.equal(tracked.registration, 'registered');
+  assert.deepEqual({ runId: tracked.run.runId, attemptOrdinal: tracked.run.attemptOrdinal,
+    languageID: tracked.run.languageID, level: tracked.run.level,
+    weekId: tracked.run.weekId, status: tracked.run.status,
+    errorCode: tracked.run.errorCode, errors: tracked.run.errors }, {
+    runId: runID, attemptOrdinal: 7, languageID: 'en', level: 'A1', weekId: targetWeek, status: 'failed',
+    errorCode: 'generation_failed', errors: [],
+  });
+  assert.ok(Date.parse(tracked.run.startedAt));
+  assert.ok(Date.parse(tracked.run.finishedAt));
+  assert.ok(Date.parse(tracked.run.updatedAt));
+});
+
+integration('regeneration after a prior terminal run reports the new persisted attempt only', async () => {
+  await seed([{ language: 'en', level: 'A2', status: 'rejected' }]);
+  const oldRunID = randomUUID();
+  await db!.query(`INSERT INTO level_test_generation_jobs(id,language_id,level,week_index,state,attempts,error_code,started_at,finished_at,updated_at)
+    VALUES($1,'en','A2',$2,'failed',1,'generation_failed',now()-interval '2 hours',now()-interval '1 hour',now()-interval '1 hour')`,
+  [oldRunID, CURRENT]);
+  const response = await post('/v1/admin/level-tests/regenerate',
+    { languageID: 'en', level: 'A2', reason: 'retry after previous failure' });
+  assert.equal(response.statusCode, 202);
+  const correlationId = response.json().runCorrelationId;
+  assert.match(correlationId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  assert.notEqual(correlationId, oldRunID);
+  let status: any;
+  for (let i = 0; i < 20; i++) {
+    const result = await app().inject({ method: 'GET',
+      url: `/v1/admin/level-tests/status?runIds=${encodeURIComponent(correlationId)}`, headers: await session() });
+    status = result.json().trackedRuns?.[0];
+    if (status?.registration === 'registered') break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.equal(status?.run?.runId, correlationId);
+  assert.equal(status?.run?.attemptOrdinal, 2);
+  assert.notEqual(status?.run?.runId, oldRunID);
+});
+
+integration('concurrent same-key launch correlations never resolve to another request run', async () => {
+  const responses = await Promise.all([1, 2].map(() => post('/v1/admin/level-tests/generate',
+    { languageID: 'en', levels: ['C1'], reason: 'concurrent same-key request' })));
+  assert.deepEqual(responses.map(response => response.statusCode), [202, 202]);
+  const ids = responses.map(response => response.json().keys[0].runCorrelationId);
+  assert.notEqual(ids[0], ids[1]);
+  const result = await app().inject({ method: 'GET', url: `/v1/admin/level-tests/status?runIds=${ids.join(',')}`,
+    headers: await session() });
+  assert.equal(result.statusCode, 200);
+  const runs = result.json().trackedRuns;
+  assert.deepEqual(runs.map((entry: any) => entry.correlationId), ids);
+  for (const entry of runs) {
+    if (entry.registration === 'registered') assert.equal(entry.run.runId, entry.correlationId);
+    else assert.deepEqual(entry, { correlationId: entry.correlationId, registration: 'pending' });
+  }
 });
 
 integration('retiring an approved week stores the operator reason and audits once', async () => {

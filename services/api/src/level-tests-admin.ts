@@ -1,4 +1,5 @@
 import type { Database } from './db.js';
+import { randomUUID } from 'node:crypto';
 import { ServiceError } from './errors.js';
 import { weekIndex } from './level-tests.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
@@ -22,7 +23,7 @@ export async function validateRegenerateRequest(db: Database, languageID: string
 }
 
 export interface GenerationLaunchKey { languageID: string; level: string;
-  status: 'started' | 'skipped_approved' | 'skipped_existing' }
+  status: 'started' | 'skipped_approved' | 'skipped_existing'; runCorrelationId?: string }
 
 /** Plans an on-demand launch: current week only. Approved keys are protected,
     and any other existing week is left to the explicit regenerate path: the
@@ -41,6 +42,7 @@ export async function planGenerationLaunch(db: Database, languageID: string, lev
       languageID, level,
       status: current === 'approved' ? 'skipped_approved' as const
         : current ? 'skipped_existing' as const : 'started' as const,
+      ...(current ? {} : { runCorrelationId: randomUUID() }),
     };
   });
 }
@@ -55,7 +57,7 @@ export function runGenerationLaunch(db: Database, env: NodeJS.ProcessEnv,
       if (key.status !== 'started') continue;
       try {
         await runLevelTestGenerationJob(db, env, { languageID: key.languageID, level: key.level, weekIndex: weekId,
-          origin: 'user_operator', manual: true });
+          origin: 'user_operator', manual: true }, key.runCorrelationId);
       } catch { /* the job runner records failures itself */ }
     }
   })();
@@ -174,23 +176,28 @@ export async function levelTestWeekDetail(db: Database, id: string): Promise<Wee
     retiredReason: (row.retired_reason as string | null) ?? null };
 }
 
-type GenerationJobRow = { language_id: string; level: string; week_index: number; state: string; attempts: number;
+type GenerationJobRow = { id: string; language_id: string; level: string; week_index: number; state: string; attempts: number;
   error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date };
 
 /** Builds the operator status view without coupling the query/projection to HTTP. */
 export async function levelTestGenerationStatus(db: Database,
-  generation: { config: LevelTestSchedulerConfig; isStarted: () => boolean } | undefined) {
-  const latest = (await db.query(`SELECT language_id, level, week_index, state, attempts, error_code, error_details,
+  generation: { config: LevelTestSchedulerConfig; isStarted: () => boolean } | undefined,
+  runCorrelationIds?: string[]) {
+  const latest = (await db.query(`SELECT id, language_id, level, week_index, state, attempts, error_code, error_details,
     started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1`))
     .rows[0] as GenerationJobRow | undefined;
-  const jobs = (await db.query(`SELECT language_id, level, week_index, state, attempts, error_code, error_details,
+  const jobs = (await db.query(`SELECT id, language_id, level, week_index, state, attempts, error_code, error_details,
     started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10`))
     .rows as GenerationJobRow[];
   const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
-  const jobItem = (job: GenerationJobRow) => ({ languageID: job.language_id, level: job.level,
-    weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
+  const jobItem = (job: GenerationJobRow) => ({ runId: job.id, attemptOrdinal: job.attempts,
+    languageID: job.language_id, level: job.level, weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
     errors: Array.isArray(job.error_details) ? job.error_details.filter(entry => typeof entry === 'string') : [],
     startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
+  const trackedRuns = runCorrelationIds ? await db.query(`SELECT id, language_id, level, week_index, state, attempts,
+    error_code, error_details, started_at, finished_at, updated_at FROM level_test_generation_jobs WHERE id = ANY($1::uuid[])`,
+  [runCorrelationIds]) : undefined;
+  const exactRuns = trackedRuns && new Map((trackedRuns.rows as GenerationJobRow[]).map(job => [job.id, job]));
   return {
     schedule: generation ? { enabled: generation.config.enabled, day: generation.config.day, hour: generation.config.hour,
       languages: generation.config.languages, levels: generation.config.levels, timeoutMs: generation.config.timeoutMs }
@@ -198,6 +205,11 @@ export async function levelTestGenerationStatus(db: Database,
     scheduler: { activeInProcess: generation?.isStarted() ?? false },
     latestJob: latest ? jobItem(latest) : null,
     jobs: jobs.map(jobItem),
+    ...(runCorrelationIds ? { trackedRuns: runCorrelationIds.map(correlationId => {
+      const run = exactRuns?.get(correlationId);
+      return run ? { correlationId, registration: 'registered' as const, run: jobItem(run) }
+        : { correlationId, registration: 'pending' as const };
+    }) } : {}),
   };
 }
 
