@@ -22,7 +22,10 @@ const CHART_TYPE = { orders: 'bar', revenue_minor: 'bar', minutes_granted_ms: 'b
 const charts = [];
 let tables = [];
 const api = async (path, options = {}) => {
-  const response = await fetch(path, { headers: { 'content-type': 'application/json' }, credentials: 'same-origin', ...options });
+  let response;
+  try { response = await fetch(path, { headers: { 'content-type': 'application/json' }, credentials: 'same-origin', ...options }); }
+  catch (error) { setApiStatus(false); throw error; }
+  setApiStatus(true);
   if (response.status === 401) { location.href = '/login.html'; throw new Error('unauthenticated'); }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw Object.assign(new Error(body.error?.code ?? 'request_failed'), { code: body.error?.code, status: response.status });
@@ -77,9 +80,72 @@ const uuidCell = cell => {
 const toast = (message, kind = 'success') => {
   const element = document.createElement('div');
   element.className = `alert alert-${kind} position-fixed top-1 end-1 m-3 shadow`;
+  element.setAttribute('role', kind === 'danger' ? 'alert' : 'status');
+  element.setAttribute('aria-live', kind === 'danger' ? 'assertive' : 'polite');
   element.style.zIndex = '9999'; element.textContent = message;
   document.body.append(element);
   setTimeout(() => element.remove(), 4_000);
+};
+const setApiStatus = connected => {
+  const badge = $('#api-status');
+  if (!badge) return;
+  badge.className = `badge ${connected ? 'bg-success-lt' : 'bg-danger-lt'}`;
+  badge.textContent = connected ? 'API conectada' : 'API sin conexión';
+  badge.setAttribute('role', 'status');
+  badge.setAttribute('aria-live', 'polite');
+};
+const validateFields = fields => {
+  let firstInvalid = null;
+  for (const { input, label, requiredText = false, requiredValue = false, validate } of fields) {
+    const control = typeof input === 'string' ? $(input) : input;
+    if (!control) continue;
+    const key = control.id || `field-${control.dataset.tier ?? 'form'}-${control.dataset.field ?? 'input'}`;
+    const errorId = `${key}-error`;
+    const helper = document.getElementById(errorId);
+    let message = '';
+    if (!control.checkValidity()) {
+      const bounds = control.validity.rangeOverflow ? `El máximo es ${control.max}.` :
+        control.validity.rangeUnderflow ? `El mínimo es ${control.min}.` : 'Introduce un valor válido.';
+      message = `${label}: ${bounds}`;
+    } else if (requiredValue && !String(control.value).trim()) message = `${label}: este campo es obligatorio.`;
+    else if (requiredText && control.value.trim().length < 3) message = `${label}: escribe al menos 3 caracteres.`;
+    else if (validate && !validate(control.value)) message = `${label}: el valor no es válido.`;
+    if (message) {
+      control.setAttribute('aria-invalid', 'true');
+      control.setAttribute('aria-describedby', [control.getAttribute('aria-describedby'), errorId].filter(Boolean).join(' '));
+      const error = helper ?? document.createElement('div');
+      error.id = errorId; error.className = 'invalid-feedback d-block';
+      error.setAttribute('role', 'alert'); error.textContent = message;
+      if (!helper) control.insertAdjacentElement('afterend', error);
+      firstInvalid ??= control;
+    } else {
+      control.removeAttribute('aria-invalid');
+      if (helper) helper.remove();
+      const describedBy = (control.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(id => id && id !== errorId);
+      if (describedBy.length) control.setAttribute('aria-describedby', describedBy.join(' '));
+      else control.removeAttribute('aria-describedby');
+    }
+  }
+  if (firstInvalid) { firstInvalid.focus(); return false; }
+  return true;
+};
+const refreshAfterMutation = async (container, render, confirmation, retryId) => {
+  try { await render(container); toast(confirmation); }
+  catch (error) {
+    const renderFailure = failure => {
+      container.innerHTML = `<div class="alert alert-warning mt-3" role="alert">
+        <strong>${escapeHtml(confirmation)}</strong><p class="mb-2">La lectura no se pudo actualizar; los datos mostrados aún no están confirmados como recientes.</p>
+        <span class="small">${escapeHtml(failure.code ?? failure.message ?? 'read_failed')}</span>
+        <div><button class="btn btn-sm btn-outline-primary mt-2" id="${retryId}">Reintentar lectura</button></div></div>`;
+      $(`#${retryId}`).onclick = async () => {
+        container.setAttribute('aria-busy', 'true');
+        try { await render(container); }
+        catch (nextFailure) { renderFailure(nextFailure); }
+        finally { container.setAttribute('aria-busy', 'false'); }
+      };
+    };
+    renderFailure(error);
+  }
 };
 const originLabel = value => value === 'user_operator' ? 'Operador' : value === 'automatic_worker' ? 'Automático' : '—';
 const openModal = id => { const element = $(id); element.classList.add('show'); element.style.display = 'block';
@@ -237,7 +303,7 @@ async function renderBrowse(container, fixedTable) {
         <span class="text-secondary small"><i class="ti ti-database me-1"></i>${escapeHtml(fixedTable ?? current)}</span>
         <span class="text-secondary small" id="browse-total"></span>
       </div>
-      <div class="card-body"><div id="browse-grid"></div></div>
+      <div class="card-body"><div id="browse-load-error" aria-live="polite"></div><div id="browse-grid"></div></div>
       <div class="card-footer py-2 pager-bar">
         <div class="btn-group">
           <button class="btn btn-sm" id="page-prev"><i class="ti ti-chevron-left"></i></button>
@@ -322,6 +388,8 @@ async function renderBrowse(container, fixedTable) {
       if (!spec.operators.includes(operator)) continue;
       query.set(`q_${entry.field}`, `${operator}:${String(filter.value ?? '')}`);
     }
+    $('#browse-grid').setAttribute('aria-busy', 'true');
+    $('#browse-load-error').textContent = 'Cargando resultados…';
     try {
       const body = await api(`/v1/admin/browse/${name}?${query}`);
       table.setData(body.rows);
@@ -331,9 +399,16 @@ async function renderBrowse(container, fixedTable) {
       $('#page-info').textContent = `${state.page} / ${maxPage}`;
       $('#page-prev').disabled = state.page <= 1;
       $('#page-next').disabled = state.page >= maxPage;
+      $('#browse-load-error').textContent = '';
     } catch (error) {
-      if (error.message !== 'unauthenticated') toast(`Error: ${error.code ?? error.message}`, 'danger');
-    }
+      if (error.message !== 'unauthenticated') {
+        $('#browse-load-error').innerHTML = `<div class="alert alert-danger mb-2" role="alert">
+          No se pudieron actualizar los resultados; las filas visibles pueden estar desactualizadas.
+          <span class="small">${escapeHtml(error.code ?? error.message)}</span>
+          <button class="btn btn-sm btn-outline-primary ms-2" id="browse-retry">Reintentar</button></div>`;
+        $('#browse-retry').onclick = () => { void load(); };
+      }
+    } finally { $('#browse-grid').setAttribute('aria-busy', 'false'); }
   };
   $('#page-prev').onclick = () => { if (state.page > 1) { state.page--; void load(); } };
   $('#page-next').onclick = () => { state.page++; void load(); };
@@ -1027,12 +1102,13 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
   </div>`;
   container.innerHTML = `<div class="row row-cards">
     ${merged.account ? `<div class="col-12"><div class="card card-sm"><div class="card-body"><strong>Alumno:</strong> ${escapeHtml(studentEmail || merged.account)}</div></div></div>` : ''}
-    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resumen</h3></div><div class="card-body d-flex gap-4">
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resumen global</h3></div><div class="card-body d-flex flex-column gap-2">
+      <p class="text-secondary mb-0" role="note">El resumen es global y no cambia con los filtros del listado.</p><div class="d-flex gap-4">
       <div><div class="subheader text-secondary">Intentos</div><strong>${summary.total}</strong></div>
       <div><div class="subheader text-secondary">Completados</div><strong>${summary.completed}</strong></div>
       <div><div class="subheader text-secondary">Aprobados</div><strong>${summary.passed}</strong></div>
       <div><div class="subheader text-secondary">Nota media</div><strong>${summary.avgOverall === null ? '—' : summary.avgOverall + ' %'}</strong></div>
-    </div></div></div>
+    </div></div></div></div>
     <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resultados de exámenes</h3></div><div class="card-body">${filterBar}
     <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Intento</th><th>Alumno</th><th>Examen</th><th>Semana</th><th>Origen</th><th>Estado</th><th>Nota</th><th>Inicio</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
       <button class="btn btn-sm btn-outline-secondary" id="attempts-prev" ${attempts.offset === 0 ? 'disabled' : ''}>Anterior</button>
@@ -1081,11 +1157,15 @@ async function renderPolicy(container) {
     <span class="text-secondary ms-2">versión actual ${policy.version}</span>
   </div></div></div></div>`;
   $('#pol-save').onclick = async () => {
+    if (!validateFields([
+      { input: '#pol-minutes', label: 'Minutos', requiredValue: true },
+      { input: '#pol-reason', label: 'Motivo', requiredText: true }
+    ])) return;
     try {
       await api('/v1/admin/policy/welcome', { method: 'PUT', body: JSON.stringify({
         version: policy.version, welcomeEnabled: $('#pol-enabled').checked,
         welcomeMinutes: Number($('#pol-minutes').value), reason: $('#pol-reason').value }) });
-      toast('Política actualizada'); renderPolicy(container);
+      await refreshAfterMutation(container, renderPolicy, 'Política actualizada correctamente', 'policy-refresh');
     } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
   };
 }
@@ -1128,6 +1208,16 @@ async function renderPlans(container) {
     </div></div></div></div>`;
   $('#plans-save').onclick = async () => {
     const tierInputs = [...container.querySelectorAll('[data-tier]')];
+    const fields = [
+      { input: '#plans-drip-minutes', label: 'Minutos/mes del goteo', requiredValue: true },
+      { input: '#plans-drip-cap', label: 'Tope de goteo', requiredValue: true },
+      { input: '#plans-trial', label: 'Días de prueba', requiredValue: true },
+      { input: '#plans-budget', label: 'Presupuesto vitalicio', requiredValue: true },
+      ...tierInputs.filter(input => input.type === 'number').map(input => ({ input,
+        label: input.dataset.field === 'monthlyMinutes' ? 'Minutos/mes del plan' : 'Tope de rollover', requiredValue: true })),
+      { input: '#plans-reason', label: 'Motivo', requiredText: true }
+    ];
+    if (!validateFields(fields)) return;
     const payload = { version: config.version, reason: $('#plans-reason').value,
       freeDripEnabled: $('#plans-drip').checked, freeDripMinutes: Number($('#plans-drip-minutes').value),
       freeDripRolloverCapMinutes: Number($('#plans-drip-cap').value), trialDays: Number($('#plans-trial').value),
@@ -1140,7 +1230,7 @@ async function renderPlans(container) {
         playProductID: tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'playProductID').value || null })) };
     try {
       await api('/v1/admin/plans', { method: 'PUT', body: JSON.stringify(payload) });
-      toast('Planes actualizados'); renderPlans(container);
+      await refreshAfterMutation(container, renderPlans, 'Planes actualizados correctamente', 'plans-refresh');
     } catch (error) { $('#plans-error').textContent = error.code === 'subscription_version_conflict' ?
       'Conflicto de versión: recarga y reintenta.' : `Error: ${error.code}`; }
   };
@@ -1185,6 +1275,14 @@ async function renderCampaigns(container) {
     $(selector).addEventListener('change', invalidatePrepared);
   }
   $('#camp-prepare').onclick = async () => {
+    const fields = [
+      ...($('#aud-one').checked ? [{ input: '#camp-account', label: 'Cuenta',
+        validate: value => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.trim()) }] : []),
+      { input: '#camp-minutes', label: 'Minutos por usuario', requiredValue: true },
+      { input: '#camp-cap', label: 'Tope total', requiredValue: true },
+      { input: '#camp-reason', label: 'Motivo', requiredText: true }
+    ];
+    if (!validateFields(fields)) return;
     try {
       const intent = { audience: $('#aud-one').checked ? [$('#camp-account').value.trim()] : 'all-current-users',
         minutesPerUser: Number($('#camp-minutes').value), maxTotalMinutes: Number($('#camp-cap').value),
@@ -1353,9 +1451,17 @@ async function renderRoute() {
   for (const table of tables) table.destroy();
   tables = [];
   const container = $('#view');
-  container.innerHTML = '<div class="mt-3 progress progress-sm"><div class="progress-bar progress-bar-indeterminate"></div></div>';
+  container.setAttribute('aria-busy', 'true');
+  container.innerHTML = '<div class="mt-3 progress progress-sm" role="status" aria-live="polite" aria-label="Cargando vista"><div class="progress-bar progress-bar-indeterminate"></div></div>';
   try { await view.render(container, params, detailId); }
-  catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger mt-3"><i class="ti ti-alert-triangle me-2"></i>${error.code ?? error.message}</div>`; }
+  catch (error) {
+    if (error.message !== 'unauthenticated') {
+      container.innerHTML = `<div class="alert alert-danger mt-3" role="alert"><i class="ti ti-alert-triangle me-2"></i>
+        <strong>No se pudo cargar esta vista.</strong> ${escapeHtml(error.code ?? error.message ?? 'request_failed')}
+        <div><button class="btn btn-sm btn-outline-primary mt-2" id="view-retry">Reintentar carga</button></div></div>`;
+      $('#view-retry').onclick = () => route();
+    }
+  } finally { container.setAttribute('aria-busy', 'false'); }
 }
 (function boot() {
   // Grouping is data: a heading appears whenever an entry opens a new group, so

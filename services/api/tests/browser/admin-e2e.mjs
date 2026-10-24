@@ -83,14 +83,37 @@ const expectText = async (selector, needle) => {
 try {
   // 1. Local operator login.
   await page.goto(`${PANEL}/login.html`, { waitUntil: 'domcontentloaded' });
+  await check('bearer network failures are accessible, retryable and never echo the token', async () => {
+    const bearer = 'A'.repeat(43);
+    let requests = 0;
+    await page.route('**/v1/admin/auth/session', async route => {
+      requests++;
+      if (requests === 1) return route.abort();
+      return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ error: { code: 'invalid_session' } }) });
+    });
+    await page.fill('#bearer', bearer);
+    await page.click('#bearer-btn');
+    await page.waitForFunction(() => (document.querySelector('#error')?.textContent ?? '').length > 0, undefined, { timeout: 5_000 });
+    const firstError = (await page.textContent('#error')) ?? '';
+    if (!firstError.includes('No se pudo contactar con el servidor')) throw new Error(`network message=${firstError}`);
+    if (firstError.includes(bearer) || page.url().includes(bearer)) throw new Error('bearer leaked into visible error or URL');
+    if (!(await page.isEnabled('#bearer-btn'))) throw new Error('bearer retry control stayed disabled');
+    await page.click('#bearer-btn');
+    await page.waitForFunction(() => (document.querySelector('#error')?.textContent ?? '').includes('Token no válido'), undefined, { timeout: 5_000 });
+    if (requests !== 2 || (await page.textContent('#error'))?.includes(bearer)) throw new Error('retry failed or echoed bearer');
+    await page.unroute('**/v1/admin/auth/session');
+  });
   await page.fill('#username', 'e2e-operator');
   await page.fill('#password', 'e2e-browser-password');
   await shot('01-login');
   await page.click('#login-btn');
   await page.waitForURL(`${PANEL}/`, { timeout: 10_000 });
   await page.waitForSelector('#nav', { timeout: 10_000 });
+  await page.waitForFunction(() => (document.querySelector('#api-status')?.textContent ?? '').toLowerCase().includes('conectada'),
+    undefined, { timeout: 5_000 }).catch(() => {});
   await check('login establishes an operator session', async () => {
     if (!page.url().startsWith(PANEL)) throw new Error(`unexpected url ${page.url()}`);
+    if (!(await page.textContent('#api-status'))?.toLowerCase().includes('conectada')) throw new Error(`API status is not reported as connected: ${await page.textContent('#api-status')}`);
   });
   await shot('02-dashboard');
 
@@ -595,6 +618,7 @@ try {
     if (!body.includes('student@example.test')) throw new Error('student row missing');
     if (!body.includes('84 %')) throw new Error('overall score missing');
     if (!body.includes('passed')) throw new Error('passed badge missing');
+    if (!body.includes('El resumen es global y no cambia con los filtros del listado.')) throw new Error('global summary scope is unclear');
   });
   await shot('11-results-section');
   // Applying a filter re-renders the whole view, filter bar included: a naive
@@ -742,27 +766,61 @@ try {
       throw new Error('non-orderable is_guest header renders a sorter');
   });
   await shot('18-browse-accounts');
+  await check('browse read failures stay visible, preserve stale rows and retry without becoming healthy', async () => {
+    await page.route('**/v1/admin/browse/accounts?*', route => route.abort());
+    await page.selectOption('#page-size', '50');
+    await page.waitForSelector('#browse-retry', { timeout: 5_000 });
+    await expectText('#browse-load-error', 'las filas visibles pueden estar desactualizadas');
+    await expectText('#browse-grid', 'student@example.test');
+    if (!(await page.textContent('#api-status'))?.includes('sin conexión')) throw new Error('API badge did not report disconnected state');
+    await page.unroute('**/v1/admin/browse/accounts?*');
+    await page.click('#browse-retry');
+    await page.waitForFunction(() => !(document.querySelector('#browse-load-error')?.textContent ?? '').length &&
+      (document.querySelector('#api-status')?.textContent ?? '').toLowerCase().includes('conectada'), undefined, { timeout: 10_000 });
+  });
 
   await page.goto(`${PANEL}/#policy`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#pol-save', { timeout: 10_000 });
   const policyVersionBefore = (await page.textContent('#view')) ?? '';
   await drainToasts();
+  const policyWrites = [];
+  page.on('request', request => {
+    if (request.url().endsWith('/v1/admin/policy/welcome') && request.method() === 'PUT') policyWrites.push(request);
+  });
+  await page.fill('#pol-minutes', '1441');
   await page.click('#pol-save');
-  await page.waitForSelector('.alert-danger', { timeout: 10_000 });
-  await check('a welcome policy save without a motive is rejected by the API', async () => {
-    await expectText('.alert-danger', 'Error: invalid_request');
+  await page.waitForSelector('#pol-minutes-error', { timeout: 5_000 });
+  await check('invalid welcome-policy values and missing reason send no request', async () => {
+    if (policyWrites.length) throw new Error(`invalid number sent ${policyWrites.length} policy request(s)`);
+    if (await page.getAttribute('#pol-minutes', 'aria-invalid') !== 'true') throw new Error('invalid minutes not identified');
+    await expectText('#pol-minutes-error', 'Minutos');
+    await page.fill('#pol-minutes', '5');
+    await page.click('#pol-save');
+    await page.waitForSelector('#pol-reason-error', { timeout: 5_000 });
+    if (policyWrites.length) throw new Error(`missing reason sent ${policyWrites.length} policy request(s)`);
+    await expectText('#pol-reason-error', 'Motivo');
   });
   await drainToasts();
   const policyMinutes = await page.inputValue('#pol-minutes');
   await page.fill('#pol-minutes', String(Number(policyMinutes) === 5 ? 6 : 5));
   await page.fill('#pol-reason', 'Ajuste de bienvenida en E2E');
+  let failPolicyRefresh = true;
+  await page.route('**/v1/admin/policy/welcome', async route => {
+    if (route.request().method() === 'GET' && failPolicyRefresh) { failPolicyRefresh = false; return route.abort(); }
+    return route.continue();
+  });
   await page.click('#pol-save');
-  await page.waitForSelector('.alert-success', { timeout: 10_000 });
-  await check('a motivated welcome policy save persists and bumps the version', async () => {
-    await expectText('.alert-success', 'Política actualizada');
+  await page.waitForSelector('#policy-refresh', { timeout: 10_000 });
+  await check('a confirmed policy update remains distinct from a failed refresh and can be retried', async () => {
+    if (policyWrites.length !== 1) throw new Error(`expected one confirmed update, got ${policyWrites.length}`);
+    await expectText('#view', 'Política actualizada correctamente');
+    await expectText('#view', 'La lectura no se pudo actualizar');
+    if (!(await page.isVisible('#policy-refresh'))) throw new Error('read retry control missing');
+    await page.unroute('**/v1/admin/policy/welcome');
+    await page.click('#policy-refresh');
     await page.waitForFunction(before => {
       const text = document.querySelector('#view')?.textContent ?? '';
-      return text !== before && /versión actual \d+/.test(text);
+      return text !== before && /versión actual \d+/.test(text) && !text.includes('La lectura no se pudo actualizar');
     }, policyVersionBefore, { timeout: 10_000 });
     const after = (await page.textContent('#view')) ?? '';
     const before = policyVersionBefore.match(/versión actual (\d+)/)?.[1];
@@ -775,12 +833,24 @@ try {
 
   await page.goto(`${PANEL}/#plans`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#plans-save', { timeout: 10_000 });
-  const plansVersionBefore = ((await page.textContent('#view')) ?? '').match(/versión actual (\d+)/)?.[1];
+  const plansViewBefore = (await page.textContent('#view')) ?? '';
+  const plansVersionBefore = plansViewBefore.match(/versión actual (\d+)/)?.[1];
+  const planWrites = [];
+  page.on('request', request => {
+    if (request.url().endsWith('/v1/admin/plans') && request.method() === 'PUT') planWrites.push(request);
+  });
+  const dripMinutes = await page.inputValue('#plans-drip-minutes');
+  await page.fill('#plans-drip-minutes', '61');
   await page.click('#plans-save');
-  await page.waitForFunction(() => (document.querySelector('#plans-error')?.textContent ?? '').length > 0,
-    undefined, { timeout: 10_000 });
-  await check('a plans save without a motive reports the API rejection', async () => {
-    await expectText('#plans-error', 'Error: invalid_request');
+  await page.waitForSelector('#plans-drip-minutes-error', { timeout: 5_000 });
+  await check('invalid plans value and missing motive are rejected before the API request', async () => {
+    if (planWrites.length) throw new Error(`invalid plans form sent ${planWrites.length} request(s)`);
+    await expectText('#plans-drip-minutes-error', 'Minutos/mes del goteo');
+    await page.fill('#plans-drip-minutes', dripMinutes);
+    await page.click('#plans-save');
+    await page.waitForSelector('#plans-reason-error', { timeout: 5_000 });
+    if (planWrites.length) throw new Error(`missing plan motive sent ${planWrites.length} request(s)`);
+    await expectText('#plans-reason-error', 'Motivo');
   });
   await page.fill('#plans-reason', 'Revisión comercial en E2E');
   await page.click('#plans-save');

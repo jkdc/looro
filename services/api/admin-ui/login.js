@@ -30,10 +30,16 @@ const $ = selector => document.querySelector(selector);
   };
   $('#bearer-btn').onclick = async () => {
     const bearer = $('#bearer').value.trim();
+    $('#error').textContent = '';
     if (!/^[A-Za-z0-9_-]{43}$/.test(bearer)) { $('#error').textContent = 'El token debe tener 43 caracteres [A-Za-z0-9_-].'; return; }
-    const response = await fetch('/v1/admin/auth/session', { method: 'POST', credentials: 'same-origin',
-      headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bearer }) });
-    if (response.ok) location.href = '/';
-    else $('#error').textContent = 'Token no válido o sesión expirada.';
+    const button = $('#bearer-btn');
+    button.disabled = true;
+    try {
+      const response = await fetch('/v1/admin/auth/session', { method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bearer }) });
+      if (response.ok) { location.href = '/'; return; }
+      $('#error').textContent = 'Token no válido o sesión expirada.';
+    } catch { $('#error').textContent = 'No se pudo contactar con el servidor. Puedes volver a intentarlo.'; }
+    finally { button.disabled = false; }
   };
 })();

@@ -37,7 +37,7 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 
 - T0 / S1–S9 / inline / complete / commit `603f2d4` — baseline and specification artifacts; baseline API 640/640, browser 57 checks.
 - T1 / S1–S2 / inline / complete / commit `386b9a3` — campaign snapshot invalidation, explicit same-ID retry after uncertain apply, and server-catalog browse filters/sorters. RED: E2E reproduced enabled stale apply, sortable `is_guest`, and rejected server-filter operators; lock-specific RED reproduced the ability to prepare a second campaign during uncertainty. GREEN: browser E2E 63/63; `make test-api` 640/640.
-- T2 / S4–S5 / inline / pending / commit pending — form validation and errors.
+- T2 / S4–S5 / inline / complete / commit pending — client validation, bearer network recovery, API connectivity, persistent read retry, confirmed mutation/failed refresh distinction, and global results scope.
 - T3 / S3–S4 / inline / pending / commit pending — lifecycle/disposal.
 - T4 / S5–S6 / inline / pending / commit pending — responsive accessibility.
 - T5 / S7 / inline / pending / commit pending — run correlation.
@@ -71,3 +71,9 @@ Follow H15 and phases 0–6. Align E2E comments, help/docs, and final verificati
 - GREEN: prepared identity/confirmation/reason remain bound to the snapshot; the impact summary includes recipients and total minutes. Editing invalidates apply. An uncertain response retains the same campaign ID for explicit retry and locks intent fields/new preparation until success. Browse filter operator options come directly from API `operators`; unsupported controls/operators are omitted, sortable columns use `orderable`, and remote sort mode keeps pagination semantics aligned.
 - Verification: browser E2E passed 63/63 checks in Chromium against disposable PostgreSQL and the stub provider; full `make test-api` passed 640/640. One earlier browser run exposed a flaky pre-existing generation timer check; a fresh complete run passed it. Browser evidence is under `.superpowers/sdd/2026-10-24-admin-panel-hardening/evidence-t1-final3/`.
 - T1 work-unit commit: `386b9a3` (`fix(admin): preserve campaign and browse intent`). Next: continue T2.
+
+### L6 — T2 validation and operator error states
+- RED: browser tests reproduced bearer network failures without accessible feedback, ambiguous static API status, missing global-result scope, and invalid forms sending requests to the server rather than identifying fields locally.
+- GREEN: login bearer handling catches network failures, re-enables retry, and never echoes credentials; shared validation identifies invalid fields and blocks requests; API badge reflects reachable/unreachable fetches; route and table failures expose persistent accessible retry states without turning stale rows into healthy/empty results; confirmed policy updates remain explicitly confirmed when refresh fails; result KPIs state their global scope.
+- Verification: browser E2E passed 65/65 checks on the disposable stack, including failure/retry paths. JavaScript syntax checks and `git diff --check` passed. Existing API contracts were exercised in E2E; no backend code changed. Browser evidence is under `.superpowers/sdd/2026-10-24-admin-panel-hardening/evidence-t2-green2/`.
+- Next: commit T2 and continue T3.
