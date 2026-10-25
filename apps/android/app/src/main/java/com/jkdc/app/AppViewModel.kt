@@ -541,6 +541,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // then the guest grant's; without either, events simply stay queued.
     private val usageClient = accountConfiguration?.let(::UsageClient)
     private val progressClient = accountConfiguration?.let(::ProgressClient)
+    private val progressSyncOperation = com.jkdc.app.core.ProgressSyncOperation()
+    private val progressSyncAdmission = com.jkdc.app.core.ProgressSyncAdmission()
+    private val progressSyncRunner = com.jkdc.app.core.ProgressSyncRunner(progressSyncOperation, progressSyncAdmission)
+    private var progressSyncJob: Job? = null
     // The durable usage_outbox drain: the C2 writer path owns the open
     // database, so the adapter reads/marks usage_outbox around `store` on IO
     // and degrades to an empty drain while no store serves the run (startup,
@@ -835,18 +839,46 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         the local ledger stays the source of truth. */
     fun syncProgress() {
         val client = progressClient ?: return
-        viewModelScope.launch {
+        if (progressSyncJob?.isActive == true) return
+        val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
             try {
-                val session = memberSessions?.read() ?: guests?.availableSession() ?: return@launch
-                val remote = client.fetch(session)
-                if (remote != null && mergeRemoteProgress(remote)) bumpLedgerRevision()
-                client.send(session, progressBatchJson())
+                progressSyncRunner.run(
+                    resolveSession = { memberSessions?.read() ?: guests?.availableSession() },
+                    fetch = client::fetch,
+                    readLiveSession = { memberSessions?.read() ?: guests?.availableSession() },
+                    mergeRemote = { body, operation, identity ->
+                        val changed = mergeRemoteProgress(body, operation, identity)
+                        if (changed) bumpLedgerRevision()
+                        changed
+                    },
+                    outboundSnapshot = ::progressBatchJson,
+                    send = { session, payload -> client.send(session, payload) },
+                )
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
                 android.util.Log.w("LooroSync", "syncProgress failed", e)
+            } finally {
+                if (progressSyncJob === coroutineContext[Job]) progressSyncJob = null
             }
         }
+        progressSyncJob = job
+        job.start()
+    }
+
+    private fun invalidateProgressSync() {
+        progressSyncOperation.invalidate()
+        progressSyncJob?.cancel()
+        progressSyncJob = null
+    }
+
+    private fun beginProgressReplacement() {
+        progressSyncAdmission.beginReplacement()
+        invalidateProgressSync()
+    }
+
+    private fun endProgressReplacement() {
+        progressSyncAdmission.endReplacement()
     }
 
     private fun progressBatchJson(): String = buildJsonObject {
@@ -867,7 +899,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         so the mirror upserts the changed/appended lessons and inserts the
         appended marks (append-only: no re-sort, rowid order stays archive
         order). */
-    private fun mergeRemoteProgress(body: String): Boolean {
+    private suspend fun mergeRemoteProgress(
+        body: String,
+        operation: com.jkdc.app.core.ProgressSyncOperation.Token,
+        identity: com.jkdc.app.core.ProgressSyncIdentity,
+    ): Boolean {
         val rows = try { json.parseToJsonElement(body).jsonObject.getValue("progress").jsonArray
             .map { it.jsonObject } } catch (_: Exception) { return false }
         val merged = rows.mapNotNull { row ->
@@ -881,21 +917,38 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore, language)
         }
         if (merged.isEmpty()) return false
-        val lessonsBefore = archive.lessons.toList()
-        val markCountBefore = archive.completions.orEmpty().size
-        archive = ProgressSync.mergeRemote(archive, merged, language.id)
-        val changedLessons = archive.lessons.filterIndexed { i, lesson ->
+        val before = archive
+        val lessonsBefore = before.lessons.toList()
+        val markCountBefore = before.completions.orEmpty().size
+        val updated = ProgressSync.mergeRemote(before, merged, language.id)
+        val changedLessons = updated.lessons.filterIndexed { i, lesson ->
             i >= lessonsBefore.size || lesson != lessonsBefore[i]
         }
-        val appendedMarks = archive.completions.orEmpty().drop(markCountBefore)
-        persist { db -> LearningDbWriter.progressMerged(db, changedLessons, appendedMarks) }
-        return true
+        val appendedMarks = updated.completions.orEmpty().drop(markCountBefore)
+        val commit = progressSyncOperation.beginCommit(operation, identity) ?: return false
+        return try {
+            withContext(NonCancellable) {
+                val saved = persistFencedAndWait(
+                    { db -> LearningDbWriter.progressMerged(db, changedLessons, appendedMarks) },
+                    { write -> progressSyncOperation.writeCommit(commit, write) },
+                    if (jsonMode) persistenceSnapshot(updated) else null,
+                )
+                if (!saved) false
+                else progressSyncOperation.publishCommit(commit) { archive = updated }
+            }
+        } finally {
+            progressSyncOperation.finishCommit(commit)
+        }
     }
 
     /** One mutation site's directed durable write, run in FIFO order on the
         IO dispatcher (see the [writes] consumer). In JSON fail-safe mode the
         work is the legacy full-snapshot JSON save instead. */
-    private class WriteRequest(val work: () -> Unit, val completion: CompletableDeferred<Unit>? = null)
+    private class WriteRequest(
+        val work: () -> Unit,
+        val completion: CompletableDeferred<Boolean>? = null,
+        val fencedWrite: (((() -> Unit) -> Boolean))? = null,
+    )
     private val writes = Channel<WriteRequest>(Channel.UNLIMITED)
 
     /**
@@ -1052,8 +1105,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             for (request in writes) {
                 try {
-                    withContext(Dispatchers.IO) { request.work() }
-                    request.completion?.complete(Unit)
+                    val written = withContext(Dispatchers.IO) {
+                        val fence = request.fencedWrite
+                        if (fence == null) { request.work(); true }
+                        else fence(request.work)
+                    }
+                    request.completion?.complete(written)
                 } catch (error: Exception) {
                     request.completion?.completeExceptionally(error)
                     if (error is CancellationException) throw error
@@ -1131,8 +1188,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         translations = s.translations.toMutableMap(),
         topics = s.topics.map { it.copy(sources = it.sources.toList()) }.toMutableList(),
     )
-    private fun persistenceSnapshot() = LearningSnapshot(
-        archive.copy(sessions = archive.sessions.toMutableList(), preferences = archive.preferences.copy()),
+    private fun persistenceSnapshot(source: Archive = archive) = LearningSnapshot(
+        source.copy(sessions = source.sessions.toMutableList(), preferences = source.preferences.copy()),
         finalAssessmentTickets.toList(),
     )
 
@@ -1157,11 +1214,29 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         writes.trySend(WriteRequest(work))
     }
 
+    private suspend fun persistFencedAndWait(
+        write: (SqlDatabase) -> Unit,
+        fencedWrite: ((() -> Unit) -> Boolean),
+        jsonSnapshot: LearningSnapshot? = null,
+    ): Boolean {
+        if (!storageReady) return false
+        val completion = CompletableDeferred<Boolean>()
+        val work: () -> Unit = if (jsonMode) {
+            val snapshot = jsonSnapshot ?: persistenceSnapshot()
+            ({ repository.save(snapshot) })
+        } else {
+            val target = store!!.db
+            ({ write(target) })
+        }
+        writes.send(WriteRequest(work, completion, fencedWrite))
+        return completion.await()
+    }
+
     /** Durability barrier: resumes after every write enqueued before it (and
         itself) has landed. */
     private suspend fun persistAndWait() {
         check(storageReady)
-        val completion = CompletableDeferred<Unit>()
+        val completion = CompletableDeferred<Boolean>()
         val work: () -> Unit = if (jsonMode) {
             val snapshot = persistenceSnapshot()
             ({ repository.save(snapshot) })
@@ -1177,7 +1252,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         check(storageReady) { "Learning storage is not ready" }
         check(!jsonMode) { "Durable exam history is unavailable in JSON fail-safe mode" }
         val target = checkNotNull(store?.db) { "Learning database is unavailable" }
-        val completion = CompletableDeferred<Unit>()
+        val completion = CompletableDeferred<Boolean>()
         writes.send(WriteRequest({ write(target) }, completion))
         completion.await()
     }
@@ -1306,6 +1381,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onAccountChanged(account: AccountState) {
+        invalidateProgressSync()
         selectedAccount = account
         // Invalidate immediately. Slow guest or member reads may not restore access during a transition.
         readiness.selectAccount(null, true)
@@ -2590,7 +2666,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     suspend fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
+        beginProgressReplacement()
         return try {
+            progressSyncOperation.awaitCommit()
             // Decode, merge and the whole-database restore transaction are
             // heavy: run them off the main thread (importDbFrom's dispatcher
             // contract). The state writes stay in the caller's context.
@@ -2611,6 +2689,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             notice = getApplication<Application>().getString(R.string.notice_backup_imported); true
         }
         catch (_: Exception) { presentError(getApplication<Application>().getString(R.string.error_import_failed)); false }
+        finally { endProgressReplacement() }
     }
 
     // -- Phase D: learning.db backup/restore + per-language delete -----------
@@ -2712,8 +2791,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             notice = getApplication<Application>().getString(R.string.notice_db_import_unavailable)
             return false
         }
+        beginProgressReplacement()
         val dbFile = databaseFile()
         return try {
+            progressSyncOperation.awaitCommit()
             val bytes = withContext(Dispatchers.IO) {
                 val workDir = dbFile.parentFile ?: error("learning database has no parent directory")
                 BackupManager.readValidatedBackup(input, workDir, verificationOpener())
@@ -2773,6 +2854,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             notice = getApplication<Application>().getString(R.string.notice_db_restore_failed)
             false
         }
+        finally { endProgressReplacement() }
     }
 
     /** The post-import reload — exactly the startup path, keeping

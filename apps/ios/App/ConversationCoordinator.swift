@@ -21,6 +21,21 @@ enum ScenarioReviewState: Equatable {
     }
 }
 
+struct ProgressSyncSession: Equatable {
+    let accountID: String
+    let accessToken: String
+}
+
+/// Injectable edges for the coordinator's real progress-sync lifecycle.
+struct ConversationProgressSyncAdapter {
+    let loadSession: () -> ProgressSyncSession?
+    let fetch: (String) async -> [RemoteProgress]?
+    let archiveSnapshot: () throws -> Data
+    let applyRemote: ([RemoteProgress]) -> Void
+    let send: (String, String) async -> Bool
+    let onFinish: () -> Void
+}
+
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
@@ -61,26 +76,70 @@ enum ScenarioReviewState: Equatable {
     private func refreshUsageEnabled() {
         usageReporter.enabled = store.preferences.usageMetricsEnabled != false && managed != nil
     }
+    @ObservationIgnored private let progressSyncOperation = ProgressSyncOperation()
+    @ObservationIgnored private var progressSyncTask: Task<Void, Never>?
+    @ObservationIgnored private let injectedProgressSyncAdapter: ConversationProgressSyncAdapter?
 
     /// Push/pull the progress ledger against the account (guests included). Failures
     /// are silent: sync must never nag, the local ledger stays the source of truth.
     func syncProgress() {
-        guard let configuration = managed?.configuration,
-              let client = ProgressClient(configuration: configuration),
-              let bearer = try? ManagedAccountKeychain(scope: configuration.storageScope).load()?.accessToken
-        else { return }
-        Task { [weak self] in
+        guard let adapter = injectedProgressSyncAdapter ?? productionProgressSyncAdapter(),
+              let capturedSession = adapter.loadSession() else { return }
+        let identity = progressSyncOperation.identity(accountID: capturedSession.accountID,
+                                                     accessToken: capturedSession.accessToken)
+        guard let operation = progressSyncOperation.begin(identity) else { return }
+        let capturedArchive = try? adapter.archiveSnapshot()
+        progressSyncTask = Task { [weak self] in
             guard let self else { return }
-            if let rows = await client.fetch(bearer: bearer), !rows.isEmpty {
-                self.store.applyRemoteProgress(rows)
+            defer {
+                self.progressSyncOperation.finish(operation)
+                adapter.onFinish()
             }
-            let language = self.store.language.id
-            _ = await client.send(ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
-                                                       completions: self.store.archive.completions ?? [],
-                                                       courses: CourseRegistry.forLanguage(language),
-                                                       listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
-                                                       languageID: language), bearer: bearer)
+            do {
+                let rows = await adapter.fetch(capturedSession.accessToken)
+                guard !Task.isCancelled,
+                      let liveSession = adapter.loadSession(),
+                      self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
+                        accountID: liveSession.accountID, accessToken: liveSession.accessToken)),
+                      let capturedArchive, (try? adapter.archiveSnapshot()) == capturedArchive else { return }
+                if let rows, !rows.isEmpty {
+                    self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity) {
+                        adapter.applyRemote(rows)
+                    }
+                }
+                guard let currentSession = adapter.loadSession() else { return }
+                let currentIdentity = self.progressSyncOperation.identity(accountID: currentSession.accountID,
+                                                                           accessToken: currentSession.accessToken)
+                guard !Task.isCancelled,
+                      self.progressSyncOperation.owns(operation, liveIdentity: currentIdentity) else { return }
+                _ = await adapter.send(self.store.language.id, currentSession.accessToken)
+            } catch is CancellationError {
+                return
+            }
         }
+    }
+
+    private func productionProgressSyncAdapter() -> ConversationProgressSyncAdapter? {
+        guard let configuration = managed?.configuration,
+              let client = ProgressClient(configuration: configuration) else { return nil }
+        let keychain = ManagedAccountKeychain(scope: configuration.storageScope)
+        return ConversationProgressSyncAdapter(
+            loadSession: {
+                guard let session = try? keychain.load() else { return nil }
+                return ProgressSyncSession(accountID: session.accountID.uuidString, accessToken: session.accessToken)
+            },
+            fetch: { bearer in await client.fetch(bearer: bearer) },
+            archiveSnapshot: { try self.store.exportData() },
+            applyRemote: { rows in self.store.applyRemoteProgress(rows) },
+            send: { language, bearer in
+                let entries = ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
+                                                   completions: self.store.archive.completions ?? [],
+                                                   courses: CourseRegistry.forLanguage(language),
+                                                   listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
+                                                   languageID: language)
+                return await client.send(entries, bearer: bearer)
+            },
+            onFinish: {})
     }
 
     private func lessonCourse(_ lessonID: String) -> Course? {
@@ -151,8 +210,9 @@ enum ScenarioReviewState: Equatable {
     private var resetTask: Task<Void, Never>?
     private var resetDeadline: Date?
 
-    init(store: LearningStore) {
+    init(store: LearningStore, progressSyncAdapter: ConversationProgressSyncAdapter? = nil) {
         self.store = store
+        injectedProgressSyncAdapter = progressSyncAdapter
         let api = APIClient(); self.api = api
         let router = HelperRouter(api: api); self.helperRouter = router
         managed = ManagedAccountConfiguration.load().map { (ManagedAccountClient(configuration: $0), $0) }
@@ -351,6 +411,10 @@ enum ScenarioReviewState: Equatable {
     /// expiry — the Keychain read decides which. Never called while a
     /// conversation is running (the notification only arrives between sessions).
     private func accountSessionChanged() {
+        progressSyncOperation.invalidate()
+        progressSyncTask?.cancel()
+        progressSyncTask = nil
+        syncProgress()
         guard prefersHostedProxy else { return }
         attachHostedProxy()
     }
@@ -583,6 +647,9 @@ enum ScenarioReviewState: Equatable {
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         scenarioReviewTask?.cancel(); scenarioReviewState = nil
         dataGeneration = UUID()
+        progressSyncOperation.invalidate()
+        progressSyncTask?.cancel()
+        progressSyncTask = nil
         return store.importDb(from: url)
     }
     func toggleMeaning() {

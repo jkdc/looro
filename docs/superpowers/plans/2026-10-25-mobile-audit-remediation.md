@@ -103,7 +103,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 3: Fence active sync and enable real iOS App tests
 
-**Requirements:** S3. **Prerequisites:** T2. **Status:** pending.
+**Requirements:** S3. **Prerequisites:** T2 committed as `d58a2c9`; iOS app execution deferred to final verification per user. **Status:** implementation and independent structural re-review complete; iOS app execution pending T16.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
@@ -119,12 +119,12 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 **Interfaces:** Produces a coordinator-owned token bound to account/credential identity/data generation and single active operation. Add an App-hosted XCTest target `AppTests`, included in scheme App, that compiles real App adapters with injected network/storage boundaries; SwiftPM still covers only Core.
 
-- [ ] **Step 1 — RED:** `staleFetchAfterImportDoesNotWrite` and `staleAccountResponseCannotPostReplacementSnapshot` assert memory, persisted rows, cursor and outbound request content. `lateAckCannotAdvanceReplacementGeneration` covers POST suspension. `onlyOnePassOwnsWriter` verifies serial operation ownership; cancellation is not reported as retryable network error.
-- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.core.ProgressSyncOperationTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Check live identity, not merely notification state, after await and within the serialized transaction/write boundary. Invalidate on account replacement/import. Add test-target configuration as part of this first App-layer task, without adding packages.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S3 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(progress): fence sync by live data generation`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 1 — RED:** Stale-fetch, credential, import-admission and commit-reservation regressions observed failing before fixes; adapter-boundary tests cover the production Android runner and iOS coordinator seams.
+- [x] **Step 2 — Observe RED:** Deliberately broken admission/commit probes failed at expected assertions.
+- [x] **Step 3 — Implement:** Android runner uses admission leases across suspend boundaries; queued durable write and archive publication share a commit reservation; imports wait for active commit and block new admission. iOS coordinator has injected fetch/send/storage boundaries and identity fences.
+- [x] **Step 4 — GREEN:** Fresh scratch Android tests passed (13 focused; 733 app + 11 engine-local). Structural PBX/scheme probe passed after the semicolon correction (109 direct objects, target/config references, testability); `git diff --check` passed. User deferred iOS app execution to T16; no Xcode/Swift run claimed.
+- [x] **Step 5 — Review:** Fresh independent scratch re-review strict-parsed 109 PBX objects, verified AppTests references/host/product/dependency, Debug testability and shared-scheme binding; negative control without the terminator failed as expected. iOS app execution is explicitly deferred to T16.
+- [x] **Step 6 — Commit:** Parent commit: pending; include only T3-owned code/tests and evidence docs. iOS execution remains pending T16, not waived.
 
 ### Task 4: Implement negotiated API v2 on the existing route
 
