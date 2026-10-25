@@ -61,7 +61,7 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
     if (system.includes('quality reviewer') || system.includes('strict exam reviewer')) {
       const parsed = JSON.parse(user) as { items?: { id: string }[] } | { id: string }[];
       const items = Array.isArray(parsed) ? parsed : parsed.items ?? [];
-      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok', reasonCode: 'answer_key', evidence: 'The marked answer matches the sentence.' })) });
+      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The marked answer matches the sentence.' })) });
     }
     const count = (pattern: RegExp, fallback: number) => Number(pattern.exec(user)?.[1] ?? fallback);
     const item = (id: string, kind: 'choice' | 'gap' = 'choice') => kind === 'choice'
@@ -112,7 +112,7 @@ const judgeRejectingFirst = () => async (_config: unknown, messages: { role: str
       { items?: { id?: string }[] } | { id?: string }[];
     const items = Array.isArray(raw) ? raw : raw.items ?? [];
     return stubReply({ items: items.map((item, index) => ({ id: item.id ?? 'missing',
-      verdict: index === 0 ? 'reject' : 'ok', reasonCode: index === 0 ? 'unsupported' : 'answer_key',
+      verdict: index === 0 ? 'reject' : 'ok', languageStatus: 'pass', reasonCode: index === 0 ? 'unsupported' : 'answer_key',
       evidence: index === 0 ? 'The key is not supported by the passage.' : 'The marked answer matches the sentence.' })) });
   }
   return sectionTransport()(_config, messages);

@@ -8,7 +8,7 @@ import { digest } from '../src/auth.js';
 import { encryptSecret, maskKey, LlmTransportError } from '../src/llm-config.js';
 import { weekIndex } from '../src/level-tests.js';
 import { readLlmConfigView, upsertLlmConfig } from '../src/llm-config-admin.js';
-import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
+import { generateWeeklyLevelTest, examModelFor } from '../src/level-tests-llm.js';
 import { parseLevelTestSchedulerConfig } from '../src/level-tests-scheduler.js';
 import { identifySnapshot, type ExamSnapshot } from '../src/level-test-snapshot.js';
 import type { GeneratedPool } from '../src/level-tests-validate.js';
@@ -39,8 +39,8 @@ const transport = (content = pool(), judge: (items: { id: string }[]) => unknown
   async (_config: unknown, messages: { role: string; content: string }[]) => {
     const user = messages[1]!.content;
     const body = messages[0]!.content.includes('quality reviewer') || messages[0]!.content.includes('strict exam reviewer')
-      ? (() => { const result = judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items) as { items: { id: string; verdict: string; reasonCode?: string; evidence?: string }[] };
-        return { items: result.items.map(entry => ({ ...entry, reasonCode: entry.reasonCode ?? 'answer_key',
+      ? (() => { const result = judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items) as { items: { id: string; verdict: string; reasonCode?: string; evidence?: string; languageStatus?: string }[] };
+        return { items: result.items.map(entry => ({ ...entry, languageStatus: Object.hasOwn(entry, 'languageStatus') ? entry.languageStatus : 'pass', reasonCode: entry.reasonCode ?? 'answer_key',
           evidence: Object.hasOwn(entry, 'evidence') ? entry.evidence : 'The marked answer matches the supplied sentence.' })) }; })()
       : content[user.includes('vocabulary and grammar') ? 'recognition' : user.includes('reading passages')
         ? 'reading' : user.includes('listening passages') ? 'listening' : 'writing'];
@@ -83,7 +83,8 @@ function database() {
       state.weeks.push({ id: v[0] as string, language_id: v[1] as string, level: v[2] as string,
         week_index: v[3] as number, status: v[4] as string, pool: JSON.parse(v[5] as string), variants: JSON.parse(v[6] as string),
         prompt_version: v[9], judge_version: v[10], judge_mode: v[11], review: JSON.parse(v[12] as string),
-        tokens_in: v[13], tokens_out: v[14] }); return result(); }
+        tokens_in: v[13], tokens_out: v[14], blueprint_version: v[18], blueprint_hash: v[19],
+        blueprint_contract: v[20] == null ? null : JSON.parse(v[20] as string) }); return result(); }
     if (sql.startsWith("UPDATE level_test_weeks") && sql.includes("status=" + String.fromCharCode(39) + "retired" + String.fromCharCode(39))) {
       for (const row of state.weeks.filter(row => row.language_id === v[0] && row.level === v[1]
         && row.week_index === v[2] && row.status !== "retired")) row.status = "retired";
@@ -101,8 +102,202 @@ function database() {
   };
   return { state, db: { query, connect: async () => ({ query, release() {} }) } as unknown as Database };
 }
-const generate = (db: Database, env = ENV, call = transport()) =>
+const generate = (db: Database, env = ENV, call: NonNullable<Parameters<typeof generateWeeklyLevelTest>[0]['transport']> = transport()) =>
   generateWeeklyLevelTest({ db, env, transport: call }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
+
+test('English judge-off generation creates only a private draft even in auto mode', async () => {
+  const { db, state } = database();
+  const result = await generate(db, { ...ENV, LEVELTEST_VERIFY: 'off' });
+  assert.equal(result.status, 'draft');
+  assert.equal(state.weeks[0]?.status, 'draft');
+});
+
+test('English manual approval cannot bypass the judge by switching its mode off', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  state.weeks[0]!.judge_mode = 'off';
+  await assert.rejects(approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content'),
+    { code: 'level_test_not_approvable' });
+  assert.equal(state.weeks[0]?.status, 'draft');
+  assert.equal(state.audit.length, 0);
+});
+
+test('English flag-mode manual approval requires bounded evidence for every retained item', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_VERIFY: 'flag', LEVELTEST_PUBLISH_MODE: 'review' });
+  (state.weeks[0]!.review as Record<string, unknown>[])[0]!.reason = '';
+  await assert.rejects(approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content'),
+    { code: 'level_test_not_approvable' });
+  assert.equal(state.weeks[0]?.status, 'draft');
+  assert.equal(state.audit.length, 0);
+});
+
+for (const field of ['passage', 'explanation']) test(`English ${field} language cannot borrow evidence from English questions`, async () => {
+  const { db, state } = database(), content = pool();
+  if (field === 'passage') {
+    for (const [index, passage] of [...content.reading, ...content.listening].entries())
+      passage.text = `Texto ${index}. ` + 'La familia vive en una casa cerca de la escuela y trabaja todos los días. '.repeat(4);
+  } else content.recognition[0]!.explain = 'La respuesta es correcta porque la frase describe el trabajo de ella.';
+  const result = await generate(db, ENV, transport(content));
+  assert.equal(result.status, 'failed');
+  assert.equal(state.weeks.length, 0);
+});
+
+test('uncertain English names and short borrowed words remain judgeable rather than discarded', async () => {
+  const { db, state } = database(), content = pool();
+  content.recognition[0] = { ...content.recognition[0]!, prompt: 'Élodie: surname?',
+    options: ['Dubois', 'Sato', 'Cruz', 'Li'], answers: ['Dubois'], explain: 'Dubois, not Élodie.' };
+  content.recognition[1] = { ...content.recognition[1]!, prompt: 'Sushi: dish?',
+    options: ['sushi', 'ramen', 'curry', 'tapas'], answers: ['sushi'], explain: 'Sushi, not ramen.' };
+  assert.equal((await generate(db, ENV, transport(content))).status, 'approved');
+  assert.ok((state.weeks[0]!.pool as GeneratedPool).recognition.some(item => item.prompt === 'Élodie: surname?'));
+  assert.ok((state.weeks[0]!.pool as GeneratedPool).recognition.some(item => item.prompt === 'Sushi: dish?'));
+});
+
+test('individually uncertain city-name options are not pooled into false foreign-language evidence', async () => {
+  const { db, state } = database(), content = pool();
+  content.recognition[0] = { ...content.recognition[0]!, prompt: 'Which city is in California?',
+    options: ['Los Angeles', 'Las Vegas', 'La Paz', 'El Paso'], answers: ['Los Angeles'],
+    explain: 'Los Angeles is a city in California.' };
+  const result = await generate(db, ENV, transport(content));
+  assert.equal(result.status, 'approved');
+  assert.ok((state.weeks[0]!.pool as GeneratedPool).recognition.some(item => item.prompt === 'Which city is in California?'));
+});
+
+test('non-English judge-off generation keeps its existing auto-publication and version behavior', async () => {
+  const { db, state } = database(), content = pool();
+  for (const [index, entry] of [...content.recognition, ...content.writing,
+    ...content.reading.flatMap(p => p.items), ...content.listening.flatMap(p => p.items)].entries()) {
+    entry.prompt = `Pregunta ${index}: ella ___ médica.`;
+    entry.options = entry.kind === 'choice' ? ['es', 'son', 'estoy', 'eres'] : [];
+    entry.answers = ['es']; entry.explain = 'Con ella usamos la forma es.';
+  }
+  for (const [index, passage] of [...content.reading, ...content.listening].entries())
+    passage.text = `Historia ${index}. ` + 'La familia vive en una casa cerca de la escuela y trabaja todos los días. '.repeat(4);
+  const result = await generateWeeklyLevelTest({ db, env: { ...ENV, LEVELTEST_VERIFY: 'off' }, transport: transport(content) },
+    { languageID: 'es', level: 'A1', now: NOW, origin: 'automatic_worker' });
+  assert.equal(result.status, 'approved');
+  assert.equal(state.weeks[0]?.prompt_version, 2);
+  assert.equal(state.weeks[0]?.judge_version, 2);
+  assert.equal(state.weeks[0]?.blueprint_version, 1);
+  assert.equal(state.weeks[0]?.blueprint_contract, null);
+});
+
+test('an ok judge verdict with unresolved language cannot publish an English exam', async () => {
+  const { db, state } = database();
+  const result = await generate(db, ENV, transport(pool(), items => ({ items: items.map(item => ({
+    id: item.id, verdict: 'ok', languageStatus: 'unknown',
+  })) })));
+  assert.equal(result.status, 'failed');
+  assert.equal(state.weeks.length, 0);
+});
+
+test('English draft approval uses its frozen contract even after the current blueprint changes', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  const current = examModelFor('A1', 'en')!, original = current.examShape.writing;
+  current.examShape.writing += 1;
+  try {
+    const result = await approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content');
+    assert.equal(result.approved, true);
+    assert.equal(state.weeks[0]?.status, 'approved');
+  } finally { current.examShape.writing = original; }
+});
+
+test('English legacy drafts without a complete frozen contract must be regenerated', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  delete state.weeks[0]!.blueprint_contract;
+  await assert.rejects(approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content'),
+    { code: 'level_test_contract_required' });
+  assert.equal(state.weeks[0]?.status, 'draft');
+  assert.equal(state.audit.length, 0);
+});
+
+test('English approval rejects a tampered frozen contract without approving or auditing', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  state.weeks[0]!.blueprint_hash = '0'.repeat(64);
+  await assert.rejects(approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content'),
+    { code: 'level_test_not_approvable' });
+  assert.equal(state.weeks[0]?.status, 'draft');
+  assert.equal(state.audit.length, 0);
+});
+
+test('generation freezes the complete blueprint before asynchronous provider work', async () => {
+  const { db, state } = database(), current = examModelFor('A1', 'en')!;
+  const original = current.examShape.writing;
+  const reply = transport(); let changed = false;
+  try {
+    const result = await generate(db, ENV, async (config, messages) => {
+      if (!changed) { changed = true; current.examShape.writing += 20; }
+      return reply(config, messages);
+    });
+    assert.equal(result.status, 'approved');
+    const frozen = state.weeks[0]!.blueprint_contract as typeof current;
+    assert.equal(frozen.examShape.writing, 4);
+    assert.equal(state.weeks[0]!.blueprint_version, 2);
+  } finally { current.examShape.writing = original; }
+});
+
+test('JSONB key reordering does not invalidate a frozen English contract', async () => {
+  const { approveGeneratedWeek } = await import('../src/level-tests-publication.js');
+  const { db, state } = database();
+  await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
+  const original = state.weeks[0]!.blueprint_contract;
+  assert.ok(original);
+  const reverseKeys = (value: unknown): unknown => Array.isArray(value) ? value.map(reverseKeys)
+    : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).reverse().map(([key, entry]) => [key, reverseKeys(entry)])) : value;
+  state.weeks[0]!.blueprint_contract = reverseKeys(original);
+  assert.equal((await approveGeneratedWeek(db, state.weeks[0]!.id, ADMIN, 'Reviewed content')).approved, true);
+});
+
+test('a provider failure retains known usage from prior calls without reporting it as complete', async () => {
+  const { db } = database(); let calls = 0;
+  const reply = transport();
+  const result = await generate(db, ENV, async (config, messages) => {
+    if (++calls === 2) throw new LlmTransportError('llm_outcome_unknown');
+    return { ...await reply(config, messages), tokensIn: 5, tokensOut: 7 };
+  });
+  assert.equal(result.status, 'failed');
+  assert.equal(calls, 2);
+  assert.equal(result.tokensIn, undefined);
+  assert.deepEqual((result as unknown as { usage: unknown }).usage, { state: 'partial', tokensIn: 5, tokensOut: 7 });
+});
+
+for (const mode of ['complete', 'partial', 'unknown', 'zero'] as const) test(`generation distinguishes ${mode} provider usage`, async () => {
+  const { db } = database(); const reply = transport(); let calls = 0;
+  const result = await generate(db, ENV, async (config, messages) => {
+    calls += 1;
+    const value = await reply(config, messages);
+    return { ...value, tokensIn: mode === 'unknown' || (mode === 'partial' && calls === 1) ? undefined : mode === 'zero' ? 0 : 2,
+      tokensOut: mode === 'unknown' ? undefined : mode === 'zero' ? 0 : 3 };
+  });
+  assert.equal(result.status, 'approved');
+  assert.equal(calls, 8);
+  assert.deepEqual((result as unknown as { usage: unknown }).usage,
+    mode === 'complete' ? { state: 'complete', tokensIn: 16, tokensOut: 24 } :
+      mode === 'partial' ? { state: 'partial', tokensIn: 14, tokensOut: 24 } :
+        mode === 'zero' ? { state: 'complete', tokensIn: 0, tokensOut: 0 } :
+          { state: 'unknown', tokensIn: null, tokensOut: null });
+});
+
+test('admin generation status exposes partial known usage without converting missing input to zero', async () => {
+  const { db, state } = database();
+  state.jobs = [{ id: ADMIN, language_id: 'en', level: 'A1', week_index: THIS_WEEK, state: 'failed', attempts: 1,
+    error_code: 'generation_failed', error_details: [], usage_state: 'partial', tokens_in: null, tokens_out: '12' }];
+  const app = adminApp(db);
+  try {
+    const response = await app.inject({ method: 'GET', url: '/v1/admin/level-tests/status', headers });
+    assert.equal(response.statusCode, 200);
+    assert.deepEqual(response.json().latestJob.usage, { state: 'partial', tokensIn: null, tokensOut: 12 });
+  } finally { await app.close(); }
+});
 
 test('missing provider usage remains unknown instead of a confirmed zero', async () => {
   const { db, state } = database();
@@ -132,7 +327,7 @@ test('generation persists the bumped English prompt and judge contract versions'
   const { db, state } = database();
   assert.equal((await generate(db)).status, 'approved');
   assert.equal(state.weeks[0]!.prompt_version, 3);
-  assert.equal(state.weeks[0]!.judge_version, 3);
+  assert.equal(state.weeks[0]!.judge_version, 4);
 });
 
 test('an unknown provider outcome is not retried by the section loop', async () => {

@@ -1,10 +1,101 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { connectDatabase } from '../src/db.js';
 import { runLevelTestGenerationJob } from '../src/level-tests-generation-jobs.js';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
+
+for (const failure of ['rejection', 'zero_rows']) test(`final run closure recovers known usage after checkpoint ${failure}`,
+  { skip: !databaseURL }, async () => {
+    const db = connectDatabase(databaseURL!);
+    const weekIndex = failure === 'rejection' ? 987012 : 987013;
+    let calls = 0, checkpoints = 0;
+    const provider = createServer((request, response) => {
+      request.resume(); calls += 1;
+      response.end(JSON.stringify({ choices: [{ message: { content: '[]' } }],
+        usage: { prompt_tokens: 17, completion_tokens: 4 } }));
+    });
+    await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+    // Inject one transient external-DB failure; final persistence still uses real PostgreSQL.
+    const faulty = new Proxy(db, { get(target, key) {
+      if (key === 'connect') return async () => {
+        const client = await target.connect();
+        return new Proxy(client, { get(connection, property) {
+          if (property === 'query') return async (sql: string, params?: unknown[]) => {
+            if (sql.includes('SET tokens_in=') && ++checkpoints === 2) {
+              if (failure === 'rejection') throw new Error('temporary checkpoint failure');
+              return { rows: [], rowCount: 0 };
+            }
+            return connection.query(sql, params);
+          };
+          const value = Reflect.get(connection, property, connection);
+          return typeof value === 'function' ? value.bind(connection) : value;
+        } });
+      };
+      const value = Reflect.get(target, key, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    } }) as typeof db;
+    const env = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'local-test-only',
+      LEVELTEST_LLM_URL: `http://127.0.0.1:${(provider.address() as AddressInfo).port}/v1` };
+    try {
+      const result = await runLevelTestGenerationJob(faulty, env, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' });
+      assert.equal(result.status, 'unknown');
+      assert.equal(calls, 1);
+      const row = (await db.query("SELECT * FROM level_test_generation_jobs WHERE language_id='en' AND level='A1' AND week_index=$1", [weekIndex])).rows[0]!;
+      assert.equal(row.state, 'unknown');
+      assert.equal(row.usage_state, 'complete');
+      assert.equal(Number(row.tokens_in), 17);
+      assert.equal(Number(row.tokens_out), 4);
+      assert.equal((await runLevelTestGenerationJob(faulty, env, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' })).status, 'unknown');
+      assert.equal(calls, 1);
+    } finally {
+      provider.closeAllConnections();
+      await new Promise<void>((resolve, reject) => provider.close(error => error ? reject(error) : resolve()));
+      await db.query("DELETE FROM level_test_generation_jobs WHERE language_id='en' AND level='A1' AND week_index=$1", [weekIndex]);
+      await db.end();
+    }
+  });
+
+for (const interrupted of [false, true]) test(`durable failed-run usage survives ${interrupted ? 'an unknown transport outcome' : 'deterministic rejection'}`,
+  { skip: !databaseURL }, async () => {
+    const db = connectDatabase(databaseURL!);
+    const weekIndex = interrupted ? 987011 : 987010;
+    let calls = 0;
+    const provider = createServer((request, response) => {
+      request.resume();
+      calls += 1;
+      if (interrupted && calls === 2) { request.socket.destroy(); return; }
+      response.setHeader('content-type', 'application/json');
+      response.end(JSON.stringify({ choices: [{ message: { content: '[]' } }],
+        usage: { prompt_tokens: 2, completion_tokens: 3 } }));
+    });
+    await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+    try {
+      const env = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'local-test-only',
+        LEVELTEST_LLM_URL: `http://127.0.0.1:${(provider.address() as AddressInfo).port}/v1` };
+      const result = await runLevelTestGenerationJob(db, env, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' });
+      assert.equal(result.status, interrupted ? 'unknown' : 'failed');
+      assert.equal(calls, interrupted ? 2 : 8);
+      const row = (await db.query("SELECT * FROM level_test_generation_jobs WHERE language_id='en' AND level='A1' AND week_index=$1", [weekIndex])).rows[0]!;
+      assert.equal(row.state, interrupted ? 'unknown' : 'failed');
+      assert.equal(row.usage_state, interrupted ? 'partial' : 'complete');
+      assert.equal(Number(row.tokens_in), interrupted ? 2 : 16);
+      assert.equal(Number(row.tokens_out), interrupted ? 3 : 24);
+      assert.ok(row.finished_at instanceof Date);
+      if (interrupted) {
+        assert.equal((await runLevelTestGenerationJob(db, env, { languageID: 'en', level: 'A1', weekIndex, origin: 'automatic_worker' })).status, 'unknown');
+        assert.equal(calls, 2);
+      }
+    } finally {
+      provider.closeAllConnections();
+      await new Promise<void>((resolve, reject) => provider.close(error => error ? reject(error) : resolve()));
+      await db.query("DELETE FROM level_test_generation_jobs WHERE language_id='en' AND level='A1' AND week_index=$1", [weekIndex]);
+      await db.end();
+    }
+  });
 test('generation job lock excludes a competing CLI or scheduler before provider calls', { skip: !databaseURL }, async () => {
   const db = connectDatabase(databaseURL!);
   const languageID = 'en', level = 'A1', weekIndex = 987654;

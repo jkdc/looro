@@ -154,7 +154,7 @@ test('English validation rejects clearly Cyrillic lexical content without adding
 });
 
 test('English prompt and judge contracts have distinct persisted versions without changing other languages', () => {
-  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 3, judgeVersion: 3 });
+  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 3, judgeVersion: 4 });
   assert.deepEqual(generationVersionsFor('es'), { promptVersion: 2, judgeVersion: 2 });
 });
 

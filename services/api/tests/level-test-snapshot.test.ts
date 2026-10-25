@@ -10,12 +10,17 @@ const NOW = new Date('2026-10-07T12:00:00Z');
 const THRESHOLDS = { overall: 70, recognition: 60, reading: 50, listening: 50,
   writing: 50, grammar: 60, vocab: 60 };
 const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key',
-  LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'off', LEVELTEST_VARIANTS: '2' };
+  LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'strict', LEVELTEST_VARIANTS: '2' };
 const question = (kind = 'choice', seed = 'example') => ({ kind, prompt: `${seed}: She ___ a doctor.`,
   options: kind === 'choice' ? ['is', 'are', 'am', 'be'] : [], answers: ['is'],
   explain: 'She takes is.', unitID: 'en-foundations-u1' });
 const transport = async (_config: unknown, messages: { role: string; content: string }[]) => {
   const user = messages.find(message => message.role === 'user')!.content;
+  if (messages[0]!.content.includes('quality reviewer')) return {
+    content: JSON.stringify({ items: (JSON.parse(user).items as { id: string }[]).map(item => ({
+      id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The key agrees with the supplied sentence.',
+    })) }), tokensIn: 0, tokensOut: 0,
+  };
   const section = user.includes('vocabulary and grammar') ? 'recognition'
     : user.includes('reading passages') ? 'reading'
     : user.includes('listening passages') ? 'listening' : 'writing';
@@ -102,7 +107,7 @@ test('new generated snapshots preserve types, unit references, passages and effe
   const outcome = await generateWeeklyLevelTest({ db, env: ENV, transport },
     { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
   assert.equal(outcome.status, 'approved');
-  assert.equal(rows[0]?.blueprint_version, 1);
+  assert.equal(rows[0]?.blueprint_version, 2);
   assert.match(rows[0]?.blueprint_hash ?? '', /^[a-f0-9]{64}$/);
   const exam = (await approvedWeeklyLevelTest(db, 'en', 'A1', 1, NOW))!;
   assert.deepEqual(exam.thresholds, THRESHOLDS);

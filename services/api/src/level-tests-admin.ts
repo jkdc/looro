@@ -178,25 +178,28 @@ export async function levelTestWeekDetail(db: Database, id: string): Promise<Wee
 }
 
 type GenerationJobRow = { id: string; language_id: string; level: string; week_index: number; state: string; attempts: number;
-  error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date };
+  error_code: string | null; error_details: unknown; started_at: Date | null; finished_at: Date | null; updated_at: Date;
+  tokens_in?: string | number | null; tokens_out?: string | number | null; usage_state?: string };
 
 /** Builds the operator status view without coupling the query/projection to HTTP. */
 export async function levelTestGenerationStatus(db: Database,
   generation: { config: LevelTestSchedulerConfig; isStarted: () => boolean } | undefined,
   runCorrelationIds?: string[]) {
   const latest = (await db.query(`SELECT id, language_id, level, week_index, state, attempts, error_code, error_details,
-    started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1`))
+    started_at, finished_at, updated_at, tokens_in, tokens_out, usage_state FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1`))
     .rows[0] as GenerationJobRow | undefined;
   const jobs = (await db.query(`SELECT id, language_id, level, week_index, state, attempts, error_code, error_details,
-    started_at, finished_at, updated_at FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10`))
+    started_at, finished_at, updated_at, tokens_in, tokens_out, usage_state FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10`))
     .rows as GenerationJobRow[];
   const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
   const jobItem = (job: GenerationJobRow) => ({ runId: job.id, attemptOrdinal: job.attempts,
     languageID: job.language_id, level: job.level, weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
+    usage: { state: job.usage_state ?? 'unknown', tokensIn: job.tokens_in == null ? null : Number(job.tokens_in),
+      tokensOut: job.tokens_out == null ? null : Number(job.tokens_out) },
     errors: Array.isArray(job.error_details) ? job.error_details.filter(entry => typeof entry === 'string') : [],
     startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
   const trackedRuns = runCorrelationIds ? await db.query(`SELECT id, language_id, level, week_index, state, attempts,
-    error_code, error_details, started_at, finished_at, updated_at FROM level_test_generation_jobs WHERE id = ANY($1::uuid[])`,
+    error_code, error_details, started_at, finished_at, updated_at, tokens_in, tokens_out, usage_state FROM level_test_generation_jobs WHERE id = ANY($1::uuid[])`,
   [runCorrelationIds]) : undefined;
   const exactRuns = trackedRuns && new Map((trackedRuns.rows as GenerationJobRow[]).map(job => [job.id, job]));
   return {

@@ -3,6 +3,18 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { chatCompletion, encryptSecret, fingerprintSecret, keyHint, LlmTransportError, maskKey } from "../src/llm-config.js";
 
+test('empty provider content preserves explicitly reported usage on its failure', async () => {
+  await assert.rejects(chatCompletion({ provider: 'openai', baseUrl: 'https://llm.example/v1', model: 'test', apiKey: 'fake' },
+    [{ role: 'user', content: 'generate' }], async () => new Response(JSON.stringify({
+      choices: [{ message: { content: '' } }], usage: { prompt_tokens: 17, completion_tokens: 0 },
+    }), { status: 200 })), error => {
+    assert.ok(error instanceof LlmTransportError);
+    assert.equal(error.code, 'llm_empty_reply');
+    assert.deepEqual((error as unknown as { usage: unknown }).usage, { tokensIn: 17, tokensOut: 0 });
+    return true;
+  });
+});
+
 test("chat completion does not reissue after an unknown transport outcome", async () => {
   let calls = 0;
   await assert.rejects(chatCompletion({ provider: "glm", baseUrl: "https://llm.example/v1", model: "test", apiKey: "key" },

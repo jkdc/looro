@@ -9,6 +9,9 @@ import { levelTestSettings } from './level-test-settings.js';
 export { levelTestSettings } from './level-test-settings.js';
 import { englishServedFormFailure, validateGeneratedPool, type GeneratedPool, type RawGeneratedItem, type ValidationFailure } from './level-tests-validate.js';
 import { resolveExamBlueprint, type ExamModelEntry } from './level-test-blueprint.js';
+import { ENGLISH_JUDGE_REASON_CODES } from './level-test-judge-policy.js';
+import { freezeBlueprint } from './level-test-frozen-blueprint.js';
+import { GenerationUsageTracker, type GenerationUsage } from './level-test-generation-usage.js';
 
 /** Weekly level-verification test generation (level-tests-llm): four
     independent section calls (recognition, reading, listening, writing),
@@ -25,13 +28,13 @@ export const LANGUAGE_NAMES: Record<string, string> = {
 export const PROMPT_VERSION = 2;
 export const JUDGE_VERSION = 2;
 const ENGLISH_PROMPT_VERSION = 3;
-const ENGLISH_JUDGE_VERSION = 3;
+const ENGLISH_JUDGE_VERSION = 4;
 export function generationVersionsFor(languageID: string): { promptVersion: number; judgeVersion: number } {
   return languageID === 'en'
     ? { promptVersion: ENGLISH_PROMPT_VERSION, judgeVersion: ENGLISH_JUDGE_VERSION }
     : { promptVersion: PROMPT_VERSION, judgeVersion: JUDGE_VERSION };
 }
-const JUDGE_REASON_CODES = ['answer_key', 'ambiguity', 'unsupported', 'level_mismatch', 'format', 'explanation'] as const;
+const JUDGE_REASON_CODES = ENGLISH_JUDGE_REASON_CODES;
 const WEEKLY_THEMES = ['daily routines and habits', 'travel, transport and getting lost', 'work, studies and colleagues',
   'food, restaurants and going out', 'weather, seasons and plans', 'moving house and neighbours',
   'shopping stories and returns', 'sport, weekends and free time'];
@@ -380,6 +383,8 @@ export interface GenerateDeps {
   db: Database; env: NodeJS.ProcessEnv;
   transport?: LlmCall;
   now?: Date;
+  /** Durable run checkpoint, called before and after each provider attempt. */
+  onUsage?: (usage: GenerationUsage) => Promise<void>;
 }
 
 export type GenerationOrigin = 'user_operator' | 'automatic_worker';
@@ -393,13 +398,17 @@ export interface GenerationOutcome {
   status: 'approved' | 'draft' | 'exists' | 'failed';
   languageID: string; level: string; weekId: number;
   variants?: number; tokensIn?: number; tokensOut?: number; errors?: string[];
+  usage?: GenerationUsage;
 }
 
 export async function generateWeeklyLevelTest(deps: GenerateDeps, options: GenerateOptions): Promise<GenerationOutcome> {
   const { languageID, level } = options;
   const weekId = options.weekIndex ?? weekIndex(options.now ?? new Date());
-  const model = examModelFor(level, languageID);
-  if (!model) return { status: 'failed', languageID, level, weekId, errors: ['no exam model'] };
+  const currentModel = examModelFor(level, languageID);
+  if (!currentModel) return { status: 'failed', languageID, level, weekId, errors: ['no exam model'] };
+  // Freeze before the first await; live model updates cannot alter this run.
+  const frozen = languageID === 'en' ? freezeBlueprint(currentModel) : undefined;
+  const model = frozen?.contract ?? currentModel;
 
   const existing = await currentWeekRow(deps.db, languageID, level, weekId);
   if (existing && !options.force)
@@ -410,17 +419,25 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   // One stable gateway session per generation run; reused as the generation id.
   config.sessionID = randomUUID();
   const providerCall = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
-  let tokensIn = 0, tokensOut = 0, usageComplete = true;
+  const usage = new GenerationUsageTracker();
+  const usageOutcome = () => {
+    const snapshot = usage.snapshot();
+    return { usage: snapshot, ...(snapshot.state === 'complete'
+      ? { tokensIn: snapshot.tokensIn!, tokensOut: snapshot.tokensOut! } : {}) };
+  };
+  const checkpoint = async (snapshot: GenerationUsage) => {
+    try { await deps.onUsage?.(snapshot); }
+    catch { throw new LlmTransportError('llm_outcome_unknown'); }
+  };
   const call: LlmCall = async (resolved, messages, signal) => {
+    await checkpoint(usage.begin());
     let reply: ChatReply;
     try { reply = await providerCall(resolved, messages, signal); }
-    catch (error) { usageComplete = false; throw error; }
-    if (typeof reply.tokensIn === 'number' && typeof reply.tokensOut === 'number') {
-      tokensIn += reply.tokensIn;
-      tokensOut += reply.tokensOut;
-    } else {
-      usageComplete = false;
+    catch (error) {
+      await checkpoint(usage.report(error instanceof LlmTransportError ? error.usage : undefined));
+      throw error;
     }
+    await checkpoint(usage.report(reply));
     return reply;
   };
 
@@ -432,7 +449,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     } catch (error) {
       const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
       return { status: 'failed', languageID, level, weekId,
-        errors: [outcomeUnknown ? 'llm_outcome_unknown' : `${section}:provider_failed`], ...(usageComplete ? { tokensIn, tokensOut } : {}) };
+        errors: [outcomeUnknown ? 'llm_outcome_unknown' : `${section}:provider_failed`], ...usageOutcome() };
     }
   }
 
@@ -441,7 +458,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   const validateCandidate = (candidate: GeneratedPool, targetModel: ExamModelEntry = model) => {
     return validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
       reading: candidate.readingPassages, listening: candidate.listeningPassages }, targetModel.examShape, languageID,
-      languageID === 'en' ? targetModel : undefined);
+      languageID === 'en' ? targetModel : undefined, languageID === 'en');
   };
   const validate = () => {
     const candidate = buildPool();
@@ -458,11 +475,11 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   } catch (error) {
     const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
     return { status: 'failed', languageID, level, weekId,
-      errors: [outcomeUnknown ? 'llm_outcome_unknown' : 'section_repair_failed'], ...(usageComplete ? { tokensIn, tokensOut } : {}) };
+      errors: [outcomeUnknown ? 'llm_outcome_unknown' : 'section_repair_failed'], ...usageOutcome() };
   }
   const final = validate();
   const finalFailures = [...final.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
-  if (!final.ok || finalFailures.length) return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}),
+  if (!final.ok || finalFailures.length) return { status: 'failed', languageID, level, weekId, ...usageOutcome(),
     errors: finalFailures.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
   let pool = final.pool;
 
@@ -483,9 +500,9 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       // English flagged content is excluded just like a rejection; it is not safe evidence for an exam.
     } catch (error) {
       if (options.signal?.aborted || (error instanceof LlmTransportError && error.code === "llm_outcome_unknown"))
-        return { status: "failed", languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ["llm_outcome_unknown"] };
+        return { status: "failed", languageID, level, weekId, ...usageOutcome(), errors: ["llm_outcome_unknown"] };
       if (settings.verifyMode === "strict") return { status: "failed", languageID, level, weekId,
-        ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: [`${section}: judge_failed_or_incomplete`] };
+        ...usageOutcome(), errors: [`${section}: judge_failed_or_incomplete`] };
       review.push(...items.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_unavailable' })));
     }
   }
@@ -500,36 +517,36 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
     } } : model;
     const trimmed = validateCandidate(pool, compositionModel);
-    if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}),
+    if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, ...usageOutcome(),
       errors: trimmed.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
     pool = trimmed.pool;
   }
 
   const generationId = config.sessionID!;
-  const blueprintHash = createHash('sha256').update(JSON.stringify(model)).digest('hex');
+  const blueprintHash = frozen?.hash ?? createHash('sha256').update(JSON.stringify(model)).digest('hex');
   const variants = composeVariants(pool, model, weekId, settings.variants).map(variant =>
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
       ...variant }, 'llm', generationId));
   if (variants.some(variant => Buffer.byteLength(JSON.stringify(variant)) > MAX_LEVEL_TEST_SNAPSHOT_BYTES))
-    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: ['snapshot_too_large'] };
+    return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: ['snapshot_too_large'] };
   const formFailure = languageID === 'en' ? englishServedFormFailure(variants, model) : null;
   if (formFailure) {
     const error = formFailure === 'mix' ? 'insufficient_variant_capacity'
       : formFailure === 'variant_diversity' ? 'insufficient_variant_diversity' : 'insufficient_variant_stimulus_diversity';
-    return { status: 'failed', languageID, level, weekId, ...(usageComplete ? { tokensIn, tokensOut } : {}), errors: [error] };
+    return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: [error] };
   }
-  const status = settings.publishMode === 'auto' ? 'approved' : 'draft';
-  const approvedBy = settings.publishMode === 'auto' ? 'system:auto' : null;
+  const status = settings.publishMode === 'auto' && !(languageID === 'en' && settings.verifyMode === 'off') ? 'approved' : 'draft';
+  const approvedBy = status === 'approved' ? 'system:auto' : null;
 
   await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
     model: config.model, generator: `llm:${config.provider}`, review,
-    blueprintVersion: 1, blueprintHash,
-    tokensIn: usageComplete ? tokensIn : null, tokensOut: usageComplete ? tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
+    blueprintVersion: frozen?.version ?? 1, blueprintHash, blueprintContract: frozen?.contract ?? null,
+    tokensIn: usage.snapshot().state === 'complete' ? usage.snapshot().tokensIn : null, tokensOut: usage.snapshot().state === 'complete' ? usage.snapshot().tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
     origin: options.origin });
 
   return { status: status as 'approved' | 'draft', languageID, level, weekId,
-    variants: variants.length, ...(usageComplete ? { tokensIn, tokensOut } : {}) };
+    variants: variants.length, ...usageOutcome() };
 }
 
 function sectionItems(pool: GeneratedPool, section: SectionName): (RawGeneratedItem & { passageText?: string })[] {
@@ -571,10 +588,11 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
     'For every item, verify that exactly one marked answer is correct and no distractor is also defensible.',
     'For comprehension, verify the answer is supported by the supplied passage and the question does not require outside knowledge.',
     'Check that the explanation is accurate and supports the key; check distractors are plausible but clearly wrong.',
+    'Resolve the language of every prompt, answer, option, explanation and supplied passage independently. All task content must be English; legitimate proper names, quoted foreign names and established loan words are allowed. English questions do not establish the language of their passage or explanation. Use languageStatus unknown and verdict flagged if uncertain; fail and reject if clearly in another language. Use ok only with languageStatus pass after resolving every supplied field.',
     'Check the whole task and language demand fit the level anchor and the section format; advanced vocabulary alone is not evidence of a higher level.',
     `Reject items that rely on these unsuitable/out-of-level targets: ${model.forbidden.join('; ')}.`,
     'Use ok only when all checks pass; use flagged when a material concern cannot be resolved; reject when incorrect, ambiguous, unsupported, or out of scope.',
-    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","reasonCode":"answer_key"|"ambiguity"|"unsupported"|"level_mismatch"|"format"|"explanation","evidence":"one short observable reason, not hidden reasoning"}]}. Return exactly one verdict for every supplied id.',
+    'Reply ONLY JSON: {"items":[{"id":"<as given>","verdict":"ok"|"flagged"|"reject","languageStatus":"pass"|"fail"|"unknown","reasonCode":"answer_key"|"ambiguity"|"unsupported"|"level_mismatch"|"format"|"explanation"|"language","evidence":"one short observable reason, not hidden reasoning"}]}. Return exactly one verdict for every supplied id.',
   ].join(' ') : `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
   const user = JSON.stringify(english ? {
     section, canDoAnchor: model.canDoAnchor, sectionBlueprint: model.sections[section],
@@ -586,19 +604,21 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
   return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
 }
 
-interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string; reasonCode?: string }
+interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string; reasonCode?: string; languageStatus?: string }
 
 function parseVerdicts(reply: ChatReply, strictEvidence = false): JudgeVerdict[] {
-  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown; reasonCode?: unknown; evidence?: unknown }[] };
+  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown; reasonCode?: unknown; evidence?: unknown; languageStatus?: unknown }[] };
   if (!Array.isArray(parsed?.items) || parsed.items.some(entry => !entry || typeof entry.id !== 'string' ||
       !['ok', 'flagged', 'reject'].includes(entry.verdict as string) || (strictEvidence &&
-        (!JUDGE_REASON_CODES.includes(entry.reasonCode as typeof JUDGE_REASON_CODES[number]) ||
+        (!['pass', 'fail', 'unknown'].includes(entry.languageStatus as string) ||
+          (entry.verdict === 'ok' && entry.languageStatus !== 'pass') ||
+          !JUDGE_REASON_CODES.includes(entry.reasonCode as typeof JUDGE_REASON_CODES[number]) ||
           typeof entry.evidence !== 'string' || entry.evidence.trim().length < 8 || entry.evidence.trim().length > 240))))
     throw new Error('judge_invalid_schema');
   return parsed.items
     .map(entry => ({ id: entry.id as string, verdict: entry.verdict as 'ok' | 'flagged' | 'reject',
       reason: strictEvidence ? (entry.evidence as string).trim() : typeof entry.reason === 'string' ? entry.reason : undefined,
-      ...(strictEvidence ? { reasonCode: entry.reasonCode as string } : {}) }));
+      ...(strictEvidence ? { reasonCode: entry.reasonCode as string, languageStatus: entry.languageStatus as string } : {}) }));
 }
 
 function assignProvisionalIds(pool: GeneratedPool): void {
@@ -786,6 +806,7 @@ async function persistWeek(db: Database, input: {
   generationId: string; languageID: string; level: string; weekId: number;
   pool: GeneratedPool; variants: unknown[]; status: string;
   model: string; generator: string; review: unknown[] | undefined; blueprintVersion: number; blueprintHash: string;
+  blueprintContract: ExamModelEntry | null;
   tokensIn: number | null; tokensOut: number | null; approvedBy: string | null;
   verifyMode: string; force: boolean; origin: GenerationOrigin;
 }): Promise<void> {
@@ -802,13 +823,13 @@ async function persistWeek(db: Database, input: {
     const versions = generationVersionsFor(input.languageID);
     await sql.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, source, status, pool, variants,
       generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by, origin,
-      blueprint_version, blueprint_hash)
-      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+      blueprint_version, blueprint_hash, blueprint_contract)
+      VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21::jsonb)`,
       [input.generationId, input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
        JSON.stringify(input.variants), input.generator, input.model, versions.promptVersion, versions.judgeVersion,
        input.verifyMode, JSON.stringify(input.review ?? []), input.tokensIn, input.tokensOut,
        input.status === 'approved' ? new Date() : null, input.approvedBy, input.origin,
-       input.blueprintVersion, input.blueprintHash]);
+       input.blueprintVersion, input.blueprintHash, input.blueprintContract ? JSON.stringify(input.blueprintContract) : null]);
   });
 }
 

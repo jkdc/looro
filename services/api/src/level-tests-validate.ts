@@ -39,7 +39,8 @@ export interface GeneratedPool {
 }
 
 export interface ValidationFailure { section: string; code: string; detail: string }
-export interface ValidationResult { ok: boolean; errors: ValidationFailure[]; pool: GeneratedPool }
+export interface LanguageAssessment { section: string; field: string; status: 'pass' | 'fail' | 'unknown' }
+export interface ValidationResult { ok: boolean; errors: ValidationFailure[]; pool: GeneratedPool; languageAssessments: LanguageAssessment[] }
 
 export interface EnglishServedForm {
   items: { id: string; section: string; kind?: string }[];
@@ -84,13 +85,23 @@ const WORDS = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 const normalize = (text: string) => text.toLowerCase().replace(/[.,!?;:¿¡"“”«»…()]/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShape>,
-  targetLanguage: string, blueprint?: ExamModelEntry): ValidationResult {
+  targetLanguage: string, blueprint?: ExamModelEntry, deferLanguageReview = false): ValidationResult {
   const shape = {
     recognition: examShape.recognition ?? 12, writing: examShape.writing ?? 3,
     readingPassages: examShape.readingPassages ?? 2, readingPerPassage: examShape.readingPerPassage ?? 3,
     listeningPassages: examShape.listeningPassages ?? 2, listeningPerPassage: examShape.listeningPerPassage ?? 2,
   };
   const errors: ValidationFailure[] = [];
+  const languageAssessments: LanguageAssessment[] = [];
+  const language = (section: string, field: string, text: string): boolean => {
+    const status = assessEnglishLanguage(text);
+    languageAssessments.push({ section, field, status });
+    if (status === 'fail' || (status === 'unknown' && field === 'prompt' && !deferLanguageReview)) {
+      errors.push({ section, code: 'language', detail: `${field} language ${status}` });
+      return false;
+    }
+    return true;
+  };
   const clean: GeneratedPool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
   const raw = record(pool);
   if (!raw) errors.push({ section: 'pool', code: 'object', detail: 'expected a pool object' });
@@ -134,7 +145,15 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     }
     const explain = typeof item.explain === 'string' ? item.explain.trim() : '';
     if (explain.length < 8) return fail(where, 'explain', 'missing or too short');
-    if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage, prompt))
+    if (targetLanguage === 'en') {
+      // Separate names/short alternatives must not accumulate spurious foreign
+      // evidence merely because they share an options or accepted-answers list.
+      const fields = [['prompt', prompt], ['explain', explain],
+        ...answers.map((answer, index) => [`answers[${index}]`, answer]),
+        ...options.map((option, index) => [`options[${index}]`, option])];
+      const checks = fields.map(([field, text]) => language(where, field!, text!));
+      if (checks.some(passed => !passed)) return false;
+    } else if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage, prompt))
       return fail(where, 'language', 'the item does not look like the target language');
     seenPrompts.add(fingerprint);
     if (item.id) seenIds.add(item.id);
@@ -179,6 +198,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     arrayed(passage.items).forEach((item, position) => acceptItem(kind, bucket, item, position));
     if (words < minWords || words > maxWords)
       return fail(where, 'passage', `passage length out of range (${words} words)`);
+    if (targetLanguage === 'en' && !language(where, 'passage', text)) return false;
     if (bucket.length < minItems) return fail(where, 'passage', 'fewer valid questions than required');
     const fingerprint = normalize(text);
     if (targetLanguage === 'en' && seenPassageTexts[kind].has(fingerprint))
@@ -214,7 +234,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     if (readingTexts.has(normalize(passage.text ?? '')))
       errors.push({ section: 'listening', code: 'overlap', detail: 'a listening passage duplicates a reading passage' });
 
-  return { ok: errors.length === 0, errors, pool: clean };
+  return { ok: errors.length === 0, errors, pool: clean, languageAssessments };
 
   function fail(section: string, code: string, detail: string): boolean {
     errors.push({ section, code, detail });
@@ -271,6 +291,21 @@ const ENGLISH_GRAMMATICAL_MARKERS = new Set([
   'she', 'they', 'been', 'being',
 ]);
 const NON_LATIN_LETTER = /[^\p{Script=Latin}\p{M}\p{N}\p{P}\p{Z}\p{S}\s]/u;
+
+/** Bounded deterministic evidence, not universal language identification.
+    Names, loan words and short fragments without evidence remain unresolved. */
+export function assessEnglishLanguage(text: string): LanguageAssessment['status'] {
+  const letters = text.match(/\p{L}/gu) ?? [];
+  const nonLatin = letters.filter(letter => !/\p{Script=Latin}/u.test(letter)).length;
+  if (nonLatin > 4 && nonLatin > letters.length / 2) return 'fail';
+  if (nonLatin) return 'unknown';
+  const english = (text.match(TARGET_MARKERS.en!) ?? []).length;
+  const foreign = Math.max(...Object.entries(TARGET_MARKERS).filter(([id]) => id !== 'en')
+    .map(([, markers]) => (text.match(markers) ?? []).filter(word => word.length > 1 &&
+      !ENGLISH_GRAMMATICAL_MARKERS.has(word.toLowerCase()) && !(word.match(TARGET_MARKERS.en!) ?? []).length).length));
+  if (foreign >= 3 && foreign > english * 3) return 'fail';
+  return looksLikeTargetLanguage(text, 'en', text) ? 'pass' : 'unknown';
+}
 
 function looksLikeTargetLanguage(text: string, targetLanguage: string, prompt: string): boolean {
   const target = TARGET_MARKERS[targetLanguage];

@@ -311,7 +311,7 @@ integration('approval is refused while a regeneration holds the generation lock'
   // draft is simply not approvable).
   await assert.rejects(
     approveGeneratedWeek(db!, id!, '00000000-0000-4000-8000-000000000009', 'approve after lock released'),
-    (error: { code?: string }) => error.code === 'level_test_not_approvable');
+    (error: { code?: string }) => error.code === 'level_test_contract_required');
 });
 
 integration('the status endpoint exposes the last generation jobs', async () => {

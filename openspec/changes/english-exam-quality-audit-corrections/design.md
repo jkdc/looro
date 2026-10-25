@@ -1,5 +1,7 @@
 # Design: English Exam Audit Corrections
 
+> Historical correction at `495689b`. The [2026-10-25 publication guarantees](../english-exam-publication-guarantees/design.md) supersede the optional-judge publication policy and prompt-only language boundary below: English off-mode is draft-only, uncertain candidates require explicit judge resolution, contracts are fully frozen, and failed runs preserve known usage. Earlier verification logs remain historical evidence.
+
 ## Quality boundary
 
 The English blueprint remains the single source of exam candidate and served-form quotas. Validate candidate structure before judge and validate the composed form after judge filtering. Generation and manual approval call the same final-form validator for recognition kind ratios, unique item sets, and distinct reading/listening stimuli across variants. These constraints do not affect non-English generation or publication.

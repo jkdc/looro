@@ -129,12 +129,15 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
       throw new LlmTransportError('llm_outcome_unknown');
     }
     const content = payload.choices?.[0]?.message?.content;
-    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
+    const reportedUsage = {
+      ...(Number.isSafeInteger(payload.usage?.prompt_tokens) && payload.usage!.prompt_tokens! >= 0
+        ? { tokensIn: payload.usage!.prompt_tokens } : {}),
+      ...(Number.isSafeInteger(payload.usage?.completion_tokens) && payload.usage!.completion_tokens! >= 0
+        ? { tokensOut: payload.usage!.completion_tokens } : {}),
+    };
+    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply', reportedUsage);
     const outcome: ChatReply = { content,
-      ...(typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens)
-        ? { tokensIn: payload.usage.prompt_tokens } : {}),
-      ...(typeof payload.usage?.completion_tokens === 'number' && Number.isFinite(payload.usage.completion_tokens)
-        ? { tokensOut: payload.usage.completion_tokens } : {}) };
+      ...reportedUsage };
     paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'ok' });
     if (typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens))
       paliqueMetrics.llmTokens.add(payload.usage.prompt_tokens, { provider: config.provider, direction: 'input' });
@@ -151,7 +154,7 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
 }
 
 export class LlmTransportError extends Error {
-  constructor(public code: string) { super(code); }
+  constructor(public code: string, public usage?: Pick<ChatReply, 'tokensIn' | 'tokensOut'>) { super(code); }
 }
 
 /** Extracts the first JSON object from a reply that may carry prose or code fences. */

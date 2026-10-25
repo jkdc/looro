@@ -5,10 +5,13 @@ import { recordAdminAction } from './admin-audit.js';
 import { identifySnapshot, type ExamSnapshot } from './level-test-snapshot.js';
 import { examModelFor } from './level-tests-llm.js';
 import { englishServedFormFailure, validateGeneratedPool, type GeneratedPool } from './level-tests-validate.js';
+import { hasEnglishJudgeEvidence } from './level-test-judge-policy.js';
+import { readFrozenBlueprint } from './level-test-frozen-blueprint.js';
 
 type Generation = { id: string; language_id: string; level: string; week_index: number;
   status: string; pool: GeneratedPool; variants: ExamSnapshot[]; judge_mode: string;
-  review: { id: string; verdict: string }[] };
+  blueprint_contract?: unknown; blueprint_version?: unknown; blueprint_hash?: unknown;
+  review: { id: string; verdict: string; reason?: unknown; reasonCode?: unknown; languageStatus?: unknown }[] };
 
 /** Approval belongs to the generation row, not one of its variants. Validation,
     status transition and audit share a locked transaction; replay does not re-audit. */
@@ -16,7 +19,8 @@ export async function approveGeneratedWeek(db: Database, id: string, adminID: st
   if (reason.trim().length < 3 || reason.length > 500 || /[\x00-\x1f]/.test(reason))
     throw new ServiceError('admin_reason_required');
   return transaction(db, async sql => {
-    const row = (await sql.query(`SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review
+    const row = (await sql.query(`SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review,
+      blueprint_contract, blueprint_version, blueprint_hash
       FROM level_test_weeks WHERE id=$1 FOR UPDATE`, [id])).rows[0] as Generation | undefined;
     if (!row) throw new ServiceError('level_test_not_found', 404);
     // A running regeneration holds this advisory lock; approving mid-regeneration
@@ -25,6 +29,8 @@ export async function approveGeneratedWeek(db: Database, id: string, adminID: st
       [`level-test-generation:${row.language_id}:${row.level}:${row.week_index}`]);
     if (gate.rows[0]?.locked !== true) throw new ServiceError('level_test_regeneration_in_progress', 409);
     if (row.status === 'approved') return { generationId: id, approved: true, alreadyApproved: true };
+    if (row.status === 'draft' && row.language_id === 'en' && !row.blueprint_contract)
+      throw new ServiceError('level_test_contract_required', 409);
     if (row.status !== 'draft' || !canPublish(row)) throw new ServiceError('level_test_not_approvable', 409);
     await sql.query(`UPDATE level_test_weeks SET status='approved', approved_at=now(), approved_by=$2
       WHERE id=$1 AND status='draft'`, [id, adminID]);
@@ -34,7 +40,9 @@ export async function approveGeneratedWeek(db: Database, id: string, adminID: st
 }
 function canPublish(row: Generation): boolean {
   try {
-    const model = examModelFor(row.level, row.language_id);
+    const model = row.language_id === 'en'
+      ? readFrozenBlueprint(row.blueprint_contract, row.blueprint_version, row.blueprint_hash, row.language_id, row.level)
+      : examModelFor(row.level, row.language_id);
     if (!model || !row.pool || !Array.isArray(row.variants) || !row.variants.length) return false;
     const excludedByEnglishJudge = row.language_id === 'en' && Array.isArray(row.review) && row.review.some(verdict =>
       typeof verdict === 'object' && verdict !== null && ['reject', 'flagged'].includes((verdict as { verdict?: string }).verdict ?? ''));
@@ -46,7 +54,7 @@ function canPublish(row: Generation): boolean {
     } } : model;
     const checked = validateGeneratedPool({ recognition: row.pool.recognition, writing: row.pool.writing,
       reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, validationModel.examShape, row.language_id,
-      row.language_id === 'en' ? validationModel : undefined);
+      row.language_id === 'en' ? validationModel : undefined, row.language_id === 'en');
     if (!checked.ok) return false;
     const pool = checked.pool;
     const expectedPassages = new Map<string, GeneratedPool['readingPassages'][number]>([
@@ -57,12 +65,16 @@ function canPublish(row: Generation): boolean {
       ...pool.readingPassages.flatMap((p, i) => p.items.map(item => ({ ...item, passageId: `llm-reading-${i + 1}` }))),
       ...pool.listeningPassages.flatMap((p, i) => p.items.map(item => ({ ...item, passageId: `llm-listening-${i + 1}`, speech: item.speech ?? p.text })))]
       .map(item => [item.id, item]));
-    if (row.judge_mode === 'strict') {
+    if (row.language_id === 'en' && row.judge_mode === 'off') return false;
+    if (row.judge_mode === 'strict' || row.language_id === 'en') {
       if (!Array.isArray(row.review)) return false;
       for (const id of expectedItems.keys()) {
         const verdicts = row.review.filter(verdict => verdict.id === id);
         const accepted = row.language_id === 'en' ? ['ok'] : ['ok', 'flagged'];
         if (verdicts.length !== 1 || !accepted.includes(verdicts[0]!.verdict)) return false;
+        if (row.language_id === 'en') {
+          if (!hasEnglishJudgeEvidence(verdicts[0]!)) return false;
+        }
       }
     }
     const shape = model.examShape;

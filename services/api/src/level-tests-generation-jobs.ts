@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
 import { generateWeeklyLevelTest, type GenerateOptions, type GenerationOutcome } from './level-tests-llm.js';
 import { paliqueMetrics } from './metrics.js';
+import type { GenerationUsage } from './level-test-generation-usage.js';
 
 export type GenerationJobResult = GenerationOutcome | {
   status: 'busy' | 'unknown'; languageID: string; level: string; weekId: number; errors?: string[];
@@ -82,7 +83,12 @@ async function runLevelTestGenerationJobOnce(
     const runId = await startRun(client, options, weekId!, attempt, runCorrelationId);
     let outcome: GenerationOutcome;
     try {
-      outcome = await generateWeeklyLevelTest({ db, env }, { ...options, weekIndex: weekId, signal: options.signal });
+      outcome = await generateWeeklyLevelTest({ db, env, onUsage: async usage => {
+        const updated = await client.query(`UPDATE level_test_generation_jobs
+          SET tokens_in=$2, tokens_out=$3, usage_state=$4, updated_at=now() WHERE id=$1 AND state='running'`,
+        [runId, usage.tokensIn, usage.tokensOut, usage.state]);
+        if (updated.rowCount !== 1) throw new Error('generation_run_checkpoint_failed');
+      } }, { ...options, weekIndex: weekId, signal: options.signal });
     } catch (error) {
       const unknown = options.signal?.aborted || (error instanceof Error && error.message === 'llm_outcome_unknown');
       await closeRun(client, runId, unknown ? 'unknown' : 'failed',
@@ -97,7 +103,7 @@ async function runLevelTestGenerationJobOnce(
     // Keep the section-level reasons for the operator-facing error dialog; the
     // coarse error_code stays the stable contract for badges and summaries.
     const details = state === 'finished' ? [] : sanitizeGenerationErrorDetails(outcome.errors, unknown ? 'llm_outcome_unknown' : errorCode);
-    await closeRun(client, runId, state, errorCode, details);
+    await closeRun(client, runId, state, errorCode, details, outcome.usage);
     if (unknown) return { ...outcome, status: 'unknown', errors: ['llm_outcome_unknown'] };
     return outcome.status === 'failed' ? { ...outcome, errors: [errorCode ?? 'generation_failed'] } : outcome;
   } finally {
@@ -125,10 +131,14 @@ async function startRun(client: PoolClient, options: GenerateOptions, weekId: nu
 }
 
 async function closeRun(client: PoolClient, id: string, state: 'finished' | 'failed' | 'unknown',
-  errorCode: string | null, errorDetails: string[]): Promise<void> {
+  errorCode: string | null, errorDetails: string[], usage?: GenerationUsage): Promise<void> {
   await client.query(`UPDATE level_test_generation_jobs
-    SET state=$2, error_code=$3, error_details=$4::jsonb, finished_at=now(), updated_at=now() WHERE id=$1`,
-  [id, state, errorCode, JSON.stringify(errorDetails)]);
+    SET state=$2, error_code=$3, error_details=$4::jsonb, finished_at=now(), updated_at=now(),
+      tokens_in=CASE WHEN $5::boolean THEN $6::bigint ELSE tokens_in END,
+      tokens_out=CASE WHEN $5::boolean THEN $7::bigint ELSE tokens_out END,
+      usage_state=CASE WHEN $5::boolean THEN $8::text ELSE usage_state END WHERE id=$1`,
+  [id, state, errorCode, JSON.stringify(errorDetails), usage !== undefined,
+    usage?.tokensIn ?? null, usage?.tokensOut ?? null, usage?.state ?? null]);
 }
 
 const MAX_ERROR_DETAILS = 10;
