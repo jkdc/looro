@@ -74,7 +74,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 2: Lock the progress contract and time primitives
 
-**Requirements:** S2,S4. **Prerequisites:** T1. **Status:** pending.
+**Requirements:** S2,S4. **Prerequisites:** T1 implementation/review committed as `f4673e2`; S1 device proof pending. **Status:** implementation/review complete; Swift execution unavailable.
 
 **Files:**
 - Modify: `openspec/changes/audit-progress-sync/design.md`
@@ -94,12 +94,12 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 **Interfaces:** Produces one version-2 contract: existing route/version negotiation, Unix-ms/Apple-reference-seconds, epoch offset 978307200, future skew 172800000, limits 200/1000, both aggregate timestamps and structured unavailable error. `ProgressTime` provides checked `fromUnixMilliseconds` and `toUnixMilliseconds` in each language; it does not mutate existing stored records.
 
-- [ ] **Step 1 — RED:** `distinctProgressInstantsRoundTrip` checks 1792929599000/1792929600000 at millisecond precision; `invalidTimeIsNotClamped` checks non-finite/unsafe/ordered bounds; `contractExporterDetectsDrift` compares generated Kotlin/Swift constants. Epoch-zero conversion is distinguished from invalid API record zero.
-- [ ] **Step 2 — Observe RED:** Run `python3 -m unittest discover -s scripts/tests -p test_export_progress_sync.py` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Reconcile only obsolete existing sync instructions with schema v5, current erasure contract and original negotiation path. Generate constants, use explicit time-boundary names, inject now for validation, and add exporter --check to make check. Recovery classification is specified here; persisted repair happens in T5, client wiring in T6/T7.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Shared + Android unit + Swift Core** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): define checked sync time contract`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 1 — RED:** Regression tests cover distinct instants, checked conversion bounds, invalid contracts and exporter drift; RED observed for unsafe exporter limits before correction.
+- [x] **Step 2 — Observe RED:** `python3 -m unittest discover -s scripts/tests -p test_export_progress_sync.py` demonstrated unsafe exporter limits were accepted before validation was added.
+- [x] **Step 3 — Implement:** Added shared contract, generated constants, checked Kotlin/Swift time primitives, exporter, `make check` integration and provenance-based recovery specification; persistence repair remains T5 and clients T6/T7.
+- [x] **Step 4 — GREEN:** Exporter tests (5), `make check` (146 tests), focused Android time tests and full Android unit suites passed. One full Android run had a transient unrelated voice assertion; focused rerun passed, and a second full run passed 731 tests with 0 failures. Swift unavailable; `swift test --package-path apps/ios` not run.
+- [x] **Step 5 — Review:** Fresh reviewer approved after one correction batch; parent exporter-test spot check passed. Advisory: fractional wire timestamp and invalid injected `now` tests remain desirable; Swift execution is unverified.
+- [ ] **Step 6 — Commit:** Parent commits reviewed T2 task surfaces using `feat(progress): define checked sync time contract`.
 
 ### Task 3: Fence active sync and enable real iOS App tests
 

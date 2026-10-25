@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "wireEpoch": "unix",
+  "wireUnit": "milliseconds",
+  "localEpoch": "appleReference",
+  "localUnit": "seconds",
+  "appleEpochOffsetSeconds": 978307200,
+  "earliestUnixMilliseconds": 1735689600001,
+  "futureSkewMilliseconds": 172800000,
+  "uploadBatchLimit": 200,
+  "downloadPageLimit": 1000
+}

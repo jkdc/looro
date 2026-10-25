@@ -26,22 +26,24 @@ Native clients MUST convert Unix-millisecond wire timestamps to their internal A
 
 ### Requirement: Contaminated timestamps receive bounded idempotent recovery
 
-Each native client MUST inspect previously persisted timestamps that may contain Unix milliseconds in an internal-seconds field. A value MAY be repaired only when interpreting it as Unix milliseconds yields an instant within the supported history window and no later than the accepted future-skew boundary. Recovery MUST record a version or equivalent marker so the same value is not repaired repeatedly.
+Each native client MUST require persisted per-record source/version evidence that identifies the historical writer and unit for the exact timestamp field before repairing a contaminated value. Numeric magnitude, field name, current database schema version, or a store-wide recovery marker alone MUST NOT authorize repair. A proven conversion MUST yield an instant inside the supported history and future-skew bounds. Missing or conflicting evidence MUST leave the record and evidence unchanged; only timestamps invalid for the supported internal domain are excluded from sync. Recovery MUST record a completion version or equivalent marker for idempotency, but that marker is not repair evidence.
 
-#### Scenario: A safely identifiable contaminated value is repaired once
+#### Scenario: Persisted source/version evidence authorizes one repair
 
-- GIVEN a persisted timestamp whose Unix-millisecond interpretation is plausible and within the recovery window
+- GIVEN a persisted timestamp with per-record source/version evidence identifying the historical writer and Unix-millisecond unit
 - WHEN the recovery pass runs
 - THEN the value is converted to the internal domain
-- AND the recovery marker records the applied recovery version
+- AND the per-record evidence records the applied recovery version
+- AND the recovery marker records completion without authorizing additional conversions
 - AND running recovery again leaves the value and marker unchanged
 
-#### Scenario: An ambiguous value is quarantined
+#### Scenario: An ambiguous value remains unchanged
 
-- GIVEN a persisted timestamp whose possible interpretations are outside the supported history or future-skew bounds
+- GIVEN a persisted timestamp with missing or conflicting source/version evidence
 - WHEN the recovery pass runs
-- THEN the value is excluded from upload
-- AND a bounded diagnostic identifies the quarantine without inventing a replacement timestamp
+- THEN the source value and evidence remain unchanged
+- AND the value is excluded from upload only if it is invalid in the supported internal domain
+- AND a bounded diagnostic identifies unresolved evidence without inventing a replacement timestamp
 - AND running recovery again does not create another repair or diagnostic side effect
 
 ### Requirement: Synchronized rollups are stored separately from local events
@@ -93,7 +95,7 @@ Recovery and synchronization diagnostics MUST expose enough bounded information 
 
 ### Requirement: Recovery respects existing retention and erasure boundaries
 
-The recovery pass and synchronized-rollup projection MUST NOT silently change unrelated local history/archive retention caps or the local-erasure contract. Any rollup data included in an explicitly defined erasure operation MUST follow that operation's documented scope.
+The recovery pass and synchronized-rollup projection MUST NOT silently change unrelated local history/archive retention caps or the local-erasure contract. Account deletion MUST continue to leave learning history on the device. Explicit delete-all and per-language erasure MUST remove synchronized rollups in the same scope as local completion and lesson-state data; recovery MUST NOT restore erased rollups from hidden local events.
 
 #### Scenario: Recovery does not bypass history limits
 
@@ -102,9 +104,15 @@ The recovery pass and synchronized-rollup projection MUST NOT silently change un
 - THEN the retention limit remains unchanged
 - AND no additional local completion history is fabricated to preserve a remote aggregate
 
-#### Scenario: Explicit erasure removes synchronized data according to its contract
+#### Scenario: Explicit local erasure removes synchronized data in scope
 
-- GIVEN an erasure operation whose documented scope includes synchronized progress
+- GIVEN a delete-all or per-language local erasure operation
 - WHEN the operation completes
-- THEN synchronized rollups in that scope are removed or reset as documented
-- AND subsequent synchronization follows the documented post-erasure behavior rather than restoring hidden local events
+- THEN synchronized rollups for the erased scope are removed in the same transaction as corresponding local completion and lesson-state data
+- AND subsequent synchronization does not recreate erased local history from synchronized rollups
+
+#### Scenario: Account deletion preserves local learning data
+
+- GIVEN a user deletes a disposable account
+- WHEN server-side account deletion completes
+- THEN learning history remains on the device, unchanged by progress-sync recovery or projection

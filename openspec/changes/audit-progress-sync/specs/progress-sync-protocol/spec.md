@@ -8,7 +8,7 @@ Define a versioned, bounded, replay-safe progress synchronization contract that 
 
 ### Requirement: Progress timestamps use one wire unit
 
-The progress API MUST represent every timestamp in the versioned wire contract as a Unix timestamp in milliseconds. The contract MUST state the epoch and unit explicitly, and clients MUST preserve the represented instant when converting between the wire domain and their internal time domain.
+The progress API MUST represent every timestamp in the versioned wire contract as a safe-integer Unix timestamp in milliseconds. The contract MUST state the epoch and unit explicitly, and clients MUST preserve the represented instant when converting between the wire domain and their Apple-reference-seconds internal time domain. Conversion MUST use the 978307200-second epoch offset exactly once and round to the nearest millisecond explicitly when encoding.
 
 #### Scenario: A shared instant round-trips through the wire contract
 
@@ -19,10 +19,17 @@ The progress API MUST represent every timestamp in the versioned wire contract a
 
 #### Scenario: Boundary and zero timestamps remain unambiguous
 
-- GIVEN a timestamp at the supported lower boundary or the Unix epoch
-- WHEN it is serialized and decoded by the API, Swift client, and Kotlin client
-- THEN the decoded instant equals the fixture instant
-- AND the contract MUST distinguish milliseconds from seconds without relying on magnitude heuristics
+- GIVEN timestamps at the supported lower boundary and at the Unix epoch
+- WHEN pure native conversion round-trips the Unix epoch and progress validation checks the epoch-zero record
+- THEN the conversion preserves Unix epoch zero as Apple-reference second -978307200
+- AND the progress API rejects zero because it is earlier than the supported history boundary
+- AND the contract distinguishes milliseconds from seconds without relying on magnitude heuristics
+
+#### Scenario: Distinct progress instants retain millisecond precision
+
+- GIVEN firstAt=1792929599000 and lastAt=1792929600000
+- WHEN each native time primitive converts the values to Apple-reference seconds and back
+- THEN both wire values remain unchanged and the local values remain one second apart
 
 ### Requirement: Downloads expose a versioned paged envelope
 
@@ -112,18 +119,20 @@ The API and clients MUST merge progress aggregates monotonically: first-at value
 
 ### Requirement: Protocol rollout remains compatibility-contained
 
-The versioned contract MUST provide an explicit transition behavior for clients that do not understand the new paged envelope. During rollout, the service MUST retain a bounded rollback path that does not require destructive schema changes or reverse repaired data.
+V2 MUST use the existing `/v1/progress` route: GET negotiates with `version=2`, and POST uses `{version:2,entries:[...]}`. V2 MUST be independently disabled by `PROGRESS_SYNC_V2_ENABLED`, which defaults to false; an authenticated v2 request while disabled returns HTTP 503 and `{error:{code:"progress_sync_version_unavailable"}}`. Only this exact status and code permit one corrected-v1 compatibility pass; authentication, rate-limit, timeout, cancellation, other server errors, malformed responses, and cursor errors MUST NOT trigger fallback. Requests that do not negotiate v2 retain the strict existing v1 request and response shapes. Rollback MUST NOT require destructive schema changes or reverse repaired data.
 
 #### Scenario: An older client receives a supported legacy response
 
 - GIVEN a client that only understands the legacy progress response
 - WHEN the service is configured for the compatibility transition
-- THEN it receives the documented legacy shape or a documented refusal
+- THEN it receives the unchanged legacy shape
 - AND the service continues rejecting implausible future timestamps
 
 #### Scenario: The new protocol is disabled after a regression
 
-- GIVEN operators stop advertising the new protocol version
+- GIVEN an authenticated v2 request is sent while `PROGRESS_SYNC_V2_ENABLED` is false
 - WHEN legacy clients resume synchronization
-- THEN synchronized-rollup and recovery data remain intact but are not required by the legacy path
+- THEN the response is HTTP 503 with `{error:{code:"progress_sync_version_unavailable"}}`
+- AND only the new client may perform one corrected-v1 compatibility pass
+- AND synchronized-rollup and recovery data remain intact but are not required by the legacy path
 - AND no repaired timestamp or remote aggregate is automatically deleted or reversed

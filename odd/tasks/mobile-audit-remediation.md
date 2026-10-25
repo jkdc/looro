@@ -265,7 +265,7 @@ Secure persistence and in-memory adoption MUST complete before one adoption noti
 Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app-movil-2026-10-25.md` unchanged.
 
 - T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; connected UI verification pending; commit: `f4673e2`.
-- T2 — linked S2; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
+- T2 — linked S2,S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: implementation/review complete; Swift execution pending; commit: pending.
 - T3 — linked S3; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T4 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T5 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
@@ -289,3 +289,5 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L4 (2026-10-25): “cuando hayas terminado implementa los cambios” — explicit authorization to execute the corrected plan.
 - L5: Begin T1 S1. The plan and OpenSpec tasks are canonical; this full feature document is the Engram recovery mirror. Parent owns git and commits reviewed bytes.
 - L6 (2026-10-25): T1 implements requesting-owner SQL isolation, guest-only NULL semantics, owner-scoped legacy summary display, and generation/request-sequence fencing. Focused and full Android unit tests pass; UI test source compiles; connected UI test unavailable because no emulator/device is attached. Independent review approved after one correction batch; no device proof is claimed. Commit: `f4673e2`.
+- L7 (2026-10-25): Begin T2 / S2,S4, using the approved version-2 shared contract and checked cross-platform time primitives. No persisted repair or production activation is authorized by this task.
+- L8 (2026-10-25): T2 adds the shared v2 contract, generated Kotlin/Swift constants, checked platform time conversions and provenance-based recovery rules. `make check` (146 tests), 5 exporter tests and Android focused/full suites pass; one unrelated voice assertion failed once, then passed isolated and on a second full suite (731/0). Swift execution is unavailable. Independent review approved; risk item 3 (cross-platform shared contract). Commit pending.

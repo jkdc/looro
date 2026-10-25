@@ -103,6 +103,7 @@ smoke-down: ## Para el stack de humo y borra sus volúmenes
 
 check: ## Contratos multiplataforma que corre CI (contenido generado y Swift↔Kotlin)
 	python3 -m unittest discover -s scripts/tests -t .
+	python3 scripts/export_progress_sync.py --check
 	python3 scripts/export_android_content.py --check
 	python3 scripts/check_cross_platform.py
 

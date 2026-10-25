@@ -5,7 +5,7 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 ## Implementation
 
 - [ ] T1 / S1 — Isolate exam history. Route: delegated-direct (user-selected sequential implementer/reviewer); trigger: explicit method choice. Status: implementation/review committed; Android UI execution pending (no device); commit `f4673e2`.
-- [ ] T2 / S2,S4 — Lock the progress contract and time primitives. Depends on T1. Evidence/commit: pending.
+- [ ] T2 / S2,S4 — Lock the progress contract and time primitives. Depends on T1 implementation/review commit `f4673e2`; its device proof remains pending. Status: implementation/review complete; Swift execution unavailable; commit pending.
 - [ ] T3 / S3 — Fence active sync and enable real iOS App tests. Depends on T2. Evidence/commit: pending.
 - [ ] T4 / S4 — Implement negotiated API v2 on the existing route. Depends on T2,T3. Evidence/commit: pending.
 - [ ] T5 / S2,S4,S5 — Add durable rollups, recovery and atomic continuation. Depends on T2,T3,T4. Evidence/commit: pending.
@@ -33,3 +33,4 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 
 - 2026-10-25: User requested review and correction of design, specification and tasks. Corrected protocol negotiation/timestamp loss, persistence ordering, real exporter/test targets, retry wording and task independence. All implementation tasks remain pending; see verify-report.md for document-only checks.
 - 2026-10-25: T1 code passes focused and full Android unit suites; independent review approved after one correction batch. Android UI source compiles, but connected execution is pending because `adb devices -l` lists no devices and `:app:connectedUiTestAndroidTest` reports “No connected devices!”. Keep S1 unverified until device execution.
+- 2026-10-25: T2 S2/S4 contract/time primitives implemented and independently approved after one correction batch. `make check` (146 tests), exporter tests, Android focused/full unit suites passed; the first full Android run had one non-reproducible `LocalVoiceTransportTest` assertion (`cloud turn processed`), which passed in isolation and on a second full run (731 tests, 0 failures). Swift is unavailable, so `swift test --package-path apps/ios` remains unverified.

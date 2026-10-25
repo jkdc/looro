@@ -57,11 +57,11 @@ New clients prefer version 2. On the documented unavailable response only—not 
 - `version = 2`
 - `wireEpoch = "unix"` and `wireUnit = "milliseconds"`
 - `localEpoch = "appleReference"` and `localUnit = "seconds"`
-- `earliestUnixMilliseconds = 1735689600000` (`2025-01-01T00:00:00Z`)
+- `earliestUnixMilliseconds = 1735689600001` (the first whole millisecond strictly after `2025-01-01T00:00:00Z`)
 - `futureSkewMilliseconds = 172800000` (48 hours)
 - `uploadBatchLimit = 200` and `downloadPageLimit = 1000`
 
-The lower bound comes from the shipped `user_progress.first_at > '2025-01-01'` database constraint. The future bound comes from the existing API `FUTURE_SKEW_MILLISECONDS = 48 * 3_600_000` validation shared conceptually with usage events. The exporter generates typed Swift/Kotlin constants and a TypeScript module so production code and tests consume the same values; the existing freshness pipeline checks generated outputs.
+The lower bound comes from the shipped strict `user_progress.first_at > '2025-01-01'` database constraint, so the first representable accepted wire millisecond is `1735689600001`. The future bound comes from the existing API `FUTURE_SKEW_MILLISECONDS = 48 * 3_600_000` validation shared conceptually with usage events. The exporter generates typed Swift/Kotlin constants so native clients and tests consume the same values; `make check` verifies those generated outputs. The API work unit consumes the shared fixture separately.
 
 **Alternatives considered**: Magnitude heuristics; a new product-selected date; duplicating literals in three implementations.
 
@@ -69,22 +69,22 @@ The lower bound comes from the shipped `user_progress.first_at > '2025-01-01'` d
 
 ### Decision: Recover known contamination before loading progress
 
-**Choice**: Recovery version 1 runs once per local store after schema opening and before `Archive`/read-model materialization. In one local transaction it inspects `lesson_state.last_seen` and `completions.at`:
+**Choice**: The future recovery implementation (Task 5) runs after schema opening and before `Archive`/read-model materialization. It MUST inspect persisted per-record source/version evidence for each timestamp field before classifying `lesson_state.last_seen` or `completions.at`:
 
-1. A value already inside the Apple-reference-second interval `[earliestAppleSeconds, nowAppleSeconds + futureSkewSeconds]` is valid and unchanged.
-2. Otherwise, interpret the value as Unix milliseconds and convert with `value / 1000 - 978307200`. Repair only if the candidate lies inside the same interval.
-3. iOS `lesson_state.last_seen` additionally recognizes the repository-proven legacy writer in `Storage.recordLessonAttempt`, which stored Unix seconds. Convert `value - 978307200` only for this field and only when that candidate lies inside the interval. New writes switch to `timeIntervalSinceReferenceDate`.
-4. Every other out-of-domain value remains stored for local-history preservation but is excluded when constructing sync aggregates. It produces only a bounded reason-code/count diagnostic, never the raw timestamp or payload.
+1. A recognized source/version may identify a documented writer and timestamp unit for that exact record/field. A store-wide recovery marker or a plausible numeric magnitude is not evidence of a record's source or unit.
+2. Preserve values already in the supported Apple-reference-second interval without conversion. Convert a contaminated value only when its persisted record evidence identifies the exact historical writer/unit and the resulting instant lies inside `[earliestAppleSeconds, nowAppleSeconds + futureSkewSeconds]`.
+3. The iOS legacy `Storage.recordLessonAttempt` Unix-seconds writer is eligible only when persisted per-record evidence identifies that writer and field. Do not infer Unix seconds or milliseconds from magnitude, field name, current schema version, or a recovery run number.
+4. Missing or conflicting source/version evidence leaves the record and its evidence unchanged. Exclude a record from sync only when its timestamp is invalid for the supported internal domain; do not delete, clamp, or rewrite unresolved local history.
 
-After the transaction succeeds, meta key `progress_timestamp_recovery` stores a compact JSON marker containing the recovery version and bounded counts by reason. Database failure leaves the marker unset so the whole recovery retries. JSON fail-safe stores persist the equivalent optional recovery marker with the archive snapshot. Re-running the same version performs no repair and emits no duplicate diagnostic.
+Repair, per-record evidence update, and the recovery-completion marker are committed atomically. The marker records the recovery version and bounded reason counts but never authorizes a repair. Database failure leaves the marker unset so a proven repair can retry; re-running a completed version is idempotent. JSON fail-safe stores use an equivalent persisted per-record evidence representation and recovery marker.
 
 **Alternatives considered**: Clamp to the nearest bound; repair any large number; delete invalid rows; run conversion during every sync.
 
-**Rationale**: The first two contamination forms are demonstrated by current code and F01; the third is demonstrated by the current iOS lesson writer and conflicts with the canonical schema's Apple-epoch convention. Bounded interpretation avoids guessing, transaction plus marker makes recovery idempotent, and preserving invalid local rows avoids destructive history changes.
+**Rationale**: Historical writers can produce different units, but numeric magnitude alone cannot prove which writer produced an individual value. Persisted per-record evidence gates every conversion; unresolved records retain their source value, and only genuinely invalid timestamps are excluded from sync. Task 2 adds the reusable checked time primitives; Task 5 owns evidence persistence, recovery, transactional repair, and its failure/idempotency tests.
 
 ### Decision: Persist remote aggregates separately and project once
 
-**Choice**: Learning database schema version 3 adds:
+**Choice**: An additive migration from the current learning database schema v5 to schema v6 adds:
 
 ```sql
 CREATE TABLE progress_rollups (
@@ -177,7 +177,7 @@ If acknowledgement is uncertain, the client does not advance and resends the sam
 ### Startup recovery
 
 ```text
-Open schema v3 -> read recovery marker
+Open schema v6 -> read recovery marker
      | missing
      v
 scan progress timestamps -> bounded interpretation -> repair or quarantine classification
@@ -193,12 +193,12 @@ scan progress timestamps -> bounded interpretation -> repair or quarantine class
 | File | Action | Description |
 |---|---|---|
 | `shared/progress-sync-contract.json` | Create | Authoritative protocol version, epochs, bounds, and limits. |
-| `scripts/export_progress_sync_contract.py` | Create | Generate typed TypeScript, Swift, and Kotlin contract constants and support `--check`. |
+| `scripts/export_progress_sync.py` | Create | Generate typed Swift/Kotlin contract constants and support `--check`; the API work unit reads the shared JSON fixture. |
 | Generated contract files under API/iOS/Android progress modules | Create | Platform-specific constants generated from the shared contract. |
-| `shared/db/schema.sql` | Modify | Add schema-v3 rollup and sync-state tables and document account/time semantics. |
-| `scripts/check_db_schema.py` | Modify | Pin schema v3 tables, constraints, indexes, and migration parity. |
-| `apps/android/app/src/main/java/com/jkdc/app/data/SchemaData.kt` | Regenerate | Carry schema-v3 fresh-install and upgrade statements. |
-| `apps/ios/Core/Database/SchemaData.swift` | Regenerate | Carry the same schema-v3 statements. |
+| `shared/db/schema.sql` | Modify | Add schema-v6 rollup and sync-state tables and document account/time semantics. |
+| `scripts/check_db_schema.py` | Modify | Pin schema v6 tables, constraints, indexes, and migration parity. |
+| `apps/android/app/src/main/java/com/jkdc/app/data/SchemaData.kt` | Regenerate | Carry schema-v6 fresh-install and upgrade statements. |
+| `apps/ios/Core/Database/SchemaData.swift` | Regenerate | Carry the same schema-v6 statements. |
 | `apps/android/app/src/main/java/com/jkdc/app/data/LearningDb.kt` | Modify | Advance the Android learning database version to 3. |
 | `apps/ios/Core/Database/LearningDatabase.swift` | Modify | Advance the iOS learning database version to 3. |
 | Android/iOS database DAO and writer files | Modify | Add transactional rollup merge, resume state, and recovery-marker operations. |
@@ -218,7 +218,7 @@ scan progress timestamps -> bounded interpretation -> repair or quarantine class
 | `apps/android/app/src/main/java/com/jkdc/app/core/Models.kt`, `ProgressEngine.kt` | Modify | Add aggregate/rollup/recovery types and pure projection; remove synthetic remote event merge. |
 | `apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt`, `MasteryEngine.kt` | Modify | Consume effective aggregate evidence. |
 | Android progress, database, and view-model tests | Modify | Mirror iOS recovery, projection, account, resume, and no-synthetic-event coverage. |
-| Root/generated freshness checks (`Makefile` and existing checker tests as applicable) | Modify | Include `export_progress_sync_contract.py --check`. |
+| Root/generated freshness checks (`Makefile` and existing checker tests as applicable) | Modify | Include `export_progress_sync.py --check`. |
 
 Exact generated file names should follow the existing `SchemaData` naming/location pattern chosen by the exporter; tasks must name them before implementation rather than creating hand-maintained duplicates.
 
@@ -310,12 +310,12 @@ N/A — this change does not introduce shell execution, subprocesses, VCS/PR aut
 ## Migration / Rollout
 
 1. Ship the additive server implementation with version 2 disabled; legacy GET/POST behavior is unchanged.
-2. Ship client schema v3, startup recovery, account-scoped rollup storage, projection readers, and v2-capable transport. Recovery completes before progress is loaded. Clients can still use the corrected legacy decoder while v2 is unavailable.
+2. Ship client schema v6, startup recovery, account-scoped rollup storage, projection readers, and v2-capable transport. Recovery completes before progress is loaded. Clients can still use the corrected legacy decoder while v2 is unavailable.
 3. Enable server version 2 in a controlled environment and run API/PostgreSQL plus both client contract suites.
 4. Enable version 2 generally. Monitor bounded cursor/recovery/pass reason codes and verify completed passes across supported client versions.
 5. Retain legacy serving until supported-client adoption and rollback policy explicitly permit removal; removal is a later change, not part of this design.
 
-Rollback disables `PROGRESS_SYNC_V2_ENABLED`. New clients take the documented legacy fallback; older clients continue unchanged. Local schema v3 tables, repaired timestamps, markers, and remote rollups remain in place. They are not deleted or reverse-migrated. Reverting client code simply leaves the additive tables unread. Server database schema is unchanged unless query-plan evidence later requires an additive index.
+Rollback disables `PROGRESS_SYNC_V2_ENABLED`. New clients take the documented legacy fallback; older clients continue unchanged. Local schema v6 tables, repaired timestamps, markers, and remote rollups remain in place. They are not deleted or reverse-migrated. Reverting client code simply leaves the additive tables unread. Server database schema is unchanged unless query-plan evidence later requires an additive index.
 
 The local-erasure change must include `progress_rollups`, `progress_sync_state`, and the progress recovery marker in synchronized-progress scope. That integration is a dependency between changes: this design does not silently alter the separately specified erasure operation.
 
