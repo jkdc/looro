@@ -32,10 +32,10 @@
 - [x] Prove tag loss, judge filtering, forged hashes, current matrix changes and historical frozen models cannot bypass the intended contract.
 
 ### Task 4: Verification and delivery
-- [ ] Run focused tests, full isolated PostgreSQL suite (zero DB skips), types, exporters and root contracts.
-- [ ] Independent whole-change review; one bounded correction pass with RED/GREEN for important findings.
-- [ ] Update policy/docs/previous pending tasks to reflect LLM approval. Actual authorized learner pilot and deployment remain pending.
-- [ ] Conventional work-unit commits on current branch; preserve original untracked artifacts.
+- [x] Run focused tests, full isolated PostgreSQL suite (zero DB skips), types, exporters and root contracts.
+- [x] Independent whole-change review; one bounded correction pass with RED/GREEN for important findings.
+- [x] Update policy/docs/previous pending tasks to reflect LLM approval. Actual authorized learner pilot and deployment remain pending.
+- [x] Conventional work-unit commits on current branch; preserve original untracked artifacts.
 
 ## Log
 - Baseline `eb911af`, branch `feat/exam-generation-readiness`. The user approved LLM-designed/reviewed coverage and runtime-loaded rubrics, then explicitly authorized implementation.
@@ -46,3 +46,5 @@
 - Task 2/3 in progress: initial runtime RED missing assessment module; coverage/metadata implementation and 131 focused regression tests now pass. Internal-tag snapshot leakage reproduced RED and fixed GREEN. Full isolated PostgreSQL suite is running; final source verification and independent review remain.
 
 - Independent runtime review: one Important uneven-capability stimulus-selection defect. Regression observed RED (`stimulus_diversity` despite an available distinct set); novelty-mask DP correction GREEN, focused132/132. No Critical or deferred Minor findings. Final isolated PostgreSQL suite748/748, zero skipped; `make check`141 Python tests plus exporters/contracts, types and `git diff --check` pass.
+
+- Completed work units: `26993ba` reviewed canonical design/exporter; `a61493a` runtime rubrics, metadata, coverage/diversity composition, approval gates, regressions and verification docs. Technical implementation complete. No configured-provider execution, native app build, learner pilot or deployment claimed. Active branch retained; no push/PR/merge.
