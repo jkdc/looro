@@ -6,6 +6,8 @@ Implementadas y verificadas las garantías técnicas de los puntos 1–4 del pla
 
 Rama: `feat/exam-generation-readiness`. Base de esta intervención: `495689b`.
 
+Commit técnico: `8ee3450` — `fix(level-tests): enforce English publication guarantees`.
+
 ## Comportamiento comprobado
 
 - Inglés con verificación desactivada genera únicamente borradores privados, incluso con publicación automática configurada. La aprobación manual tampoco permite saltarse el juez.
