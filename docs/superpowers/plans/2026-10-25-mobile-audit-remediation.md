@@ -70,7 +70,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Added owner SQL predicate, guest `IS NULL`, owner-scoped summaries and generation/request-sequence fencing; late results cannot republish after owner changes.
 - [x] **Step 4 — GREEN:** Focused and full Android unit suites passed; UI-test sources compiled. Connected UI execution unavailable: no devices attached, `:app:connectedUiTestAndroidTest` reports “No connected devices!”.
 - [x] **Step 5 — Review:** Fresh reviewer approved after one correction batch; parent spot-check of the focused unit command passed. Review advisories: no rendered Compose assertion ran, and the test barrier cleanup is not wrapped in `finally`.
-- [x] **Step 6 — Commit:** `043fb6e` (`fix(android): isolate exam history by account`) contains the reviewed task files and plan/spec evidence. S1 remains proof-pending until the required connected UI run succeeds.
+- [x] **Step 6 — Commit:** `f4673e2` (`fix(android): isolate exam history by account`) contains the reviewed task files and plan/spec evidence. S1 remains proof-pending until the required connected UI run succeeds.
 
 ### Task 2: Lock the progress contract and time primitives
 

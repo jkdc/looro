@@ -33,5 +33,5 @@
 
 ## Implementation evidence matrix
 
-- **T1 / S1:** Unit coverage `historyIsScopedToRequestingOwner`, `lateHistoryCannotRepopulateAfterOwnerSwitchOrReturnToSameAccount`, and `switchingToGuestClearsAccountHistoryBeforeGuestLoadCompletes`; instrumentation coverage `lateOwnerHistoryCannotRepopulateNewAccount`. Focused Android unit test and full app unit suite passed. Instrumentation source compiles, but `./gradlew --offline :app:connectedUiTestAndroidTest` could not execute because no device is attached; S1 remains unverified pending that run. Independent review approved after one correction batch. Commit: `043fb6e`.
+- **T1 / S1:** Unit coverage `historyIsScopedToRequestingOwner`, `lateHistoryCannotRepopulateAfterOwnerSwitchOrReturnToSameAccount`, and `switchingToGuestClearsAccountHistoryBeforeGuestLoadCompletes`; instrumentation coverage `lateOwnerHistoryCannotRepopulateNewAccount`. Focused Android unit test and full app unit suite passed. Instrumentation source compiles, but `./gradlew --offline :app:connectedUiTestAndroidTest` could not execute because no device is attached; S1 remains unverified pending that run. Independent review approved after one correction batch. Commit: `f4673e2`.
 - **T2–T16 / S2–S16:** Pending implementation and scenario-level verification.

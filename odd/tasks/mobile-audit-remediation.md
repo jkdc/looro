@@ -264,7 +264,7 @@ Secure persistence and in-memory adoption MUST complete before one adoption noti
 
 Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app-movil-2026-10-25.md` unchanged.
 
-- T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; connected UI verification pending; commit: `043fb6e`.
+- T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; connected UI verification pending; commit: `f4673e2`.
 - T2 — linked S2; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T3 — linked S3; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T4 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
@@ -288,4 +288,4 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L3 (2026-10-25): “revisa el diseño que has planteado junto con la especificación y las tareas, si encuentras algo que no esté bien actualizalo” — review/correct planning artifacts only.
 - L4 (2026-10-25): “cuando hayas terminado implementa los cambios” — explicit authorization to execute the corrected plan.
 - L5: Begin T1 S1. The plan and OpenSpec tasks are canonical; this full feature document is the Engram recovery mirror. Parent owns git and commits reviewed bytes.
-- L6 (2026-10-25): T1 implements requesting-owner SQL isolation, guest-only NULL semantics, owner-scoped legacy summary display, and generation/request-sequence fencing. Focused and full Android unit tests pass; UI test source compiles; connected UI test unavailable because no emulator/device is attached. Independent review approved after one correction batch; no device proof is claimed. Commit: `043fb6e`.
+- L6 (2026-10-25): T1 implements requesting-owner SQL isolation, guest-only NULL semantics, owner-scoped legacy summary display, and generation/request-sequence fencing. Focused and full Android unit tests pass; UI test source compiles; connected UI test unavailable because no emulator/device is attached. Independent review approved after one correction batch; no device proof is claimed. Commit: `f4673e2`.
