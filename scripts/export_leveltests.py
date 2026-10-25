@@ -133,8 +133,9 @@ def emit_kotlin(banks, package_line):
 
 
 def exam_models():
+    from exam_assessment import embed_assessment
     path = ROOT / 'shared/leveltests/exam-models.json'
-    return json.loads(path.read_text())
+    return embed_assessment(ROOT, json.loads(path.read_text()))
 
 
 def emit_typescript(banks):

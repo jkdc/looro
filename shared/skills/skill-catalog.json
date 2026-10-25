@@ -125,6 +125,13 @@
       ]
     },
     {
+      "id": "grammar:cleft-sentences",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:relative-clauses"
+      ]
+    },
+    {
       "id": "grammar:comparatives",
       "category": "grammar",
       "prerequisites": [
@@ -149,6 +156,13 @@
       "category": "grammar",
       "prerequisites": [
         "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:ellipsis",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:connectors"
       ]
     },
     {
@@ -200,6 +214,13 @@
       "category": "grammar",
       "prerequisites": [
         "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:inversion",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-questions"
       ]
     },
     {

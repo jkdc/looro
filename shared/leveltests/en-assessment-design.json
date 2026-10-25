@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 1,
+  "revision": 1,
+  "rubricVersion": 1,
+  "levels": [
+    {
+      "level": "A1",
+      "sections": {
+        "recognition": {
+          "requiredSkills": [
+            "grammar:verb-be",
+            "grammar:present-simple",
+            "grammar:articles",
+            "grammar:plurals",
+            "grammar:present-questions",
+            "grammar:possessives",
+            "vocab:daily-routine"
+          ],
+          "example": {
+            "id": "en-a1-recognition-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "My sister ___ a nurse.",
+                "options": [
+                  "is",
+                  "are",
+                  "am",
+                  "be"
+                ],
+                "answers": [
+                  "is"
+                ],
+                "assessedSkill": "grammar:verb-be",
+                "evidence": "The subject my sister is singular, so the correct form is is.",
+                "explain": "The subject my sister is singular, so the correct form is is."
+              }
+            ]
+          }
+        },
+        "reading": {
+          "requiredSkills": [
+            "reading:gist",
+            "reading:detail"
+          ],
+          "example": {
+            "id": "en-a1-reading-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What is this notice about?",
+                "options": [
+                  "A school holiday",
+                  "A new bookshop",
+                  "A computer for sale",
+                  "A library class"
+                ],
+                "answers": [
+                  "A library class"
+                ],
+                "assessedSkill": "reading:gist",
+                "evidence": "The notice gives the place and details of a class at the library.",
+                "explain": "The notice gives the place and details of a class at the library."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Where is the class?",
+                "options": [
+                  "In the garden",
+                  "At a bookshop",
+                  "In the blue room",
+                  "At the school"
+                ],
+                "answers": [
+                  "In the blue room"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "The class is in the blue room.",
+                "explain": "The class is in the blue room."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What do students need to bring?",
+                "options": [
+                  "A blue book",
+                  "A notebook",
+                  "A library card",
+                  "A computer"
+                ],
+                "answers": [
+                  "A notebook"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Please bring a notebook. You do not need a library card for this class.",
+                "explain": "Please bring a notebook. You do not need a library card for this class."
+              }
+            ],
+            "passage": {
+              "title": "A library notice",
+              "text": "The library is open on Saturday from ten to four. You can read books and use the computers there. This Saturday, Anna has a small class for new students at eleven. The class is in the blue room. Please bring a notebook. You do not need a library card for this class."
+            }
+          },
+          "guidance": {}
+        },
+        "listening": {
+          "requiredSkills": [
+            "listening:gist",
+            "listening:detail",
+            "listening:number-time"
+          ],
+          "example": {
+            "id": "en-a1-listening-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What are Mia and Ben planning?",
+                "options": [
+                  "A train trip",
+                  "A shopping trip",
+                  "A picnic",
+                  "A lesson"
+                ],
+                "answers": [
+                  "A picnic"
+                ],
+                "assessedSkill": "listening:gist",
+                "evidence": "Mia asks whether Ben is ready for their picnic.",
+                "explain": "Mia asks whether Ben is ready for their picnic."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Who has the sandwiches?",
+                "options": [
+                  "Neither of them",
+                  "Ben",
+                  "Mia",
+                  "Both of them"
+                ],
+                "answers": [
+                  "Ben"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "Ben says: I have the sandwiches.",
+                "explain": "Ben says: I have the sandwiches."
+              },
+              {
+                "kind": "choice",
+                "prompt": "When will they meet?",
+                "options": [
+                  "At twelve",
+                  "At ten",
+                  "At eleven",
+                  "At two"
+                ],
+                "answers": [
+                  "At twelve"
+                ],
+                "assessedSkill": "listening:number-time",
+                "evidence": "Meet me at the park gate at twelve.",
+                "explain": "Meet me at the park gate at twelve."
+              }
+            ],
+            "passage": {
+              "title": "Planning a picnic",
+              "text": "Mia: Hi, Ben. Are you ready for our picnic? I have water and apples. Meet me at the park gate at twelve. Ben: Yes, I have the sandwiches. Twelve is fine. I can walk there from my house."
+            }
+          },
+          "guidance": {}
+        },
+        "writing": {
+          "requiredSkills": [
+            "writing:sentence",
+            "grammar:present-simple"
+          ],
+          "example": {
+            "id": "en-a1-writing-reference-v1",
+            "items": [
+              {
+                "kind": "gap",
+                "prompt": "Complete with the present simple of work: I ___ in a shop.",
+                "answers": [
+                  "work"
+                ],
+                "assessedSkill": "grammar:present-simple",
+                "evidence": "With I, the present simple uses the base form work.",
+                "explain": "With I, the present simple uses the base form work."
+              }
+            ]
+          },
+          "guidance": {
+            "writing:sentence": "Assess controlled familiar sentences, without implying open writing proficiency."
+          }
+        }
+      }
+    },
+    {
+      "level": "A2",
+      "sections": {
+        "recognition": {
+          "requiredSkills": [
+            "grammar:past-simple-regular",
+            "grammar:comparatives",
+            "grammar:going-to",
+            "grammar:countable-uncountable",
+            "grammar:time-expressions",
+            "grammar:past-continuous",
+            "grammar:past-simple-irregular",
+            "vocab:travel"
+          ],
+          "example": {
+            "id": "en-a2-recognition-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "Yesterday, we ___ the new museum.",
+                "options": [
+                  "visit",
+                  "visiting",
+                  "have visit",
+                  "visited"
+                ],
+                "answers": [
+                  "visited"
+                ],
+                "assessedSkill": "grammar:past-simple-regular",
+                "evidence": "Yesterday locates the completed event in the past; visited is the regular past form.",
+                "explain": "Yesterday locates the completed event in the past; visited is the regular past form."
+              }
+            ]
+          },
+          "guidance": {
+            "grammar:countable-uncountable": "Assess quantifier selection in context, not merely noun classification.",
+            "grammar:time-expressions": "Assess time-preposition selection in context, not merely recognition of a time word."
+          }
+        },
+        "reading": {
+          "requiredSkills": [
+            "reading:gist",
+            "reading:detail",
+            "reading:scan"
+          ],
+          "example": {
+            "id": "en-a2-reading-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "Why did Sam write this message?",
+                "options": [
+                  "To ask Eva to buy tickets",
+                  "To describe a past holiday",
+                  "To explain plans for a trip",
+                  "To cancel a seaside visit"
+                ],
+                "answers": [
+                  "To explain plans for a trip"
+                ],
+                "assessedSkill": "reading:gist",
+                "evidence": "Sam gives the changed train time, meeting place, tickets and plans for lunch.",
+                "explain": "Sam gives the changed train time, meeting place, tickets and plans for lunch."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Where should Eva meet Sam?",
+                "options": [
+                  "Near the beach",
+                  "Outside the station",
+                  "Beside the harbour",
+                  "At the ticket machine"
+                ],
+                "answers": [
+                  "Outside the station"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Please meet me outside the station at half past eight.",
+                "explain": "Please meet me outside the station at half past eight."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What time does the train leave?",
+                "options": [
+                  "At nine",
+                  "At eight",
+                  "At half past eight",
+                  "At half past nine"
+                ],
+                "answers": [
+                  "At nine"
+                ],
+                "assessedSkill": "reading:scan",
+                "evidence": "The train to the seaside leaves at nine on Sunday.",
+                "explain": "The train to the seaside leaves at nine on Sunday."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why should Eva bring a jacket?",
+                "options": [
+                  "Sam lost his jacket",
+                  "They will travel at night",
+                  "The cafe has no heating",
+                  "It may be windy"
+                ],
+                "answers": [
+                  "It may be windy"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Bring a jacket because it may be windy near the beach.",
+                "explain": "Bring a jacket because it may be windy near the beach."
+              }
+            ],
+            "passage": {
+              "title": "A changed departure",
+              "text": "Hi Eva, our train to the seaside leaves at nine on Sunday, not at eight as we planned. Please meet me outside the station at half past eight. I bought our tickets online yesterday, so we do not need to use the ticket machine. Bring a jacket because it may be windy near the beach. We can have lunch at the little cafe beside the harbour before we come home. See you soon, Sam."
+            }
+          },
+          "guidance": {}
+        },
+        "listening": {
+          "requiredSkills": [
+            "listening:gist",
+            "listening:detail",
+            "listening:number-time"
+          ],
+          "example": {
+            "id": "en-a2-listening-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What does the caller want to arrange?",
+                "options": [
+                  "A meeting with a friend",
+                  "A swimming class",
+                  "A tennis match",
+                  "A visit to a shop"
+                ],
+                "answers": [
+                  "A swimming class"
+                ],
+                "assessedSkill": "listening:gist",
+                "evidence": "The caller asks to come to the swimming class.",
+                "explain": "The caller asks to come to the swimming class."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Which day does the caller accept?",
+                "options": [
+                  "Thursday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Friday"
+                ],
+                "answers": [
+                  "Thursday"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "There is a place on Thursday, and the caller says that is fine.",
+                "explain": "There is a place on Thursday, and the caller says that is fine."
+              },
+              {
+                "kind": "choice",
+                "prompt": "How much does the class cost?",
+                "options": [
+                  "Six pounds",
+                  "Ten pounds",
+                  "Eighteen pounds",
+                  "Eight pounds"
+                ],
+                "answers": [
+                  "Eight pounds"
+                ],
+                "assessedSkill": "listening:number-time",
+                "evidence": "The receptionist says: Eight pounds.",
+                "explain": "The receptionist says: Eight pounds."
+              }
+            ],
+            "passage": {
+              "title": "Booking a class",
+              "text": "Caller: Hello. Can I come to the swimming class on Tuesday? Receptionist: The Tuesday class is full, but there is a place on Thursday at six. It costs eight pounds. Please arrive ten minutes early to change. Caller: Thursday at six is fine. Please book a place for me."
+            }
+          },
+          "guidance": {}
+        },
+        "writing": {
+          "requiredSkills": [
+            "writing:sentence",
+            "grammar:past-simple-regular"
+          ],
+          "example": {
+            "id": "en-a2-writing-reference-v1",
+            "items": [
+              {
+                "kind": "gap",
+                "prompt": "Complete with the past simple of start: The lesson ___ at nine yesterday.",
+                "answers": [
+                  "started"
+                ],
+                "assessedSkill": "grammar:past-simple-regular",
+                "evidence": "The completed past event uses started, the regular past form of start.",
+                "explain": "The completed past event uses started, the regular past form of start."
+              }
+            ]
+          },
+          "guidance": {
+            "writing:sentence": "Assess controlled sentences about past events, plans or comparisons."
+          }
+        }
+      }
+    },
+    {
+      "level": "B1",
+      "sections": {
+        "recognition": {
+          "requiredSkills": [
+            "grammar:present-perfect",
+            "grammar:first-conditional",
+            "grammar:second-conditional",
+            "grammar:used-to",
+            "grammar:relative-clauses",
+            "grammar:connectors",
+            "vocab:work",
+            "grammar:speculation"
+          ],
+          "example": {
+            "id": "en-b1-recognition-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "We ___ here since 2020, and we still enjoy living here.",
+                "options": [
+                  "are living",
+                  "live",
+                  "have lived",
+                  "lived"
+                ],
+                "answers": [
+                  "have lived"
+                ],
+                "assessedSkill": "grammar:present-perfect",
+                "evidence": "Since 2020 links the start of a continuing situation to the present.",
+                "explain": "Since 2020 links the start of a continuing situation to the present."
+              }
+            ]
+          }
+        },
+        "reading": {
+          "requiredSkills": [
+            "reading:gist",
+            "reading:detail",
+            "reading:inference"
+          ],
+          "example": {
+            "id": "en-b1-reading-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What is the writer mainly arguing?",
+                "options": [
+                  "Friday should be a compulsory holiday",
+                  "A shorter week needs changes to working habits",
+                  "Longer days are always better for teams",
+                  "Written updates should replace all conversations"
+                ],
+                "answers": [
+                  "A shorter week needs changes to working habits"
+                ],
+                "assessedSkill": "reading:gist",
+                "evidence": "The writer recommends the change only if the team changes how it works.",
+                "explain": "The writer recommends the change only if the team changes how it works."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why was the first month tiring?",
+                "options": [
+                  "Old meetings were fitted into fewer days",
+                  "Everyone had to work on Fridays",
+                  "Written updates took longer than meetings",
+                  "The office moved to a noisy building"
+                ],
+                "answers": [
+                  "Old meetings were fitted into fewer days"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "We tried to fit all our old meetings into fewer days.",
+                "explain": "We tried to fit all our old meetings into fewer days."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What would the writer probably expect if another team kept every meeting and made its working days longer?",
+                "options": [
+                  "Employees could become busier instead of gaining time to concentrate",
+                  "Its meetings would automatically become more useful",
+                  "Urgent messages would stop interrupting its employees",
+                  "Written updates would become less necessary because days were longer"
+                ],
+                "answers": [
+                  "Employees could become busier instead of gaining time to concentrate"
+                ],
+                "assessedSkill": "reading:inference",
+                "evidence": "The tiring first month and later benefits from replacing meetings support this prediction for another team, which the passage does not describe.",
+                "explain": "The tiring first month and later benefits from replacing meetings support this prediction for another team, which the passage does not describe."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What still interrupts the writer?",
+                "options": [
+                  "Travel to the old office",
+                  "Friday training sessions",
+                  "Urgent messages",
+                  "Daily routine meetings"
+                ],
+                "answers": [
+                  "Urgent messages"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Urgent messages still interrupt me.",
+                "explain": "Urgent messages still interrupt me."
+              }
+            ],
+            "passage": {
+              "title": "A shorter working week",
+              "text": "When our office moved to a four-day working week, I expected every Friday to feel like a holiday. In fact, the first month was tiring: we tried to fit all our old meetings into fewer days. Then we replaced routine meetings with short written updates. I now have more time to concentrate, although urgent messages still interrupt me. I would recommend the change, but only if a team is willing to change how it works, rather than simply making each day longer. A shorter week alone does not solve poor organisation."
+            }
+          },
+          "guidance": {
+            "reading:inference": "Require an unstated but text-supported conclusion; paraphrasing an explicit sentence is detail, not inference."
+          }
+        },
+        "listening": {
+          "requiredSkills": [
+            "listening:gist",
+            "listening:detail",
+            "listening:inference"
+          ],
+          "example": {
+            "id": "en-b1-listening-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What are the speakers deciding?",
+                "options": [
+                  "How to travel to a fair",
+                  "Whether to organise a fair",
+                  "Where to buy bicycles",
+                  "How to read a weather report"
+                ],
+                "answers": [
+                  "How to travel to a fair"
+                ],
+                "assessedSkill": "listening:gist",
+                "evidence": "They compare cycling and taking the bus to the village fair.",
+                "explain": "They compare cycling and taking the bus to the village fair."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What weather is expected after lunch?",
+                "options": [
+                  "Strong sunshine",
+                  "Snow",
+                  "A light breeze",
+                  "Heavy rain"
+                ],
+                "answers": [
+                  "Heavy rain"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "The weather report says heavy rain after lunch.",
+                "explain": "The weather report says heavy rain after lunch."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why does Jo prefer the bus?",
+                "options": [
+                  "It avoids checking a timetable",
+                  "It was cheaper on their last visit",
+                  "It would let them stay longer without cycling in rain",
+                  "It is the only way to arrive early"
+                ],
+                "answers": [
+                  "It would let them stay longer without cycling in rain"
+                ],
+                "assessedSkill": "listening:inference",
+                "evidence": "Jo links their disappointing early departure last time to taking the bus and staying longer.",
+                "explain": "Jo links their disappointing early departure last time to taking the bus and staying longer."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What will Alex do next?",
+                "options": [
+                  "Leave immediately",
+                  "Check the bus timetable",
+                  "Buy new bicycles",
+                  "Call the fair organisers"
+                ],
+                "answers": [
+                  "Check the bus timetable"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "I will check the timetable.",
+                "explain": "I will check the timetable."
+              }
+            ],
+            "passage": {
+              "title": "Choosing transport",
+              "text": "Alex: Shall we cycle to the village fair? Jo: I would like to, but the weather report says heavy rain after lunch. Alex: We could leave early and come back before then. Jo: Last time we did that, the fair had barely started when we left. Why not take the bus and stay longer? Alex: Good point. I will check the timetable."
+            }
+          },
+          "guidance": {
+            "listening:inference": "Combine spoken clues to infer an unstated intention or conclusion; do not tag explicit detail as inference."
+          }
+        },
+        "writing": {
+          "requiredSkills": [
+            "writing:sentence",
+            "grammar:connectors"
+          ],
+          "example": {
+            "id": "en-b1-writing-reference-v1",
+            "items": [
+              {
+                "kind": "gap",
+                "prompt": "Complete with although or because to express contrast: ___ it was raining, we continued our walk.",
+                "answers": [
+                  "Although"
+                ],
+                "assessedSkill": "grammar:connectors",
+                "evidence": "The clauses contrast the rain with continuing the walk; although marks that contrast.",
+                "explain": "The clauses contrast the rain with continuing the walk; although marks that contrast."
+              }
+            ]
+          },
+          "guidance": {
+            "writing:sentence": "Assess controlled expression of reasons and opinions, not free-text composition."
+          }
+        }
+      }
+    },
+    {
+      "level": "B2",
+      "sections": {
+        "recognition": {
+          "requiredSkills": [
+            "grammar:passive-intro",
+            "grammar:reported-speech-basic",
+            "grammar:third-conditional",
+            "grammar:wish-clauses",
+            "grammar:phrasal-verbs",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "example": {
+            "id": "en-b2-recognition-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "If the driver had checked the route, she ___ the closed bridge.",
+                "options": [
+                  "had avoided",
+                  "would have avoided",
+                  "will avoid",
+                  "would avoid"
+                ],
+                "answers": [
+                  "would have avoided"
+                ],
+                "assessedSkill": "grammar:third-conditional",
+                "evidence": "The unreal past condition requires would have plus the past participle in the result clause.",
+                "explain": "The unreal past condition requires would have plus the past participle in the result clause."
+              }
+            ]
+          }
+        },
+        "reading": {
+          "requiredSkills": [
+            "reading:gist",
+            "reading:detail",
+            "reading:inference"
+          ],
+          "example": {
+            "id": "en-b2-reading-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "Which position best represents the writer?",
+                "options": [
+                  "Test practical access before deciding permanently",
+                  "Reject every car-free scheme immediately",
+                  "Introduce the scheme because success is guaranteed",
+                  "Copy the neighbouring district without changes"
+                ],
+                "answers": [
+                  "Test practical access before deciding permanently"
+                ],
+                "assessedSkill": "reading:gist",
+                "evidence": "The final sentence recommends testing deliveries and transport before a permanent scheme.",
+                "explain": "The final sentence recommends testing deliveries and transport before a permanent scheme."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What caused early difficulties in the neighbouring district?",
+                "options": [
+                  "A permanent ban on deliveries",
+                  "A shortage of shops",
+                  "The price of shuttle buses",
+                  "Confusing signs"
+                ],
+                "answers": [
+                  "Confusing signs"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Sales initially fell while confusing signs sent visitors away.",
+                "explain": "Sales initially fell while confusing signs sent visitors away."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why does the writer mention bulky goods?",
+                "options": [
+                  "To claim the neighbouring trial failed",
+                  "To argue that signs have no effect on sales",
+                  "To qualify how far the trial’s results can be transferred",
+                  "To show that all customers need a car"
+                ],
+                "answers": [
+                  "To qualify how far the trial’s results can be transferred"
+                ],
+                "assessedSkill": "reading:inference",
+                "evidence": "Bulky goods distinguish the local shops from those in the trial, limiting the comparison.",
+                "explain": "Bulky goods distinguish the local shops from those in the trial, limiting the comparison."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What is implied about the two extreme responses?",
+                "options": [
+                  "Neither involves making any decision",
+                  "Neither accounts sufficiently for local uncertainty",
+                  "Both would solve the delivery problem",
+                  "Both are supported by the same sales figures"
+                ],
+                "answers": [
+                  "Neither accounts sufficiently for local uncertainty"
+                ],
+                "assessedSkill": "reading:inference",
+                "evidence": "The writer rejects both abandoning the plan and declaring guaranteed success in favour of testing.",
+                "explain": "The writer rejects both abandoning the plan and declaring guaranteed success in favour of testing."
+              }
+            ],
+            "passage": {
+              "title": "A square without cars",
+              "text": "The council’s plan to make the central square car-free has been criticised by shopkeepers who fear losing customers. Yet the trial in the neighbouring district suggests that the effect depends less on parking spaces than on access. There, sales initially fell while confusing signs sent visitors away. After clearer routes and regular shuttle buses were introduced, trade recovered. This does not prove our square will thrive: several shops here sell bulky goods, unlike those in the trial. The sensible response is therefore neither to abandon the plan nor to declare it a guaranteed success, but to test deliveries and public transport before committing to a permanent scheme."
+            }
+          },
+          "guidance": {
+            "reading:inference": "Require an unstated but text-supported conclusion; paraphrasing an explicit sentence is detail, not inference."
+          }
+        },
+        "listening": {
+          "requiredSkills": [
+            "listening:gist",
+            "listening:detail",
+            "listening:inference"
+          ],
+          "example": {
+            "id": "en-b2-listening-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What is the manager’s overall attitude to the policy?",
+                "options": [
+                  "Opposed because recruitment fell",
+                  "Certain that it alone increased applications",
+                  "Undecided about allowing any remote work",
+                  "Supportive, with adjustments"
+                ],
+                "answers": [
+                  "Supportive, with adjustments"
+                ],
+                "assessedSkill": "listening:gist",
+                "evidence": "The manager would keep the policy while improving support for new starters.",
+                "explain": "The manager would keep the policy while improving support for new starters."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What else changed when the policy began?",
+                "options": [
+                  "Recruitment stopped",
+                  "All new employees received mentors",
+                  "Salaries increased",
+                  "The company closed all offices"
+                ],
+                "answers": [
+                  "Salaries increased"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "We increased salaries at the same time.",
+                "explain": "We increased salaries at the same time."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why does the manager qualify the recruitment claim?",
+                "options": [
+                  "The interviewer has misunderstood the policy",
+                  "Two simultaneous changes make the cause uncertain",
+                  "There is no evidence applications rose",
+                  "New employees rejected higher salaries"
+                ],
+                "answers": [
+                  "Two simultaneous changes make the cause uncertain"
+                ],
+                "assessedSkill": "listening:inference",
+                "evidence": "The salary increase prevents confidently attributing the rise entirely to the policy.",
+                "explain": "The salary increase prevents confidently attributing the rise entirely to the policy."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What response is planned for new starters?",
+                "options": [
+                  "Pairing them with mentors",
+                  "Ending flexible work for everyone",
+                  "Reducing their starting salaries",
+                  "Delaying their first assignments"
+                ],
+                "answers": [
+                  "Pairing them with mentors"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "We are pairing them with mentors.",
+                "explain": "We are pairing them with mentors."
+              }
+            ],
+            "passage": {
+              "title": "Interpreting recruitment results",
+              "text": "Interviewer: Your company lets staff work anywhere. Has that improved recruitment? Manager: Applications rose, certainly. But I would hesitate to attribute that entirely to the policy; we increased salaries at the same time. Interviewer: Would you keep it if salaries stopped rising? Manager: Yes, though with clearer arrangements for new starters. Experienced colleagues adapted quickly, whereas new employees sometimes waited too long for informal help. We are pairing them with mentors, rather than asking everyone to return to the office."
+            }
+          },
+          "guidance": {
+            "listening:inference": "Combine spoken clues to infer an unstated intention or conclusion; do not tag explicit detail as inference."
+          }
+        },
+        "writing": {
+          "requiredSkills": [
+            "writing:sentence",
+            "grammar:speculation",
+            "grammar:connectors"
+          ],
+          "example": {
+            "id": "en-b2-writing-reference-v1",
+            "items": [
+              {
+                "kind": "gap",
+                "prompt": "Complete with must have or might have to express a confident deduction: They were inside, but the main entrance was still locked and untouched; they ___ used another way in.",
+                "answers": [
+                  "must have"
+                ],
+                "assessedSkill": "grammar:speculation",
+                "evidence": "Their presence inside and the unused main entrance support a confident past deduction: must have used.",
+                "explain": "Their presence inside and the unused main entrance support a confident past deduction: must have used."
+              }
+            ]
+          },
+          "guidance": {
+            "writing:sentence": "Assess a controlled formal sentence that connects a claim and supporting reason or qualification."
+          }
+        }
+      }
+    },
+    {
+      "level": "C1",
+      "sections": {
+        "recognition": {
+          "requiredSkills": [
+            "grammar:inversion",
+            "grammar:cleft-sentences",
+            "grammar:ellipsis",
+            "vocab:collocations",
+            "grammar:connectors",
+            "grammar:speculation"
+          ],
+          "example": {
+            "id": "en-c1-recognition-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "Only after the objections had been addressed ___ the proposal.",
+                "options": [
+                  "did the committee approve",
+                  "the committee approved",
+                  "had the committee approve",
+                  "the committee did approve"
+                ],
+                "answers": [
+                  "did the committee approve"
+                ],
+                "assessedSkill": "grammar:inversion",
+                "evidence": "Fronted Only after requires subject-auxiliary inversion in the main clause: did the committee approve.",
+                "explain": "Fronted Only after requires subject-auxiliary inversion in the main clause: did the committee approve."
+              }
+            ]
+          }
+        },
+        "reading": {
+          "requiredSkills": [
+            "reading:gist",
+            "reading:detail",
+            "reading:inference"
+          ],
+          "example": {
+            "id": "en-c1-reading-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What is the writer’s central contention?",
+                "options": [
+                  "Digitisation should stop until every visitor can travel",
+                  "Physical displays necessarily explain every object better",
+                  "Uploading a complete collection guarantees educational value",
+                  "Access should be judged by understanding rather than upload totals"
+                ],
+                "answers": [
+                  "Access should be judged by understanding rather than upload totals"
+                ],
+                "assessedSkill": "reading:gist",
+                "evidence": "The conclusion contrasts how little remains undigitised with how much visitors can understand.",
+                "explain": "The conclusion contrasts how little remains undigitised with how much visitors can understand."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What effect does the moral framing have?",
+                "options": [
+                  "It prevents any decision about funding",
+                  "It obliges visitors to attend in person",
+                  "It makes criticism appear to oppose access itself",
+                  "It reveals every curatorial choice"
+                ],
+                "answers": [
+                  "It makes criticism appear to oppose access itself"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Objections are easily portrayed as opposition to access itself.",
+                "explain": "Objections are easily portrayed as opposition to access itself."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why does the writer explicitly reject closed doors?",
+                "options": [
+                  "To concede that uploads have no disadvantages",
+                  "To prevent the critique being mistaken for opposition to wider access",
+                  "To withdraw the argument about missing context",
+                  "To suggest that physical visits should require approval"
+                ],
+                "answers": [
+                  "To prevent the critique being mistaken for opposition to wider access"
+                ],
+                "assessedSkill": "reading:inference",
+                "evidence": "This is not an argument for keeping collections behind closed doors limits the preceding criticism.",
+                "explain": "This is not an argument for keeping collections behind closed doors limits the preceding criticism."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Which initiative best meets the writer’s implied standard of educational access?",
+                "options": [
+                  "An online display explaining why objects were selected and how they were used",
+                  "An upload target measuring success solely by image totals",
+                  "A digital catalogue deliberately hiding curatorial decisions",
+                  "A funding policy excluding online visitors from educational evaluation"
+                ],
+                "answers": [
+                  "An online display explaining why objects were selected and how they were used"
+                ],
+                "assessedSkill": "reading:inference",
+                "evidence": "Visible curatorial choices, context and increased understanding together support this proposed initiative; it is not explicitly described in the text.",
+                "explain": "Visible curatorial choices, context and increased understanding together support this proposed initiative; it is not explicitly described in the text."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Which funding risk is identified?",
+                "options": [
+                  "The online catalogue may omit explanations of individual objects",
+                  "Online participation will immediately decline",
+                  "Every object will require a new building",
+                  "Physical displays may be neglected"
+                ],
+                "answers": [
+                  "Physical displays may be neglected"
+                ],
+                "assessedSkill": "reading:detail",
+                "evidence": "Resources may be diverted so completely that physical displays become an afterthought.",
+                "explain": "Resources may be diverted so completely that physical displays become an afterthought."
+              }
+            ],
+            "passage": {
+              "title": "What does access mean?",
+              "text": "The museum’s promise to digitise its entire collection has acquired an almost moral force: objections are easily portrayed as opposition to access itself. That framing obscures a more awkward question about what access means. A searchable image may reach someone who could never travel to the building, but it may also detach an object from the circumstances that make it intelligible. This is not an argument for keeping collections behind closed doors. Rather, the museum should resist counting every uploaded image as an equivalent educational gain. Digitisation can widen participation, provided that curatorial choices remain visible and resources are not diverted so completely that the surviving physical displays become an afterthought. The real measure of success is not how little remains undigitised, but how much more a visitor, online or otherwise, can understand."
+            }
+          },
+          "guidance": {
+            "reading:inference": "Require an unstated but text-supported conclusion; paraphrasing an explicit sentence is detail, not inference."
+          }
+        },
+        "listening": {
+          "requiredSkills": [
+            "listening:gist",
+            "listening:detail",
+            "listening:inference"
+          ],
+          "example": {
+            "id": "en-c1-listening-reference-v1",
+            "items": [
+              {
+                "kind": "choice",
+                "prompt": "What is the analyst’s main position?",
+                "options": [
+                  "Average waiting times provide no useful evidence",
+                  "The result already establishes how ordinary sites will perform",
+                  "The result supports further testing rather than certain expansion",
+                  "The pilot proves the system should be abandoned"
+                ],
+                "answers": [
+                  "The result supports further testing rather than certain expansion"
+                ],
+                "assessedSkill": "listening:gist",
+                "evidence": "The result is encouraging enough for a broader trial but does not justify certainty.",
+                "explain": "The result is encouraging enough for a broader trial but does not justify certainty."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What limits the result’s generalisability?",
+                "options": [
+                  "The trial included every ordinary workplace",
+                  "Voluntary sites with unusually experienced staff",
+                  "A complete absence of measured results",
+                  "Requests were processed more slowly"
+                ],
+                "answers": [
+                  "Voluntary sites with unusually experienced staff"
+                ],
+                "assessedSkill": "listening:detail",
+                "evidence": "The sites volunteered and had unusually experienced staff.",
+                "explain": "The sites volunteered and had unusually experienced staff."
+              },
+              {
+                "kind": "choice",
+                "prompt": "What is the analyst doing by saying a narrower question?",
+                "options": [
+                  "Restricting the conclusion to what the evidence actually establishes",
+                  "Denying that waiting times were measured",
+                  "Arguing that experienced staff were unnecessary for the trial",
+                  "Agreeing that expansion is settled"
+                ],
+                "answers": [
+                  "Restricting the conclusion to what the evidence actually establishes"
+                ],
+                "assessedSkill": "listening:inference",
+                "evidence": "The analyst restricts the finding to those sites and that period, resisting the host’s broader conclusion.",
+                "explain": "The analyst restricts the finding to those sites and that period, resisting the host’s broader conclusion."
+              },
+              {
+                "kind": "choice",
+                "prompt": "Why might the analyst prefer a smaller replicated gain?",
+                "options": [
+                  "It would make average times irrelevant",
+                  "It would remove the need to explain results",
+                  "It would show that experienced staff are unnecessary",
+                  "It would give stronger grounds for application in ordinary settings"
+                ],
+                "answers": [
+                  "It would give stronger grounds for application in ordinary settings"
+                ],
+                "assessedSkill": "listening:inference",
+                "evidence": "A smaller gain reproduced in ordinary conditions would be more persuasive than an unexplained impressive figure.",
+                "explain": "A smaller gain reproduced in ordinary conditions would be more persuasive than an unexplained impressive figure."
+              }
+            ],
+            "passage": {
+              "title": "A qualified result",
+              "text": "Host: The pilot cut average waiting times. Surely that settles the case for expansion? Analyst: It settles a narrower question. At those sites, over that period, the new system processed requests faster. The sites volunteered, however, and had unusually experienced staff. Host: So the result tells us nothing? Analyst: Not at all. It is encouraging enough to justify a broader trial, not broad enough to justify your certainty. I would be more persuaded by a slightly smaller gain reproduced in ordinary conditions than by an impressive figure we cannot yet explain."
+            }
+          },
+          "guidance": {
+            "listening:inference": "Combine spoken clues to infer an unstated intention or conclusion; do not tag explicit detail as inference."
+          }
+        },
+        "writing": {
+          "requiredSkills": [
+            "writing:sentence",
+            "vocab:collocations",
+            "grammar:connectors"
+          ],
+          "example": {
+            "id": "en-c1-writing-reference-v1",
+            "items": [
+              {
+                "kind": "gap",
+                "prompt": "Complete with the missing noun: The report casts serious ___ on the reliability of the estimates, without proving them false.",
+                "answers": [
+                  "doubt",
+                  "doubts"
+                ],
+                "assessedSkill": "vocab:collocations",
+                "evidence": "Cast doubt on is the conventional phrase for questioning reliability without disproving it; singular or plural doubt is accepted.",
+                "explain": "Cast doubt on is the conventional phrase for questioning reliability without disproving it; singular or plural doubt is accepted."
+              }
+            ]
+          },
+          "guidance": {
+            "writing:sentence": "Assess precise, context-sensitive formal phrasing in a controlled sentence, not free-text composition."
+          }
+        }
+      }
+    }
+  ],
+  "review": {
+    "status": "approved",
+    "kind": "automated-llm",
+    "model": "gpt-6-astra",
+    "rubricVersion": 1,
+    "contentHash": "127091484484b0e4f3ae4695f67597bbb3e8633fab9813cee716c861f9fe9cbc",
+    "date": "2026-10-25",
+    "evidence": "Separate LLM review rejected the initial draft; bounded correction readback approved all reported findings after independently verifying the canonical content hash. Automated evidence only, not empirical calibration."
+  }
+}
