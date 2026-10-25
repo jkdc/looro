@@ -124,7 +124,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Android runner uses admission leases across suspend boundaries; queued durable write and archive publication share a commit reservation; imports wait for active commit and block new admission. iOS coordinator has injected fetch/send/storage boundaries and identity fences.
 - [x] **Step 4 — GREEN:** Fresh scratch Android tests passed (13 focused; 733 app + 11 engine-local). Structural PBX/scheme probe passed after the semicolon correction (109 direct objects, target/config references, testability); `git diff --check` passed. User deferred iOS app execution to T16; no Xcode/Swift run claimed.
 - [x] **Step 5 — Review:** Fresh independent scratch re-review strict-parsed 109 PBX objects, verified AppTests references/host/product/dependency, Debug testability and shared-scheme binding; negative control without the terminator failed as expected. iOS app execution is explicitly deferred to T16.
-- [x] **Step 6 — Commit:** Parent commit: pending; include only T3-owned code/tests and evidence docs. iOS execution remains pending T16, not waived.
+- [x] **Step 6 — Commit:** `6a69351` (`fix(progress): fence sync by live data generation`). iOS execution remains pending T16, not waived.
 
 ### Task 4: Implement negotiated API v2 on the existing route
 
