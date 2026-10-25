@@ -5,7 +5,7 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 ## Implementation
 
 - [ ] T1 / S1 — Isolate exam history. Route: delegated-direct (user-selected sequential implementer/reviewer); trigger: explicit method choice. Status: implementation/review committed; Android UI execution pending (no device); commit `f4673e2`.
-- [ ] T2 / S2,S4 — Lock the progress contract and time primitives. Depends on T1 implementation/review commit `f4673e2`; its device proof remains pending. Status: implementation/review complete; Swift execution unavailable; commit pending.
+- [ ] T2 / S2,S4 — Lock the progress contract and time primitives. Depends on T1 implementation/review commit `f4673e2`; its device proof remains pending. Status: committed; Swift execution unavailable; commit `d58a2c9`.
 - [ ] T3 / S3 — Fence active sync and enable real iOS App tests. Depends on T2. Evidence/commit: pending.
 - [ ] T4 / S4 — Implement negotiated API v2 on the existing route. Depends on T2,T3. Evidence/commit: pending.
 - [ ] T5 / S2,S4,S5 — Add durable rollups, recovery and atomic continuation. Depends on T2,T3,T4. Evidence/commit: pending.

@@ -99,7 +99,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Added shared contract, generated constants, checked Kotlin/Swift time primitives, exporter, `make check` integration and provenance-based recovery specification; persistence repair remains T5 and clients T6/T7.
 - [x] **Step 4 — GREEN:** Exporter tests (5), `make check` (146 tests), focused Android time tests and full Android unit suites passed. One full Android run had a transient unrelated voice assertion; focused rerun passed, and a second full run passed 731 tests with 0 failures. Swift unavailable; `swift test --package-path apps/ios` not run.
 - [x] **Step 5 — Review:** Fresh reviewer approved after one correction batch; parent exporter-test spot check passed. Advisory: fractional wire timestamp and invalid injected `now` tests remain desirable; Swift execution is unverified.
-- [ ] **Step 6 — Commit:** Parent commits reviewed T2 task surfaces using `feat(progress): define checked sync time contract`.
+- [x] **Step 6 — Commit:** `d58a2c9` (`feat(progress): define checked sync time contract`) contains reviewed T2 surfaces and progress-sync OpenSpec updates. Swift execution remains unverified due unavailable toolchain.
 
 ### Task 3: Fence active sync and enable real iOS App tests
 
