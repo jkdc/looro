@@ -47,3 +47,7 @@ A mandatory teacher signature is not part of the accepted workflow. A separate L
 ## Verification
 
 Run `cd services/api && npm test` for the full suite. It owns disposable PostgreSQL and teardown, never a caller's real database. `npm run check`, root `make check`, and `python3 scripts/export_leveltests.py --check` cover types and repository contracts. See the matching OpenSpec verification report for observed results, not inferred readiness.
+
+## Adding another language
+
+The enhanced guarantees above are currently English-only. Use the [technical language-onboarding guide](generated-exam-language-onboarding.md) before extending them: it maps existing English-specific gates, reusable machinery, per-language review inputs, compatibility rules and required verification. A translated assessment file alone does not activate equivalent guarantees.

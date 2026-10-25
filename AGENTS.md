@@ -173,6 +173,24 @@ Reglas no negociables:
    proveedores reales: inyecta o mockea el límite del sistema y usa fixtures
    estables.
 
+### Ampliar exámenes generados a otros idiomas
+
+Antes de añadir o activar un idioma en la generación mejorada, leer
+[`services/api/docs/generated-exam-language-onboarding.md`](services/api/docs/generated-exam-language-onboarding.md).
+La implementación reforzada actual cubre **inglés A1–C1**; los demás idiomas
+mantienen su comportamiento anterior. No basta con traducir prompts o añadir
+un JSON: hacen falta matriz y ejemplos propios revisados, validación
+lingüística y activación coherente de generación, juez, contrato congelado,
+composición y publicación automática/manual. Reutilizar el motor común y
+preservar inglés, contratos históricos y payloads públicos.
+
+La revisión pedagógica puede hacerla un LLM independiente y debe registrarse
+como automatizada; no imponer una firma docente obligatoria ni confundirla
+con calibración empírica. Verificar con PostgreSQL aislado sin omitir pruebas
+por necesitar BD. Las llamadas a proveedores reales, el piloto con alumnos y
+el despliegue requieren su autorización correspondiente. La guía versionada
+es la referencia, también cuando no haya acceso a Engram u otro agente.
+
 ## Convenciones del repositorio
 
 - **Idioma**: código y comentarios en inglés; documentación de producto e

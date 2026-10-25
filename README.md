@@ -56,6 +56,8 @@ Once it is up:
 
 English generated exams require active judge evidence to publish: verification off creates private drafts only. New drafts use their frozen generation blueprint; legacy English drafts without a complete contract must be regenerated. See [English exam guarantees and LLM-reviewed coverage](services/api/docs/english-generated-exams.md).
 
+Before enabling enhanced generated exams for another language, follow the [technical language-onboarding guide](services/api/docs/generated-exam-language-onboarding.md). The shared engine is reusable, but each language needs reviewed pedagogical configuration and explicit activation of generation/publication guarantees; adding a translated JSON file is not enough.
+
 The mobile apps do not run in Docker — they build natively because they need Xcode (macOS) and the Android SDK on the host. Everything else (backend, admin panel, database, tests) goes through the Makefile.
 
 ## API endpoints for local testing
