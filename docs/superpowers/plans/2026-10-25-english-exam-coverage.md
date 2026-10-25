@@ -22,14 +22,14 @@
 - [x] Add exporter validation tests (RED), implement validated API-only embedding and regenerate (GREEN). Do not edit generated files manually.
 
 ### Task 2: Runtime metadata, rubrics and candidate gates
-- [ ] Add RED tests for reviewed references in actual generation messages, valid/unknown/missing/wrong-section assessed IDs, semantic tag evidence and exposure-only claims.
-- [ ] Implement typed assessment contract and reusable versioned design/generation/judge instructions. Preserve internal `assessedSkill` through normalization and persistence, excluding it from public snapshots.
-- [ ] Validate catalog-bound coverage candidates and strengthen judge evidence for assessed-skill alignment; preserve legacy evidence for frozen legacy models.
+- [x] Add RED tests for reviewed references in actual generation messages, valid/unknown/missing/wrong-section assessed IDs, semantic tag evidence and exposure-only claims.
+- [x] Implement typed assessment contract and reusable versioned design/generation/judge instructions. Preserve internal `assessedSkill` through normalization and persistence, excluding it from public snapshots.
+- [x] Validate catalog-bound coverage candidates and strengthen judge evidence for assessed-skill alignment; preserve legacy evidence for frozen legacy models.
 
 ### Task 3: Composition and publication
-- [ ] Add RED tests for coverage-aware deterministic flat/passage selection with kind constraints, infeasible coverage and bounded search; all levels and variants.
-- [ ] Implement bounded deterministic coverage selection, then final per-variant coverage validation against persisted pool tags in both auto and manual publication.
-- [ ] Prove tag loss, judge filtering, forged hashes, current matrix changes and historical frozen models cannot bypass the intended contract.
+- [x] Add RED tests for coverage-aware deterministic flat/passage selection with kind constraints, infeasible coverage and bounded search; all levels and variants.
+- [x] Implement bounded deterministic coverage selection, then final per-variant coverage validation against persisted pool tags in both auto and manual publication.
+- [x] Prove tag loss, judge filtering, forged hashes, current matrix changes and historical frozen models cannot bypass the intended contract.
 
 ### Task 4: Verification and delivery
 - [ ] Run focused tests, full isolated PostgreSQL suite (zero DB skips), types, exporters and root contracts.
@@ -44,3 +44,5 @@
 
 - Task 1 evidence: independent initial review required changes; targeted correction readback approved hash `12709148…9fe9cbc`. Exporter tests observed RED (7 failures) then GREEN (3 tests). Both exporters `--check` pass; root `make check` passes 141 Python tests and cross-platform contracts (pre-existing non-failing SQLite ResourceWarnings).
 - Task 2/3 in progress: initial runtime RED missing assessment module; coverage/metadata implementation and 131 focused regression tests now pass. Internal-tag snapshot leakage reproduced RED and fixed GREEN. Full isolated PostgreSQL suite is running; final source verification and independent review remain.
+
+- Independent runtime review: one Important uneven-capability stimulus-selection defect. Regression observed RED (`stimulus_diversity` despite an available distinct set); novelty-mask DP correction GREEN, focused132/132. No Critical or deferred Minor findings. Final isolated PostgreSQL suite748/748, zero skipped; `make check`141 Python tests plus exporters/contracts, types and `git diff --check` pass.

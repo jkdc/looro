@@ -1,3 +1,4 @@
+import type { AssessmentContract } from './level-test-assessment.js';
 import { EXAM_MODELS } from './level-tests-content.generated.js';
 
 export type ExamSectionName = 'recognition' | 'reading' | 'listening' | 'writing';
@@ -38,6 +39,7 @@ export interface ExamSectionBlueprint {
 }
 
 export interface ExamModelEntry {
+  assessment?: AssessmentContract;
   level: string;
   languageID: string;
   canDoAnchor: string;

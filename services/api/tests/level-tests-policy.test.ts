@@ -1,3 +1,4 @@
+import { syntheticSkill, syntheticJudgeSkill } from './assessment-fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
@@ -21,7 +22,7 @@ const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key
 const ADMIN_ENV = { ADMIN_HMAC_KEY: 'a'.repeat(64), ADMIN_PROXY_TOKEN: 'b'.repeat(64), ADMIN_PUBLIC_ORIGIN: 'https://admin.example' };
 const headers = { cookie: adminCookieHeader(TOKEN), origin: ADMIN_ENV.ADMIN_PUBLIC_ORIGIN,
   'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': ADMIN_ENV.ADMIN_PROXY_TOKEN };
-const item = (id: string, kind = 'choice') => ({ kind, prompt: `Question ${id}: she ___ a doctor.`,
+const item = (id: string, kind = 'choice') => ({ assessedSkill: syntheticSkill(id.split('-')[0] as 'recognition'|'writing'|'reading'|'listening', Number(id.split('-').at(-1))), kind, prompt: `Question ${id}: she ___ a doctor.`,
   options: kind === 'choice' ? ['is', 'are', 'am', 'be'] : [], answers: ['is'], explain: 'With she, the verb is is.', unitID: 'en-foundations-u1' });
 const paragraph = 'She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning. Her sister is coming too, so they will have lunch together before the train leaves.';
 const pool = (extraRecognition = 0) => ({
@@ -40,7 +41,7 @@ const transport = (content = pool(), judge: (items: { id: string }[]) => unknown
     const user = messages[1]!.content;
     const body = messages[0]!.content.includes('quality reviewer') || messages[0]!.content.includes('strict exam reviewer')
       ? (() => { const result = judge(Array.isArray(JSON.parse(user)) ? JSON.parse(user) : JSON.parse(user).items) as { items: { id: string; verdict: string; reasonCode?: string; evidence?: string; languageStatus?: string }[] };
-        return { items: result.items.map(entry => ({ ...entry, languageStatus: Object.hasOwn(entry, 'languageStatus') ? entry.languageStatus : 'pass', reasonCode: entry.reasonCode ?? 'answer_key',
+        return { items: result.items.map(entry => ({ ...syntheticJudgeSkill((JSON.parse(user).items ?? JSON.parse(user)).find((item:{id:string})=>item.id===entry.id)), ...entry, languageStatus: Object.hasOwn(entry, 'languageStatus') ? entry.languageStatus : 'pass', reasonCode: entry.reasonCode ?? 'answer_key',
           evidence: Object.hasOwn(entry, 'evidence') ? entry.evidence : 'The marked answer matches the supplied sentence.' })) }; })()
       : content[user.includes('vocabulary and grammar') ? 'recognition' : user.includes('reading passages')
         ? 'reading' : user.includes('listening passages') ? 'listening' : 'writing'];
@@ -326,8 +327,8 @@ test('generation aggregates token usage across section and judge calls', async (
 test('generation persists the bumped English prompt and judge contract versions', async () => {
   const { db, state } = database();
   assert.equal((await generate(db)).status, 'approved');
-  assert.equal(state.weeks[0]!.prompt_version, 3);
-  assert.equal(state.weeks[0]!.judge_version, 4);
+  assert.equal(state.weeks[0]!.prompt_version, 4);
+  assert.equal(state.weeks[0]!.judge_version, 5);
 });
 
 test('an unknown provider outcome is not retried by the section loop', async () => {
@@ -740,4 +741,99 @@ for (const corruption of ['section', 'passage', 'variant']) test(`approval check
     headers, payload: { reason: 'Reviewed content' } })).statusCode, 409);
     assert.equal(state.weeks[0]!.status, 'draft');
   } finally { await app.close(); }
+});
+
+for (const tag of [undefined,'grammar:unknown','reading:gist']) test(`generation refuses invalid primary tag ${tag}`, async()=>{
+  const {db,state}=database(), content=pool();
+  Object.assign(content.recognition[0]!,{assessedSkill:tag});
+  const result=await generate(db,ENV,transport(content));
+  assert.equal(result.status,'failed');
+  assert.equal(state.weeks.length,0);
+});
+
+test('semantic skill evidence is mandatory, bounded and bound to each expected tag', async()=>{
+  for (const invalid of [{skillEvidence:undefined},{skillEvidence:'x'},{skillEvidence:'x'.repeat(241)},{assessedSkill:'reading:gist'}]) {
+    const {db,state}=database();
+    const base=transport();
+    const result=await generate(db,ENV,async(config,messages)=>{
+      const reply=await base(config,messages);
+      if (messages[0]!.content.includes('quality reviewer')) {
+        const parsed=JSON.parse(reply.content);Object.assign(parsed.items[0],invalid);
+        return {...reply,content:JSON.stringify(parsed)};
+      }
+      return reply;
+    });
+    assert.equal(result.status,'failed');assert.equal(state.weeks.length,0);
+  }
+});
+
+test('manual approval cannot bypass coverage by relabeling pool and matching judge evidence',async()=>{
+  const {approveGeneratedWeek}=await import('../src/level-tests-publication.js');
+  const {db,state}=database();
+  assert.equal((await generate(db,{...ENV,LEVELTEST_PUBLISH_MODE:'review'})).status,'draft');
+  const row=state.weeks[0]!;
+  const saved=row.pool as GeneratedPool;
+  const tag=examModelFor('A1','en')!.assessment!.sections.recognition.requiredSkills[0]!;
+  saved.recognition.forEach(item=>{item.assessedSkill=tag;});
+  (row.review as {id:string;assessedSkill?:string}[]).forEach(verdict=>{if(saved.recognition.some(item=>item.id===verdict.id)) verdict.assessedSkill=tag;});
+  await assert.rejects(approveGeneratedWeek(db,row.id,ADMIN,'Reviewed content'),{code:'level_test_not_approvable'});
+  assert.equal(row.status,'draft');assert.equal(state.audit.length,0);
+});
+
+test('manual approval requires semantic evidence and retains historical no-assessment contracts',async()=>{
+  const {approveGeneratedWeek}=await import('../src/level-tests-publication.js');
+  const {freezeBlueprint}=await import('../src/level-test-frozen-blueprint.js');
+  const {db,state}=database();
+  await generate(db,{...ENV,LEVELTEST_PUBLISH_MODE:'review'});
+  const row=state.weeks[0]!;
+  const review=row.review as {skillEvidence?:string;assessedSkill?:string}[];
+  review.forEach(item=>{delete item.skillEvidence;delete item.assessedSkill;});
+  await assert.rejects(approveGeneratedWeek(db,row.id,ADMIN,'Reviewed content'),{code:'level_test_not_approvable'});
+  const retained=state.weeks[0]!;
+  const legacy=structuredClone(retained.blueprint_contract as NonNullable<ReturnType<typeof examModelFor>>);
+  delete legacy.assessment;
+  const frozen=freezeBlueprint(legacy);
+  retained.blueprint_contract=frozen.contract;retained.blueprint_hash=frozen.hash;
+  assert.equal((await approveGeneratedWeek(db,row.id,ADMIN,'Reviewed historical contract')).approved,true);
+});
+
+test('manual approval verifies each rehashed form against frozen coverage, not just candidate coverage',async()=>{
+  const {approveGeneratedWeek}=await import('../src/level-tests-publication.js');
+  const {db,state}=database();
+  await generate(db,{...ENV,LEVELTEST_PUBLISH_MODE:'review'});
+  const row=state.weeks[0]!, candidate=row.pool as GeneratedPool;
+  const form=row.variants[0] as unknown as ExamSnapshot;
+  const byID=new Map(candidate.recognition.map(item=>[item.id,item]));
+  const missing=examModelFor('A1','en')!.assessment!.sections.recognition.requiredSkills[0]!;
+  const used=new Set(form.items.map(item=>item.id));
+  form.items=form.items.map(item=>{
+    if(item.section!=='recognition'||byID.get(item.id)?.assessedSkill!==missing) return item;
+    const replacement=candidate.recognition.find(other=>!used.has(other.id)&&other.kind===item.kind&&other.assessedSkill!==missing)!;
+    assert.ok(replacement);used.add(replacement.id);
+    const {assessedSkill,...publicItem}=replacement;
+    return publicItem;
+  });
+  row.variants[0]=identifySnapshot(form,'llm',row.id) as unknown as Record<string,unknown>;
+  await assert.rejects(approveGeneratedWeek(db,row.id,ADMIN,'Reviewed content'),{code:'level_test_not_approvable'});
+  assert.equal(state.weeks[0]!.status,'draft');assert.equal(state.audit.length,0);
+});
+
+test('approval uses frozen matrix after current matrix changes',async()=>{
+  const {approveGeneratedWeek}=await import('../src/level-tests-publication.js');
+  const {db,state}=database();await generate(db,{...ENV,LEVELTEST_PUBLISH_MODE:'review'});
+  const model=examModelFor('A1','en')!, original=structuredClone(model.assessment);
+  try {
+    model.assessment!.sections.recognition.requiredSkills=['grammar:future-not-in-frozen-contract'];
+    assert.equal((await approveGeneratedWeek(db,state.weeks[0]!.id,ADMIN,'Reviewed frozen coverage')).approved,true);
+  } finally { model.assessment=original; }
+});
+
+test('manual approval rejects leaked internal assessed tags even in rehashed snapshots',async()=>{
+  const {approveGeneratedWeek}=await import('../src/level-tests-publication.js');
+  const {db,state}=database();await generate(db,{...ENV,LEVELTEST_PUBLISH_MODE:'review'});
+  const row=state.weeks[0]!, form=row.variants[0] as unknown as ExamSnapshot;
+  Object.assign(form.items[0]!,{assessedSkill:'grammar:verb-be'});
+  row.variants[0]=identifySnapshot(form,'llm',row.id) as unknown as Record<string,unknown>;
+  await assert.rejects(approveGeneratedWeek(db,row.id,ADMIN,'Reviewed content'),{code:'level_test_not_approvable'});
+  assert.equal(state.audit.length,0);
 });

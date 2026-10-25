@@ -1,3 +1,4 @@
+import { syntheticSkill } from './assessment-fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveExamBlueprint } from '../src/level-test-blueprint.js';
@@ -154,7 +155,7 @@ test('English validation rejects clearly Cyrillic lexical content without adding
 });
 
 test('English prompt and judge contracts have distinct persisted versions without changing other languages', () => {
-  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 3, judgeVersion: 4 });
+  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 4, judgeVersion: 5 });
   assert.deepEqual(generationVersionsFor('es'), { promptVersion: 2, judgeVersion: 2 });
 });
 
@@ -308,7 +309,7 @@ test('English validator refuses a form-sized pool when the candidate target is l
 test('English composition returns longer forms and distinct deterministic variants', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
   const item = (id: string, section: 'recognition' | 'writing' | 'reading' | 'listening') => ({
-    id, section, kind: 'choice', prompt: `Prompt for ${id}`, options: ['one','two','three','four'],
+    assessedSkill:syntheticSkill(section,Number(id.split('-').at(-1))), id, section, kind: 'choice', prompt: `Prompt for ${id}`, options: ['one','two','three','four'],
     answers: ['one'], explain: 'The text supports this answer.'
   });
   const pool: GeneratedPool = {

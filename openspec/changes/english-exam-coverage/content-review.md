@@ -12,7 +12,7 @@ Important findings:
 3. B1 modal deduction and B2/C1 productive connector coverage needed explicit catalog IDs and level-specific interpretations.
 4. A1/A2 listening scripts exceeded the blueprint's turn counts.
 
-One bounded correction batch replaces the collocation task, makes the two inference items apply/combine evidence in an unstated situation, adds the missing coverage/interpretations, and consolidates the listening turns. It also makes B1 writing contrast explicit and replaces the three identified implausible distractors. Targeted readback of these corrections is pending; no approval is invented from the initial rejection.
+One bounded correction batch replaces the collocation task, makes the two inference items apply/combine evidence in an unstated situation, adds the missing coverage/interpretations, and consolidates the listening turns. It also makes B1 writing contrast explicit and replaces the three identified implausible distractors. These corrections were submitted for the targeted readback recorded below; approval was not inferred from the initial rejection.
 
 ## Targeted correction readback
 

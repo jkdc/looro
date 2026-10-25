@@ -28,19 +28,21 @@ A provider-reported zero is preserved. Invalid/negative/non-integer counters are
 
 The run is checkpointed before and after every provider call, before parsing generated content. Empty responses with reported usage preserve those counters too. Interruptions and failed runs retain durable checkpoints. Final run closure also records the latest returned usage, so recovered persistence can retain counters after a transient checkpoint failure without changing an unknown execution outcome. Unknown provider outcomes remain terminal and automatic retries remain blocked by the existing reconciliation policy.
 
-## Pedagogical gate — not completed by code
+## LLM-reviewed coverage and runtime rubric v1
 
-No approved skill matrix or reviewed reference corpus was supplied with this change. Existing free-text blueprint skill labels are not an approved assessment matrix and do not prove coverage. Do not invent quotas, approve generated examples automatically, or claim that engineering tests establish CEFR readiness.
+`shared/leveltests/en-assessment-design.json` now defines English A1–C1 coverage and twenty complete reference examples (one per level/section), not a new learner bank. Revision 1 was reviewed by a separate `gpt-6-astra` LLM pass, corrected after substantive findings and approved against its canonical SHA-256. Review kind, model, date, rubric version, exact content hash and bounded evidence are recorded. See `openspec/changes/english-exam-coverage/content-review.md` for findings and dispositions.
 
-The next pedagogical input must include:
+The exporter rejects unapproved, stale, unknown-catalog or infeasible content before embedding each level in its API blueprint. Updating content requires a new review of its canonical payload, not simply editing the approval hash. Existing catalog IDs are reused; inversion, cleft sentences and ellipsis have explicit catalog entries rather than misleading substitute tags.
 
-1. A named accountable reviewer, approval date and immutable matrix version.
-2. Per-level/section assessed capabilities mapped to existing `shared/skills/skill-catalog.json` IDs; explicit distinction between assessed and exposure-only skills.
-3. Agreed form-level coverage requirements and the rule for insufficient candidate coverage, including infeasible combinations. These decisions determine validated internal item tags and composition constraints; do not modify public/mobile exam payloads to carry them without a separate compatibility design.
-4. A reviewed/versioned example corpus for enabled English cells. Each comprehension example needs its full passage, all questions/options, accepted solutions, answer-support evidence and review provenance. It must be suitable for prompt inclusion, not an orphan `passageId`.
-5. Teacher pilot criteria for level/task fit, ambiguous keys, distractor plausibility, difficulty and timing. Then explicit authorization/consent and handling rules for a learner pilot, before collecting learner evidence.
+Runtime rubric v1 is loaded by the existing generator and judge. English prompt/judge versions are 4/5. Every new covered item has one primary `assessedSkill` from its section's approved list. A tag represents what answering requires, not a skill merely encountered in the passage. The judge must return the same tag plus 8–240 characters of observable `skillEvidence`; missing, uncertain or mismatched evidence cannot authorize the item. Semantic truth still depends on reviewer quality: a catalog-valid label is not by itself proof of task validity.
 
-Only after those inputs are approved should retained catalog-validated skill metadata, coverage-aware composition and curated prompt references be implemented. The existing form totals 34/39/44/54/58 remain pilot targets, not validated readiness cutoffs.
+Every form must include each required capability at least once. This LLM-reviewed minimum-presence rule is an engineering pilot constraint, not an empirically calibrated weighting. A bounded deterministic dynamic program selects whole reading/listening groups and individual recognition/writing items while jointly preserving kind quotas. Covered passages have exactly the frozen questions-per-passage count. Insufficient combinations fail with `insufficient_coverage_capacity`; bounded search exhaustion fails with `coverage_search_limit`. Neither case silently reduces coverage or retries uncertain provider calls. Existing distinct-form and distinct-stimulus gates still apply.
+
+Internal pool/review JSON retains tags and evidence. Learner snapshots project them out before hashing; approval also rejects leaked tags and validates each form's selected IDs against pool coverage. The complete existing frozen blueprint stores coverage, examples and rubric provenance, so no new migration is needed. A draft cannot adopt today's matrix on approval; historical frozen models without assessment metadata retain their original evidence contract. Published snapshots and attempts are not rewritten.
+
+### What automated review does not establish
+
+A mandatory teacher signature is not part of the accepted workflow. A separate LLM may design and review the matrix/examples; its evidence must be explicitly labeled automated. This does **not** establish empirical difficulty, timing, distractor performance or CEFR certification. The existing totals 34/39/44/54/58 remain pilot targets, not validated readiness cutoffs. A real learner pilot requires separate authorization/consent and evaluation/handling criteria. No learner data or production credentials are used by this implementation.
 
 ## Verification
 

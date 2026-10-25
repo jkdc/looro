@@ -1,3 +1,4 @@
+import { assessmentPoolErrors } from './level-test-assessment.js';
 import { isDeepStrictEqual } from 'node:util';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
@@ -11,7 +12,7 @@ import { readFrozenBlueprint } from './level-test-frozen-blueprint.js';
 type Generation = { id: string; language_id: string; level: string; week_index: number;
   status: string; pool: GeneratedPool; variants: ExamSnapshot[]; judge_mode: string;
   blueprint_contract?: unknown; blueprint_version?: unknown; blueprint_hash?: unknown;
-  review: { id: string; verdict: string; reason?: unknown; reasonCode?: unknown; languageStatus?: unknown }[] };
+  review: { id: string; verdict: string; reason?: unknown; reasonCode?: unknown; languageStatus?: unknown; assessedSkill?: unknown; skillEvidence?: unknown }[] };
 
 /** Approval belongs to the generation row, not one of its variants. Validation,
     status transition and audit share a locked transaction; replay does not re-audit. */
@@ -55,7 +56,7 @@ function canPublish(row: Generation): boolean {
     const checked = validateGeneratedPool({ recognition: row.pool.recognition, writing: row.pool.writing,
       reading: row.pool.readingPassages, listening: row.pool.listeningPassages }, validationModel.examShape, row.language_id,
       row.language_id === 'en' ? validationModel : undefined, row.language_id === 'en');
-    if (!checked.ok) return false;
+    if (!checked.ok || assessmentPoolErrors(checked.pool,model).length) return false;
     const pool = checked.pool;
     const expectedPassages = new Map<string, GeneratedPool['readingPassages'][number]>([
       ...pool.readingPassages.map((p, i) => [`llm-reading-${i + 1}`, p] as const),
@@ -73,7 +74,7 @@ function canPublish(row: Generation): boolean {
         const accepted = row.language_id === 'en' ? ['ok'] : ['ok', 'flagged'];
         if (verdicts.length !== 1 || !accepted.includes(verdicts[0]!.verdict)) return false;
         if (row.language_id === 'en') {
-          if (!hasEnglishJudgeEvidence(verdicts[0]!)) return false;
+          if (!hasEnglishJudgeEvidence(verdicts[0]!, model.assessment ? expectedItems.get(id)?.assessedSkill : undefined)) return false;
         }
       }
     }
@@ -91,7 +92,7 @@ function canPublish(row: Generation): boolean {
       const ids = new Set<string>();
       for (const item of exam.items) {
         const expected = expectedItems.get(item.id);
-        if (!expected || ids.has(item.id)) return false;
+        if (!expected || ids.has(item.id) || Object.hasOwn(item,'assessedSkill')) return false;
         ids.add(item.id);
         for (const key of ['kind', 'section', 'prompt', 'options', 'answers', 'explain', 'unitID', 'passageId', 'speech'] as const)
           if (!isDeepStrictEqual(item[key], expected[key])) return false;
@@ -116,7 +117,7 @@ function canPublish(row: Generation): boolean {
       if (used.size !== passages.size) return false;
       if (exam.items.length !== shape.recognition + shape.writing + shape.readingPassages * shape.readingPerPassage + shape.listeningPassages * shape.listeningPerPassage) return false;
     }
-    if (row.language_id === 'en' && englishServedFormFailure(row.variants, model)) return false;
+    if (row.language_id === 'en' && englishServedFormFailure(row.variants, model, pool)) return false;
     return true;
   } catch { return false; }
 }

@@ -1,3 +1,4 @@
+import { assessmentFormFailure } from './level-test-assessment.js';
 import type { LevelTestContentItem, LevelTestSection } from './level-tests-content.generated.js';
 import type { ExamModelEntry, ExamSectionName, ExamShape } from './level-test-blueprint.js';
 
@@ -13,6 +14,7 @@ export interface RawGeneratedItem {
   section: LevelTestSection | string;
   kind?: string;
   skill?: string;
+  assessedSkill?: string;
   prompt?: string;
   options?: string[] | null;
   answers?: string[] | null;
@@ -31,11 +33,13 @@ export interface RawGeneratedPassage {
   items?: RawGeneratedItem[] | null;
 }
 
+export interface GeneratedItem extends LevelTestContentItem { assessedSkill?: string }
+
 export interface GeneratedPool {
-  recognition: LevelTestContentItem[];
-  writing: LevelTestContentItem[];
-  readingPassages: { title: string; text: string; items: LevelTestContentItem[] }[];
-  listeningPassages: { title: string; text: string; items: LevelTestContentItem[] }[];
+  recognition: GeneratedItem[];
+  writing: GeneratedItem[];
+  readingPassages: { title: string; text: string; items: GeneratedItem[] }[];
+  listeningPassages: { title: string; text: string; items: GeneratedItem[] }[];
 }
 
 export interface ValidationFailure { section: string; code: string; detail: string }
@@ -49,8 +53,9 @@ export interface EnglishServedForm {
 }
 
 /** One final-form gate shared by automatic generation and manual approval. */
-export function englishServedFormFailure(variants: readonly EnglishServedForm[], model: ExamModelEntry):
-  'mix' | 'variant_diversity' | 'stimulus_diversity' | null {
+export function englishServedFormFailure(variants: readonly EnglishServedForm[], model: ExamModelEntry, pool?: GeneratedPool):
+  'mix' | 'variant_diversity' | 'stimulus_diversity' | 'coverage' | null {
+  if (model.assessment && (!pool || assessmentFormFailure(variants,pool,model))) return 'coverage';
   const recognitionTotal = model.examShape.recognition;
   const mix = model.sections.recognition?.mix ?? {};
   const entries = Object.entries(mix).filter(([, value]) => typeof value === 'number' && value > 0)
@@ -112,7 +117,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
 
   const seenPrompts = new Set<string>();
   const seenIds = new Set<string>();
-  const acceptItem = (section: LevelTestContentItem['section'], bucket: LevelTestContentItem[], value: unknown, index: number): boolean => {
+  const acceptItem = (section: LevelTestContentItem['section'], bucket: GeneratedItem[], value: unknown, index: number): boolean => {
     const where = `${section}[${index}]`;
     const fields = record(value);
     if (!fields) return fail(where, 'item', 'expected an item object');
@@ -158,6 +163,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     seenPrompts.add(fingerprint);
     if (item.id) seenIds.add(item.id);
     bucket.push({
+      assessedSkill: typeof item.assessedSkill === 'string' ? item.assessedSkill : undefined,
       id: item.id ?? 'pending', section: section as LevelTestSection, kind, prompt,
       unitID: item.unitID ?? undefined, passageId: item.passageId ?? undefined, speech: item.speech ?? undefined,
       options: kind === 'choice' ? options : [], answers, explain,
@@ -165,7 +171,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     return true;
   };
 
-  const recognitionBucket: LevelTestContentItem[] = [], writingBucket: LevelTestContentItem[] = [];
+  const recognitionBucket: GeneratedItem[] = [], writingBucket: GeneratedItem[] = [];
   recognition.forEach((item, index) => acceptItem('recognition', recognitionBucket, item, index));
   writing.forEach((item, index) => acceptItem('writing', writingBucket, item, index));
   clean.recognition = recognitionBucket;
@@ -194,7 +200,7 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     const passage = fields as RawGeneratedPassage;
     const text = typeof passage.text === 'string' ? passage.text.trim() : '';
     const words = text ? WORDS(text) : 0;
-    const bucket: LevelTestContentItem[] = [];
+    const bucket: GeneratedItem[] = [];
     arrayed(passage.items).forEach((item, position) => acceptItem(kind, bucket, item, position));
     if (words < minWords || words > maxWords)
       return fail(where, 'passage', `passage length out of range (${words} words)`);

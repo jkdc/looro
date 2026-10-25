@@ -1,3 +1,5 @@
+import { assessmentGenerationRubric, assessmentPoolErrors, selectCoverageGroups } from './level-test-assessment.js';
+import type { GeneratedItem } from './level-tests-validate.js';
 import { randomUUID, createHash } from 'node:crypto';
 import { transaction, type Database } from './db.js';
 import type { PoolClient } from 'pg';
@@ -27,8 +29,8 @@ export const LANGUAGE_NAMES: Record<string, string> = {
 
 export const PROMPT_VERSION = 2;
 export const JUDGE_VERSION = 2;
-const ENGLISH_PROMPT_VERSION = 3;
-const ENGLISH_JUDGE_VERSION = 4;
+const ENGLISH_PROMPT_VERSION = 4;
+const ENGLISH_JUDGE_VERSION = 5;
 export function generationVersionsFor(languageID: string): { promptVersion: number; judgeVersion: number } {
   return languageID === 'en'
     ? { promptVersion: ENGLISH_PROMPT_VERSION, judgeVersion: ENGLISH_JUDGE_VERSION }
@@ -204,7 +206,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
       `Reply as JSON array: [{"kind":"written","prompt":"Write...","answers":["variant1","variant2"],"explain":"..."}]`,
     ].join('\n');
   }
-  const messages = [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
+  const messages = [{ role: 'system' as const, content: system + '\n' + assessmentGenerationRubric(model,section) }, { role: 'user' as const, content: user }];
   if (repairFeedback.length) messages.push({ role: 'user', content: [
     'Your previous response did not pass deterministic validation. Repair the entire section and satisfy every listed check.',
     `Validation locations and codes: ${repairFeedback.join(', ')}.`,
@@ -267,8 +269,8 @@ function legacySectionMessages(section: SectionName, languageID: string, level: 
 
 interface SectionResult {
   section: SectionName;
-  items: LevelTestContentItem[];
-  passages?: { title: string; text: string; items: LevelTestContentItem[] }[];
+  items: GeneratedItem[];
+  passages?: { title: string; text: string; items: GeneratedItem[] }[];
   validationErrors: ValidationFailure[];
 }
 
@@ -292,7 +294,7 @@ async function generateSection(
 
   if (section === 'reading' || section === 'listening') {
     // Passages: each element has { title?, text, items: [{kind, prompt, options, answers, explain}] }
-    const passages: { title: string; text: string; items: LevelTestContentItem[] }[] = [];
+    const passages: { title: string; text: string; items: GeneratedItem[] }[] = [];
     const validationErrors: ValidationFailure[] = [];
     for (const passage of parsed) {
       if (!isRecord(passage)) {
@@ -306,13 +308,14 @@ async function generateSection(
         validationErrors.push({ section, code: 'passage', detail: 'passage needs text and questions' });
         continue;
       }
-      const passageItems: LevelTestContentItem[] = rawItems.filter(isRecord).map((raw, index) => ({
+      const passageItems: GeneratedItem[] = rawItems.filter(isRecord).map((raw, index) => ({
         id: `pending-${index}`, section: section as LevelTestSection,
         kind: typeof raw.kind === 'string' ? raw.kind : 'choice',
         prompt: typeof raw.prompt === 'string' ? raw.prompt : '',
         options: Array.isArray(raw.options) ? raw.options.filter((v): v is string => typeof v === 'string') : [],
         answers: Array.isArray(raw.answers) ? raw.answers.filter((v): v is string => typeof v === 'string') : [],
         explain: typeof raw.explain === 'string' ? raw.explain : '',
+        assessedSkill: typeof raw.assessedSkill === 'string' ? raw.assessedSkill : undefined,
         unitID: typeof raw.unitID === 'string' ? raw.unitID : undefined,
       }));
       if (passageItems.length !== rawItems.length) validationErrors.push({ section, code: 'item', detail: 'passage contains a non-object question' });
@@ -330,7 +333,7 @@ async function generateSection(
 
   // recognition / writing: flat item arrays
   const validationErrors: ValidationFailure[] = [];
-  const items: LevelTestContentItem[] = parsed.filter(isRecord).map((item, index) => ({
+  const items: GeneratedItem[] = parsed.filter(isRecord).map((item, index) => ({
     id: `pending-${index}`,
     section: section as LevelTestSection,
     kind: typeof item.kind === 'string' ? item.kind : 'choice',
@@ -338,6 +341,7 @@ async function generateSection(
     options: Array.isArray(item.options) ? item.options.filter((v): v is string => typeof v === 'string') : [],
     answers: Array.isArray(item.answers) ? item.answers.filter((v): v is string => typeof v === 'string') : [],
     explain: typeof item.explain === 'string' ? item.explain : '',
+    assessedSkill: typeof item.assessedSkill === 'string' ? item.assessedSkill : undefined,
     unitID: typeof item.unitID === 'string' ? item.unitID : undefined,
   }));
   if (items.length !== parsed.length) validationErrors.push({ section, code: 'item', detail: 'section contains a non-object item' });
@@ -372,9 +376,13 @@ async function judgeSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
   languageID: string, level: string, model: ExamModelEntry,
   items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
-): Promise<{ id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }[]> {
+): Promise<JudgeVerdict[]> {
   const reply = await call(config, buildJudgeMessages(section, languageID, level, items, model), signal);
-  return parseVerdicts(reply, languageID === 'en');
+  const verdicts = parseVerdicts(reply, languageID === 'en');
+  if (model.assessment && verdicts.some(verdict=>verdict.assessedSkill !== items.find(item=>item.id===verdict.id)?.assessedSkill ||
+      typeof verdict.skillEvidence !== 'string' || verdict.skillEvidence.trim().length<8 || verdict.skillEvidence.length>240))
+    throw new Error('judge_invalid_skill_evidence');
+  return verdicts;
 }
 
 // ---- orchestration ----
@@ -456,9 +464,11 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   // ---- combine into a pool ----
   const buildPool = () => poolFromSectionResults(sectionResults);
   const validateCandidate = (candidate: GeneratedPool, targetModel: ExamModelEntry = model) => {
-    return validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
+    const checked = validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
       reading: candidate.readingPassages, listening: candidate.listeningPassages }, targetModel.examShape, languageID,
       languageID === 'en' ? targetModel : undefined, languageID === 'en');
+    const errors=[...checked.errors,...assessmentPoolErrors(checked.pool,targetModel)];
+    return {...checked,errors,ok:errors.length===0};
   };
   const validate = () => {
     const candidate = buildPool();
@@ -524,15 +534,19 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   const generationId = config.sessionID!;
   const blueprintHash = frozen?.hash ?? createHash('sha256').update(JSON.stringify(model)).digest('hex');
-  const variants = composeVariants(pool, model, weekId, settings.variants).map(variant =>
+  let composed: GeneratedVariant[];
+  try { composed=composeVariants(pool,model,weekId,settings.variants); }
+  catch (error) { return {status:'failed',languageID,level,weekId,...usageOutcome(),
+    errors:[error instanceof Error && error.message==='coverage_search_limit'?'coverage_search_limit':'insufficient_coverage_capacity']}; }
+  const variants = composed.map(variant =>
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
       ...variant }, 'llm', generationId));
   if (variants.some(variant => Buffer.byteLength(JSON.stringify(variant)) > MAX_LEVEL_TEST_SNAPSHOT_BYTES))
     return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: ['snapshot_too_large'] };
-  const formFailure = languageID === 'en' ? englishServedFormFailure(variants, model) : null;
+  const formFailure = languageID === 'en' ? englishServedFormFailure(variants, model, pool) : null;
   if (formFailure) {
-    const error = formFailure === 'mix' ? 'insufficient_variant_capacity'
+    const error = formFailure === 'coverage' ? 'insufficient_coverage_capacity' : formFailure === 'mix' ? 'insufficient_variant_capacity'
       : formFailure === 'variant_diversity' ? 'insufficient_variant_diversity' : 'insufficient_variant_stimulus_diversity';
     return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: [error] };
   }
@@ -583,6 +597,7 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
   const langName = LANGUAGE_NAMES[languageID] ?? languageID;
   const english = languageID === 'en';
   const system = english ? [
+    ...(model.assessment ? [`Assessment rubric v${model.assessment.rubricVersion}. Independently verify the primary assessedSkill, not just exposure to it, against these allowed capabilities and task guidance: ${JSON.stringify(model.assessment.sections[section])}. Return assessedSkill unchanged and skillEvidence (8-240 characters) describing the observable task demand. Reject a false skill claim; flag uncertainty. These fields are required in every verdict in addition to the schema below.`] : []),
     `You are a careful quality reviewer for English CEFR ${level} ${section} exam items.`,
     `Use this level anchor: ${model.canDoAnchor}`,
     'For every item, verify that exactly one marked answer is correct and no distractor is also defensible.',
@@ -597,17 +612,17 @@ export function buildJudgeMessages(section: SectionName, languageID: string, lev
   const user = JSON.stringify(english ? {
     section, canDoAnchor: model.canDoAnchor, sectionBlueprint: model.sections[section],
     forbidden: model.forbidden,
-    items: items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
+    items: items.map(item => ({ id: item.id, assessedSkill: item.assessedSkill, kind: item.kind, prompt: item.prompt,
       options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })),
   } : items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
     options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })));
   return [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }];
 }
 
-interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string; reasonCode?: string; languageStatus?: string }
+interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string; reasonCode?: string; languageStatus?: string; assessedSkill?: string; skillEvidence?: string }
 
 function parseVerdicts(reply: ChatReply, strictEvidence = false): JudgeVerdict[] {
-  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown; reasonCode?: unknown; evidence?: unknown; languageStatus?: unknown }[] };
+  const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown; reasonCode?: unknown; evidence?: unknown; languageStatus?: unknown; assessedSkill?: unknown; skillEvidence?: unknown }[] };
   if (!Array.isArray(parsed?.items) || parsed.items.some(entry => !entry || typeof entry.id !== 'string' ||
       !['ok', 'flagged', 'reject'].includes(entry.verdict as string) || (strictEvidence &&
         (!['pass', 'fail', 'unknown'].includes(entry.languageStatus as string) ||
@@ -618,6 +633,8 @@ function parseVerdicts(reply: ChatReply, strictEvidence = false): JudgeVerdict[]
   return parsed.items
     .map(entry => ({ id: entry.id as string, verdict: entry.verdict as 'ok' | 'flagged' | 'reject',
       reason: strictEvidence ? (entry.evidence as string).trim() : typeof entry.reason === 'string' ? entry.reason : undefined,
+      assessedSkill: typeof entry.assessedSkill === 'string' ? entry.assessedSkill : undefined,
+      skillEvidence: typeof entry.skillEvidence === 'string' ? entry.skillEvidence : undefined,
       ...(strictEvidence ? { reasonCode: entry.reasonCode as string, languageStatus: entry.languageStatus as string } : {}) }));
 }
 
@@ -635,6 +652,7 @@ function assignProvisionalIds(pool: GeneratedPool): void {
 /** The K variants: same stable-hash block rotation as the deterministic
     composer, with the variant index salted into the hash. */
 export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
+  if (model.assessment) return composeCoveredVariants(pool,model,weekId,count);
   if (model.languageID !== 'en') return composeLegacyVariants(pool, model, weekId, count);
   const variants: GeneratedVariant[] = [];
   const flat = flattenPool(pool);
@@ -668,9 +686,57 @@ export function composeVariants(pool: GeneratedPool, model: ExamModelEntry, week
       ...listeningIds.flatMap(id => flat.filter(item => item.section === 'listening' && item.passageId === id).slice(0, shape.listeningPerPassage)),
       ...writing,
     ];
-    variants.push({ variant, items, passages: passages.filter(passage =>
+    variants.push({ variant, items: items.map(({assessedSkill, ...item})=>item), passages: passages.filter(passage =>
       readingIds.includes(passage.id) || listeningIds.includes(passage.id)),
       readingPassageIds: readingIds, listeningPassageIds: listeningIds });
+  }
+  return variants;
+}
+
+function composeCoveredVariants(pool:GeneratedPool, model:ExamModelEntry, weekId:number, count:number):GeneratedVariant[] {
+  if (assessmentPoolErrors(pool,model).length) throw new Error('insufficient_coverage_capacity');
+  const flat=flattenPool(pool);
+  const shape=model.examShape;
+  const variants:GeneratedVariant[]=[];
+  const passages=[...pool.readingPassages.map((p,i)=>({id:`llm-reading-${i+1}`,title:p.title,text:p.text})),
+    ...pool.listeningPassages.map((p,i)=>({id:`llm-listening-${i+1}`,title:p.title,text:p.text}))];
+  const usedPassageSets={reading:[] as Set<string>[],listening:[] as Set<string>[]};
+  for (let variant=1;variant<=count;variant++) {
+    const selected:FlatItem[]=[];
+    const passageIDs={reading:[] as string[],listening:[] as string[]};
+    for (const section of SECTION_ORDER) {
+      const candidates=flat.filter(item=>item.section===section);
+      const comprehension=section==='reading'||section==='listening';
+      const groups=comprehension
+        ? [...new Set(candidates.map(item=>item.passageId!))].map(id=>({id,items:candidates.filter(item=>item.passageId===id)}))
+        : candidates.map(item=>({id:item.id,items:[item]}));
+      groups.sort((a,b)=>codepointCompare(hashOf(`${section}:${weekId}`,a.id),hashOf(`${section}:${weekId}`,b.id)));
+      const offset=Math.floor((variant-1)*groups.length/Math.max(1,count));
+      const ordered=[...groups.slice(offset),...groups.slice(0,offset)];
+      const coverageGroups=ordered.map(group=>({value:group,key:group.id,
+        skills:group.items.map(item=>item.assessedSkill!),kind:group.items[0]?.kind}));
+      const groupCount=comprehension?shape[`${section}Passages`]:shape[section];
+      const required=model.assessment!.sections[section].requiredSkills;
+      const quotas=section==='recognition'&&model.sections.recognition?.mix
+        ? scaledKindMix(model.sections.recognition.mix,shape.recognition):undefined;
+      let picked=selectCoverageGroups(coverageGroups,groupCount,required,quotas,
+        100_000,comprehension?usedPassageSets[section]:[]);
+      // Only for failure classification: a repeated set still fails the shared final-form gate.
+      // Keeping that gate preserves the existing item/stimulus-diversity error contract.
+      if (!picked && comprehension && usedPassageSets[section].length)
+        picked=selectCoverageGroups(coverageGroups,groupCount,required,quotas);
+      if (!picked) throw new Error('insufficient_coverage_capacity');
+      const pickedItems=picked.flatMap(group=>group.items);
+      if (section==='recognition') pickedItems.sort((a,b)=>codepointCompare(a.kind,b.kind));
+      selected.push(...pickedItems);
+      if (comprehension) {
+        passageIDs[section]=picked.map(group=>group.id);
+        usedPassageSets[section].push(new Set(passageIDs[section]));
+      }
+    }
+    variants.push({variant,items:selected.map(({assessedSkill,...item})=>item),
+      passages:passages.filter(p=>passageIDs.reading.includes(p.id)||passageIDs.listening.includes(p.id)),
+      readingPassageIds:passageIDs.reading,listeningPassageIds:passageIDs.listening});
   }
   return variants;
 }
@@ -714,7 +780,7 @@ function composeLegacyVariants(pool: GeneratedPool, model: ExamModelEntry, weekI
     const listeningIds = (listeningBlock.length === shape.listeningPassages ? listeningBlock : listeningOrder.slice(0, shape.listeningPassages)).map(p => p.id);
     const items = [...recognition, ...readingIds.flatMap(id => flat.filter(item => item.section === 'reading' && item.passageId === id).slice(0, shape.readingPerPassage)),
       ...listeningIds.flatMap(id => flat.filter(item => item.section === 'listening' && item.passageId === id).slice(0, shape.listeningPerPassage)), ...writing];
-    variants.push({ variant, items, passages: passages.filter(p => readingIds.includes(p.id) || listeningIds.includes(p.id)),
+    variants.push({ variant, items: items.map(({assessedSkill, ...item})=>item), passages: passages.filter(p => readingIds.includes(p.id) || listeningIds.includes(p.id)),
       readingPassageIds: readingIds, listeningPassageIds: listeningIds });
   }
   return variants;
@@ -740,7 +806,7 @@ function legacyPassageOrder(items: FlatItem[], section: string, perPassage: numb
 
 interface GeneratedVariant extends Pick<SnapshotContent, 'items' | 'passages' | 'readingPassageIds' | 'listeningPassageIds'> { variant: number }
 
-interface FlatItem { id: string; section: LevelTestSection; kind: string; prompt: string;
+interface FlatItem { assessedSkill?: string; id: string; section: LevelTestSection; kind: string; prompt: string;
   options: string[]; answers: string[]; explain: string; unitID?: string; passageId?: string; speech?: string }
 
 function flattenPool(pool: GeneratedPool): FlatItem[] {
@@ -754,6 +820,7 @@ function flattenPool(pool: GeneratedPool): FlatItem[] {
       answers: Array.isArray(item.answers) ? item.answers : [],
       explain: typeof item.explain === 'string' ? item.explain : '',
       unitID: typeof item.unitID === 'string' ? item.unitID : undefined,
+      assessedSkill: item.assessedSkill,
       passageId: item.passageId ?? passageId, speech: itemSpeech ?? speech,
     });
   };

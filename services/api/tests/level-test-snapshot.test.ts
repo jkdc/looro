@@ -1,3 +1,4 @@
+import { syntheticSkill, syntheticJudgeSkill } from './assessment-fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { Database } from '../src/db.js';
@@ -11,14 +12,14 @@ const THRESHOLDS = { overall: 70, recognition: 60, reading: 50, listening: 50,
   writing: 50, grammar: 60, vocab: 60 };
 const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key',
   LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'strict', LEVELTEST_VARIANTS: '2' };
-const question = (kind = 'choice', seed = 'example') => ({ kind, prompt: `${seed}: She ___ a doctor.`,
+const question = (kind = 'choice', seed = 'example') => ({ assessedSkill: syntheticSkill(seed.split('-')[0] as 'recognition'|'writing'|'reading'|'listening',Number(seed.split('-').at(-1))), kind, prompt: `${seed}: She ___ a doctor.`,
   options: kind === 'choice' ? ['is', 'are', 'am', 'be'] : [], answers: ['is'],
   explain: 'She takes is.', unitID: 'en-foundations-u1' });
 const transport = async (_config: unknown, messages: { role: string; content: string }[]) => {
   const user = messages.find(message => message.role === 'user')!.content;
   if (messages[0]!.content.includes('quality reviewer')) return {
-    content: JSON.stringify({ items: (JSON.parse(user).items as { id: string }[]).map(item => ({
-      id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The key agrees with the supplied sentence.',
+    content: JSON.stringify({ items: (JSON.parse(user).items as { id: string; assessedSkill?:string }[]).map(item => ({
+      ...syntheticJudgeSkill(item), id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The key agrees with the supplied sentence.',
     })) }), tokensIn: 0, tokensOut: 0,
   };
   const section = user.includes('vocabulary and grammar') ? 'recognition'

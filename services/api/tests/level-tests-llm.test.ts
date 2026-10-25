@@ -1,3 +1,4 @@
+import { syntheticSkill, syntheticJudgeSkill } from './assessment-fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
@@ -59,14 +60,15 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
     const system = messages.find(m => m.role === 'system')?.content ?? '';
     const user = messages.find(m => m.role === 'user')?.content ?? '';
     if (system.includes('quality reviewer') || system.includes('strict exam reviewer')) {
-      const parsed = JSON.parse(user) as { items?: { id: string }[] } | { id: string }[];
+      const parsed = JSON.parse(user) as { items?: { id: string; assessedSkill?:string }[] } | { id: string; assessedSkill?:string }[];
       const items = Array.isArray(parsed) ? parsed : parsed.items ?? [];
-      return stubReply({ items: items.map(item => ({ id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The marked answer matches the sentence.' })) });
+      return stubReply({ items: items.map(item => ({ ...syntheticJudgeSkill(item), id: item.id, verdict: 'ok', languageStatus: 'pass', reasonCode: 'answer_key', evidence: 'The marked answer matches the sentence.' })) });
     }
+    const level = /CEFR (A1|A2|B1|B2|C1)/.exec(system)?.[1] ?? 'A1';
     const count = (pattern: RegExp, fallback: number) => Number(pattern.exec(user)?.[1] ?? fallback);
     const item = (id: string, kind: 'choice' | 'gap' = 'choice') => kind === 'choice'
-      ? { id, ...goodItem, prompt: `She ___ a doctor in sentence ${id}.` }
-      : { id, ...goodGap, prompt: `Complete sentence ${id}: I have ___ idea.` };
+      ? { id, assessedSkill:syntheticSkill('recognition',Number(id.split('-').at(-1)),level), ...goodItem, prompt: `She ___ a doctor in sentence ${id}.` }
+      : { id, assessedSkill:syntheticSkill(id.startsWith('wri')?'writing':'recognition',Number(id.split('-').at(-1)),level), ...goodGap, prompt: `Complete sentence ${id}: I have ___ idea.` };
     const passageText = (kind: 'reading' | 'listening', index: number) => {
       const range = /\((\d+)-(\d+) words each\)/.exec(user);
       const minimum = Number(range?.[1] ?? (kind === 'reading' ? 60 : 40));
@@ -77,7 +79,7 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
     };
     const passageQuestions = (kind: 'reading' | 'listening', passage: number, questions: number) =>
       Array.from({ length: questions }, (_, index) => ({
-        kind: 'choice', prompt: `What detail is mentioned in the ${kind} passage ${passage}, question ${index}?`,
+        assessedSkill:syntheticSkill(kind,index,level), kind: 'choice', prompt: `What detail is mentioned in the ${kind} passage ${passage}, question ${index}?`,
         options: ['The team reviewed a project', 'The meeting was cancelled', 'The team changed its name', 'The residents left early'],
         answers: ['The team reviewed a project'], explain: 'The text says the team reviewed a project.'
       }));
@@ -109,9 +111,9 @@ const judgeRejectingFirst = () => async (_config: unknown, messages: { role: str
   const systemMessage = messages.find(message => message.role === 'system')?.content ?? '';
   if (systemMessage.includes('quality reviewer') || systemMessage.includes('strict exam reviewer')) {
     const raw = JSON.parse(messages.find(message => message.role === 'user')?.content ?? '{}') as
-      { items?: { id?: string }[] } | { id?: string }[];
+      { items?: { id?: string; assessedSkill?:string }[] } | { id?: string; assessedSkill?:string }[];
     const items = Array.isArray(raw) ? raw : raw.items ?? [];
-    return stubReply({ items: items.map((item, index) => ({ id: item.id ?? 'missing',
+    return stubReply({ items: items.map((item, index) => ({ ...syntheticJudgeSkill(item), id: item.id ?? 'missing',
       verdict: index === 0 ? 'reject' : 'ok', languageStatus: 'pass', reasonCode: index === 0 ? 'unsupported' : 'answer_key',
       evidence: index === 0 ? 'The key is not supported by the passage.' : 'The marked answer matches the sentence.' })) });
   }
@@ -276,7 +278,7 @@ integration('strict judge excludes a genuinely rejected English item before serv
   assert.equal(outcome.status, 'approved');
   const history = await db.query(`SELECT status, pool, variants, review FROM level_test_weeks WHERE language_id='en' AND level='A1' ORDER BY created_at DESC`);
   assert.ok(history.rows.length >= 1);
-  const row = history.rows[0] as { pool: { recognition: { id: string }[] }; variants: { items: { id: string }[] }[];
+  const row = history.rows[0] as { pool: { recognition: { id: string; assessedSkill?:string }[] }; variants: { items: { id: string; assessedSkill?:string }[] }[];
     review: { id: string; verdict: string }[] };
   const rejected = row.review.find(entry => entry.verdict === 'reject');
   assert.ok(rejected);

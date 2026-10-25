@@ -1,3 +1,4 @@
+import { validAssessmentContract } from './level-test-assessment.js';
 import { createHash } from 'node:crypto';
 import type { ExamModelEntry } from './level-test-blueprint.js';
 
@@ -39,6 +40,7 @@ export function readFrozenBlueprint(value: unknown, version: unknown, hash: unkn
       if (entry.words && (!Array.isArray(entry.words) || entry.words.length !== 2 ||
           !entry.words.every(positiveInteger) || entry.words[0] > entry.words[1])) return undefined;
     }
+    if (model.assessment && !validAssessmentContract(model.assessment,model)) return undefined;
     if (freezeBlueprint(model).hash !== hash) return undefined;
     return structuredClone(model);
   } catch { return undefined; }

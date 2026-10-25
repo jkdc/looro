@@ -54,7 +54,7 @@ Once it is up:
 | `make android-build` / `android-install` / `android-run` | Build, install and launch the debug APK on a connected device |
 | `make ios-build` / `ios-test` / `ios-device` | iOS simulator build, simulator test suite, install on a connected iPhone |
 
-English generated exams require active judge evidence to publish: verification off creates private drafts only. New drafts use their frozen generation blueprint; legacy English drafts without a complete contract must be regenerated. See [English exam guarantees and pedagogical prerequisites](services/api/docs/english-generated-exams.md).
+English generated exams require active judge evidence to publish: verification off creates private drafts only. New drafts use their frozen generation blueprint; legacy English drafts without a complete contract must be regenerated. See [English exam guarantees and LLM-reviewed coverage](services/api/docs/english-generated-exams.md).
 
 The mobile apps do not run in Docker — they build natively because they need Xcode (macOS) and the Android SDK on the host. Everything else (backend, admin panel, database, tests) goes through the Makefile.
 

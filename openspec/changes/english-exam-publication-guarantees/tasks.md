@@ -6,6 +6,6 @@ Implementation ledger: `docs/superpowers/plans/2026-10-25-english-exam-publicati
 - [x] Full-field three-state language validation and explicit resolution.
 - [x] Complete frozen blueprint and legacy draft policy.
 - [x] Durable truthful failed-run usage.
-- [ ] Approved skill matrix and reviewed examples (external input pending).
+- [x] Approved skill matrix and reviewed examples (superseded by the separately LLM-reviewed `english-exam-coverage` change).
 - [x] Technical verification and independent review.
-- [ ] Teacher/consented learner pilot (external evidence pending).
+- [ ] Authorized learner pilot (external evidence pending; teacher review is optional, not a mandatory owner gate).

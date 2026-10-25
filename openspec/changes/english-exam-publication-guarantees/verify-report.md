@@ -57,3 +57,7 @@ Hace falta un responsable pedagógico que apruebe y versione una matriz por nive
 Después se requiere un piloto docente y otro con alumnos autorizados para medir dificultad, duración, ambigüedades y distractores. Los detalles de entrada y los límites están en `services/api/docs/english-generated-exams.md`.
 
 Risk: items 1 and 4 — additive persisted schema and asynchronous usage checkpoints; independent review and isolated PostgreSQL verification completed.
+
+## Actualización 2026-10-25 — decisión del usuario
+
+El usuario confirmó que un LLM puede diseñar y revisar la matriz y los ejemplos. La referencia anterior a evidencia humana obligatoria queda sustituida por `english-exam-coverage`, que registra revisión automatizada independiente y su hash. Esto no equivale a validación empírica con alumnos ni a certificación CEFR.

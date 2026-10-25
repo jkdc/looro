@@ -19,3 +19,7 @@ Checkpoint usage on the run before each call (in-flight usage is unknown/partial
 ## External pedagogical evidence
 
 No approved per-level assessed-skill matrix or teacher-reviewed example corpus was provided. Do not derive quotas from prompt labels or invent approval. Record the required owner, catalog IDs, per-section/form coverage, version, reviewed complete examples and learner-pilot consent/evaluation criteria before implementing that conditional part. Technical changes do not certify CEFR readiness.
+
+## Follow-up decision — 2026-10-25
+
+The user explicitly accepted LLM ownership and separate automated review of the matrix/examples. `english-exam-coverage` supplies that versioned evidence and implements internal tags, runtime references and coverage. The earlier human-owner prerequisite above describes the state at this change’s original implementation, not a current teacher gate. Empirical learner evidence remains separate.
