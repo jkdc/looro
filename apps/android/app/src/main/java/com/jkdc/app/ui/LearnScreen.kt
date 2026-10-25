@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CancellationException
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
@@ -113,14 +115,18 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
         var savedLevel by rememberSaveable { mutableStateOf<String?>(null) }
         val selectedLevel = savedLevel?.takeIf { it in levels } ?: defaultLevel ?: levels.firstOrNull() ?: "A1"
         var attemptHistoryRefresh by remember { mutableStateOf(0) }
-        var attemptHistory by remember(vm.language.id, selectedLevel) {
-            mutableStateOf(emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>())
-        }
+        val attemptHistoryIdentity by vm.levelTestAttemptHistoryIdentity.collectAsState()
+        val attemptHistory by vm.levelTestAttemptHistoryState.collectAsState()
         LaunchedEffect(vm.language.id, selectedLevel) { vm.refreshLevelTestCatalog(selectedLevel) }
-        LaunchedEffect(vm.language.id, selectedLevel, vm.loadingHistory, attemptHistoryRefresh) {
+        LaunchedEffect(vm.language.id, selectedLevel, vm.loadingHistory, attemptHistoryRefresh, attemptHistoryIdentity) {
             if (!vm.loadingHistory) {
-                attemptHistory = runCatching { vm.levelTestAttemptHistory(vm.language.id, selectedLevel) }
-                    .getOrDefault(emptyList())
+                try {
+                    vm.loadLevelTestAttemptHistory(vm.language.id, selectedLevel)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    // Keep the current identity's previous result on transient load failures.
+                }
             }
         }
         val completedLevels = remember(levels, progress.second) {
@@ -195,7 +201,9 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                 LevelBar(levels, selectedLevel, completedLevels, onSelect = { savedLevel = it })
             }
             if (vm.levelTestPool(selectedLevel) != null) item(key = "leveltest-entry") {
-                val history = remember(selectedLevel) { vm.levelTestHistory(selectedLevel) }
+                val history = remember(selectedLevel, attemptHistoryIdentity, attemptHistoryRefresh) {
+                    vm.levelTestHistory(selectedLevel)
+                }
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) {
                     levelTestAttemptID = null; levelTestLevel = selectedLevel
                 }

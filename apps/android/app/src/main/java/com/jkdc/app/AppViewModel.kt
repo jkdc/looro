@@ -39,6 +39,7 @@ import java.util.UUID
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -109,6 +110,46 @@ internal fun requestErrorReference(error: Throwable): String? = safeRequestError
     is AccountFailure.Http -> error.reference
     else -> null
 })
+
+internal data class LevelTestAttemptHistoryIdentity(val ownerAccountID: String?, val generation: Long)
+
+/** Holds only the latest owner-and-level result; stale loads cannot publish. */
+internal class OwnerScopedLevelTestHistory<T> {
+    internal data class Request(
+        val identity: LevelTestAttemptHistoryIdentity,
+        val languageID: String,
+        val level: String,
+        val sequence: Long,
+    )
+
+    private val _visible = kotlinx.coroutines.flow.MutableStateFlow<List<T>>(emptyList())
+    val visible = _visible.asStateFlow()
+    private var identity: LevelTestAttemptHistoryIdentity? = null
+    private var activeRequest: Request? = null
+    private var sequence = 0L
+
+    @Synchronized fun setIdentity(next: LevelTestAttemptHistoryIdentity) {
+        if (identity != next) {
+            identity = next
+            activeRequest = null
+            sequence++
+            _visible.value = emptyList()
+        }
+    }
+
+    @Synchronized fun begin(requestIdentity: LevelTestAttemptHistoryIdentity, languageID: String, level: String): Request {
+        setIdentity(requestIdentity)
+        val previous = activeRequest
+        if (previous == null || previous.languageID != languageID || previous.level != level) {
+            _visible.value = emptyList()
+        }
+        return Request(requestIdentity, languageID, level, ++sequence).also { activeRequest = it }
+    }
+
+    @Synchronized fun publish(request: Request, values: List<T>) {
+        if (request == activeRequest && request.identity == identity) _visible.value = values
+    }
+}
 
 /** Post-session review lifecycle for situation practice (mode="scenario"). */
 sealed interface ScenarioReviewState {
@@ -241,10 +282,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val languageID = language.id
         viewModelScope.launch { levelTestCatalogRepository.refresh(languageID, level) }
     }
-    fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? =
-        levelTestHistoryStore.get(language.id, level)
+    private var ownerScopedLegacyLevelTestHistory: Pair<LevelTestAttemptHistoryIdentity, com.jkdc.app.core.LevelTestResult>? = null
+    fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? = ownerScopedLegacyLevelTestHistory
+        ?.takeIf { it.first == examOwnerIdentity.value }
+        ?.second
+        ?.takeIf { it.level == level && it.languageID == language.id }
     fun saveLevelTestResult(result: com.jkdc.app.core.LevelTestResult) {
         levelTestHistoryStore.save(result)
+        ownerScopedLegacyLevelTestHistory = examOwnerIdentity.value to result
         // One synced `assessment` completion per attempt (slug-safe: lowercase level).
         recordCompletion(ProgressEngine.ASSESSMENT,
             "levelcheck-${result.languageID}-${result.level.lowercase()}", result.overall)
@@ -261,16 +306,30 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             // (the outbox drains per owner); anonymous attempts stay local until
             // an explicit claim — never silently bound by a later sign-in.
             val started = attempts.start(selection, attemptID = attemptID,
-                ownerAccountID = examOwnerID.value)
-            restored = attempts.load(started.attempt["attempt_id"] as String, examOwnerID.value)
+                ownerAccountID = examOwnerIdentity.value.ownerAccountID)
+            restored = attempts.load(started.attempt["attempt_id"] as String, examOwnerIdentity.value.ownerAccountID)
         }
         return checkNotNull(restored) { "Started exam attempt could not be reloaded" }
     }
 
     /** The signed-in account for new exam attempts; MainActivity mirrors the
         account state here. Null keeps attempts anonymous (local-only). */
-    private val examOwnerID = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
-    fun setExamOwner(accountID: String?) { examOwnerID.value = accountID }
+    private val examOwnerIdentity = kotlinx.coroutines.flow.MutableStateFlow(
+        LevelTestAttemptHistoryIdentity(ownerAccountID = null, generation = 0),
+    )
+    internal val levelTestAttemptHistoryIdentity = examOwnerIdentity.asStateFlow()
+    private val ownerScopedLevelTestHistory = OwnerScopedLevelTestHistory<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
+    internal val levelTestAttemptHistoryState = ownerScopedLevelTestHistory.visible
+    internal var beforeLevelTestAttemptHistoryQuery: suspend (LevelTestAttemptHistoryIdentity) -> Unit = {}
+    internal fun captureLevelTestAttemptHistoryIdentity(): LevelTestAttemptHistoryIdentity = examOwnerIdentity.value
+    fun setExamOwner(accountID: String?) {
+        val current = examOwnerIdentity.value
+        if (current.ownerAccountID != accountID) {
+            val updated = LevelTestAttemptHistoryIdentity(accountID, current.generation + 1)
+            examOwnerIdentity.value = updated
+            ownerScopedLevelTestHistory.setIdentity(updated)
+        }
+    }
 
     internal suspend fun saveLevelTestAnswer(attemptID: String, questionID: String, response: String, position: Int) {
         persistDbAndWait { db ->
@@ -282,18 +341,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     internal suspend fun loadLevelTestAttempt(attemptID: String): com.jkdc.app.data.LevelTestAttemptStore.Restored? {
         var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
         persistDbAndWait { db ->
-            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, examOwnerID.value)
+            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, examOwnerIdentity.value.ownerAccountID)
         }
         return restored
     }
 
-    internal suspend fun levelTestAttemptHistory(
+    internal suspend fun loadLevelTestAttemptHistory(
         languageID: String,
         level: String,
-    ): List<com.jkdc.app.data.LevelTestAttemptStore.Restored> {
+    ) {
+        val identity = examOwnerIdentity.value
+        val request = ownerScopedLevelTestHistory.begin(identity, languageID, level)
+        beforeLevelTestAttemptHistoryQuery(identity)
         var attempts = emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
-        persistDbAndWait { db -> attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level) }
-        return attempts
+        persistDbAndWait { db ->
+            attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level, identity.ownerAccountID)
+        }
+        ownerScopedLevelTestHistory.publish(request, attempts)
     }
 
     internal suspend fun completeLevelTestAttempt(

@@ -3,6 +3,8 @@ package com.jkdc.app.data
 import com.jkdc.app.core.LevelTestEngine
 import com.jkdc.app.core.LevelTestsRegistry
 import com.jkdc.app.network.LevelTestSnapshotAdapter
+import com.jkdc.app.LevelTestAttemptHistoryIdentity
+import com.jkdc.app.OwnerScopedLevelTestHistory
 import java.sql.DriverManager
 import java.io.File
 import java.nio.file.Files
@@ -11,6 +13,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 
 class LevelTestAttemptStoreTest {
     private lateinit var db: SqlDatabase
@@ -39,7 +44,70 @@ class LevelTestAttemptStoreTest {
         assertEquals(1_000L, restored.startedAt)
         assertEquals(emptyMap<String, String>(), restored.responses)
         assertEquals("local_only", restored.syncState)
-        assertEquals(listOf("attempt-local-1"), LevelTestAttemptStore(db).list("en", "A1").map { it.attemptID })
+        assertEquals(listOf("attempt-local-1"), LevelTestAttemptStore(db).list("en", "A1", ownerAccountID = null).map { it.attemptID })
+    }
+
+    @Test fun historyIsScopedToRequestingOwner() {
+        val level = requireNotNull(LevelTestsRegistry.level("en", "A1"))
+        val selection = LevelTestSnapshotAdapter.fromBundled(level, LevelTestEngine.compose(level, 202642))
+        val store = LevelTestAttemptStore(db)
+        store.start(selection, attemptID = "attempt-owner-a", ownerAccountID = "owner-a", startedAt = 1.0)
+        store.start(selection, attemptID = "attempt-owner-b", ownerAccountID = "owner-b", startedAt = 2.0)
+        store.start(selection, attemptID = "attempt-owner-guest", ownerAccountID = null, startedAt = 3.0)
+
+        assertEquals(listOf("attempt-owner-a"), store.list("en", "A1", ownerAccountID = "owner-a").map { it.attemptID })
+        assertEquals(listOf("attempt-owner-b"), store.list("en", "A1", ownerAccountID = "owner-b").map { it.attemptID })
+        assertEquals(listOf("attempt-owner-guest"), store.list("en", "A1", ownerAccountID = null).map { it.attemptID })
+        assertEquals(null, store.load("attempt-owner-b", ownerAccountID = "owner-a"))
+    }
+
+    @Test fun lateHistoryCannotRepopulateAfterOwnerSwitchOrReturnToSameAccount() = runBlocking {
+        val history = OwnerScopedLevelTestHistory<String>()
+        val ownerA = LevelTestAttemptHistoryIdentity("owner-a", 1)
+        val ownerB = LevelTestAttemptHistoryIdentity("owner-b", 2)
+        val ownerAReturned = LevelTestAttemptHistoryIdentity("owner-a", 3)
+        history.setIdentity(ownerA)
+        val staleRequest = history.begin(ownerA, "en", "A1")
+        val releaseOldLoad = CompletableDeferred<Unit>()
+        val oldLoad = async {
+            releaseOldLoad.await()
+            history.publish(staleRequest, listOf("owner-a-summary"))
+        }
+
+        history.setIdentity(ownerB)
+        assertEquals(emptyList<String>(), history.visible.value)
+        history.setIdentity(ownerAReturned)
+        assertEquals(emptyList<String>(), history.visible.value)
+        releaseOldLoad.complete(Unit)
+        oldLoad.await()
+        assertEquals(emptyList<String>(), history.visible.value)
+
+        val currentRequest = history.begin(ownerAReturned, "en", "A1")
+        history.publish(currentRequest, listOf("current-owner-a-summary"))
+        assertEquals(listOf("current-owner-a-summary"), history.visible.value)
+    }
+
+    @Test fun switchingToGuestClearsAccountHistoryBeforeGuestLoadCompletes() = runBlocking {
+        val history = OwnerScopedLevelTestHistory<String>()
+        val signedIn = LevelTestAttemptHistoryIdentity("owner-a", 1)
+        val guest = LevelTestAttemptHistoryIdentity(null, 2)
+        history.setIdentity(signedIn)
+        val oldRequest = history.begin(signedIn, "en", "A1")
+        history.publish(oldRequest, listOf("owner-a-summary"))
+
+        val guestRequest = history.begin(guest, "en", "A1")
+        assertEquals(emptyList<String>(), history.visible.value)
+        val releaseOldLoad = CompletableDeferred<Unit>()
+        val oldLoad = async {
+            releaseOldLoad.await()
+            history.publish(oldRequest, listOf("late-owner-a-summary"))
+        }
+        releaseOldLoad.complete(Unit)
+        oldLoad.await()
+        assertEquals(emptyList<String>(), history.visible.value)
+
+        history.publish(guestRequest, listOf("guest-summary"))
+        assertEquals(listOf("guest-summary"), history.visible.value)
     }
 
     @Test fun `answer and completion survive reload and cannot be completed twice`() {

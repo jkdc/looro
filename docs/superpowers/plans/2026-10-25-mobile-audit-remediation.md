@@ -1,0 +1,406 @@
+# Mobile Audit Remediation Implementation Plan
+
+> **For agentic workers:** Use `superpowers:subagent-driven-development` sequentially: a fresh implementer, fresh task reviewer, then the parent commits the reviewed candidate. No source implementation has started.
+
+**Goal:** Address M01–M16 from the mobile audit without data loss, false activity history or unsupported capability promises.
+**Architecture:** One negotiated progress contract, owner/generation-bound transactional persistence, bounded continuous voice capture and explicit App-layer error/cancellation states.
+**Tech Stack:** Kotlin/Compose/SQLite, Swift/SwiftUI/Speech/GRDB, TypeScript/Fastify/PostgreSQL and existing Python exporters.
+**Spec:** `openspec/changes/mobile-audit-remediation/design.md` and `openspec/changes/mobile-audit-remediation/specs/mobile-remediation/spec.md`. The latter contains the normative scenarios; S# are requirements and T# are tasks.
+**Status:** Revised after user-requested document review; all tasks pending. The baseline design was approved; this review does not start implementation.
+
+## Global Constraints
+
+- Stay on `feature/learning-platform`; no worktrees, branch switch, push, PR or merge. Use Superpowers, not Gentle AI.
+- Parent owns git, shared docs, candidate snapshot and commits. Workers edit only their declared surface, run no installers and spawn no helpers. Reviewer inspects the same bytes that the parent commits.
+- Keep generated files generated: schema SQL uses `scripts/export_db_schema.py`; new progress constants use the T2 exporter. Do not edit generated Kotlin/Swift outputs by hand.
+- Preserve Android EN/ES strings and Compose test tags; preserve iOS existing localizations. No new dependencies, real provider calls or production configuration changes.
+- Preserve pre-existing `.playwright-mcp/` and the source audit report. Do not clean or absorb them into commits.
+- V2 stays on `/v1/progress`: GET `version=2`, versioned POST with distinct `firstAt`/`lastAt`, page limits 1000/200, and downgrade only on HTTP 503 plus `progress_sync_version_unavailable`; the design contract table is authoritative.
+- Each task consumes the exact contract produced by its prerequisites. No live v2 client activation before T8; local tests explicitly enable the flag.
+- Missing platform proof is `implemented / verification pending`, not complete. Do not tick requirements based on pure-helper tests when real persistence, HTTP, App or UI behavior is required.
+
+## Review Focus
+
+1. Account/import replacement during fetch **or POST acknowledgement** must leave replacement data and resume state untouched (T3, T6, T7).
+2. First/last timestamps, replayed pages and mutations behind the cursor must converge without firstAt loss, additive attempts or partial cursor commits (T4–T8).
+3. Old-server legacy-shaped 200 and unrelated HTTP errors must not silently trigger fallback (T4, T6, T7).
+4. Cancellation/overflow/late callbacks must not leak audio, mutate newer attempts or replay muted/echo frames (T9–T13).
+5. Legacy guest/local history and existing v1 shapes must survive migrations, rollout and aggregate projection unchanged (T1, T4, T5, T8).
+
+## Interfaces and execution gates
+
+Read task prerequisites in order. T2 locks the shared contract; T4 implements the server; T5 supplies the rollup destination and atomic cursor write before T6/T7 consume them. T8 integrates score readers and upload feedback. T13–T15 are separate independently reviewable iOS behaviors, not one mixed task.
+
+Before dispatch, create the task brief using the Superpowers helper, include these Global Constraints, exact S# scenarios and allowed edit paths. Any necessary file outside those paths is returned to the parent for an explicit surface update, not silently edited. All names below marked Create are planned new files, not claims that they already exist. No task ends with unspecified “related tests” or “existing exporter inputs”.
+
+## Verification commands
+
+Run from repository root except the explicit `cd apps/android`. For each task, first run its named new regression **before** the production fix and observe the correct failure; then run it green and the applicable suite. New tests belong in the listed target, with injected time/network/audio boundaries, never real providers. Formatting normalizers run before freezing the review candidate. Docs-only reconciliation has structural proof, not fabricated RED.
+
+| Check | Command and required evidence |
+|---|---|
+| Shared | `make check`; `python3 scripts/export_progress_sync.py --check` once T2 exists; `python3 scripts/export_db_schema.py --check`; `python3 scripts/check_db_schema.py`; all exit 0 |
+| API integration | `make test-api`; PostgreSQL cases in progress.test.ts/progress-http.test.ts execute, not skip for missing TEST_DATABASE_URL |
+| Android unit | `cd apps/android && ./gradlew --offline :app:testDebugUnitTest :core:engine-local:testDebugUnitTest`; inspect failures/skips, not just task status |
+| Android lint/build | `cd apps/android && ./gradlew --offline :app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest`; record warnings separately |
+| Android UI | `cd apps/android && ./gradlew --offline :app:connectedUiTestAndroidTest`; only isolated uiTest app and synthetic data on an available test device |
+| Swift Core | `swift test --package-path apps/ios`; compiles Core/Tests only |
+| iOS App | `make ios-test` after T3 adds AppTests to scheme App; verify AppTests and AppUITests actually execute; do not call pre-existing UI-only scheme App-unit coverage |
+| Physical gates | Explicit Android audio/TalkBack and iOS local-recognition/VoiceOver/device cancellation checks from the audit; pending unless performed |
+
+A failed command is investigated, not hidden by `--offline` or skipped database tests. If the required runner is unavailable, retain the test/code as pending proof and list the exact limitation. At final delivery S# is verified only after its complete scenario chain has evidence; local default-off v2 implementation is not a deployed M04 fix.
+
+---
+
+### Task 1: Isolate exam history
+
+**Requirements:** S1. **Prerequisites:** none. **Status:** implementation/review complete; connected UI proof pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/data/LevelTestAttemptStore.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/LearnScreen.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/data/LevelTestAttemptStoreTest.kt`
+- Create: `apps/android/app/src/androidTest/java/com/jkdc/app/MobileAuditHistoryTest.kt`
+
+**Interfaces:** Consumes the captured requesting account; produces owner-filtered history with explicit guest-only NULL semantics and UI request identity. `LevelTestAttemptStore.list` requires caller owner rather than authorizing from each returned row.
+
+- [x] **Step 1 — RED:** `historyIsScopedToRequestingOwner` and `lateOwnerHistoryCannotRepopulateNewAccount` regressions added; test-first failure observed before implementation (initial API/behavior failure).
+- [x] **Step 2 — Observe RED:** Focused test failed before implementing owner-aware history.
+- [x] **Step 3 — Implement:** Added owner SQL predicate, guest `IS NULL`, owner-scoped summaries and generation/request-sequence fencing; late results cannot republish after owner changes.
+- [x] **Step 4 — GREEN:** Focused and full Android unit suites passed; UI-test sources compiled. Connected UI execution unavailable: no devices attached, `:app:connectedUiTestAndroidTest` reports “No connected devices!”.
+- [x] **Step 5 — Review:** Fresh reviewer approved after one correction batch; parent spot-check of the focused unit command passed. Review advisories: no rendered Compose assertion ran, and the test barrier cleanup is not wrapped in `finally`.
+- [x] **Step 6 — Commit:** `043fb6e` (`fix(android): isolate exam history by account`) contains the reviewed task files and plan/spec evidence. S1 remains proof-pending until the required connected UI run succeeds.
+
+### Task 2: Lock the progress contract and time primitives
+
+**Requirements:** S2,S4. **Prerequisites:** T1. **Status:** pending.
+
+**Files:**
+- Modify: `openspec/changes/audit-progress-sync/design.md`
+- Modify: `openspec/changes/audit-progress-sync/tasks.md`
+- Modify: `openspec/changes/audit-progress-sync/specs/progress-sync-protocol/spec.md`
+- Modify: `openspec/changes/audit-progress-sync/specs/progress-sync-recovery/spec.md`
+- Create: `shared/progress-sync-contract.json`
+- Create: `scripts/export_progress_sync.py`
+- Create: `scripts/tests/test_export_progress_sync.py`
+- Modify: `Makefile`
+- Create: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressTime.kt`
+- Create: `apps/ios/Core/ProgressTime.swift`
+- Create: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressTimeTest.kt`
+- Create: `apps/ios/Tests/ProgressTimeTests.swift`
+- Generate: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressSyncContractData.kt`
+- Generate: `apps/ios/Core/ProgressSyncContractData.swift`
+
+**Interfaces:** Produces one version-2 contract: existing route/version negotiation, Unix-ms/Apple-reference-seconds, epoch offset 978307200, future skew 172800000, limits 200/1000, both aggregate timestamps and structured unavailable error. `ProgressTime` provides checked `fromUnixMilliseconds` and `toUnixMilliseconds` in each language; it does not mutate existing stored records.
+
+- [ ] **Step 1 — RED:** `distinctProgressInstantsRoundTrip` checks 1792929599000/1792929600000 at millisecond precision; `invalidTimeIsNotClamped` checks non-finite/unsafe/ordered bounds; `contractExporterDetectsDrift` compares generated Kotlin/Swift constants. Epoch-zero conversion is distinguished from invalid API record zero.
+- [ ] **Step 2 — Observe RED:** Run `python3 -m unittest discover -s scripts/tests -p test_export_progress_sync.py` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Reconcile only obsolete existing sync instructions with schema v5, current erasure contract and original negotiation path. Generate constants, use explicit time-boundary names, inject now for validation, and add exporter --check to make check. Recovery classification is specified here; persisted repair happens in T5, client wiring in T6/T7.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Shared + Android unit + Swift Core** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): define checked sync time contract`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 3: Fence active sync and enable real iOS App tests
+
+**Requirements:** S3. **Prerequisites:** T2. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Create: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressSyncOperation.kt`
+- Create: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressSyncOperationTest.kt`
+- Modify: `apps/ios/App/ConversationCoordinator.swift`
+- Modify: `apps/ios/App/ManagedAccountStore.swift`
+- Create: `apps/ios/Core/ProgressSyncOperation.swift`
+- Create: `apps/ios/Tests/ProgressSyncOperationTests.swift`
+- Modify: `apps/ios/App.xcodeproj/project.pbxproj`
+- Modify: `apps/ios/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme`
+- Create: `apps/ios/AppTests/ProgressSyncOperationTests.swift`
+
+**Interfaces:** Produces a coordinator-owned token bound to account/credential identity/data generation and single active operation. Add an App-hosted XCTest target `AppTests`, included in scheme App, that compiles real App adapters with injected network/storage boundaries; SwiftPM still covers only Core.
+
+- [ ] **Step 1 — RED:** `staleFetchAfterImportDoesNotWrite` and `staleAccountResponseCannotPostReplacementSnapshot` assert memory, persisted rows, cursor and outbound request content. `lateAckCannotAdvanceReplacementGeneration` covers POST suspension. `onlyOnePassOwnsWriter` verifies serial operation ownership; cancellation is not reported as retryable network error.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.core.ProgressSyncOperationTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Check live identity, not merely notification state, after await and within the serialized transaction/write boundary. Invalidate on account replacement/import. Add test-target configuration as part of this first App-layer task, without adding packages.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S3 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(progress): fence sync by live data generation`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 4: Implement negotiated API v2 on the existing route
+
+**Requirements:** S4. **Prerequisites:** T2,T3. **Status:** pending.
+
+**Files:**
+- Modify: `services/api/src/progress.ts`
+- Modify: `services/api/src/app.ts`
+- Modify: `services/api/.env.example`
+- Modify: `services/api/tests/progress.test.ts`
+- Modify: `services/api/tests/progress-http.test.ts`
+
+**Interfaces:** Consumes the T2 contract. Produces GET version=2 envelope with 1000-row codepoint identity pages, strict bounded opaque cursor, and versioned POST with firstAt/lastAt and full-batch {merged:N} ack. Disabled requests authenticate first and return exact HTTP 503 / progress_sync_version_unavailable; unversioned v1 stays unchanged.
+
+- [ ] **Step 1 — RED:** `versionTwoPreservesDistinctFirstAndLastAt`, `all1001IdentitiesTraverseWithEqualTimestamps`, `disabledV2DoesNotMaskAuthentication`, `invalidCursorDoesNotChangeLedger`, and `legacyBodyStillRejectsVersionTwoFields` assert HTTP status, full JSON, account-scoped DB state and strict ordering under database collation.
+- [ ] **Step 2 — Observe RED:** Run `make test-api` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Use explicit C/codepoint ordering on immutable identity, validate ranges and pair ordering, retain existing body bounds and v1 validation. Do not add a new /v2 route, credential, cursor-signing secret or database snapshot promise.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **API integration + Shared** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S4 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): negotiate bounded version two sync`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 5: Add durable rollups, recovery and atomic continuation
+
+**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** pending.
+
+**Files:**
+- Modify: `shared/db/schema.sql`
+- Modify: `scripts/export_db_schema.py`
+- Modify: `scripts/check_db_schema.py`
+- Modify: `scripts/tests/test_export_db_schema.py`
+- Modify: `scripts/tests/test_check_db_schema.py`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/data/LearningDb.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/data/LearningDbDao.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/data/LearningDbWriter.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/data/LearningDbTest.kt`
+- Modify: `apps/ios/Core/Database/LearningDatabase.swift`
+- Modify: `apps/ios/Core/Database/LearningDatabaseDao.swift`
+- Modify: `apps/ios/Core/Database/LearningDbWriter.swift`
+- Modify: `apps/ios/Tests/LearningDatabaseTests.swift`
+- Create: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressProjection.kt`
+- Create: `apps/ios/Core/ProgressProjection.swift`
+- Create: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressProjectionTest.kt`
+- Create: `apps/ios/Tests/ProgressProjectionTests.swift`
+- Generate: `apps/android/app/src/main/java/com/jkdc/app/data/SchemaData.kt`
+- Generate: `apps/ios/Core/Database/SchemaData.swift`
+
+**Interfaces:** Produces account-scoped remote rollup and direction/cursor persistence, versioned recovery bookkeeping, atomic rollup-page+cursor apply and ack-only upload advance. `ProgressProjection` merges one aggregate identity using min(firstAt), max(lastAt,attempts,bestScore). T6/T7 must use these stores; T8 wires visible readers.
+
+- [ ] **Step 1 — RED:** `pageAndCursorRollbackTogether`, `uncertainAckReplaysWithoutStarvation`, `upgradeFromV5PreservesExamOutboxAndConflicts`, `ambiguousTimestampIsRetainedAndValidRowsStillSync`, `recoverySecondRunIsIdempotent`, and `projectionDoesNotAppendLocalEvents` assert persisted rows after close/reopen, rollback, owner partition and full effective aggregate.
+- [ ] **Step 2 — Observe RED:** Run `python3 scripts/export_db_schema.py --check && python3 scripts/check_db_schema.py` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Append schema version 6 only if still next; never edit old applied blocks. Update actual native openers, pinned inventory/versions and generate SQL outputs with export_db_schema.py. Test fresh install and every supported prior version. Run proven repairs before materialization; keep unresolved source records intact, with bounded reasons and retry-safe markers. Do not reclassify legacy completion history.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Shared + Android unit + Swift Core** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): persist atomic rollup sync state`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 6: Wire iOS time-safe complete transport
+
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5. **Status:** pending.
+
+**Files:**
+- Modify: `apps/ios/App/ProgressClient.swift`
+- Modify: `apps/ios/App/ConversationCoordinator.swift`
+- Modify: `apps/ios/App/Storage.swift`
+- Modify: `apps/ios/Core/ProgressEngine.swift`
+- Modify: `apps/ios/Tests/ProgressEngineTests.swift`
+- Create: `apps/ios/AppTests/ProgressClientTests.swift`
+
+**Interfaces:** Consumes T2 time types, T3 fences and T5 atomic rollup/cursor APIs. Produces typed success, protocol-unavailable, cancellation and failure transport outcomes, not Boolean/nil conflation. V1 fallback uses corrected conversion and rollup writes but does not advance v2 cursors.
+
+- [ ] **Step 1 — RED:** `all201UploadsAnd1001DownloadsSurviveRestart`, `downloadPersistUploadKeepsBothInstants`, `localLessonUsesReferenceEpoch`, `onlyExactUnavailableResponseDowngrades`, and `malformedPageLeavesCursorUnchanged` cover status/code and complete identity sets with no synthetic events.
+- [ ] **Step 2 — Observe RED:** Run `swift test --package-path apps/ios --filter ProgressEngineTests` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Correct the actual local lesson writer, decode once in HTTP adapter, validate complete/cursor consistency and page progress, traverse bounded passes and persist via T5. Do not activate app-facing v2 before T8 projection integration.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S3,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 7: Wire Android time-safe complete transport
+
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5,T6. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/network/ProgressClient.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressEngineTest.kt`
+- Create: `apps/android/app/src/test/java/com/jkdc/app/network/ProgressClientTest.kt`
+
+**Interfaces:** Consumes the same T2/T3/T5 interfaces as iOS. Replaces current Boolean/null transport conflation with typed outcomes and converts wire timestamps only in the transport adapter.
+
+- [ ] **Step 1 — RED:** `all201UploadsAnd1001DownloadsSurviveRestart`, `downloadPersistUploadKeepsBothInstants`, `onlyExactUnavailableResponseDowngrades`, `malformedPageLeavesCursorUnchanged` and stale-generation variants assert final persisted identity sets, emitted payloads, cursor and event counts.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.network.ProgressClientTest' --tests 'com.jkdc.app.core.ProgressEngineTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Wire ProgressClient.kt as well as AppViewModel/engine. Use exact version negotiation, bounded deterministic suffix traversal, ack validation and T5 rollup write path, including corrected v1 compatibility. No app-facing v2 activation before T8.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S3,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 8: Integrate effective progress reads and upload feedback
+
+**Requirements:** S5. **Prerequisites:** T5,T6,T7. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/MasteryEngine.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressProjectionTest.kt`
+- Modify: `apps/ios/Core/ProgressEngine.swift`
+- Modify: `apps/ios/Core/LevelEngine.swift`
+- Modify: `apps/ios/Core/MasteryEngine.swift`
+- Modify: `apps/ios/App/Storage.swift`
+- Modify: `apps/ios/App/LearningProgressView.swift`
+- Modify: `apps/ios/App/ListeningView.swift`
+- Modify: `apps/ios/Tests/ProgressProjectionTests.swift`
+
+**Interfaces:** Consumes T5 pure projection and T6/T7 stored rollups; produces visible score/mastery/completion evidence and future uploads from the same effective aggregate. Activity/streak/history readers continue to read local events only.
+
+- [ ] **Step 1 — RED:** `remote90ImprovesLocal40InEitherOrder`, `projectionReplayDoesNotInventActivity`, `otherOwnerOrLanguageDoesNotContribute`, and `nextUploadRetainsRemoteBestAndFirstAt` cover all 10 supported kinds, legacy language, account switch and event/session counts.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.core.ProgressProjectionTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Wire score consumers rather than appending CompletionMark/SessionRecord. Preserve legacy rows unchanged and do not sum device attempts. Exercise v1 compatibility and local v2-on paths before clearing the integration gate; production stays untouched.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Swift Core + iOS App + API integration** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(progress): integrate aggregate projection without activity inflation`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 9: Make Android topic selection transactional
+
+**Requirements:** S6. **Prerequisites:** T3. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/LibraryScreens.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/AppRoot.kt`
+- Create: `apps/android/app/src/test/java/com/jkdc/app/ThemeTransitionTest.kt`
+- Create: `apps/android/app/src/androidTest/java/com/jkdc/app/ThemeTransitionUiTest.kt`
+
+**Interfaces:** Produces pending-topic intent separate from the applied session, a single awaitable close/settlement/start transition, and invalidation on newer intent/account/navigation.
+
+- [ ] **Step 1 — RED:** `cancelTopicSelectionLeavesSessionUnchanged`, `delayedCloseStartsExactlyOnce`, `timeoutDoesNotStartNewSession`, and `staleIntentCannotRestart` assert theme/title/context, sent instructions and session start counts; include double confirm.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.ThemeTransitionTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Apply no active mutation before confirmation. Await real terminal close and settlement, not a fixed delay. Surface close failure/timeout and discard only the pending selection on cancel.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Android UI** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S6 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): await confirmed topic transitions`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 10: Bound voice capture and unify live turn context
+
+**Requirements:** S7,S8,S9. **Prerequisites:** T9. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/voice/LocalVoiceTransport.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/LocalVoiceTransportTest.kt`
+
+**Interfaces:** Produces one bounded frame producer/VAD-barrier independent of a serial turn consumer, plus one role-aware bounded opening/typed/voice context. Record chosen preroll, active/manual limits, queue capacity and overflow handling in the task brief before code; derive from the actual sample/frame rate.
+
+- [ ] **Step 1 — RED:** `initialSilenceRetainsBoundedSamples`, `speechAfterSilenceRetainsFirstSyllable`, `voiceReplyCanBeInterruptedWhileTtsBlocked`, `openingAppearsExactlyOnceInNextRequest`, and cross-mode/cancel/no-AEC/overflow regressions assert sample arrays, stop timing and exact request roles/order.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.LocalVoiceTransportTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Keep capture live during supported playback, own/cancel all child jobs, bound every state and discard echo/interruption frames. Preserve safe no-AEC behavior and existing typed-originated interruption regression.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Android audio device gate** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S7,S8,S9 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): bound voice and unify conversation context`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 11: Expose accessible manual microphone mute
+
+**Requirements:** S10. **Prerequisites:** T10. **Status:** pending.
+
+**Files:**
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/TalkScreen.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
+- Modify: `apps/android/app/src/main/res/values/strings.xml`
+- Modify: `apps/android/app/src/main/res/values-es/strings.xml`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/LocalVoiceTransportTest.kt`
+- Create: `apps/android/app/src/androidTest/java/com/jkdc/app/ManualMuteUiTest.kt`
+
+**Interfaces:** Consumes T10 voice input state. Produces a separate observable microphone mute with EN/ES text, preserved test tags/state description and >=48 dp target. It is not session pause or tutor-output stop.
+
+- [ ] **Step 1 — RED:** `manualMuteIsVisibleAndAccessible`, `mutedSamplesNeverReachNextTurn` and `muteDoesNotStopTutorOutput` assert semantics/state, focus, touch target, STT payloads and unchanged active session.
+- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.LocalVoiceTransportTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Connect the manual UI action to existing mute semantics, discard buffered input at mute boundaries and retain session context.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Android UI + Android lint/build** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S10 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(android): expose accessible manual microphone mute`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 12: Make iOS pronunciation private and recoverable
+
+**Requirements:** S11,S12,S13. **Prerequisites:** T3. **Status:** pending.
+
+**Files:**
+- Modify: `apps/ios/App/Info.plist`
+- Modify: `apps/ios/App/PronunciationCheckController.swift`
+- Modify: `apps/ios/App/CoursesViews.swift`
+- Modify: `apps/ios/App.xcodeproj/project.pbxproj`
+- Create: `apps/ios/App/en.lproj/InfoPlist.strings`
+- Create: `apps/ios/App/es.lproj/InfoPlist.strings`
+- Create: `apps/ios/AppTests/PronunciationCheckControllerTests.swift`
+- Modify: `apps/ios/UITests/AppUITests.swift`
+- Modify: `openspec/changes/pronunciation-module/proposal.md`
+
+**Interfaces:** Consumes T3 actual App test target. Produces request-scoped states and one terminal cleanup/cancel path with injected recognizer/recorder/time boundaries. Every adapter request requires on-device recognition; unsupported returns non-scored practice.
+
+- [ ] **Step 1 — RED:** `deniedPermissionNeverRecords`, `recognizerErrorSettlesBusy`, `timeoutAndCancelCleanExactlyOnce`, `lateCallbackCannotScoreNextAttempt`, `unsupportedLocalModelMakesNoRequest`, and built-bundle permission tests cover unique file removal, owned audio release, navigation/background and successive attempts.
+- [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Add accurate localized Speech/mic copy and resource membership without overwriting existing localizations. Retain recognition task, use unique attempt files, enforce supportsOnDeviceRecognition/requiresOnDeviceRecognition and preserve shared TTS audio ownership.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI/audio device gate** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S11,S12,S13 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): enforce local pronunciation lifecycle`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 13: Preserve typed replies across failure and retry
+
+**Requirements:** S14. **Prerequisites:** T3. **Status:** pending.
+
+**Files:**
+- Modify: `apps/ios/App/RootView.swift`
+- Modify: `apps/ios/App/ConversationCoordinator.swift`
+- Create: `apps/ios/AppTests/TypedReplyTests.swift`
+- Modify: `apps/ios/UITests/AppUITests.swift`
+
+**Interfaces:** Produces a typed send result and stable pending message identity bound to conversation/account. Only success closes the matching editor; manual retries reuse the local entry and one in-flight operation.
+
+- [ ] **Step 1 — RED:** `failedSendKeepsDraftFocusAndSheet`, `twoManualRetriesKeepOneLocalMessage`, `doubleSubmitStartsOneGeneration`, and `lateReplyCannotCloseNewSheet` assert UI/error persistence, transcript identity and request count. Preserve auth/balance behavior.
+- [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Distinguish success/cancel/failure, persist visible errors and do not auto-replay uncertain provider operations. Explicit dismissal invalidates local continuation; external provider costs are not exactly-once guaranteed.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S14 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): preserve typed replies across retries`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 14: Gate topic search by real engine capability
+
+**Requirements:** S15. **Prerequisites:** T13. **Status:** pending.
+
+**Files:**
+- Modify: `apps/ios/App/LibraryViews.swift`
+- Modify: `apps/ios/App/HostedSessions.swift`
+- Modify: `apps/ios/App/ConversationCoordinator.swift`
+- Create: `apps/ios/AppTests/TopicSearchCapabilityTests.swift`
+- Modify: `apps/ios/UITests/AppUITests.swift`
+
+**Interfaces:** Produces explicit source-backed-search capability for the selected engine, used before a fresh network/model request, with cached topic access unchanged.
+
+- [ ] **Step 1 — RED:** `unsupportedEngineMakesZeroSearchCalls`, `unsupportedEngineKeepsCachedTopics`, and `capableEngineKeepsRealRetry` assert UI explanation, cache selection, successful source-backed results and distinct genuine network errors.
+- [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Gate impossible operations without provider switch, new search backend, proxy, key or billing changes.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S15 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): gate unsupported topic search`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 15: Notify session adoption before profile loading
+
+**Requirements:** S16. **Prerequisites:** T3,T14. **Status:** pending.
+
+**Files:**
+- Modify: `apps/ios/App/ManagedAccountStore.swift`
+- Modify: `apps/ios/App/ConversationCoordinator.swift`
+- Modify: `apps/ios/App/HostedSessions.swift`
+- Create: `apps/ios/AppTests/SessionAdoptionTests.swift`
+
+**Interfaces:** Produces one adoption event only after secure persistence/in-memory commit, before profile await. Keeps existing credential-invalidated transition symmetric and independent from recoverable profile errors.
+
+- [ ] **Step 1 — RED:** `profile500StillPublishesAdoptedBearer`, `profileRefreshDoesNotRepublishAdoption`, `actualCredentialRejectionInvalidates` and persistence-failure/stale-exchange variants assert Keychain session, notification order/count and helper bearer before starting conversation.
+- [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 3 — Implement:** Separate session adoption from profile hydration. A profile 500 is not logout; actual rejection follows existing policy. Preserve T3 checks against live owner/generation rather than relying only on notifications.
+- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S16 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): notify session adoption independently of profile`; record commit and evidence in OpenSpec tasks/verification report.
+
+### Task 16: Verify the complete remediation and report gaps
+
+**Requirements:** S1–S16. **Prerequisites:** T1–T15. **Status:** pending.
+
+**Files:**
+- Modify: `openspec/changes/mobile-audit-remediation/verify-report.md`
+- Modify: `openspec/changes/mobile-audit-remediation/tasks.md`
+
+**Interfaces:** Consumes per-task test evidence and reviewer decisions. Produces one requirement-to-proof matrix with exact commands, failure/skip counts, device/bundle evidence and honest incomplete gates.
+
+- [ ] **Step 1 — Evidence reconciliation:** Compare each scenario against a real executed test. Parser-only or Swift Core green never substitutes for database or actual App tests. Verify old v1, v2-on/off, earliest/latest, schema upgrades, owner boundaries and no invented activity together.
+- [ ] **Step 2 — Baseline checks:** Run `make check` and read every output. Evidence documentation itself does not require an artificial failing behavior test.
+- [ ] **Step 3 — Implement:** Run shared/API/Android/Swift/App/UI checks where available, fresh whole-feature review, and one bounded correction batch with RED→GREEN for actual blockers. Keep production activation and physical audio validation separate; unexecuted proof stays pending.
+- [ ] **Step 4 — Final proof:** Run the final applicable command set; expected: every executed required check exits zero, with no hidden skipped integration cases. Run the **Shared + API integration + Android unit + Android lint/build + Swift Core + iOS App + Android UI + device gates** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S1–S16 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `docs(mobile): record remediation verification`; record commit and evidence in OpenSpec tasks/verification report.
