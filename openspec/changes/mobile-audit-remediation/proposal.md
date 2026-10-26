@@ -1,6 +1,6 @@
 # Proposal: Complete Mobile Audit Remediation
 
-**Status:** Baseline design approved on 2026-10-25; document corrections requested by the user are recorded in `verify-report.md`. T1–T3 are committed; T4 is verified and awaiting its work-unit commit; remaining tasks are pending.
+**Status:** Baseline design approved on 2026-10-25; document corrections requested by the user are recorded in `verify-report.md`. T1–T4 are committed; remaining tasks are pending.
 **Source of findings:** [`informe-revision-app-movil-2026-10-25.md`](../../../informe-revision-app-movil-2026-10-25.md)
 
 ## Intent

@@ -128,7 +128,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 4: Implement negotiated API v2 on the existing route
 
-**Requirements:** S4. **Prerequisites:** T2,T3. **Status:** verified; behavior commit pending.
+**Requirements:** S4. **Prerequisites:** T2,T3. **Status:** committed as `98ae12d`.
 
 **Files:**
 - Modify: `services/api/src/progress.ts`
@@ -145,7 +145,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Use explicit C/codepoint ordering on immutable identity, version-tag the opaque cursor, validate ranges and pair ordering, retain existing body bounds and v1 validation. Add the next additive migration to remove the arbitrary 2025 `first_at` constraint without editing migration 030. Do not add a new /v2 route, credential, cursor-signing secret or database snapshot promise.
 - [x] **Step 4 — GREEN:** T4 focused PostgreSQL tests passed 17/17; `make check` passed 146 Python tests and contract/export checks; `cd services/api && npm run check` passed. Fresh full API run passed 756/756. Parent full-suite spot-check had an earlier environment failure (582/757; auth 401 and DB timeouts); parent focused rerun passed 17/17.
 - [x] **Step 5 — Review:** Fresh independent review verified S4 after one correction round; all three findings were addressed with no new Critical/Important breakage.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): negotiate bounded version two sync`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** `98ae12d` (`feat(progress): negotiate bounded version two sync`); commit and evidence recorded in OpenSpec tasks/verification report.
 
 ### Task 5: Add durable rollups, recovery and atomic continuation
 
