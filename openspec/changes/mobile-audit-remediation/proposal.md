@@ -5,13 +5,14 @@
 
 ## Intent
 
-Remediate all 16 findings M01–M16 from the mobile audit. Protect each learner's exam history and existing progress; make progress sync bounded, resumable and convergent; make voice and speech flows cancellable and recoverable; and stop presenting operations that the selected engine cannot perform.
+Remediate all 16 findings M01–M16 from the mobile audit and the user-approved account-isolation requirement for local learner data. Protect each learner's exam history and existing progress; make progress sync bounded, resumable and convergent; make voice and speech flows cancellable and recoverable; and stop presenting operations that the selected engine cannot perform.
 
 ## Scope
 
 ### In scope
 
 - Android exam-history isolation by the requesting account, including anonymous ownership and stale UI results.
+- Always-present active member/guest identity and owner-scoped reads/writes for all learner data, one-time development-data backfill to the active identity, and isolated guest-to-member transitions without merge.
 - API/iOS/Android progress timestamp conversion, safe recovery of already contaminated data, complete paged transfer, account-bound resume state, and separate remote-rollup projection.
 - Android topic-switch confirmation and local voice buffering, barge-in, context, and manual microphone control.
 - iOS pronunciation permission, explicit on-device-only capability, error/cancellation/audio-resource lifecycle, typed-reply retry, topic-search capability feedback, and session-adoption notification.
@@ -21,12 +22,12 @@ Remediate all 16 findings M01–M16 from the mobile audit. Protect each learner'
 
 - New conversation providers, cloud transcription, search-with-sources service, paid-motor fallback, or broader provider-proxy/billing changes.
 - New product features unrelated to M01–M16, broad UI redesign, course/content edits, new API consumers, or a security/observability review outside the mobile paths.
-- Deleting learning data, silently reassigning guest records to an account, backdating bad timestamps, inventing sessions/streaks from remote aggregates, or weakening identity checks.
+- Deleting learning data, silently merging guest records into a member, backdating bad timestamps, inventing sessions/streaks from remote aggregates, or weakening identity checks. One-time backfill of existing ownerless development rows to the identity active at migration is explicitly authorized; later accounts do not inherit those rows.
 - Push, pull requests, merge, release, main-branch work, or unrequested UI for erasure/export.
 
 ## Design decisions
 
-1. Implement the complete report scope in the active feature branch, split into the 16 ordered phases in `design.md`.
+1. Implement the complete report scope in the active feature branch, split into the ordered implementation phases in `design.md`.
 2. Use sequential Superpowers subagents: one scoped implementer and one fresh reviewer per unit; finish review before starting the next. Parent owns git, shared change docs, evidence and integration; no worktrees or parallel writers.
 3. Keep explicit source/domain time types and convert at API boundaries. Version the existing `/v1/progress` route using explicit negotiation, distinct `firstAt`/`lastAt`, deterministic identity pagination and durable per-account acknowledgements; preserve legacy behavior until v2 rollout is deliberately enabled.
 4. Keep remote progress aggregates separate from local learning events. Project aggregate scores monotonically without fabricating new local completions, sessions, streaks or activity. Preserve existing completion marks of unknown provenance.
@@ -36,7 +37,7 @@ Remediate all 16 findings M01–M16 from the mobile audit. Protect each learner'
 
 ## Acceptance outcome
 
-Every M01–M16 behavior has a regression demonstrating its original failure before the fix; passive document/configuration checks use explicit structural evidence; data/identity/concurrency changes pass applicable Android, API and database checks; SDD and generated artifacts match the current schema; platform-unavailable checks are identified rather than called green; and each implementation unit has a reviewed commit on the existing feature branch.
+Every M01–M16 behavior and S17 account-isolation scenario has a regression demonstrating its original failure before the fix; passive document/configuration checks use explicit structural evidence; data/identity/concurrency changes pass applicable Android, API and database checks; SDD and generated artifacts match the current schema; platform-unavailable checks are identified rather than called green; and each implementation unit has a reviewed commit on the existing feature branch.
 
 ## Implementation constraints
 

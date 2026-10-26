@@ -36,6 +36,9 @@ struct RootView: View {
             Tab("Listen", systemImage: "headphones", value: 4) { shell { ListeningView(coordinator: coordinator) } }
         }
         .tint(AppColor.ink)
+        .onChange(of: accountStore.session?.accountID) { _, accountID in
+            coordinator.store.activateLearnerIdentity(accountID?.uuidString)
+        }
         .sheet(isPresented: $coordinator.showSettings) {
             SettingsView(coordinator: coordinator, accountStore: accountStore)
         }

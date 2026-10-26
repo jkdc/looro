@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define a versioned, bounded, replay-safe progress synchronization contract that can transfer every progress identity across the API and native clients without treating a single pass as a transaction snapshot.
+Define a versioned, bounded, replay-safe progress contract: mobile devices originate progress and upload it under the active account; a backend download is a one-time bootstrap for an account with no local progress on that device.
 
 ## ADDED Requirements
 
@@ -33,14 +33,21 @@ The progress API MUST represent every timestamp in the versioned wire contract a
 
 ### Requirement: Downloads expose a versioned paged envelope
 
-The progress download endpoint MUST return a versioned envelope containing progress entries, an opaque continuation cursor, and an explicit completion signal. A completed response MUST be distinguishable from a response that has more pages, and the contract MUST define the maximum number of entries in one response.
+The progress download endpoint MUST return a versioned envelope containing progress entries, an opaque continuation cursor, and an explicit completion signal. Clients MUST use it only for the eligible one-time account bootstrap on a device with no local progress for that account. After a complete bootstrap, routine sync MUST upload without downloading again. A completed response MUST be distinguishable from a response that has more pages, and the contract MUST define the maximum number of entries in one response.
 
-#### Scenario: A small complete collection finishes in one response
+#### Scenario: A small bootstrap finishes in one response
 
 - GIVEN an account with no more entries than the page limit
 - WHEN a client requests the first page
 - THEN the response contains every matching identity
 - AND the completion signal indicates that no continuation request is required
+
+#### Scenario: Existing account data is never downloaded during routine sync
+
+- GIVEN the account has local progress on this device or its bootstrap is already complete
+- WHEN a routine progress sync runs
+- THEN the client uploads eligible progress
+- AND it issues no progress GET request
 
 #### Scenario: A large collection advertises continuation
 
@@ -99,16 +106,16 @@ Native clients MUST upload all eligible progress identities in deterministic ide
 - THEN the new or changed identity is eligible for upload
 - AND the client MUST NOT treat the previous completion marker as a permanent global cutoff
 
-### Requirement: Progress synchronization is monotonic and eventually convergent
+### Requirement: Mobile uploads are monotonic and bootstrap restores the server aggregate
 
-The API and clients MUST merge progress aggregates monotonically: first-at values use the earliest known instant, while last-at, attempts, and best-score values use the greatest known value. A synchronization pass MUST promise eventual recovery across repeated completed passes, but MUST NOT promise transaction-wide snapshot isolation.
+The API MUST merge mobile-uploaded aggregates monotonically: first-at uses the earliest mobile-recorded instant, while last-at, attempts, and best-score use the greatest known value. A newly authenticated account on a device with no local progress MUST be able to bootstrap that aggregate. The protocol MUST NOT promise ongoing backend-to-device convergence after bootstrap or transaction-wide snapshot isolation.
 
-#### Scenario: A mutation behind a stateless cursor converges later
+#### Scenario: Bootstrap pages replay without loss
 
-- GIVEN an insert or update occurs behind the current cursor while a download pass is in progress
-- WHEN the current pass completes and a subsequent full pass completes
-- THEN the later pass can return the missed identity or updated aggregate
-- AND the contract makes no claim that the first pass was a snapshot of one instant
+- GIVEN a bootstrap page is applied but acknowledgement of its cursor is interrupted
+- WHEN the device retries the same page
+- THEN rollup persistence is idempotent and cursor state advances atomically with the page
+- AND no local activity event is fabricated
 
 #### Scenario: Replay and reversed merge order remain monotonic
 

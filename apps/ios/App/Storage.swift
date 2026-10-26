@@ -64,6 +64,8 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// phase-F backup/restore swaps bytes under, and the path
     /// `LearningDbStore.open` adopted `learning.db.preimport` back into.
     private let databaseURL: URL?
+    private static let guestIdentityKey = "com.palique.localLearnerIdentity"
+    private(set) var activeLearnerIdentity: String
     /// The learning database (phase E). Opened at init with the one-way
     /// SwiftData-payload migration and RE-opened by a successful
     /// `importDb` — the store is always the one source of the working copy;
@@ -72,6 +74,8 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// next launch would not read.
     private var dbStore: LearningDbStore
     init(inMemory: Bool = false) throws {
+        let memberIdentity = ManagedAccountStore().session?.accountID
+        activeLearnerIdentity = memberIdentity.map { "member:\($0)" } ?? Self.stableGuestIdentity()
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
             .appendingPathComponent("Palique", isDirectory: true)
             .appendingPathComponent("before-language-modules.json")
@@ -88,12 +92,17 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         }
         if inMemory {
             databaseURL = nil
-            dbStore = try LearningDbStore.open(database: try LearningDatabase.openInMemory())
+            dbStore = try LearningDbStore.open(database: try LearningDatabase.openInMemory(),
+                                               activeIdentity: activeLearnerIdentity)
         } else {
             let url = try Self.learningDatabaseURL()
             databaseURL = url
             dbStore = try LearningDbStore.open(at: url.path,
-                                               source: SwiftDataMigrationSource(container: container))
+                                               source: SwiftDataMigrationSource(container: container),
+                                               activeIdentity: activeLearnerIdentity)
+        }
+        if !dbStore.jsonMode {
+            try ExamHistoryDao.assignOwnerlessToIdentityOnce(dbStore.db, ownerAccountID: activeLearnerIdentity)
         }
         if dbStore.jsonMode {
             // JSON fail-safe: the migration committed nothing, the SwiftData
@@ -125,9 +134,37 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     var jsonMode: Bool { dbStore.jsonMode }
 
+    func activateLearnerIdentity(_ accountID: String?) {
+        let identity = accountID.map { "member:\($0)" } ?? Self.stableGuestIdentity()
+        guard identity != activeLearnerIdentity else { return }
+        activeLearnerIdentity = identity
+        archive = Archive()
+        guard !dbStore.jsonMode else { return }
+        do {
+            try LearnerOwnershipDao.activate(dbStore.db, identity: identity)
+            try ProgressRecoveryDao.recover(dbStore.db, nowUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+            archive = try dbStore.recoverUnfinishedSessions(dbStore.loadInitialArchive())
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
+    private static func stableGuestIdentity() -> String {
+        let defaults = UserDefaults.standard
+        if let existing = defaults.string(forKey: guestIdentityKey), existing.hasPrefix("guest:"),
+           existing.count > "guest:".count { return existing }
+        let created = "guest:\(UUID().uuidString.lowercased())"
+        defaults.set(created, forKey: guestIdentityKey)
+        return created
+    }
+
     /// Starts a frozen exam snapshot and its initial outbox record atomically.
     func startExam(snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord) throws -> ExamHistory {
-        try ExamHistoryDao.start(dbStore.db, snapshot: snapshot, attempt: attempt)
+        let accountOwner = activeLearnerIdentity.hasPrefix("member:")
+            ? String(activeLearnerIdentity.dropFirst("member:".count)) : nil
+        let ownedAttempt = ExamAttemptRecord(attemptID: attempt.attemptID, examID: attempt.examID,
+            ownerAccountID: attempt.ownerAccountID ?? accountOwner, startedAt: attempt.startedAt)
+        return try ExamHistoryDao.start(dbStore.db, snapshot: snapshot, attempt: ownedAttempt)
     }
 
     /// Persists the latest answer and position in the same transaction as its sync event.
@@ -146,12 +183,16 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
     /// Local history is isolated to the active account; nil selects anonymous attempts only.
     func examHistory(ownerAccountID: String? = nil) throws -> [ExamHistory] {
-        try ExamHistoryDao.history(dbStore.db, ownerAccountID: ownerAccountID)
+        try ExamHistoryDao.history(dbStore.db, ownerAccountID: ownerAccountID ?? currentExamAccountID)
     }
 
     /// Loads an attempt only inside the requested local/account ownership boundary.
     func examAttempt(attemptID: String, ownerAccountID: String? = nil) throws -> ExamHistory? {
-        try ExamHistoryDao.load(dbStore.db, attemptID: attemptID, ownerAccountID: ownerAccountID)
+        try ExamHistoryDao.load(dbStore.db, attemptID: attemptID, ownerAccountID: ownerAccountID ?? currentExamAccountID)
+    }
+
+    private var currentExamAccountID: String? {
+        activeLearnerIdentity.hasPrefix("member:") ? String(activeLearnerIdentity.dropFirst("member:".count)) : nil
     }
 
     func pendingExamOutbox(ownerAccountID: String) throws -> [SqlRow] {
@@ -315,10 +356,11 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         let updated: LessonState
         if let index = lessons.firstIndex(where: { $0.lessonID == lessonID }) {
             lessons[index].attempts += 1
-            lessons[index].lastSeen = Date.now.timeIntervalSince1970
+            lessons[index].lastSeen = Date.now.timeIntervalSinceReferenceDate
             updated = lessons[index]
         } else {
-            updated = LessonState(lessonID: lessonID, attempts: 1, lastSeen: Date.now.timeIntervalSince1970)
+            updated = LessonState(lessonID: lessonID, attempts: 1,
+                                  lastSeen: Date.now.timeIntervalSinceReferenceDate)
             lessons.append(updated)
         }
         archive.lessons = lessons
@@ -798,7 +840,8 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
                 "the learning database file is not known (in-memory store)")
         }
         let reloaded = try LearningDbStore.open(at: databaseURL.path,
-                                                source: SwiftDataMigrationSource(container: container))
+                                                source: SwiftDataMigrationSource(container: container),
+                                                activeIdentity: activeLearnerIdentity)
         guard !reloaded.jsonMode else {
             throw LearningDbStore.LearningDbStoreError.jsonModeUnavailable(
                 "the restored database failed to open; the JSON fail-safe took over")

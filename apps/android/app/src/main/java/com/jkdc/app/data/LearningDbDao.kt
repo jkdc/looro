@@ -7,6 +7,7 @@ import com.jkdc.app.core.CompletionMark
 import com.jkdc.app.core.ExpressionState
 import com.jkdc.app.core.Fragment
 import com.jkdc.app.core.LessonState
+import com.jkdc.app.core.ProgressTime
 import com.jkdc.app.core.PendingUsageEvent
 import com.jkdc.app.core.Preferences
 import com.jkdc.app.core.RecallEngine
@@ -48,6 +49,76 @@ internal fun decodeStringList(json: String): List<String> =
 internal fun encodeStringList(value: List<String>): String =
     ArchiveJson.encodeToString(ListSerializer(String.serializer()), value)
 
+/** Device-local identity binding and one-time migration of ownerless learner rows. */
+object LearnerOwnershipDao {
+    const val ACTIVE_IDENTITY_KEY = "active_learner_identity"
+    const val BACKFILL_KEY = "learner_owner_backfill_v1"
+
+    fun activeIdentity(db: SqlDatabase): String? = MetaDao.get(db, ACTIVE_IDENTITY_KEY)
+
+    fun activate(db: SqlDatabase, identity: String) {
+        require(identity.startsWith("member:") || identity.startsWith("guest:")) {
+            "Learner identity must be namespaced as member:<accountID> or guest:<installationUUID>"
+        }
+        require(identity.substringAfter(':').isNotBlank()) { "Learner identity is empty" }
+        synchronized(LearnerOwnershipDao) {
+            db.transaction { tx ->
+                MetaDao.put(tx, ACTIVE_IDENTITY_KEY, identity)
+                if (MetaDao.get(tx, BACKFILL_KEY) != null) return@transaction
+
+            if (identity.startsWith("member:")) {
+                tx.update("UPDATE exam_attempts SET owner_account_id = ? WHERE owner_account_id IS NULL " +
+                    "AND (owner_key IS NULL OR owner_key = '')", listOf(identity.removePrefix("member:")))
+            }
+            tx.update("UPDATE exam_attempts SET owner_key = CASE " +
+                "WHEN owner_account_id LIKE 'guest:%' THEN owner_account_id " +
+                "ELSE 'member:' || owner_account_id END " +
+                "WHERE owner_key IS NULL AND owner_account_id IS NOT NULL")
+            tx.update("UPDATE exam_attempts SET owner_key = ? WHERE owner_key IS NULL", listOf(identity))
+            for (table in listOf("exam_answers", "exam_results", "exam_sync_outbox", "exam_sync_conflicts")) {
+                val key = when (table) {
+                    "exam_answers" -> "attempt_id"
+                    "exam_results" -> "attempt_id"
+                    "exam_sync_outbox" -> "attempt_id"
+                    else -> "attempt_id"
+                }
+                tx.update("UPDATE $table SET owner_key = (SELECT owner_key FROM exam_attempts a " +
+                    "WHERE a.attempt_id = $table.$key) WHERE owner_key IS NULL")
+            }
+            for (table in listOf("preferences", "sessions", "fragments", "expressions", "lesson_state",
+                    "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
+                tx.update("UPDATE $table SET owner_key = ? WHERE owner_key IS NULL OR owner_key = ''", listOf(identity))
+            }
+            tx.update("UPDATE progress_recovery SET owner_key = ? WHERE owner_key = ''", listOf(identity))
+            tx.update("INSERT OR IGNORE INTO meta(key, value) " +
+                "SELECT 'mastery:' || ? || ':' || substr(key, length('mastery:') + 1), value " +
+                "FROM meta WHERE key LIKE 'mastery:%' AND key NOT LIKE 'mastery:member:%' " +
+                "AND key NOT LIKE 'mastery:guest:%'", listOf(identity))
+            tx.update("DELETE FROM meta WHERE key LIKE 'mastery:%' AND key NOT LIKE 'mastery:member:%' " +
+                "AND key NOT LIKE 'mastery:guest:%'")
+                MetaDao.put(tx, BACKFILL_KEY, "1")
+            }
+        }
+    }
+
+    /** Serializes identity selection with its captured write and rejects callbacks made stale by a switch. */
+    fun runForIdentity(db: SqlDatabase, identity: String, isCurrent: () -> Boolean,
+                       work: (SqlDatabase) -> Unit): Boolean = synchronized(LearnerOwnershipDao) {
+        if (!isCurrent()) return@synchronized false
+        activate(db, identity)
+        work(db)
+        true
+    }
+}
+
+internal fun activeOwnerKey(db: SqlDatabase): String? = LearnerOwnershipDao.activeIdentity(db)
+internal fun ownerClause(db: SqlDatabase, alias: String = ""): String {
+    val prefix = if (alias.isEmpty()) "" else "$alias."
+    return if (activeOwnerKey(db) == null) "(${prefix}owner_key IS NULL OR ${prefix}owner_key = '')"
+    else "${prefix}owner_key = ?"
+}
+internal fun ownerArguments(db: SqlDatabase): List<Any?> = activeOwnerKey(db)?.let(::listOf) ?: emptyList()
+
 /**
  * UPDATE with NULL assignments spelled as literals. [SqlDatabase.update]
  * rejects null bind arguments, and updates must clear columns too (an ended
@@ -79,14 +150,15 @@ private fun updateRow(db: SqlDatabase, table: String, row: Map<String, Any?>,
  */
 object PreferencesDao {
     fun put(db: SqlDatabase, p: Preferences) {
-        val exists = db.query("SELECT 1 AS matched FROM preferences WHERE id = 1").isNotEmpty()
-        if (exists) updateRow(db, "preferences", row(p), "id = 1", emptyList())
+        val where = "id = 1 AND ${ownerClause(db)}"
+        val exists = db.query("SELECT 1 AS matched FROM preferences WHERE $where", ownerArguments(db)).isNotEmpty()
+        if (exists) updateRow(db, "preferences", row(p), where, ownerArguments(db))
         else db.insert("preferences", row(p))
     }
 
     /** null when the learner has no preferences row yet (fresh database). */
     fun get(db: SqlDatabase): Preferences? {
-        val row = db.query("SELECT * FROM preferences WHERE id = 1").firstOrNull() ?: return null
+        val row = db.query("SELECT * FROM preferences WHERE id = 1 AND ${ownerClause(db)}", ownerArguments(db)).firstOrNull() ?: return null
         return Preferences(
             learningLanguageID = row.text("learning_language_id"),
             meaningVisible = row.bool("meaning_visible"),
@@ -134,24 +206,25 @@ object SessionsDao {
         cascade-destroy the session's fragments (fragments.session_id ON
         DELETE CASCADE) on every session-end token/endedAt update. */
     fun upsert(db: SqlDatabase, session: SessionRecord) {
-        val exists = db.query("SELECT 1 AS matched FROM sessions WHERE id = ?",
-            listOf(session.id)).isNotEmpty()
-        if (exists) updateRow(db, "sessions", row(session), "id = ?", listOf(session.id))
+        val where = "id = ? AND ${ownerClause(db)}"
+        val args = listOf<Any?>(session.id) + ownerArguments(db)
+        val exists = db.query("SELECT 1 AS matched FROM sessions WHERE $where", args).isNotEmpty()
+        if (exists) updateRow(db, "sessions", row(session), where, args)
         else db.insert("sessions", row(session))
     }
 
     /** Fragments go with it (fragments.session_id ON DELETE CASCADE). */
     fun delete(db: SqlDatabase, id: String) {
-        db.update("DELETE FROM sessions WHERE id = ?", listOf(id))
+        db.update("DELETE FROM sessions WHERE id = ? AND ${ownerClause(db)}", listOf(id) + ownerArguments(db))
     }
 
     /** All sessions in insertion order, fragments ordered by sort_index. */
     fun all(db: SqlDatabase): List<SessionRecord> =
-        db.query("SELECT * FROM sessions ORDER BY rowid").map { SessionsDao.session(it, db) }
+        db.query("SELECT * FROM sessions WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map { SessionsDao.session(it, db) }
 
     /** Sessions of one learning language in insertion order. */
     fun byLanguage(db: SqlDatabase, languageID: String): List<SessionRecord> =
-        db.query("SELECT * FROM sessions WHERE language_id = ? ORDER BY rowid", listOf(languageID))
+        db.query("SELECT * FROM sessions WHERE language_id = ? AND ${ownerClause(db)} ORDER BY rowid", listOf(languageID) + ownerArguments(db))
             .map { SessionsDao.session(it, db) }
 
     internal fun session(row: Row, db: SqlDatabase): SessionRecord {
@@ -219,7 +292,7 @@ object SessionsDao {
     do not nest. */
 object FragmentsDao {
     fun bySession(db: SqlDatabase, sessionID: String): List<Fragment> =
-        db.query("SELECT * FROM fragments WHERE session_id = ? ORDER BY sort_index", listOf(sessionID))
+        db.query("SELECT * FROM fragments WHERE session_id = ? AND ${ownerClause(db)} ORDER BY sort_index", listOf(sessionID) + ownerArguments(db))
             .map(::fragment)
 
     fun replaceBySession(db: SqlDatabase, sessionID: String, fragments: List<Fragment>) {
@@ -227,7 +300,7 @@ object FragmentsDao {
     }
 
     internal fun replaceInTx(db: SqlDatabase, sessionID: String, fragments: List<Fragment>) {
-        db.update("DELETE FROM fragments WHERE session_id = ?", listOf(sessionID))
+        db.update("DELETE FROM fragments WHERE session_id = ? AND ${ownerClause(db)}", listOf(sessionID) + ownerArguments(db))
         fragments.forEachIndexed { index, f -> db.insert("fragments", row(sessionID, index, f)) }
     }
 
@@ -304,19 +377,19 @@ object ExpressionsDao {
     fun upsert(db: SqlDatabase, expression: ExpressionState, adoptLegacy: Boolean = true): Boolean {
         val normKey = RecallEngine.normalizeKey(expression.text)
         val exactExists = if (expression.languageID == null) {
-            db.query("SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id IS NULL",
-                listOf(normKey)).isNotEmpty()
+            db.query("SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id IS NULL AND ${ownerClause(db)}",
+                listOf(normKey) + ownerArguments(db)).isNotEmpty()
         } else {
-            db.query("SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id = ?",
-                listOf(normKey, expression.languageID)).isNotEmpty()
+            db.query("SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id = ? AND ${ownerClause(db)}",
+                listOf(normKey, expression.languageID) + ownerArguments(db)).isNotEmpty()
         }
         if (exactExists) {
             // language_id already matches the key; the row() value for it is
             // rewritten as-is (NULL literal or bound) and lesson_id may clear.
             updateRow(db, "expressions", row(normKey, expression),
-                if (expression.languageID == null) "norm_key = ? AND language_id IS NULL"
-                else "norm_key = ? AND language_id = ?",
-                if (expression.languageID == null) listOf(normKey) else listOf(normKey, expression.languageID))
+                if (expression.languageID == null) "norm_key = ? AND language_id IS NULL AND ${ownerClause(db)}"
+                else "norm_key = ? AND language_id = ? AND ${ownerClause(db)}",
+                (if (expression.languageID == null) listOf<Any?>(normKey) else listOf(normKey, expression.languageID)) + ownerArguments(db))
             return true
         }
         if (expression.languageID != null && adoptLegacy &&
@@ -332,8 +405,8 @@ object ExpressionsDao {
                                 languageID: String): Boolean {
         val legacy = db.query(
             "SELECT rowid AS rid, meaning, lesson_id, bars, attempts, last_seen, due_at " +
-                "FROM expressions WHERE norm_key = ? AND language_id IS NULL ORDER BY rowid",
-            listOf(normKey))
+                "FROM expressions WHERE norm_key = ? AND language_id IS NULL AND ${ownerClause(db)} ORDER BY rowid",
+            listOf(normKey) + ownerArguments(db))
         if (legacy.isEmpty()) return false
         val keptId = legacy.first().long("rid")
         // languageID is the only semantic change (RecallEngine adoption); the
@@ -351,8 +424,8 @@ object ExpressionsDao {
                 legacy.maxOf { it.real("last_seen") }, legacy.maxOf { it.real("due_at") }, keptId))
         if (lessonID == null) db.exec("UPDATE expressions SET lesson_id = NULL WHERE rowid = $keptId")
         else db.update("UPDATE expressions SET lesson_id = ? WHERE rowid = ?", listOf(lessonID, keptId))
-        db.update("DELETE FROM expressions WHERE norm_key = ? AND language_id IS NULL AND rowid != ?",
-            listOf(normKey, keptId))
+        db.update("DELETE FROM expressions WHERE norm_key = ? AND language_id IS NULL AND rowid != ? AND ${ownerClause(db)}",
+            listOf(normKey, keptId) + ownerArguments(db))
         return true
     }
 
@@ -362,27 +435,27 @@ object ExpressionsDao {
         language-or-legacy). Returns the removed row count (JVM only; -1 on
         Android). */
     fun removeVisible(db: SqlDatabase, text: String, languageID: String): Long =
-        db.update("DELETE FROM expressions WHERE norm_key = ? AND (language_id = ? OR language_id IS NULL)",
-            listOf(RecallEngine.normalizeKey(text), languageID))
+        db.update("DELETE FROM expressions WHERE norm_key = ? AND (language_id = ? OR language_id IS NULL) AND ${ownerClause(db)}",
+            listOf(RecallEngine.normalizeKey(text), languageID) + ownerArguments(db))
 
     /** All expressions in insertion order (legacy NULL rows wherever the
         archive listed them). */
     fun all(db: SqlDatabase): List<ExpressionState> =
-        db.query("SELECT * FROM expressions ORDER BY rowid").map(::expression)
+        db.query("SELECT * FROM expressions WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map(::expression)
 
     /** Expressions visible in [languageID]: its own rows plus the legacy
         NULL-language entries RecallEngine keeps reachable everywhere,
         insertion order. */
     fun byLanguage(db: SqlDatabase, languageID: String): List<ExpressionState> =
-        db.query("SELECT * FROM expressions WHERE language_id = ? OR language_id IS NULL ORDER BY rowid",
-            listOf(languageID)).map(::expression)
+        db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) AND ${ownerClause(db)} ORDER BY rowid",
+            listOf(languageID) + ownerArguments(db)).map(::expression)
 
     /** RecallEngine.due over the table: the language's rows plus legacy NULL
         entries, bars < 3, dueAt reached, oldest due first. `ORDER BY due_at,
         rowid` reproduces the engine's stable sort over rowid order. */
     fun due(db: SqlDatabase, languageID: String, now: Double): List<ExpressionState> =
-        db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) " +
-            "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", listOf(languageID, now)).map(::expression)
+        db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) AND ${ownerClause(db)} " +
+            "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", listOf(languageID) + ownerArguments(db) + listOf(now)).map(::expression)
 
     /**
      * Deletes the notebook rows of ONE language — `language_id = ?` EXACT.
@@ -397,15 +470,15 @@ object ExpressionsDao {
      * cannot ride a bind argument).
      */
     fun deleteExpressionsForLanguage(db: SqlDatabase, languageID: String): Long =
-        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id = ?",
-            listOf(languageID)) }
+        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id = ? AND ${ownerClause(tx)}",
+            listOf(languageID) + ownerArguments(tx)) }
 
     /** The legacy bucket's delete — the selectable "No language (legacy)" row
         of the notebook's remove-languages dialog. Same contract as
         [deleteExpressionsForLanguage]: one transaction, affected count
         (JVM only; -1 on Android). */
     fun deleteExpressionsLegacy(db: SqlDatabase): Long =
-        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id IS NULL") }
+        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id IS NULL AND ${ownerClause(tx)}", ownerArguments(tx)) }
 
     /**
      * Per-language notebook size for the remove-languages dialog: one
@@ -421,13 +494,13 @@ object ExpressionsDao {
         db.query(
             "SELECT language_id, COUNT(*) AS n, " +
                 "SUM(LENGTH(CAST(text AS BLOB)) + LENGTH(CAST(meaning AS BLOB))) AS bytes " +
-                "FROM expressions GROUP BY language_id " +
-                "ORDER BY n DESC, language_id IS NULL, language_id")
+                "FROM expressions WHERE ${ownerClause(db)} GROUP BY language_id " +
+                "ORDER BY n DESC, language_id IS NULL, language_id", ownerArguments(db))
             .map { row ->
                 ExpressionLanguageStats(row.textOrNull("language_id"), row.int("n"), row.long("bytes"))
             }
 
-    private fun count(db: SqlDatabase): Long = db.query("SELECT COUNT(*) AS n FROM expressions").single().long("n")
+    private fun count(db: SqlDatabase): Long = db.query("SELECT COUNT(*) AS n FROM expressions WHERE ${ownerClause(db)}", ownerArguments(db)).single().long("n")
 
     private fun expression(row: Row): ExpressionState = ExpressionState(
         text = row.text("text"),
@@ -459,20 +532,30 @@ object ExpressionsDao {
     only — LessonState.bars and dueAt are intentionally not stored yet and
     read back as zero (shared/db/schema.sql, lesson_state). */
 object LessonStateDao {
-    fun upsert(db: SqlDatabase, state: LessonState) {
-        val exists = db.query("SELECT 1 AS matched FROM lesson_state WHERE lesson_id = ?",
-            listOf(state.lessonID)).isNotEmpty()
+    fun upsert(db: SqlDatabase, state: LessonState, evidence: TimestampEvidence? = null) {
+        val prior = db.query("SELECT last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+            "FROM lesson_state WHERE lesson_id = ? AND ${ownerClause(db)}",
+            listOf(state.lessonID) + ownerArguments(db)).firstOrNull()
+        val retainedEvidence = prior?.let { row ->
+            if (row.real("last_seen") == state.lastSeen) TimestampEvidenceFields(
+                row.textOrNull("last_seen_source"), row.intOrNull("last_seen_source_version")?.toLong(),
+                row.textOrNull("last_seen_unit")) else null
+        }
+        val fields = evidence?.let(TimestampEvidenceFields::from) ?: retainedEvidence ?: TimestampEvidenceFields(null, null, null)
         val row = mapOf<String, Any?>(
             "lesson_id" to state.lessonID,
             "attempts" to state.attempts,
             "last_seen" to state.lastSeen,
+            "last_seen_source" to fields.source,
+            "last_seen_source_version" to fields.sourceVersion,
+            "last_seen_unit" to fields.unit,
         )
-        if (exists) updateRow(db, "lesson_state", row, "lesson_id = ?", listOf(state.lessonID))
+        if (prior != null) updateRow(db, "lesson_state", row, "lesson_id = ? AND ${ownerClause(db)}", listOf(state.lessonID) + ownerArguments(db))
         else db.insert("lesson_state", row)
     }
 
     fun all(db: SqlDatabase): List<LessonState> =
-        db.query("SELECT * FROM lesson_state ORDER BY rowid").map { row ->
+        db.query("SELECT * FROM lesson_state WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map { row ->
             LessonState(
                 lessonID = row.text("lesson_id"),
                 bars = 0,
@@ -481,6 +564,24 @@ object LessonStateDao {
                 dueAt = 0.0,
             )
         }
+
+    fun syncEligible(db: SqlDatabase, nowUnixMilliseconds: Long): List<LessonState> =
+        all(db).filter { ProgressTime.toUnixMilliseconds(it.lastSeen, nowUnixMilliseconds.toDouble()) != null }
+}
+
+data class TimestampEvidence(val source: String, val sourceVersion: Int, val unit: String) {
+    init {
+        require(source.isNotBlank() && source.length <= 80)
+        require(sourceVersion > 0)
+        require(unit in setOf("apple_reference_seconds", "unix_seconds", "unix_milliseconds"))
+    }
+}
+
+private data class TimestampEvidenceFields(val source: String?, val sourceVersion: Long?, val unit: String?) {
+    companion object {
+        fun from(evidence: TimestampEvidence) = TimestampEvidenceFields(evidence.source,
+            evidence.sourceVersion.toLong(), evidence.unit)
+    }
 }
 
 /**
@@ -499,17 +600,20 @@ object LessonStateDao {
  * different `at` is always its own row. Returns true when the mark landed.
  */
 object CompletionsDao {
-    fun add(db: SqlDatabase, mark: CompletionMark): Boolean =
+    fun add(db: SqlDatabase, mark: CompletionMark, evidence: TimestampEvidence? = null): Boolean =
         db.insert("completions", mapOf(
             "kind" to mark.kind,
             "item_id" to mark.itemID,
             "at" to mark.at,
             "best_score" to mark.bestScore,
             "language_id" to mark.languageID,
+            "at_source" to evidence?.source,
+            "at_source_version" to evidence?.sourceVersion,
+            "at_unit" to evidence?.unit,
         ), ConflictStrategy.IGNORE) != -1L
 
     fun all(db: SqlDatabase): List<CompletionMark> =
-        db.query("SELECT * FROM completions ORDER BY rowid").map { row ->
+        db.query("SELECT * FROM completions WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map { row ->
             CompletionMark(
                 kind = row.text("kind"),
                 itemID = row.text("item_id"),
@@ -519,15 +623,32 @@ object CompletionsDao {
             )
         }
 
+    fun syncEligible(db: SqlDatabase, nowUnixMilliseconds: Long): List<CompletionMark> =
+        all(db).filter { ProgressTime.toUnixMilliseconds(it.at, nowUnixMilliseconds.toDouble()) != null }
+
     /** Rewrites the table to exactly [marks], in list order (callers inside a
         transaction use this directly — transactions do not nest). The runtime
         ledger re-sorts by `at` descending and truncates on every append
         (recordCompletion), so an insert-only write would drift from the
         archive's order and cap; the archive's ledger IS the table's content,
         and rowid order must equal list order for export to rebuild it. */
-    fun replaceAllInTx(db: SqlDatabase, marks: List<CompletionMark>) {
-        db.exec("DELETE FROM completions")
-        marks.forEach { add(db, it) }
+    fun replaceAllInTx(db: SqlDatabase, marks: List<CompletionMark>, evidence: TimestampEvidence? = null) {
+        val existingEvidence = db.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit FROM completions WHERE ${ownerClause(db)}", ownerArguments(db))
+            .associate { row ->
+                Triple(row.text("kind"), row.text("item_id"), row.real("at")) to TimestampEvidenceFields(
+                    row.textOrNull("at_source"), row.intOrNull("at_source_version")?.toLong(), row.textOrNull("at_unit"))
+            }
+        db.update("DELETE FROM completions WHERE ${ownerClause(db)}", ownerArguments(db))
+        marks.forEach { mark ->
+            val key = Triple(mark.kind, mark.itemID, mark.at)
+            val fields = existingEvidence[key] ?: evidence?.let(TimestampEvidenceFields::from)
+            db.insert("completions", mapOf(
+                "kind" to mark.kind, "item_id" to mark.itemID, "at" to mark.at,
+                "best_score" to mark.bestScore, "language_id" to mark.languageID,
+                "at_source" to fields?.source, "at_source_version" to fields?.sourceVersion,
+                "at_unit" to fields?.unit,
+            ), ConflictStrategy.IGNORE)
+        }
     }
 }
 
@@ -538,22 +659,24 @@ object CompletionsDao {
     REPLACE), so rows keep their insertion-order rowid. */
 object SkillErrorsDao {
     fun upsert(db: SqlDatabase, error: SkillError) {
-        val exists = db.query("SELECT 1 AS matched FROM skill_errors WHERE skill_id = ?",
-            listOf(error.skillID)).isNotEmpty()
+        val where = "skill_id = ? AND ${ownerClause(db)}"
+        val args = listOf<Any?>(error.skillID) + ownerArguments(db)
+        val exists = db.query("SELECT 1 AS matched FROM skill_errors WHERE $where", args).isNotEmpty()
         val row = mapOf<String, Any?>(
             "skill_id" to error.skillID,
             "count" to error.count,
             "last_at" to error.lastAt,
             "last_prompt" to error.lastPrompt,
         )
-        if (exists) updateRow(db, "skill_errors", row, "skill_id = ?", listOf(error.skillID))
+        if (exists) updateRow(db, "skill_errors", row, where, args)
         else db.insert("skill_errors", row)
-        db.exec("DELETE FROM skill_errors WHERE skill_id NOT IN " +
-            "(SELECT skill_id FROM skill_errors ORDER BY count DESC, rowid LIMIT ${ArchiveCodec.MAXIMUM_ERRORS})")
+        db.update("DELETE FROM skill_errors WHERE ${ownerClause(db)} AND skill_id NOT IN " +
+            "(SELECT skill_id FROM skill_errors WHERE ${ownerClause(db)} ORDER BY count DESC, rowid LIMIT ${ArchiveCodec.MAXIMUM_ERRORS})",
+            ownerArguments(db) + ownerArguments(db))
     }
 
     fun all(db: SqlDatabase): List<SkillError> =
-        db.query("SELECT * FROM skill_errors ORDER BY rowid").map { row ->
+        db.query("SELECT * FROM skill_errors WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map { row ->
             SkillError(row.text("skill_id"), row.int("count"), row.real("last_at"), row.text("last_prompt"))
         }
 
@@ -563,8 +686,176 @@ object SkillErrorsDao {
         (recordExerciseMistake), so the archive's list IS the table's content
         and rowid order must equal list order for export to rebuild it. */
     fun replaceAllInTx(db: SqlDatabase, errors: List<SkillError>) {
-        db.exec("DELETE FROM skill_errors")
+        db.update("DELETE FROM skill_errors WHERE ${ownerClause(db)}", ownerArguments(db))
         errors.forEach { upsert(db, it) }
+    }
+}
+
+data class RemoteProgressRollup(
+    val ownerAccountID: String,
+    val languageID: String?,
+    val kind: String,
+    val itemID: String,
+    val firstAtMilliseconds: Long,
+    val lastAtMilliseconds: Long,
+    val attempts: Int,
+    val bestScore: Int,
+    val sourceVersion: Int,
+)
+
+object RemoteProgressRollupsDao {
+    fun all(db: SqlDatabase, ownerAccountID: String): List<RemoteProgressRollup> =
+        db.query("SELECT * FROM remote_progress_rollups WHERE owner_account_id = ? " +
+            "ORDER BY language_key, kind, item_id", listOf(ownerAccountID)).map(::decode)
+
+    fun forLanguage(db: SqlDatabase, ownerAccountID: String, languageID: String): List<RemoteProgressRollup> =
+        db.query("SELECT * FROM remote_progress_rollups WHERE owner_account_id = ? AND language_id = ? " +
+            "ORDER BY kind, item_id", listOf(ownerAccountID, languageID)).map(::decode)
+
+    fun merge(db: SqlDatabase, incoming: RemoteProgressRollup) {
+        require(incoming.ownerAccountID.isNotEmpty() && incoming.kind.isNotEmpty() && incoming.itemID.isNotEmpty())
+        require(incoming.languageID == null || incoming.languageID.isNotEmpty())
+        require(incoming.firstAtMilliseconds >= 0 && incoming.lastAtMilliseconds >= incoming.firstAtMilliseconds)
+        require(incoming.attempts >= 0 && incoming.bestScore >= 0 && incoming.sourceVersion > 0)
+        val existing = db.query(
+            "SELECT * FROM remote_progress_rollups WHERE owner_account_id = ? AND language_key = ? AND kind = ? AND item_id = ?",
+            listOf(incoming.ownerAccountID, incoming.languageID ?: "", incoming.kind, incoming.itemID),
+        ).firstOrNull()?.let(::decode)
+        val result = if (existing == null) incoming else incoming.copy(
+            firstAtMilliseconds = minOf(existing.firstAtMilliseconds, incoming.firstAtMilliseconds),
+            lastAtMilliseconds = maxOf(existing.lastAtMilliseconds, incoming.lastAtMilliseconds),
+            attempts = maxOf(existing.attempts, incoming.attempts),
+            bestScore = maxOf(existing.bestScore, incoming.bestScore),
+            sourceVersion = maxOf(existing.sourceVersion, incoming.sourceVersion),
+        )
+        val values = mapOf<String, Any?>(
+            "owner_account_id" to result.ownerAccountID,
+            "language_id" to result.languageID,
+            "language_key" to (result.languageID ?: ""),
+            "kind" to result.kind,
+            "item_id" to result.itemID,
+            "first_at_ms" to result.firstAtMilliseconds,
+            "last_at_ms" to result.lastAtMilliseconds,
+            "attempts" to result.attempts,
+            "best_score" to result.bestScore,
+            "source_version" to result.sourceVersion,
+        )
+        if (existing == null) db.insert("remote_progress_rollups", values)
+        else updateRow(db, "remote_progress_rollups", values, "owner_account_id = ? AND language_key = ? AND kind = ? AND item_id = ?",
+            listOf(result.ownerAccountID, result.languageID ?: "", result.kind, result.itemID))
+    }
+
+    private fun decode(row: Row) = RemoteProgressRollup(
+        row.text("owner_account_id"), row.textOrNull("language_id"), row.text("kind"), row.text("item_id"),
+        row.long("first_at_ms"), row.long("last_at_ms"), row.int("attempts"), row.int("best_score"),
+        row.int("source_version"),
+    )
+}
+
+data class ProgressSyncState(
+    val ownerAccountID: String,
+    val direction: String,
+    val cursor: String?,
+    val passGeneration: Long,
+    val updatedAtMilliseconds: Long,
+)
+
+object ProgressSyncStateDao {
+    fun get(db: SqlDatabase, ownerAccountID: String, direction: String): ProgressSyncState? =
+        db.query("SELECT * FROM progress_sync_state WHERE owner_account_id = ? AND direction = ?",
+            listOf(ownerAccountID, direction)).firstOrNull()?.let { row ->
+            ProgressSyncState(row.text("owner_account_id"), row.text("direction"), row.textOrNull("cursor"),
+                row.long("pass_generation"), row.long("updated_at_ms"))
+        }
+
+    fun put(db: SqlDatabase, state: ProgressSyncState) {
+        require(state.ownerAccountID.isNotEmpty() && state.direction in setOf("download", "upload"))
+        require(state.passGeneration >= 0 && state.updatedAtMilliseconds >= 0)
+        val values = mapOf<String, Any?>("owner_account_id" to state.ownerAccountID,
+            "direction" to state.direction, "cursor" to state.cursor,
+            "pass_generation" to state.passGeneration, "updated_at_ms" to state.updatedAtMilliseconds)
+        if (get(db, state.ownerAccountID, state.direction) == null) db.insert("progress_sync_state", values)
+        else updateRow(db, "progress_sync_state", values, "owner_account_id = ? AND direction = ?",
+            listOf(state.ownerAccountID, state.direction))
+    }
+}
+
+data class ProgressRecoveryRecord(
+    val ownerAccountID: String?,
+    val sourceTable: String,
+    val sourceKey: String,
+    val sourceVersion: Int,
+    val state: String,
+    val reason: String?,
+    val updatedAtMilliseconds: Long,
+)
+
+object ProgressRecoveryDao {
+    private val supportedEvidence = mapOf(
+        "android.recordCompletion" to 2,
+        "android.recordLessonAttempt" to 2,
+    )
+
+    /** Classifies timestamps before readers materialize progress; unknown encodings are never repaired. */
+    fun recover(db: SqlDatabase, nowUnixMilliseconds: Long) {
+        db.transaction { tx ->
+            tx.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit FROM completions " +
+                "WHERE ${ownerClause(tx)} ORDER BY rowid", ownerArguments(tx))
+                .forEach { row ->
+                    val at = row.real("at")
+                    classify(tx, "completions", completionKey(row.text("kind"), row.text("item_id"), at), at,
+                        row.textOrNull("at_source"), row.intOrNull("at_source_version"), row.textOrNull("at_unit"),
+                        "apple_reference_seconds", nowUnixMilliseconds, supportedEvidence.keys)
+                }
+            tx.query("SELECT lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+                "FROM lesson_state WHERE ${ownerClause(tx)} ORDER BY rowid", ownerArguments(tx)).forEach { row ->
+                classify(tx, "lesson_state", row.text("lesson_id"), row.real("last_seen"),
+                    row.textOrNull("last_seen_source"), row.intOrNull("last_seen_source_version"),
+                    row.textOrNull("last_seen_unit"), "apple_reference_seconds", nowUnixMilliseconds,
+                    setOf("android.recordLessonAttempt"))
+            }
+        }
+    }
+
+    private fun classify(db: SqlDatabase, table: String, key: String, value: Double,
+                         source: String?, version: Int?, unit: String?, expectedUnit: String,
+                         nowUnixMilliseconds: Long, supportedSources: Set<String>) {
+        val valid = ProgressTime.toUnixMilliseconds(value, nowUnixMilliseconds.toDouble()) != null
+        val noEvidence = source == null && version == null && unit == null
+        if (noEvidence && valid) return
+        val recognized = source != null && version != null && unit == expectedUnit &&
+            supportedEvidence[source] == version && source in supportedSources
+        val state = if (!valid) "excluded" else if (recognized) "validated" else "unresolved"
+        val reason = when {
+            !valid && noEvidence -> "invalid timestamp; provenance unavailable"
+            !valid -> "invalid timestamp; persisted evidence does not authorize repair"
+            !recognized -> "persisted writer/version/unit tuple is unsupported"
+            else -> null
+        }
+        record(db, ProgressRecoveryRecord(null, table, key, version ?: 0, state, reason, nowUnixMilliseconds))
+    }
+
+    private fun completionKey(kind: String, itemID: String, at: Double): String =
+        "${kind.length}:$kind${itemID.length}:$itemID:${at.toBits()}"
+
+    fun record(db: SqlDatabase, record: ProgressRecoveryRecord) {
+        require(record.sourceTable.isNotEmpty() && record.sourceKey.isNotEmpty() && record.sourceVersion >= 0)
+        require(record.state in setOf("pending", "repaired", "excluded", "unresolved", "validated"))
+        require(record.reason == null || record.reason.length <= 160)
+        require(record.updatedAtMilliseconds >= 0)
+        val ownerKey = activeOwnerKey(db) ?: ""
+        val ownerAccountID = ownerKey.takeIf { it.startsWith("member:") }?.removePrefix("member:")
+        val where = "owner_key = ? AND source_table = ? AND source_key = ? AND source_version = ?"
+        val whereArgs = listOf<Any?>(ownerKey, record.sourceTable, record.sourceKey, record.sourceVersion)
+        val values = mapOf<String, Any?>("owner_account_id" to ownerAccountID, "owner_key" to ownerKey,
+            "source_table" to record.sourceTable, "source_key" to record.sourceKey,
+            "source_version" to record.sourceVersion, "state" to record.state, "reason" to record.reason,
+            "updated_at_ms" to record.updatedAtMilliseconds)
+        val existing = db.query("SELECT state, reason FROM progress_recovery WHERE $where", whereArgs).firstOrNull()
+        if (existing == null) db.insert("progress_recovery", values)
+        else if (existing.text("state") != record.state || existing.textOrNull("reason") != record.reason) {
+            updateRow(db, "progress_recovery", values, where, whereArgs)
+        }
     }
 }
 
@@ -607,7 +898,7 @@ object UsageOutboxDao {
     fun pending(db: SqlDatabase): List<QueuedUsageEvent> {
         val install = installID(db)
         return db.query("SELECT rowid AS row_id, name, at, props_json FROM usage_outbox " +
-            "WHERE dispatched = 0 ORDER BY at, row_id").map { row ->
+            "WHERE dispatched = 0 AND ${ownerClause(db)} ORDER BY at, row_id", ownerArguments(db)).map { row ->
             val rowId = row.long("row_id")
             QueuedUsageEvent(
                 rowId = rowId,
@@ -624,7 +915,8 @@ object UsageOutboxDao {
     fun markDispatched(db: SqlDatabase, rowIds: Collection<Long>) {
         if (rowIds.isEmpty()) return
         val placeholders = rowIds.joinToString(", ") { "?" }
-        db.update("UPDATE usage_outbox SET dispatched = 1 WHERE rowid IN ($placeholders)", rowIds.toList())
+        db.update("UPDATE usage_outbox SET dispatched = 1 WHERE rowid IN ($placeholders) AND ${ownerClause(db)}",
+            rowIds.toList() + ownerArguments(db))
     }
 }
 
@@ -635,30 +927,31 @@ data class AssessmentTicketRow(val sessionID: String, val attempts: Int, val las
 
 object AssessmentTicketsDao {
     fun upsert(db: SqlDatabase, ticket: AssessmentTicketRow) {
-        val exists = db.query("SELECT 1 AS matched FROM assessment_tickets WHERE session_id = ?",
-            listOf(ticket.sessionID)).isNotEmpty()
+        val where = "session_id = ? AND ${ownerClause(db)}"
+        val args = listOf<Any?>(ticket.sessionID) + ownerArguments(db)
+        val exists = db.query("SELECT 1 AS matched FROM assessment_tickets WHERE $where", args).isNotEmpty()
         val row = mapOf<String, Any?>(
             "session_id" to ticket.sessionID,
             "attempts" to ticket.attempts,
             "last_attempt_at" to ticket.lastAttemptAt,
         )
-        if (exists) updateRow(db, "assessment_tickets", row, "session_id = ?", listOf(ticket.sessionID))
+        if (exists) updateRow(db, "assessment_tickets", row, where, args)
         else db.insert("assessment_tickets", row)
     }
 
     fun all(db: SqlDatabase): List<AssessmentTicketRow> =
-        db.query("SELECT * FROM assessment_tickets ORDER BY rowid").map { row ->
+        db.query("SELECT * FROM assessment_tickets WHERE ${ownerClause(db)} ORDER BY rowid", ownerArguments(db)).map { row ->
             AssessmentTicketRow(row.text("session_id"), row.int("attempts"), row.realOrNull("last_attempt_at"))
         }
 
     /** Removes one session's ticket — the mirror of FinalAssessmentRecovery
         enqueue's removal branch and of the ledger filters in deleteSession. */
     fun delete(db: SqlDatabase, sessionID: String) {
-        db.update("DELETE FROM assessment_tickets WHERE session_id = ?", listOf(sessionID))
+        db.update("DELETE FROM assessment_tickets WHERE session_id = ? AND ${ownerClause(db)}", listOf(sessionID) + ownerArguments(db))
     }
 
     fun clear(db: SqlDatabase) {
-        db.exec("DELETE FROM assessment_tickets")
+        db.update("DELETE FROM assessment_tickets WHERE ${ownerClause(db)}", ownerArguments(db))
     }
 }
 
@@ -682,14 +975,18 @@ object MetaDao {
         skills behind (export = the archive, not a union). Callers inside a
         transaction (ArchiveMapper.import) make that atomic. */
     fun replaceMastery(db: SqlDatabase, mastery: Map<String, Int>) {
-        db.exec("DELETE FROM meta WHERE key LIKE '$MASTERY_PREFIX%'")
-        mastery.forEach { (skill, level) -> put(db, "$MASTERY_PREFIX$skill", level.toString()) }
+        val scopedPrefix = activeOwnerKey(db)?.let { "$MASTERY_PREFIX$it:" } ?: MASTERY_PREFIX
+        db.update("DELETE FROM meta WHERE key LIKE ?", listOf("$scopedPrefix%"))
+        mastery.forEach { (skill, level) -> put(db, "$scopedPrefix$skill", level.toString()) }
     }
 
     /** Every mastery row, keyed like Archive.masteryCache. */
     fun mastery(db: SqlDatabase): Map<String, Int> =
-        db.query("SELECT key, value FROM meta WHERE key LIKE '$MASTERY_PREFIX%' ORDER BY key")
-            .associate { it.text("key").removePrefix(MASTERY_PREFIX) to it.text("value").toInt() }
+        run {
+            val scopedPrefix = activeOwnerKey(db)?.let { "$MASTERY_PREFIX$it:" } ?: MASTERY_PREFIX
+            db.query("SELECT key, value FROM meta WHERE key LIKE ? ORDER BY key", listOf("$scopedPrefix%"))
+                .associate { it.text("key").removePrefix(scopedPrefix) to it.text("value").toInt() }
+        }
 
     /** Writes the schema-flags row once; v1 has no flags. */
     fun ensureSchemaFlags(db: SqlDatabase) {
@@ -735,9 +1032,10 @@ object SearchDao {
                 "FROM fragments_fts " +
                 "JOIN fragments ON fragments.rowid = fragments_fts.rowid " +
                 "JOIN sessions s ON s.id = fragments.session_id " +
-                "WHERE fragments_fts MATCH ? AND s.language_id = ? " +
+                "WHERE fragments_fts MATCH ? AND s.language_id = ? AND fragments.owner_key = s.owner_key " +
+                "AND ${ownerClause(db, "s")}" +
                 "ORDER BY s.started_at DESC, fragments.rowid",
-            listOf(SNIPPET_START, SNIPPET_END, SNIPPET_ELLIPSIS, match, languageID),
+            listOf(SNIPPET_START, SNIPPET_END, SNIPPET_ELLIPSIS, match, languageID) + ownerArguments(db),
         )) {
             // one hit per session: the first (newest conversation, earliest
             // fragment) match decides the snippet

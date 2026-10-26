@@ -66,7 +66,10 @@ public enum LearningDbWriter {
     /// recordCompletion() and the completions side of lesson attempts: the
     /// archive's whole (re-sorted, truncated) ledger, in list order.
     public static func completions(_ db: SqlDatabase, _ marks: [CompletionMark]) throws {
-        try db.transaction { tx in try CompletionsDao.replaceAllInTx(tx, marks) }
+        try db.transaction { tx in
+            try CompletionsDao.replaceAllInTx(tx, marks,
+                evidence: TimestampEvidence("ios.recordCompletion", 2, "apple_reference_seconds"))
+        }
     }
 
     /// recordExerciseMistake(): the archive's whole (re-sorted, truncated)
@@ -83,8 +86,9 @@ public enum LearningDbWriter {
     public static func lessonAttempt(_ db: SqlDatabase, lesson: LessonState, marks: [CompletionMark],
                                      seeds: [ExpressionState]) throws {
         try db.transaction { tx in
-            try LessonStateDao.upsert(tx, lesson)
-            try CompletionsDao.replaceAllInTx(tx, marks)
+            let evidence = TimestampEvidence("ios.recordLessonAttempt", 3, "apple_reference_seconds")
+            try LessonStateDao.upsert(tx, lesson, evidence: evidence)
+            try CompletionsDao.replaceAllInTx(tx, marks, evidence: evidence)
             for expression in seeds {
                 _ = try ExpressionsDao.upsert(tx, expression)
             }
@@ -132,10 +136,8 @@ public enum LearningDbWriter {
     /// site touches, faithful to the previous full-archive write.
     public static func learningDataDeleted(_ db: SqlDatabase, _ preferences: Preferences) throws {
         try db.transaction { tx in
-            try tx.exec("DELETE FROM exam_attempts")
-            try tx.exec("DELETE FROM exam_snapshot_ids")
-            try tx.exec("DELETE FROM exam_snapshots")
-            try tx.exec("DELETE FROM sessions")
+            _ = try tx.update("DELETE FROM exam_attempts WHERE \(ownerClause(tx))", args: ownerArguments(tx))
+            _ = try tx.update("DELETE FROM sessions WHERE \(ownerClause(tx))", args: ownerArguments(tx))
             try AssessmentTicketsDao.clear(tx)
             try PreferencesDao.put(tx, preferences)
         }
@@ -154,6 +156,42 @@ public enum LearningDbWriter {
                 _ = try CompletionsDao.add(tx, mark)
             }
         }
+    }
+
+    /// Applies one validated remote page and its resume cursor atomically.
+    public static func remoteProgressPageApplied(_ db: SqlDatabase, ownerAccountID: String,
+                                                 rollups: [RemoteProgressRollup], nextCursor: String?,
+                                                 passGeneration: Int64, updatedAtMilliseconds: Int64) throws {
+        guard rollups.allSatisfy({ $0.ownerAccountID == ownerAccountID }) else {
+            throw SqlDatabaseError.unsupportedValue("remote progress page owner mismatch")
+        }
+        try db.transaction { tx in
+            for rollup in rollups { try RemoteProgressRollupsDao.merge(tx, rollup) }
+            try ProgressSyncStateDao.put(tx, ProgressSyncState(ownerAccountID: ownerAccountID,
+                direction: "download", cursor: nextCursor, passGeneration: passGeneration,
+                updatedAtMilliseconds: updatedAtMilliseconds))
+        }
+    }
+
+    /// Upload acknowledgements advance only upload resume state, never rollup data.
+    public static func remoteProgressUploadAcknowledged(_ db: SqlDatabase, ownerAccountID: String,
+                                                        nextCursor: String?, passGeneration: Int64,
+                                                        updatedAtMilliseconds: Int64) throws {
+        try db.transaction { tx in
+            try ProgressSyncStateDao.put(tx, ProgressSyncState(ownerAccountID: ownerAccountID,
+                direction: "upload", cursor: nextCursor, passGeneration: passGeneration,
+                updatedAtMilliseconds: updatedAtMilliseconds))
+        }
+    }
+
+    /// Recovery bookkeeping is versioned and written without rewriting legacy source rows.
+    public static func progressRecoveryRecorded(_ db: SqlDatabase, _ record: ProgressRecoveryRecord) throws {
+        try db.transaction { tx in try ProgressRecoveryDao.record(tx, record) }
+    }
+
+    /// Runs timestamp classification transactionally before callers materialize sync state.
+    public static func progressRecoveryRun(_ db: SqlDatabase, nowUnixMilliseconds: Int64) throws {
+        try ProgressRecoveryDao.recover(db, nowUnixMilliseconds: nowUnixMilliseconds)
     }
 
     /// importData() (DB restore path): the ArchiveMerger.apply mirror, kept
@@ -205,27 +243,27 @@ public enum LearningDbWriter {
     /// `ArchiveMapper.import`), so the rewrite routes nil and the mastery
     /// rows end up empty exactly as a Kotlin rewrite of a cache-less archive.
     private static func rewriteInTx(_ db: SqlDatabase, _ archive: Archive) throws {
-        try db.exec("DELETE FROM sessions") // fragments follow by ON DELETE CASCADE
+        _ = try db.update("DELETE FROM sessions WHERE \(ownerClause(db))", args: ownerArguments(db)) // fragments follow by ON DELETE CASCADE
         for session in archive.sessions {
             try SessionsDao.upsert(db, session)
             try FragmentsDao.replaceInTx(db, session.id.uuidString, session.fragments)
         }
-        try db.exec("DELETE FROM expressions")
+        _ = try db.update("DELETE FROM expressions WHERE \(ownerClause(db))", args: ownerArguments(db))
         for expression in archive.expressions ?? [] {
             _ = try ExpressionsDao.upsert(db, expression, adoptLegacy: false)
         }
-        try db.exec("DELETE FROM lesson_state")
+        _ = try db.update("DELETE FROM lesson_state WHERE \(ownerClause(db))", args: ownerArguments(db))
         for lesson in archive.lessons ?? [] {
             try LessonStateDao.upsert(db, lesson)
         }
         // add (insert-or-ignore) keeps the FIRST mark of a same-instant
         // cross-language pair — the schema-pinned narrowing documented on
         // CompletionsDao.
-        try db.exec("DELETE FROM completions")
+        _ = try db.update("DELETE FROM completions WHERE \(ownerClause(db))", args: ownerArguments(db))
         for mark in archive.completions ?? [] {
             _ = try CompletionsDao.add(db, mark)
         }
-        try db.exec("DELETE FROM skill_errors")
+        _ = try db.update("DELETE FROM skill_errors WHERE \(ownerClause(db))", args: ownerArguments(db))
         for error in archive.errors ?? [] {
             try SkillErrorsDao.upsert(db, error)
         }

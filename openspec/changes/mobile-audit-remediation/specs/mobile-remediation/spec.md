@@ -8,13 +8,13 @@ Normative S1–S16 acceptance criteria for M01–M16 in `informe-revision-app-mo
 
 ### Requirement: S1 — Owner-scoped exam history (M01)
 
-History queries MUST use the requesting owner, including guest-only NULL ownership. Identity changes MUST immediately clear prior visible summaries and reject late results. Existing foreign-owner detail protections MUST remain intact.
+History queries MUST use the requesting active identity, including a stable guest identity; NULL ownership is legacy-only and MUST NOT act as a wildcard or active guest. Identity changes MUST immediately clear prior visible summaries and reject late results. Existing foreign-owner detail protections MUST remain intact.
 
 #### Scenario: Account isolation
 
-- **GIVEN** stored attempts owned by A, B and a NULL guest for the same language/level
+- **GIVEN** stored attempts owned by A, B and guest identity G for the same language/level
 - **WHEN** each identity requests history
-- **THEN** only its rows are returned and guest rows are not reassigned.
+- **THEN** only its rows are returned and guest G's rows are not exposed to A or B.
 
 #### Scenario: Late history response
 
@@ -24,7 +24,7 @@ History queries MUST use the requesting owner, including guest-only NULL ownersh
 
 ### Requirement: S2 — Time-safe progress and recoverable legacy data (M02)
 
-Wire timestamps MUST be safe-integer Unix milliseconds; both native progress domains MUST use Apple-reference seconds, converting exactly once with offset 978307200 seconds and explicit millisecond rounding. V2 MUST preserve distinct firstAt and lastAt. Recovery MUST require persisted source/version evidence, retain unresolved records unchanged, exclude only invalid records from sync and remain transactionally idempotent. A plausible magnitude alone MUST NOT authorize repair.
+Wire timestamps MUST be safe-integer Unix milliseconds; both native progress domains MUST use Apple-reference seconds, converting exactly once with offset 978307200 seconds and explicit millisecond rounding. V2 MUST preserve distinct firstAt and lastAt. Recovery MUST require persisted per-record source/version evidence identifying the writer and unit for the exact timestamp field. Pre-v6 completion rows without such evidence MUST remain unchanged and MUST NOT be repaired from timestamp magnitude, field, kind, or database version. New writes that may participate in recovery MUST persist explicit source/version and unit evidence. Missing or conflicting evidence MUST leave the record unchanged; exclude it from sync only if its timestamp is invalid in the supported internal domain. Recovery MUST be transactional and idempotent.
 
 #### Scenario: Distinct instants survive persistence
 
@@ -32,11 +32,11 @@ Wire timestamps MUST be safe-integer Unix milliseconds; both native progress dom
 - **WHEN** each client decodes, persists, reopens and uploads to a fresh v2 ledger
 - **THEN** both instants remain unchanged to millisecond precision and the local completion uses Apple-reference seconds.
 
-#### Scenario: Ambiguous legacy record
+#### Scenario: Evidence-backed recovery preserves ambiguous legacy data
 
-- **GIVEN** one valid record, one provably contaminated record and one ambiguous record
+- **GIVEN** one valid record, one contaminated record with persisted source/version and unit evidence, and one pre-v6 completion record without provenance
 - **WHEN** recovery runs twice or fails before commit
-- **THEN** only the provable value is repaired; ambiguous source data is preserved, valid sync continues, and replay/rollback produces no extra changes.
+- **THEN** only the evidence-backed value is repaired; the pre-v6 record remains byte-for-byte unchanged, valid sync continues, and replay/rollback produces no extra changes.
 
 ### Requirement: S3 — Account and generation fencing (M03)
 
@@ -261,3 +261,33 @@ Secure persistence and in-memory adoption MUST complete before one adoption noti
 - **GIVEN** adoption has been notified
 - **WHEN** profile refresh succeeds or credentials are genuinely rejected
 - **THEN** refresh does not duplicate adoption and rejection emits the appropriate invalidation transition.
+
+### Requirement: S17 — Account-owned local learner data (user-approved scope extension)
+
+Every learner-data read and write MUST be scoped to the currently active identity, which is always either a signed-in member or a local guest. Switching identities MUST make the prior identity's learning data unavailable to the new identity. Sign-out MUST transition to a guest identity, not leave an ownerless active state. Existing ownerless development data MUST be assigned once to the identity active when the ownership migration runs; fresh installs and newly created accounts MUST not inherit it. Guest data MUST remain isolated when that guest later signs into or registers a member account: no automatic merge, copy, or visibility is allowed. Only member-owned progress is eligible for backend sync; the backend download remains a one-time bootstrap only when a member account has no local data on that device. Archive export/import, reset/delete, history and all learner-data stores MUST preserve these ownership boundaries; device-global cache/install metadata is not learner-owned data.
+
+The storage identity MUST be a namespaced key: `member:<accountID>` or `guest:<installationUUID>`. Every mutable learner-owned row MUST persist that key, including exam attempts; NULL is allowed only transiently for ownerless rows being backfilled by the one-time migration.
+
+#### Scenario: Account switch isolation
+
+- **GIVEN** accounts A and B have local exercises, sessions, preferences and assessment data
+- **WHEN** the active identity changes from A to B
+- **THEN** B can read and mutate only B-owned data and A's visible state is cleared immediately.
+
+#### Scenario: Existing ownerless development data
+
+- **GIVEN** a pre-migration database contains ownerless learner data and the active identity is A
+- **WHEN** the ownership migration runs
+- **THEN** the existing rows are assigned to A exactly once, while fresh databases and later accounts receive no copied rows.
+
+#### Scenario: Guest-to-member transition
+
+- **GIVEN** guest G has locally generated progress and the user signs into member A
+- **WHEN** the active identity changes
+- **THEN** A sees only A-owned data; G's progress remains isolated under G and is not merged, uploaded as A, or exposed to A.
+
+#### Scenario: Active-owner archive projection and whole-install backup
+
+- **GIVEN** local records exist for A, B and guest G
+- **WHEN** A reads the app-facing archive projection, exports/restores the whole-install database file, or performs progress sync
+- **THEN** the app-facing archive projection contains only A-owned learner data; the whole-install database backup preserves every partition's owner keys; after restore normal reads remain scoped to A; guest progress is local-only and an already-bootstrapped member device does not download backend state again.

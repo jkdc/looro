@@ -15,6 +15,91 @@ class ExamHistorySyncTest {
 
     @After fun closeConnection() { connection.close() }
 
+    @Test fun ownerlessExamHistoryIsBackfilledOnceToTheMigrationIdentity() {
+        val legacyHash = "f".repeat(64)
+        ExamHistoryDao.start(db,
+            ExamSnapshotRecord("exam-legacy-owner", "sha256:$legacyHash", legacyHash, 1, 1, 1,
+                "bundled", "en", "B1", 202640, "{}", 10.0),
+            ExamAttemptRecord("attempt-legacy-owner", "exam-legacy-owner", startedAt = 10.0))
+
+        assertTrue(ExamHistoryDao.assignOwnerlessToIdentityOnce(db, "member:member-a"))
+        assertFalse(ExamHistoryDao.assignOwnerlessToIdentityOnce(db, "member:member-b"))
+
+        assertEquals("member-a", db.query("SELECT owner_account_id FROM exam_attempts WHERE attempt_id = ?",
+            listOf("attempt-legacy-owner")).single().textOrNull("owner_account_id"))
+        assertEquals("member:member-a", db.query("SELECT owner_key FROM exam_attempts WHERE attempt_id = ?",
+            listOf("attempt-legacy-owner")).single().textOrNull("owner_key"))
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-legacy-owner", "member-a"))
+        LearnerOwnershipDao.activate(db, "member:member-a")
+        assertEquals("member-a", ExamHistoryDao.load(db, "attempt-legacy-owner", "member-a")!!
+            .attempt.text("owner_account_id"))
+        LearnerOwnershipDao.activate(db, "member:member-b")
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-legacy-owner", "member-b"))
+        assertEquals("member-a", db.query("SELECT owner_account_id FROM exam_attempts WHERE attempt_id = ?",
+            listOf("attempt-legacy-owner")).single().text("owner_account_id"))
+    }
+
+    @Test fun guestExamHistoryUsesStableGuestOwnerAndCannotBeReadOrSyncedAsMember() {
+        val snapshot = ExamSnapshotRecord("exam-guest", "sha256:${"a".repeat(64)}", "a".repeat(64),
+            1, 1, 1, "bundled", "en", "B1", 202640, "{}", 10.0)
+        LearnerOwnershipDao.activate(db, "guest:installation-1")
+        ExamHistoryDao.start(db, snapshot, ExamAttemptRecord("attempt-guest", "exam-guest", startedAt = 10.0))
+        assertEquals("guest:installation-1", db.query(
+            "SELECT owner_key FROM exam_attempts WHERE attempt_id = ?", listOf("attempt-guest")).single().text("owner_key"))
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-guest", null)?.attempt?.textOrNull("owner_account_id"))
+
+        LearnerOwnershipDao.activate(db, "member:member-1")
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-guest", null))
+        assertTrue(ExamHistoryDao.pendingOutbox(db, "member-1").isEmpty())
+    }
+
+    @Test fun foreignOwnerCannotMutateExamAttemptOrAdvanceItsHistory() {
+        LearnerOwnershipDao.activate(db, "member:owner-a")
+        val hash = "d".repeat(64)
+        ExamHistoryDao.start(db,
+            ExamSnapshotRecord("exam-foreign-write", "sha256:$hash", hash, 1, 1, 1,
+                "bundled", "en", "B1", 202640, "{}", 10.0),
+            ExamAttemptRecord("attempt-foreign-write", "exam-foreign-write", "owner-a", 10.0))
+        val before = db.query("SELECT state, position, revision, updated_at, owner_key FROM exam_attempts " +
+            "WHERE attempt_id = 'attempt-foreign-write'").single()
+
+        LearnerOwnershipDao.activate(db, "member:owner-b")
+        assertThrows(IllegalStateException::class.java) {
+            ExamHistoryDao.saveAnswer(db, "attempt-foreign-write", "q1", "{\"answer\":\"foreign\"}", 9, 20.0)
+        }
+        assertThrows(IllegalStateException::class.java) {
+            ExamHistoryDao.complete(db, "attempt-foreign-write", "{\"score\":100}", 21.0)
+        }
+
+        val after = db.query("SELECT state, position, revision, updated_at, owner_key FROM exam_attempts " +
+            "WHERE attempt_id = 'attempt-foreign-write'").single()
+        assertEquals(before.text("state"), after.text("state"))
+        assertEquals(before.long("position"), after.long("position"))
+        assertEquals(before.long("revision"), after.long("revision"))
+        assertEquals(before.real("updated_at"), after.real("updated_at"), 0.0)
+        assertEquals(before.text("owner_key"), after.text("owner_key"))
+        assertTrue(db.query("SELECT * FROM exam_answers WHERE attempt_id = 'attempt-foreign-write'").isEmpty())
+        assertTrue(db.query("SELECT * FROM exam_results WHERE attempt_id = 'attempt-foreign-write'").isEmpty())
+        assertEquals(listOf("created"), db.query(
+            "SELECT event_type FROM exam_sync_outbox WHERE attempt_id = 'attempt-foreign-write'").map { it.text("event_type") })
+    }
+
+    @Test fun latestAnswerRevisionIsSelectedOnlyInsideItsOwnerPartition() {
+        LearnerOwnershipDao.activate(db, "member:owner-a")
+        val hash = "c".repeat(64)
+        ExamHistoryDao.start(db,
+            ExamSnapshotRecord("exam-owner-revision", "sha256:$hash", hash, 1, 1, 1,
+                "bundled", "en", "B1", 202640, "{}", 10.0),
+            ExamAttemptRecord("attempt-owner-revision", "exam-owner-revision", "owner-a", 10.0))
+        ExamHistoryDao.saveAnswer(db, "attempt-owner-revision", "q1", "{\"answer\":\"owner-a\"}", 1, 11.0)
+        db.insert("exam_answers", mapOf("attempt_id" to "attempt-owner-revision", "question_id" to "q1",
+            "revision" to 99L, "response_json" to "{\"answer\":\"owner-b\"}", "saved_at" to 99.0,
+            "owner_key" to "member:owner-b"))
+
+        val visible = ExamHistoryDao.load(db, "attempt-owner-revision", "owner-a")
+        assertEquals(listOf("{\"answer\":\"owner-a\"}"), visible!!.answers.map { it.text("response_json") })
+    }
+
     @Test fun forkUsesLatestLocalAnswersPositionAndResultAfterConflictCapture() {
         val owner = "account-fork-latest"
         val attemptID = "attempt-fork-latest"

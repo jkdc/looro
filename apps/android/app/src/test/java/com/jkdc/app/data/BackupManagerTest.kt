@@ -85,6 +85,38 @@ class BackupManagerTest {
         assertEquals("{\"answer\":\"saved\"}", restoredExam.answers.single().text("response_json"))
     }
 
+    @Test fun wholeInstallBackupPreservesEveryOwnerPartitionOnRestore() {
+        val dir = tmp.newFolder()
+        val dbFile = File(dir, "learning.db")
+        val db = fileBacked(dbFile.path)
+        val id = "same-session-id"
+        fun saveSession(identity: String, title: String) {
+            LearnerOwnershipDao.activate(db, identity)
+            SessionsDao.upsert(db, SessionRecord(id = id, languageID = "en", startedAt = 1.0,
+                title = title))
+        }
+        saveSession("member:backup-a", "A session")
+        saveSession("member:backup-b", "B session")
+        saveSession("guest:installation-g", "Guest session")
+        LearnerOwnershipDao.activate(db, "member:backup-a")
+
+        val output = ByteArrayOutputStream()
+        BackupManager.exportTo(db, dbFile, output, opener())
+        val bytes = BackupManager.readValidatedBackup(
+            ByteArrayInputStream(output.toByteArray()), tmp.newFolder(), opener())
+        db.close()
+        assertTrue(dbFile.delete())
+        BackupManager.installDatabase(dbFile, bytes)
+
+        val restored = fileBacked(dbFile.path)
+        LearnerOwnershipDao.activate(restored, "member:backup-a")
+        assertEquals(listOf("guest:installation-g", "member:backup-a", "member:backup-b"),
+            restored.query("SELECT owner_key FROM sessions ORDER BY owner_key").map { it.text("owner_key") })
+        assertEquals(listOf("A session"), ArchiveMapper.export(restored).sessions.map { it.title })
+        LearnerOwnershipDao.activate(restored, "member:backup-b")
+        assertEquals(listOf("B session"), ArchiveMapper.export(restored).sessions.map { it.title })
+    }
+
     @Test fun exportIsDeterministicAndItsCopyPassesTheImportGate() {
         val dir = tmp.newFolder()
         val dbFile = File(dir, "learning.db")
@@ -216,9 +248,9 @@ class BackupManagerTest {
         assertEquals(2L, deletion.lessonStates)
         assertEquals(1L, deletion.tickets)
         assertEquals(1L, deletion.examAttempts)
-        assertEquals(1L, deletion.examSnapshots)
+        assertEquals(0L, deletion.examSnapshots)
         assertEquals(1L, count(db, "exam_attempts"))
-        assertEquals(1L, count(db, "exam_snapshots"))
+        assertEquals(2L, count(db, "exam_snapshots"))
         assertEquals("es-attempt", db.query("SELECT attempt_id FROM exam_attempts").single().text("attempt_id"))
 
         // the survivors, row by row

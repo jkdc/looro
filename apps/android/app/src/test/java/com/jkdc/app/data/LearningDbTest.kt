@@ -3,6 +3,7 @@ package com.jkdc.app.data
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.io.File
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -10,6 +11,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import com.jkdc.app.core.AccountSession
+import com.jkdc.app.core.LocalLearnerIdentity
+import com.jkdc.app.core.ProgressAggregate
+import com.jkdc.app.core.ProgressProjection
 import com.jkdc.app.network.ExamAttemptOutboxSync
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.buildJsonObject
@@ -26,8 +30,318 @@ class LearningDbTest {
 
     @After fun closeConnection() { connection.close() }
 
-    @Test fun schemaOpensAtVersionFiveWithExactlyThePinnedTables() {
-        assertEquals(5L, db.query("PRAGMA user_version").single().values.single())
+    @Test fun learnerRowsPersistOwnerKeysForEveryMutableLearnerTable() {
+        val expected = setOf("preferences", "sessions", "fragments", "expressions", "lesson_state",
+            "completions", "skill_errors", "usage_outbox", "assessment_tickets", "exam_attempts",
+            "exam_answers", "exam_results", "exam_sync_outbox", "exam_sync_conflicts",
+            "remote_progress_rollups", "progress_sync_state", "progress_recovery")
+        expected.forEach { table ->
+            val columns = db.query("PRAGMA table_info($table)").map { it.text("name") }.toSet()
+            assertTrue("$table must persist a row owner", "owner_key" in columns)
+        }
+    }
+
+    @Test fun accountSwitchKeepsPreferencesAndLessonStateInSeparatePartitions() {
+        LearnerOwnershipDao.activate(db, "member:account-a")
+        PreferencesDao.put(db, com.jkdc.app.core.Preferences(learningLanguageID = "en"))
+        LessonStateDao.upsert(db, com.jkdc.app.core.LessonState("shared-lesson", attempts = 2, lastSeen = 100.0))
+
+        LearnerOwnershipDao.activate(db, "member:account-b")
+        assertEquals(null, PreferencesDao.get(db))
+        assertTrue(LessonStateDao.all(db).isEmpty())
+        PreferencesDao.put(db, com.jkdc.app.core.Preferences(learningLanguageID = "es"))
+        LessonStateDao.upsert(db, com.jkdc.app.core.LessonState("shared-lesson", attempts = 7, lastSeen = 200.0))
+
+        LearnerOwnershipDao.activate(db, "member:account-a")
+        assertEquals("en", PreferencesDao.get(db)?.learningLanguageID)
+        assertEquals(2, LessonStateDao.all(db).single().attempts)
+        LearnerOwnershipDao.activate(db, "member:account-b")
+        assertEquals("es", PreferencesDao.get(db)?.learningLanguageID)
+        assertEquals(7, LessonStateDao.all(db).single().attempts)
+    }
+
+    @Test fun ownerlessDevelopmentRowsAreBackfilledOnlyForTheFirstActiveIdentity() {
+        PreferencesDao.put(db, com.jkdc.app.core.Preferences(learningLanguageID = "en"))
+        LearnerOwnershipDao.activate(db, "member:first-account")
+        assertEquals("member:first-account", db.query("SELECT owner_key FROM preferences").single().text("owner_key"))
+        assertEquals("en", PreferencesDao.get(db)?.learningLanguageID)
+
+        LearnerOwnershipDao.activate(db, "member:later-account")
+        assertEquals(null, PreferencesDao.get(db))
+        assertEquals("member:first-account", db.query("SELECT owner_key FROM preferences").single().text("owner_key"))
+    }
+
+    @Test fun staleOwnerCallbackCannotReactivateItsPartitionOrRedirectItsWrite() {
+        var currentIdentity = "member:account-a"
+        LearnerOwnershipDao.activate(db, currentIdentity)
+        currentIdentity = "member:account-b"
+        LearnerOwnershipDao.activate(db, currentIdentity)
+
+        val wrote = LearnerOwnershipDao.runForIdentity(db, "member:account-a",
+            isCurrent = { currentIdentity == "member:account-a" }) {
+            PreferencesDao.put(it, com.jkdc.app.core.Preferences(learningLanguageID = "en"))
+        }
+
+        assertFalse(wrote)
+        assertEquals("member:account-b", LearnerOwnershipDao.activeIdentity(db))
+        assertTrue(db.query("SELECT * FROM preferences").isEmpty())
+    }
+
+    @Test fun staleAccountDatabaseCallbackCannotReactivateAAfterTheAuthenticatedSessionMovesToB() {
+        val sessionA = AccountSession("00000000-0000-0000-0000-00000000000a", "a".repeat(43), 10_000L)
+        val sessionB = AccountSession("00000000-0000-0000-0000-00000000000b", "b".repeat(43), 10_000L)
+        var liveSession = sessionB
+        var liveGeneration = 8L
+        LearnerOwnershipDao.activate(db, "member:${sessionB.accountID}")
+        PreferencesDao.put(db, com.jkdc.app.core.Preferences(learningLanguageID = "es"))
+
+        val accepted = LocalLearnerIdentity.activateDatabaseForAccountCallback(
+            db = db,
+            requestedSession = sessionA,
+            requestedGeneration = 7L,
+            currentSession = { liveSession },
+            currentAccountID = { liveSession.accountID },
+            currentGeneration = { liveGeneration },
+        ) { target, identity ->
+            LearnerOwnershipDao.activate(target, identity)
+        }
+
+        assertFalse(accepted)
+        assertEquals("member:${sessionB.accountID}", LearnerOwnershipDao.activeIdentity(db))
+        assertEquals("es", PreferencesDao.get(db)?.learningLanguageID)
+        assertEquals("member:${sessionB.accountID}", db.query("SELECT owner_key FROM preferences").single().text("owner_key"))
+    }
+
+    @Test fun archiveExportAndResetAreRestrictedToTheActiveOwner() {
+        LearnerOwnershipDao.activate(db, "member:archive-a")
+        SessionsDao.upsert(db, com.jkdc.app.core.SessionRecord(id = "shared-session", languageID = "en",
+            startedAt = 10.0, title = "A session"))
+        LearnerOwnershipDao.activate(db, "member:archive-b")
+        SessionsDao.upsert(db, com.jkdc.app.core.SessionRecord(id = "shared-session", languageID = "es",
+            startedAt = 20.0, title = "B session"))
+        assertEquals("B session", ArchiveMapper.export(db).sessions.single().title)
+        LearningDbWriter.learningDataDeleted(db, com.jkdc.app.core.Preferences())
+        assertTrue(ArchiveMapper.export(db).sessions.isEmpty())
+
+        LearnerOwnershipDao.activate(db, "member:archive-a")
+        assertEquals("A session", ArchiveMapper.export(db).sessions.single().title)
+    }
+
+    @Test fun pageAndCursorRollbackTogether() {
+        val file = File.createTempFile("progress-page", ".db")
+        try {
+            var target = openFileBacked(file)
+            val row = RemoteProgressRollup("owner-a", "es", "exercise", "item-a", 100, 200, 2, 40, 2)
+            assertThrows(IllegalArgumentException::class.java) {
+                LearningDbWriter.remoteProgressPageApplied(target, "owner-a", listOf(row), "cursor-1", -1, 300)
+            }
+            assertTrue(RemoteProgressRollupsDao.all(target, "owner-a").isEmpty())
+            assertEquals(null, ProgressSyncStateDao.get(target, "owner-a", "download"))
+
+            LearningDbWriter.remoteProgressPageApplied(target, "owner-a", listOf(row), "cursor-1", 1, 300)
+            target.close()
+            target = openFileBacked(file)
+            assertEquals(listOf(row), RemoteProgressRollupsDao.all(target, "owner-a"))
+            assertEquals("cursor-1", ProgressSyncStateDao.get(target, "owner-a", "download")?.cursor)
+            target.close()
+        } finally { file.delete() }
+    }
+
+    @Test fun uncertainAckReplaysWithoutStarvation() {
+        val row = RemoteProgressRollup("owner-a", "es", "exercise", "item-a", 100, 200, 2, 40, 2)
+        LearningDbWriter.remoteProgressPageApplied(db, "owner-a", listOf(row), "page-1", 1, 300)
+        repeat(3) { RemoteProgressRollupsDao.merge(db, row) }
+        assertEquals(1, RemoteProgressRollupsDao.all(db, "owner-a").size)
+        assertEquals(null, ProgressSyncStateDao.get(db, "owner-a", "upload"))
+        LearningDbWriter.remoteProgressUploadAcknowledged(db, "owner-a", "upload-1", 1, 400)
+        assertEquals("upload-1", ProgressSyncStateDao.get(db, "owner-a", "upload")?.cursor)
+        assertEquals(row, RemoteProgressRollupsDao.all(db, "owner-a").single())
+    }
+
+    @Test fun upgradeFromV5PreservesExamOutboxAndConflicts() {
+        val file = File.createTempFile("progress-v5-upgrade", ".db")
+        val old = DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}")
+        try {
+            val legacy = JvmSqlDatabase(old)
+            legacy.exec("PRAGMA foreign_keys = ON")
+            val laterUpgrades = SchemaData.SCHEMA_UPGRADES.filterKeys { it >= 6 }.values.flatten().toSet()
+            for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) {
+                if (statement !in laterUpgrades && statement != "PRAGMA user_version = 6" &&
+                    statement != "PRAGMA user_version = 7") legacy.exec(statement)
+            }
+            legacy.insert("exam_snapshots", mapOf("content_id" to "content-a", "content_hash" to "hash-a",
+                "schema_version" to 1, "content_revision" to 1, "grading_version" to 1, "source" to "bundled",
+                "language_id" to "es", "level" to "A1", "week_id" to 1, "content_json" to "{}", "created_at" to 1.0))
+            legacy.insert("exam_snapshot_ids", mapOf("exam_id" to "exam-a", "content_id" to "content-a", "created_at" to 1.0))
+            legacy.insert("exam_attempts", mapOf("attempt_id" to "attempt-a", "exam_id" to "exam-a", "owner_account_id" to "owner-a",
+                "state" to "completed", "sync_state" to "conflict", "position" to 0, "revision" to 1, "started_at" to 1.0,
+                "updated_at" to 2.0, "completed_at" to 2.0))
+            legacy.insert("exam_sync_outbox", mapOf("event_id" to "event-a", "attempt_id" to "attempt-a", "revision" to 1,
+                "event_type" to "completed", "payload_json" to "{}", "delivery_state" to "pending", "created_at" to 2.0))
+            legacy.insert("exam_sync_conflicts", mapOf("attempt_id" to "attempt-a", "owner_account_id" to "owner-a",
+                "server_revision" to 2, "server_attempt_json" to "{}", "local_attempt_json" to "{}", "received_at" to 3.0,
+                "resolution" to "takeover", "resolved_at" to 4.0))
+            legacy.insert("completions", mapOf("kind" to "exercise", "item_id" to "pre-v6", "at" to 1_700_000_000.0,
+                "best_score" to 40, "language_id" to "es"))
+            legacy.insert("lesson_state", mapOf("lesson_id" to "legacy-lesson", "attempts" to 1,
+                "last_seen" to 1_700_000_000.0))
+            legacy.transaction { LearningDb.upgrade(it, 5) }
+            legacy.exec("PRAGMA user_version = ${LearningDb.VERSION}")
+            legacy.close()
+
+            val reopened = openFileBacked(file)
+            ProgressRecoveryDao.recover(reopened, System.currentTimeMillis())
+            assertEquals("pending", reopened.query("SELECT delivery_state FROM exam_sync_outbox WHERE event_id = 'event-a'").single().text("delivery_state"))
+            assertEquals("takeover", reopened.query("SELECT resolution FROM exam_sync_conflicts WHERE attempt_id = 'attempt-a'").single().text("resolution"))
+            assertEquals(1_700_000_000.0, reopened.query("SELECT at FROM completions WHERE item_id = 'pre-v6'").single().real("at"), 0.0)
+            assertEquals(1_700_000_000.0, reopened.query("SELECT last_seen FROM lesson_state WHERE lesson_id = 'legacy-lesson'").single().real("last_seen"), 0.0)
+            assertEquals(null, reopened.query("SELECT at_source FROM completions WHERE item_id = 'pre-v6'").single().textOrNull("at_source"))
+            assertEquals(null, reopened.query("SELECT last_seen_source FROM lesson_state WHERE lesson_id = 'legacy-lesson'").single().textOrNull("last_seen_source"))
+            assertEquals(2L, reopened.query("SELECT COUNT(*) AS n FROM progress_recovery WHERE state = 'excluded'").single().long("n"))
+            reopened.close()
+        } finally { old.close(); file.delete() }
+    }
+
+    @Test fun ambiguousTimestampIsRetainedAndValidRowsStillSync() {
+        val ambiguous = com.jkdc.app.core.CompletionMark("exercise", "ambiguous", 123.0, 40, "es")
+        CompletionsDao.add(db, ambiguous)
+        LearningDbWriter.progressRecoveryRecorded(db, ProgressRecoveryRecord(null, "completions", "ambiguous", 1,
+            "unresolved", "missing source version evidence", 500))
+        LearningDbWriter.remoteProgressPageApplied(db, "owner-a", listOf(
+            RemoteProgressRollup("owner-a", "es", "exercise", "valid", 100, 200, 2, 90, 2)), null, 1, 500)
+        assertEquals(ambiguous, CompletionsDao.all(db).single())
+        assertEquals(listOf("valid"), RemoteProgressRollupsDao.forLanguage(db, "owner-a", "es").map { it.itemID })
+    }
+
+    @Test fun newLocalCompletionWritesPersistTimestampEvidenceWithoutRelabelingOldRows() {
+        val columns = db.query("PRAGMA table_info(completions)").map { it.text("name") }.toSet()
+        assertTrue("completion timestamp provenance columns are required", setOf(
+            "at_source", "at_source_version", "at_unit").all(columns::contains))
+
+        val legacy = com.jkdc.app.core.CompletionMark("exercise", "legacy", 700_000_000.0, 40, "es")
+        val current = com.jkdc.app.core.CompletionMark("exercise", "current", 800_000_000.0, 90, "es")
+        CompletionsDao.add(db, legacy)
+        LearningDbWriter.completions(db, listOf(legacy, current))
+
+        val rows = db.query("SELECT item_id, at, at_source, at_source_version, at_unit FROM completions ORDER BY item_id")
+        val old = rows.single { it.text("item_id") == "legacy" }
+        assertEquals(700_000_000.0, old.real("at"), 0.0)
+        assertEquals(null, old.textOrNull("at_source"))
+        val new = rows.single { it.text("item_id") == "current" }
+        assertEquals("android.recordCompletion", new.text("at_source"))
+        assertEquals(2, new.int("at_source_version"))
+        assertEquals("apple_reference_seconds", new.text("at_unit"))
+
+        val lessonMark = com.jkdc.app.core.CompletionMark("lesson", "lesson-a", 900_000_000.0, 0, "es")
+        LearningDbWriter.lessonAttempt(db, com.jkdc.app.core.LessonState("lesson-a", attempts = 1,
+            lastSeen = 900_000_000.0), listOf(lessonMark), emptyList())
+        val lesson = db.query("SELECT last_seen_source, last_seen_source_version, last_seen_unit FROM lesson_state WHERE lesson_id = 'lesson-a'").single()
+        assertEquals("android.recordLessonAttempt", lesson.text("last_seen_source"))
+        assertEquals(2, lesson.int("last_seen_source_version"))
+        assertEquals("apple_reference_seconds", lesson.text("last_seen_unit"))
+    }
+
+    @Test fun recoverySecondRunIsIdempotent() {
+        val marker = ProgressRecoveryRecord("owner-a", "completions", "item-a", 2,
+            "unresolved", "ambiguous timestamp", 500)
+        repeat(2) { LearningDbWriter.progressRecoveryRecorded(db, marker) }
+        assertEquals(1L, db.query("SELECT COUNT(*) AS n FROM progress_recovery").single().long("n"))
+        assertEquals("unresolved", db.query("SELECT state FROM progress_recovery").single().text("state"))
+    }
+
+    @Test fun recoveryExcludesInvalidTimestampsWithoutRewritingLegacyValues() {
+        val nowMilliseconds = System.currentTimeMillis()
+        val valid = com.jkdc.app.core.CompletionMark("exercise", "valid", com.jkdc.app.core.nowSeconds(), 40, "es")
+        val invalidLegacy = com.jkdc.app.core.CompletionMark("exercise", "invalid-legacy", 1_700_000_000.0, 40, "es")
+        val invalidCurrent = com.jkdc.app.core.CompletionMark("exercise", "invalid-current", 1_700_000_000.0, 90, "es")
+        CompletionsDao.add(db, invalidLegacy)
+        LearningDbWriter.completions(db, listOf(invalidLegacy, invalidCurrent, valid))
+        LearningDbWriter.remoteProgressPageApplied(db, "owner-a", listOf(
+            RemoteProgressRollup("owner-a", "es", "exercise", "remote-valid", nowMilliseconds,
+                nowMilliseconds, 1, 90, 2)), null, 1, nowMilliseconds)
+
+        runRecovery(db, nowMilliseconds)
+        runRecovery(db, nowMilliseconds + 1)
+
+        val values = db.query("SELECT item_id, at FROM completions ORDER BY item_id")
+            .associate { it.text("item_id") to it.real("at") }
+        assertEquals(1_700_000_000.0, values["invalid-legacy"]!!, 0.0)
+        assertEquals(1_700_000_000.0, values["invalid-current"]!!, 0.0)
+        assertEquals(setOf("valid"), syncEligible(db, nowMilliseconds).map { it.itemID }.toSet())
+        assertEquals(listOf(0L, 2L), db.query("SELECT source_version FROM progress_recovery WHERE state = 'excluded' ORDER BY source_version")
+            .map { it.long("source_version") })
+        assertEquals(listOf("remote-valid"), db.query("SELECT item_id FROM remote_progress_rollups WHERE owner_account_id = 'owner-a' AND language_id = 'es'")
+            .map { it.text("item_id") })
+    }
+
+    @Test fun recoveryMarkerFailureRollsBackAndReplayIsIdempotent() {
+        val file = File.createTempFile("progress-recovery", ".db")
+        try {
+            var target = openFileBacked(file)
+            val now = System.currentTimeMillis()
+            val good = com.jkdc.app.core.CompletionMark("exercise", "good", com.jkdc.app.core.nowSeconds(), 1, "es")
+            val invalidLegacy = com.jkdc.app.core.CompletionMark("exercise", "invalid-legacy", 1_700_000_000.0, 1, "es")
+            val invalidCurrent = com.jkdc.app.core.CompletionMark("exercise", "invalid-current", 1_700_000_000.0, 2, "es")
+            CompletionsDao.add(target, invalidLegacy)
+            LearningDbWriter.completions(target, listOf(invalidLegacy, invalidCurrent, good))
+            target.exec("CREATE TRIGGER abort_recovery BEFORE INSERT ON progress_recovery " +
+                "WHEN NEW.source_version = 2 BEGIN SELECT RAISE(ABORT, 'injected recovery failure'); END")
+            assertThrows(Exception::class.java) { runRecovery(target, now) }
+            assertEquals(0L, target.query("SELECT COUNT(*) AS n FROM progress_recovery").single().long("n"))
+            target.close()
+
+            target = openFileBacked(file)
+            assertEquals(1_700_000_000.0, target.query("SELECT at FROM completions WHERE item_id = 'invalid-legacy'")
+                .single().real("at"), 0.0)
+            target.exec("DROP TRIGGER abort_recovery")
+            runRecovery(target, now)
+            val firstRun = target.query("SELECT source_version, state FROM progress_recovery ORDER BY source_version")
+                .map { "${it.long("source_version")}:${it.text("state")}" }
+            runRecovery(target, now + 1)
+            assertEquals(firstRun, target.query("SELECT source_version, state FROM progress_recovery ORDER BY source_version")
+                .map { "${it.long("source_version")}:${it.text("state")}" })
+            target.close()
+        } finally { file.delete() }
+    }
+
+    private fun runRecovery(target: SqlDatabase, nowMilliseconds: Long) {
+        LearningDbWriter.progressRecoveryRun(target, nowMilliseconds)
+    }
+
+    private fun syncEligible(target: SqlDatabase, nowMilliseconds: Long): List<com.jkdc.app.core.CompletionMark> {
+        return CompletionsDao.syncEligible(target, nowMilliseconds)
+    }
+
+    @Test fun projectionDoesNotAppendLocalEvents() {
+        val mark = com.jkdc.app.core.CompletionMark("exercise", "item-a", 1.0, 40, "es")
+        CompletionsDao.add(db, mark)
+        val sessionsBefore = db.query("SELECT COUNT(*) AS n FROM sessions").single().long("n")
+        val completionsBefore = CompletionsDao.all(db)
+        val projection = ProgressProjection.merge("owner-a", "es", listOf(
+            ProgressAggregate("owner-a", "es", "exercise", "item-a", 100, 200, 1, 40)), listOf(
+            ProgressAggregate("owner-a", "es", "exercise", "item-a", 50, 300, 3, 90)))
+        assertEquals(90, projection.single().bestScore)
+        assertEquals(sessionsBefore, db.query("SELECT COUNT(*) AS n FROM sessions").single().long("n"))
+        assertEquals(completionsBefore, CompletionsDao.all(db))
+    }
+
+    private fun openFileBacked(file: File): SqlDatabase {
+        val target = JvmSqlDatabase(DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}"))
+        target.exec("PRAGMA foreign_keys = ON")
+        val version = target.query("PRAGMA user_version").single().values.single() as Long
+        when {
+            version == 0L -> SchemaData.LEARNING_SCHEMA_STATEMENTS.forEach(target::exec)
+            version == LearningDb.VERSION.toLong() -> Unit
+            else -> {
+                target.transaction { LearningDb.upgrade(it, version.toInt()) }
+                target.exec("PRAGMA user_version = ${LearningDb.VERSION}")
+            }
+        }
+        return target
+    }
+
+    @Test fun schemaOpensAtVersionSevenWithExactlyThePinnedTables() {
+        assertEquals(7L, db.query("PRAGMA user_version").single().values.single())
         val tables = db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { it["name"] as String }
@@ -38,7 +352,8 @@ class LearningDbTest {
             "expressions", "fragments",
             "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
             "fragments_fts_segments", "fragments_fts_stat",
-            "lesson_state", "meta", "preferences", "sessions", "skill_errors", "usage_outbox"), tables)
+            "lesson_state", "meta", "preferences", "progress_recovery", "progress_sync_state",
+            "remote_progress_rollups", "sessions", "skill_errors", "usage_outbox"), tables)
         assertFalse("words must never be stored; hidden words live in preferences", tables.contains("words"))
         val virtual = db.query(
             "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'fragments_fts'")
@@ -51,9 +366,15 @@ class LearningDbTest {
         assertTrue(virtual.contains("tokenize='unicode61'"))
         assertFalse("FTS5 does not exist in the Android framework build",
             virtual.contains("fts5"))
-        assertEquals(listOf("exam_snapshot_ids_no_update", "exam_snapshots_no_update",
-            "fragments_fts_after_insert", "fragments_fts_after_update",
-            "fragments_fts_before_delete", "fragments_fts_before_update"),
+        assertEquals(listOf("assessment_tickets_owner_insert", "completions_owner_insert",
+            "exam_answers_owner_insert", "exam_attempts_owner_insert", "exam_results_owner_insert",
+            "exam_snapshot_ids_no_update", "exam_snapshots_no_update", "exam_sync_conflicts_owner_insert",
+            "exam_sync_outbox_owner_insert", "expressions_owner_insert", "fragments_fts_after_insert",
+            "fragments_fts_after_update", "fragments_fts_before_delete", "fragments_fts_before_update",
+            "fragments_owner_insert", "lesson_state_owner_insert", "preferences_owner_insert",
+            "progress_sync_state_owner_insert", "remote_progress_rollups_owner_insert", "sessions_owner_insert",
+            "skill_errors_owner_insert", "usage_outbox_owner_insert",
+            ),
             db.query("SELECT name FROM sqlite_master WHERE type = 'trigger' ORDER BY name")
                 .map { it["name"] as String })
     }
@@ -105,7 +426,7 @@ class LearningDbTest {
             // the delta, then the recorded version
             v1.transaction { LearningDb.upgrade(it, 1) }
             v1.exec("PRAGMA user_version = ${LearningDb.VERSION}")
-            assertEquals(5L, v1.query("PRAGMA user_version").single().values.single())
+            assertEquals(7L, v1.query("PRAGMA user_version").single().values.single())
             // the 'rebuild' indexed the fragment v1 already had, and a NEW write
             // (the insert trigger) is searchable too
             assertEquals(listOf("s1"), SearchDao.search(v1, "heredada", "es").map { it.session.id })
@@ -129,6 +450,28 @@ class LearningDbTest {
         assertThrows(IllegalArgumentException::class.java) { LearningDb.upgrade(db, 0) }
         assertThrows(IllegalArgumentException::class.java) { LearningDb.upgrade(db, LearningDb.VERSION) }
         assertThrows(IllegalArgumentException::class.java) { LearningDb.upgrade(db, 99) }
+    }
+
+    @Test fun everySupportedPriorVersionUpgradesToTheFreshInventory() {
+        fun inventory(target: SqlDatabase) = target.query(
+            "SELECT type, name, COALESCE(sql, '') AS sql FROM sqlite_master " +
+                "WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name")
+            .map { Triple(it.text("type"), it.text("name"), it.text("sql")) }
+        val expected = inventory(db)
+        for (fromVersion in 1 until LearningDb.VERSION) {
+            val connection = DriverManager.getConnection("jdbc:sqlite::memory:")
+            try {
+                val old = JvmSqlDatabase(connection)
+                old.exec("PRAGMA foreign_keys = ON")
+                for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) {
+                    old.exec(statement)
+                    if (statement == "PRAGMA user_version = $fromVersion") break
+                }
+                old.transaction { LearningDb.upgrade(it, fromVersion) }
+                old.exec("PRAGMA user_version = ${LearningDb.VERSION}")
+                assertEquals("upgrade from v$fromVersion", expected, inventory(old))
+            } finally { connection.close() }
+        }
     }
 
     @Test fun foreignKeysAreEnforcedOnTheConnection() {

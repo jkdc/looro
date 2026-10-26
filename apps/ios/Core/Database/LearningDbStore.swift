@@ -179,8 +179,8 @@ public final class LearningDbStore {
                 let session = archive.sessions[index]
                 try SessionsDao.upsert(tx, session)
                 if Self.recoverablePassage(session) == nil {
-                    _ = try tx.update("DELETE FROM assessment_tickets WHERE session_id = ?",
-                                      args: [session.id.uuidString])
+                    _ = try tx.update("DELETE FROM assessment_tickets WHERE session_id = ? AND \(ownerClause(tx))",
+                                      args: [session.id.uuidString] + (try ownerArguments(tx)))
                 } else {
                     try AssessmentTicketsDao.upsert(tx, AssessmentTicketRow(
                         session.id.uuidString, attempts: 0, lastAttemptAt: nil))
@@ -221,6 +221,7 @@ public final class LearningDbStore {
     /// and silently drop the session's work on the next launch.
     public static func open(at path: String,
                             source: (any LearningMigrationSource)? = nil,
+                            activeIdentity: String? = nil,
                             clock: @escaping () -> Double = { Date.now.timeIntervalSinceReferenceDate }) throws -> LearningDbStore {
         if adoptPreimportDatabase(at: URL(fileURLWithPath: path)) {
             print("LearningDbStore: adopted stranded learning.db.preimport "
@@ -228,7 +229,7 @@ public final class LearningDbStore {
         }
         do {
             let database = try LearningDatabase.open(at: path)
-            return try open(database: database, source: source, clock: clock)
+            return try open(database: database, source: source, activeIdentity: activeIdentity, clock: clock)
         } catch {
             guard let source, source.hasPayload else { throw error }
             return jsonMode(failure: error)
@@ -240,11 +241,14 @@ public final class LearningDbStore {
     /// split: jsonMode while the source has a payload, rethrow without one.
     public static func open(database: SqlDatabase,
                             source: (any LearningMigrationSource)? = nil,
+                            activeIdentity: String? = nil,
                             clock: @escaping () -> Double = { Date.now.timeIntervalSinceReferenceDate }) throws -> LearningDbStore {
         do {
+            if let activeIdentity { try LearnerOwnershipDao.activate(database, identity: activeIdentity) }
             if let source, source.hasPayload, try MetaDao.get(database, migrationHashKey) == nil {
                 try migrate(database, source, clock)
             }
+            try ProgressRecoveryDao.recover(database, nowUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
             return LearningDbStore(database: database, clock: clock, jsonMode: false, jsonModeNotice: nil)
         } catch {
             // Migration aborted (or the database broke underneath it): the
@@ -315,9 +319,10 @@ public final class LearningDbStore {
         try db.transaction { tx in
             for table in ["fragments", "sessions", "expressions", "lesson_state",
                           "completions", "skill_errors", "usage_outbox", "assessment_tickets"] {
-                _ = try tx.update("DELETE FROM \(table)")
+                _ = try tx.update("DELETE FROM \(table) WHERE \(ownerClause(tx))", args: ownerArguments(tx))
             }
-            try tx.exec("DELETE FROM meta WHERE key LIKE '\(MetaDao.masteryPrefix)%'")
+            let prefix = try activeOwnerKey(tx).map { "\(MetaDao.masteryPrefix)\($0):" } ?? MetaDao.masteryPrefix
+            _ = try tx.update("DELETE FROM meta WHERE key LIKE ?", args: ["\(prefix)%"])
         }
     }
 

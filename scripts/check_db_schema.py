@@ -36,7 +36,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / 'shared/db/schema.sql'
 FIXTURES = ROOT / 'shared/fixtures/db/migration'
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 7
 
 # ---------------------------------------------------------------------------
 # Pinned inventory.
@@ -125,6 +125,9 @@ TABLES = {
         ('lesson_id', 'TEXT', 0, 1, None),
         ('attempts', 'INTEGER', 1, 0, None),
         ('last_seen', 'REAL', 1, 0, None),
+        ('last_seen_source', 'TEXT', 0, 0, None),
+        ('last_seen_source_version', 'INTEGER', 0, 0, None),
+        ('last_seen_unit', 'TEXT', 0, 0, None),
     ],
     'completions': [
         ('kind', 'TEXT', 1, 1, None),
@@ -132,6 +135,9 @@ TABLES = {
         ('at', 'REAL', 1, 3, None),
         ('best_score', 'INTEGER', 1, 0, '0'),
         ('language_id', 'TEXT', 0, 0, None),
+        ('at_source', 'TEXT', 0, 0, None),
+        ('at_source_version', 'INTEGER', 0, 0, None),
+        ('at_unit', 'TEXT', 0, 0, None),
     ],
     'skill_errors': [
         ('skill_id', 'TEXT', 0, 1, None),
@@ -213,7 +219,69 @@ TABLES = {
         ('resolution', 'TEXT', 0, 0, None),
         ('resolved_at', 'REAL', 0, 0, None),
     ],
+    'remote_progress_rollups': [
+        ('owner_account_id', 'TEXT', 1, 0, None),
+        ('language_id', 'TEXT', 0, 0, None),
+        ('language_key', 'TEXT', 1, 0, None),
+        ('kind', 'TEXT', 1, 0, None),
+        ('item_id', 'TEXT', 1, 0, None),
+        ('first_at_ms', 'INTEGER', 1, 0, None),
+        ('last_at_ms', 'INTEGER', 1, 0, None),
+        ('attempts', 'INTEGER', 1, 0, None),
+        ('best_score', 'INTEGER', 1, 0, None),
+        ('source_version', 'INTEGER', 1, 0, None),
+    ],
+    'progress_sync_state': [
+        ('owner_account_id', 'TEXT', 1, 1, None),
+        ('direction', 'TEXT', 1, 2, None),
+        ('cursor', 'TEXT', 0, 0, None),
+        ('pass_generation', 'INTEGER', 1, 0, '0'),
+        ('updated_at_ms', 'INTEGER', 1, 0, None),
+    ],
+    'progress_recovery': [
+        ('owner_account_id', 'TEXT', 0, 0, None),
+        ('owner_key', 'TEXT', 1, 0, None),
+        ('source_table', 'TEXT', 1, 0, None),
+        ('source_key', 'TEXT', 1, 0, None),
+        ('source_version', 'INTEGER', 1, 0, None),
+        ('state', 'TEXT', 1, 0, None),
+        ('reason', 'TEXT', 0, 0, None),
+        ('updated_at_ms', 'INTEGER', 1, 0, None),
+    ],
 }
+
+# Mutable learner rows are partitioned by the namespaced local identity.
+# Content snapshots, install/schema metadata and caches remain device-scoped.
+OWNER_SCOPED_TABLES = (
+    'preferences', 'sessions', 'fragments', 'expressions', 'lesson_state',
+    'completions', 'skill_errors', 'usage_outbox', 'assessment_tickets',
+    'exam_attempts', 'exam_answers', 'exam_results', 'exam_sync_outbox',
+    'exam_sync_conflicts', 'remote_progress_rollups', 'progress_sync_state',
+)
+for table in OWNER_SCOPED_TABLES:
+    TABLES[table].append(('owner_key', 'TEXT', 0, 0, None))
+
+def _set_column_shape(table, name, *, notnull=None, pk=None, default=None):
+    TABLES[table] = [
+        (column, kind, notnull if column == name and notnull is not None else nn,
+         pk if column == name and pk is not None else key,
+         default if column == name else value)
+        for column, kind, nn, key, value in TABLES[table]
+    ]
+
+for _table, _column, _notnull, _pk, _default in (
+    ('preferences', 'id', 1, 2, None), ('preferences', 'owner_key', 1, 1, "''"),
+    ('sessions', 'id', 1, 2, None), ('sessions', 'owner_key', 1, 1, "''"),
+    ('fragments', 'id', 1, 2, None), ('fragments', 'owner_key', 1, 1, "''"),
+    ('expressions', 'norm_key', 1, 2, None), ('expressions', 'language_id', 0, 3, None),
+    ('expressions', 'owner_key', 1, 1, "''"),
+    ('lesson_state', 'lesson_id', 1, 2, None), ('lesson_state', 'owner_key', 1, 1, "''"),
+    ('completions', 'kind', 1, 2, None), ('completions', 'item_id', 1, 3, None),
+    ('completions', 'at', 1, 4, None), ('completions', 'owner_key', 1, 1, "''"),
+    ('skill_errors', 'skill_id', 1, 2, None), ('skill_errors', 'owner_key', 1, 1, "''"),
+    ('assessment_tickets', 'session_id', 1, 2, None), ('assessment_tickets', 'owner_key', 1, 1, "''"),
+):
+    _set_column_shape(_table, _column, notnull=_notnull, pk=_pk, default=_default)
 
 # (name, table, columns) — explicitly created indexes only.
 INDEXES = [
@@ -223,7 +291,37 @@ INDEXES = [
     ('outbox_pending', 'usage_outbox', ['dispatched', 'at']),
     ('exam_attempts_owner_updated', 'exam_attempts', ['owner_account_id', 'updated_at']),
     ('exam_sync_outbox_pending', 'exam_sync_outbox', ['delivery_state', 'created_at']),
+    ('remote_progress_rollups_identity', 'remote_progress_rollups',
+     ['owner_account_id', 'language_key', 'kind', 'item_id']),
+    ('progress_recovery_source', 'progress_recovery',
+     ['owner_key', 'source_table', 'source_key', 'source_version']),
 ]
+INDEXES.extend([
+    ('expressions_due', 'expressions', ['language_id', 'due_at']),
+    ('completions_lang', 'completions', ['language_id', 'at']),
+    ('preferences_owner', 'preferences', ['owner_key']),
+    ('sessions_owner', 'sessions', ['owner_key', 'started_at']),
+    ('fragments_owner', 'fragments', ['owner_key', 'session_id', 'sort_index']),
+    ('expressions_owner', 'expressions', ['owner_key', 'language_id', 'due_at']),
+    ('lesson_state_owner', 'lesson_state', ['owner_key', 'lesson_id']),
+    ('completions_owner', 'completions', ['owner_key', 'language_id', 'at']),
+    ('skill_errors_owner', 'skill_errors', ['owner_key', 'skill_id']),
+    ('usage_outbox_owner', 'usage_outbox', ['owner_key', 'dispatched', 'at']),
+    ('assessment_tickets_owner', 'assessment_tickets', ['owner_key', 'session_id']),
+    ('exam_attempts_owner_key_updated', 'exam_attempts', ['owner_key', 'updated_at']),
+    ('exam_answers_owner', 'exam_answers', ['owner_key', 'attempt_id', 'question_id']),
+    ('exam_results_owner', 'exam_results', ['owner_key', 'attempt_id']),
+    ('exam_sync_outbox_owner', 'exam_sync_outbox', ['owner_key', 'delivery_state', 'created_at']),
+    ('exam_sync_conflicts_owner', 'exam_sync_conflicts', ['owner_key', 'attempt_id']),
+    ('remote_progress_owner_key', 'remote_progress_rollups', ['owner_key', 'language_key', 'kind', 'item_id']),
+    ('progress_sync_state_owner_key', 'progress_sync_state', ['owner_key', 'direction']),
+])
+
+# Durable client sync bookkeeping is install-local state, not an archive/import
+# fixture payload, so historical fixture inventories intentionally omit it.
+FIXTURE_LOCAL_STATE_TABLES = {
+    'remote_progress_rollups', 'progress_sync_state', 'progress_recovery',
+}
 
 # Pinned constraints.
 #
@@ -231,7 +329,7 @@ INDEXES = [
 # EXACTLY against PRAGMA foreign_key_list for every pinned table, so removing
 # the FK, re-pointing it, or weakening ON DELETE CASCADE all fail.
 FOREIGN_KEYS = [
-    ('fragments', 'sessions', [('session_id', 'id')], 'CASCADE'),
+    ('fragments', 'sessions', [('owner_key', 'owner_key'), ('session_id', 'id')], 'CASCADE'),
     ('exam_snapshot_ids', 'exam_snapshots', [('content_id', 'content_id')], 'RESTRICT'),
     ('exam_attempts', 'exam_snapshot_ids', [('exam_id', 'exam_id')], 'RESTRICT'),
     ('exam_answers', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
@@ -252,7 +350,11 @@ REQUIRED_CONSTRAINTS = [
     ('exam_sync_outbox', "CHECK (event_type IN ('created', 'progress', 'completed', 'takeover'))"),
     ('exam_sync_conflicts', 'CHECK (server_revision > 0)'),
     ('exam_sync_conflicts', "CHECK (resolution IS NULL OR resolution IN ('takeover', 'fork'))"),
-    (None, 'PRAGMA user_version = 5;'),
+    ('remote_progress_rollups', 'CHECK (last_at_ms >= first_at_ms'),
+    ('progress_sync_state', "CHECK (direction IN ('download', 'upload'))"),
+    ('progress_recovery', 'CHECK (source_version >= 0)'),
+    ('progress_recovery', "CHECK (state IN ('pending', 'repaired', 'excluded', 'unresolved', 'validated'))"),
+    (None, 'PRAGMA user_version = 7;'),
 ]
 
 # ---------------------------------------------------------------------------
@@ -289,6 +391,7 @@ TRIGGERS = {
     'fragments_fts_before_update': ('fragments', 'BEFORE UPDATE OF text'),
     'exam_snapshots_no_update': ('exam_snapshots', 'BEFORE UPDATE'),
     'exam_snapshot_ids_no_update': ('exam_snapshot_ids', 'BEFORE UPDATE'),
+    **{f'{table}_owner_insert': (table, 'AFTER INSERT') for table in OWNER_SCOPED_TABLES},
 }
 
 # ---------------------------------------------------------------------------
@@ -660,7 +763,7 @@ _COLUMN_REF = re.compile(r'\b([a-z][a-z0-9_]*)\.([a-z][a-z0-9_]*)\b')
 
 
 def check_expected_fixture(path, tables):
-    """Validate one *.expected.json: row counts for every schema table, and
+    """Validate one *.expected.json: row counts for every archive-facing schema table, and
     every table.column reference (in invariants or any other string) must
     resolve against the live schema. Returns (issues, tables_section)."""
     issues = []
@@ -682,7 +785,7 @@ def check_expected_fixture(path, tables):
             issues.append(f"FIXTURE_INVALID: {path.name} count for '{name}' must be a "
                           f"non-negative integer")
     for name in tables:
-        if name not in counts:
+        if name not in counts and name not in FIXTURE_LOCAL_STATE_TABLES:
             issues.append(f"FIXTURE_MISSING_COUNT: {path.name} does not count table '{name}'")
     columns = {t: {c[0] for c in cols} for t, cols in tables.items()}
     for match in _COLUMN_REF.finditer(path.read_text()):

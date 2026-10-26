@@ -69,7 +69,8 @@ object LearningDbWriter {
     /** recordCompletion() and the completions side of lesson attempts: the
         archive's whole (re-sorted, truncated) ledger, in list order. */
     fun completions(db: SqlDatabase, marks: List<CompletionMark>) {
-        db.transaction { tx -> CompletionsDao.replaceAllInTx(tx, marks) }
+        db.transaction { tx -> CompletionsDao.replaceAllInTx(tx, marks,
+            TimestampEvidence("android.recordCompletion", 2, "apple_reference_seconds")) }
     }
 
     /** recordExerciseMistake(): the archive's whole (re-sorted, truncated)
@@ -86,8 +87,10 @@ object LearningDbWriter {
     fun lessonAttempt(db: SqlDatabase, lesson: LessonState, marks: List<CompletionMark>,
                       seeds: List<ExpressionState>) {
         db.transaction { tx ->
-            LessonStateDao.upsert(tx, lesson)
-            CompletionsDao.replaceAllInTx(tx, marks)
+            LessonStateDao.upsert(tx, lesson,
+                TimestampEvidence("android.recordLessonAttempt", 2, "apple_reference_seconds"))
+            CompletionsDao.replaceAllInTx(tx, marks,
+                TimestampEvidence("android.recordLessonAttempt", 2, "apple_reference_seconds"))
             seeds.forEach { ExpressionsDao.upsert(tx, it) }
         }
     }
@@ -129,10 +132,8 @@ object LearningDbWriter {
         data the site touches, faithful to the previous full-archive write. */
     fun learningDataDeleted(db: SqlDatabase, preferences: Preferences) {
         db.transaction { tx ->
-            tx.exec("DELETE FROM exam_attempts")
-            tx.exec("DELETE FROM exam_snapshot_ids")
-            tx.exec("DELETE FROM exam_snapshots")
-            tx.exec("DELETE FROM sessions")
+            tx.update("DELETE FROM exam_attempts WHERE ${ownerClause(tx)}", ownerArguments(tx))
+            tx.update("DELETE FROM sessions WHERE ${ownerClause(tx)}", ownerArguments(tx))
             AssessmentTicketsDao.clear(tx)
             PreferencesDao.put(tx, preferences)
         }
@@ -152,6 +153,35 @@ object LearningDbWriter {
             lessons.forEach { LessonStateDao.upsert(tx, it) }
             marks.forEach { CompletionsDao.add(tx, it) }
         }
+    }
+
+    /** Applies one validated remote page and its resume cursor atomically. */
+    fun remoteProgressPageApplied(db: SqlDatabase, ownerAccountID: String,
+                                  rollups: List<RemoteProgressRollup>, nextCursor: String?,
+                                  passGeneration: Long, updatedAtMilliseconds: Long) {
+        require(rollups.all { it.ownerAccountID == ownerAccountID })
+        db.transaction { tx ->
+            rollups.forEach { RemoteProgressRollupsDao.merge(tx, it) }
+            ProgressSyncStateDao.put(tx, ProgressSyncState(ownerAccountID, "download", nextCursor,
+                passGeneration, updatedAtMilliseconds))
+        }
+    }
+
+    /** Upload acknowledgements advance only upload resume state, never rollup data. */
+    fun remoteProgressUploadAcknowledged(db: SqlDatabase, ownerAccountID: String, nextCursor: String?,
+                                         passGeneration: Long, updatedAtMilliseconds: Long) {
+        db.transaction { tx -> ProgressSyncStateDao.put(tx, ProgressSyncState(ownerAccountID, "upload",
+            nextCursor, passGeneration, updatedAtMilliseconds)) }
+    }
+
+    /** Recovery bookkeeping is versioned and written without rewriting legacy source rows. */
+    fun progressRecoveryRecorded(db: SqlDatabase, record: ProgressRecoveryRecord) {
+        db.transaction { tx -> ProgressRecoveryDao.record(tx, record) }
+    }
+
+    /** Runs timestamp classification transactionally before callers materialize sync state. */
+    fun progressRecoveryRun(db: SqlDatabase, nowUnixMilliseconds: Long) {
+        ProgressRecoveryDao.recover(db, nowUnixMilliseconds)
     }
 
     /** importData() (DB restore path): ArchiveMerger.apply IS the write; kept

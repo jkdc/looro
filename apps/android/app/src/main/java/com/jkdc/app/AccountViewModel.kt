@@ -11,6 +11,8 @@ import com.jkdc.app.network.ManagedAccountClient
 import com.jkdc.app.network.ManagedAccountConfiguration
 import com.jkdc.app.data.ExamHistoryDao
 import com.jkdc.app.data.LearningDb
+import com.jkdc.app.data.LearnerOwnershipDao
+import com.jkdc.app.data.ProgressRecoveryDao
 import com.jkdc.app.network.ExamAttemptOutboxSync
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -24,6 +26,8 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import androidx.credentials.CredentialManager
 import androidx.credentials.ClearCredentialStateRequest
 
@@ -34,16 +38,26 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     }
     private val sessionStore = configuration?.let { AccountSessionStore(application, it.origin.toString()) }
     private val accountClient = configuration?.let { ManagedAccountClient(it) }
+    private val syncMutex = Mutex()
+    private val identityGenerationLock = Any()
+    private var observedSession: com.jkdc.app.core.AccountSession? = null
+    private var identityGeneration = 0L
+    @Volatile private var activeSyncSession: com.jkdc.app.core.AccountSession? = null
+    @Volatile private var activeSyncGeneration: Long? = null
     private val examOutboxSync = ExamAttemptOutboxSync(
         sendCreation = { session, snapshot, attempt -> accountClient!!.syncExamAttempt(session, snapshot, attempt) },
         sendEvent = { session, event -> accountClient!!.syncExamEvent(session, event) },
         acknowledge = { owner, attempt, event, revision, acceptedRevision, at ->
-            val db = LearningDb.open(application)
+            val session = checkNotNull(activeSyncSession) { "No active account-sync session" }
+            val generation = checkNotNull(activeSyncGeneration) { "No active account-sync generation" }
+            val db = openLearningDb(owner, session, generation)
             try { ExamHistoryDao.acknowledgeOutbox(db, owner, attempt, event, revision, at, acceptedRevision) }
             finally { db.close() }
         },
         conflict = { owner, attempt, server, at ->
-            val db = LearningDb.open(application)
+            val session = checkNotNull(activeSyncSession) { "No active account-sync session" }
+            val generation = checkNotNull(activeSyncGeneration) { "No active account-sync generation" }
+            val db = openLearningDb(owner, session, generation)
             try { ExamHistoryDao.persistConflict(db, owner, attempt, server, at) }
             finally { db.close() }
         },
@@ -57,31 +71,83 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             syncOwnedExamAttempts()
         }
         viewModelScope.launch {
-            state.collect { current -> if (current.signedIn) syncOwnedExamAttempts() }
+            state.collect { current ->
+                observeSession(sessionStore?.read())
+                if (current.signedIn) syncOwnedExamAttempts()
+            }
         }
     }
 
     private suspend fun syncOwnedExamAttempts() {
         val sessions = sessionStore ?: return
         accountClient ?: return
-        val session = sessions.read() ?: return
-        if (!session.isValid(System.currentTimeMillis())) return
-        try {
-            withContext(Dispatchers.IO) {
-                val db = LearningDb.open(getApplication())
-                try {
-                    // The captured session is bound to this owner's pending rows; switching accounts
-                    // can never cause an older owner's answers to be sent under a newer bearer.
-                    examOutboxSync.drain(db, session)
-                    restoreOwnedExamAttempts(db, session)
-                } finally { db.close() }
+        syncMutex.withLock {
+            val session = sessions.read() ?: return
+            if (!session.isValid(System.currentTimeMillis()) || state.value.accountID != session.accountID) return
+            val generation = observeSession(session)
+            activeSyncSession = session
+            activeSyncGeneration = generation
+            try {
+                withContext(Dispatchers.IO) {
+                    val db = openLearningDb(session.accountID, session, generation)
+                    try {
+                        examOutboxSync.drain(db, session)
+                        restoreOwnedExamAttempts(db, session)
+                    } finally { db.close() }
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (httpError: com.jkdc.app.core.AccountFailure.Http) {
+                android.util.Log.e("ExamRecovery", "drain failed: HTTP ${httpError.status} ${httpError.code}")
+            } catch (drainError: Exception) {
+                android.util.Log.e("ExamRecovery", "drain failed", drainError)
+            } finally {
+                activeSyncSession = null
+                activeSyncGeneration = null
             }
-        } catch (cancelled: CancellationException) {
-            throw cancelled
-        } catch (httpError: com.jkdc.app.core.AccountFailure.Http) {
-            android.util.Log.e("ExamRecovery", "drain failed: HTTP ${httpError.status} ${httpError.code}")
-        } catch (drainError: Exception) {
-            android.util.Log.e("ExamRecovery", "drain failed", drainError)
+        }
+    }
+
+    private fun observeSession(session: com.jkdc.app.core.AccountSession?): Long = synchronized(identityGenerationLock) {
+        if (session != observedSession) {
+            observedSession = session
+            identityGeneration++
+        }
+        identityGeneration
+    }
+
+    private fun currentObservedSession(): com.jkdc.app.core.AccountSession? = synchronized(identityGenerationLock) {
+        observedSession
+    }
+
+    private fun openLearningDb(
+        ownerAccountID: String,
+        expectedSession: com.jkdc.app.core.AccountSession,
+        expectedGeneration: Long,
+    ): com.jkdc.app.data.SqlDatabase {
+        check(expectedSession.accountID == ownerAccountID) { "Account callback does not match its captured session" }
+        val currentBeforeOpen = currentObservedSession()
+        check(currentBeforeOpen == expectedSession && state.value.accountID == ownerAccountID &&
+            observeSession(currentBeforeOpen) == expectedGeneration) {
+            "Stale account callback cannot open learner storage"
+        }
+        return LearningDb.open(getApplication()).also { db ->
+            try {
+                val activated = com.jkdc.app.core.LocalLearnerIdentity.activateDatabaseForAccountCallback(
+                    db = db,
+                    requestedSession = expectedSession,
+                    requestedGeneration = expectedGeneration,
+                    currentSession = { currentObservedSession() },
+                    currentAccountID = { state.value.accountID },
+                    currentGeneration = { observeSession(currentObservedSession()) },
+                ) { target, identity ->
+                    LearnerOwnershipDao.activate(target, identity)
+                    ExamHistoryDao.assignOwnerlessToIdentityOnce(target, identity)
+                    ProgressRecoveryDao.recover(target, System.currentTimeMillis())
+                }
+                check(activated) { "Stale account callback cannot activate learner storage" }
+            }
+            catch (failure: Exception) { db.close(); throw failure }
         }
     }
 

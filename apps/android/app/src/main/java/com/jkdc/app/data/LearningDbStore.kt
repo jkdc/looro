@@ -155,7 +155,8 @@ class LearningDbStore private constructor(
                 SessionsDao.upsert(tx, session)
                 val passage = FinalAssessmentRecovery.passage(session)
                 if (passage == null) {
-                    tx.update("DELETE FROM assessment_tickets WHERE session_id = ?", listOf(session.id))
+                    tx.update("DELETE FROM assessment_tickets WHERE session_id = ? AND ${ownerClause(tx)}",
+                        listOf(session.id) + ownerArguments(tx))
                 } else {
                     AssessmentTicketsDao.upsert(tx, AssessmentTicketRow(session.id,
                         attempts = 0, lastAttemptAt = null))
@@ -199,7 +200,8 @@ class LearningDbStore private constructor(
          *  RETHROWS: jsonMode would promise a fallback that cannot serve
          *  anything and silently drop the session's work on the next
          *  launch. */
-        fun open(context: Context, clock: () -> Double = ::nowSeconds): LearningDbStore {
+        fun open(context: Context, clock: () -> Double = ::nowSeconds,
+                 activeIdentity: String? = null): LearningDbStore {
             val files = androidFiles(context)
             val adopted = adoptPreimportDatabase(context.getDatabasePath(LearningDb.NAME))
             if (adopted) {
@@ -207,7 +209,9 @@ class LearningDbStore private constructor(
                     "(an import died between the two renames; the previous database is back)")
             }
             return try {
-                open(LearningDb.open(context), files, clock)
+                open(LearningDb.open(context), files, activeIdentity = activeIdentity, clock = clock).also { store ->
+                    activeIdentity?.let { ExamHistoryDao.assignOwnerlessToIdentityOnce(store.db, it) }
+                }
             } catch (failure: Exception) {
                 if (!files.learningJsonExists()) throw failure
                 jsonMode(files, failure)
@@ -218,11 +222,14 @@ class LearningDbStore private constructor(
          *  supplies the opened database and the file operations. Same
          *  fail-safe split: jsonMode while a learning.json exists, rethrow
          *  without one. */
-        fun open(database: SqlDatabase, files: Files, clock: () -> Double = ::nowSeconds): LearningDbStore {
+        fun open(database: SqlDatabase, files: Files, activeIdentity: String? = null,
+                 clock: () -> Double = ::nowSeconds): LearningDbStore {
             return try {
+                activeIdentity?.let { LearnerOwnershipDao.activate(database, it) }
                 if (MetaDao.get(database, MIGRATION_HASH_KEY) == null && files.learningJsonExists()) {
                     migrate(database, files, clock)
                 }
+                ProgressRecoveryDao.recover(database, System.currentTimeMillis())
                 LearningDbStore(database, clock, jsonMode = false, jsonModeNotice = null)
             } catch (failure: Exception) {
                 // Migration aborted (or the database broke underneath it):
@@ -324,9 +331,10 @@ class LearningDbStore private constructor(
             db.transaction { tx ->
                 for (table in listOf("fragments", "sessions", "expressions", "lesson_state",
                         "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
-                    tx.update("DELETE FROM $table")
+                    tx.update("DELETE FROM $table WHERE ${ownerClause(tx)}", ownerArguments(tx))
                 }
-                tx.exec("DELETE FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%'")
+                val prefix = activeOwnerKey(tx)?.let { "${MetaDao.MASTERY_PREFIX}$it:" } ?: MetaDao.MASTERY_PREFIX
+                tx.update("DELETE FROM meta WHERE key LIKE ?", listOf("$prefix%"))
             }
         }
 

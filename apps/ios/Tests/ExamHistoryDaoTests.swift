@@ -21,6 +21,48 @@ final class ExamHistoryDaoTests: XCTestCase {
         XCTAssertEqual(Int64(2), try db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").first!.long("n"))
     }
 
+    func testForeignOwnerCannotMutateAttemptOrAdvanceItsRevisionAndPosition() throws {
+        try LearnerOwnershipDao.activate(db, identity: "member:owner-a")
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-foreign", "content-foreign"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-foreign", examID: "exam-foreign",
+                ownerAccountID: "owner-a", startedAt: 10))
+        let before = try db.query("SELECT revision, position, state FROM exam_attempts WHERE attempt_id = 'attempt-foreign'").first!
+
+        try LearnerOwnershipDao.activate(db, identity: "member:owner-b")
+        XCTAssertThrowsError(try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-foreign", questionID: "q1",
+            responseJSON: "{\"answer\":\"foreign\"}", position: 9, savedAt: 20)) {
+            XCTAssertEqual($0 as? ExamHistoryError, .missingAttempt)
+        }
+        XCTAssertThrowsError(try ExamHistoryDao.complete(db, attemptID: "attempt-foreign",
+            resultJSON: "{\"score\":100}", completedAt: 21)) {
+            XCTAssertEqual($0 as? ExamHistoryError, .missingAttempt)
+        }
+
+        let after = try db.query("SELECT revision, position, state FROM exam_attempts WHERE attempt_id = 'attempt-foreign'").first!
+        XCTAssertEqual(before.long("revision"), after.long("revision"))
+        XCTAssertEqual(before.long("position"), after.long("position"))
+        XCTAssertEqual(before.text("state"), after.text("state"))
+        XCTAssertEqual(0, try db.query("SELECT COUNT(*) AS n FROM exam_answers WHERE attempt_id = 'attempt-foreign'").first!.long("n"))
+        XCTAssertEqual(0, try db.query("SELECT COUNT(*) AS n FROM exam_results WHERE attempt_id = 'attempt-foreign'").first!.long("n"))
+        XCTAssertEqual(["created"], try db.query("SELECT event_type FROM exam_sync_outbox WHERE attempt_id = 'attempt-foreign'")
+            .map { $0.text("event_type") })
+    }
+
+    func testLatestAnswerRevisionIsSelectedInsideTheAttemptOwnerPartition() throws {
+        try LearnerOwnershipDao.activate(db, identity: "member:owner-a")
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-owner-revision", "content-owner-revision"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-owner-revision", examID: "exam-owner-revision",
+                ownerAccountID: "owner-a", startedAt: 10))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-owner-revision", questionID: "q1",
+            responseJSON: "{\"answer\":\"owner-a\"}", position: 1, savedAt: 11)
+        _ = try db.insert("exam_answers", ["attempt_id": "attempt-owner-revision", "question_id": "q1",
+            "revision": 99, "response_json": "{\"answer\":\"owner-b\"}", "saved_at": 99,
+            "owner_key": "member:owner-b"])
+
+        let visible = try XCTUnwrap(ExamHistoryDao.load(db, attemptID: "attempt-owner-revision", ownerAccountID: "owner-a"))
+        XCTAssertEqual(["{\"answer\":\"owner-a\"}"], visible.answers.map { $0.text("response_json") })
+    }
+
     func testCreatedOutboxRetainsImmutableInitialAttemptAfterOfflineEdits() throws {
         _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-create-retry", "content-create-retry"),
             attempt: ExamAttemptRecord(attemptID: "attempt-create-retry", examID: "exam-create-retry",
@@ -165,6 +207,19 @@ final class ExamHistoryDaoTests: XCTestCase {
         let ownerA = try ExamHistoryDao.history(db, ownerAccountID: "account-a")
         XCTAssertEqual(["attempt-list-a"], ownerA.map { $0.attempt.text("attempt_id") })
         XCTAssertEqual([], try ExamHistoryDao.history(db, ownerAccountID: "account-missing"))
+    }
+
+    func testOwnerlessExamHistoryIsBackfilledOnceToTheMigrationIdentity() throws {
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-legacy-owner", "content-legacy-owner"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-legacy-owner", examID: "exam-legacy-owner", startedAt: 10))
+
+        XCTAssertTrue(try ExamHistoryDao.assignOwnerlessToIdentityOnce(db, ownerAccountID: "member-a"))
+        XCTAssertFalse(try ExamHistoryDao.assignOwnerlessToIdentityOnce(db, ownerAccountID: "member-b"))
+
+        XCTAssertEqual("member-a", try ExamHistoryDao.load(db, attemptID: "attempt-legacy-owner",
+            ownerAccountID: "member-a")?.attempt.text("owner_account_id"))
+        XCTAssertNil(try ExamHistoryDao.load(db, attemptID: "attempt-legacy-owner", ownerAccountID: "member-b"))
+        XCTAssertNil(try ExamHistoryDao.load(db, attemptID: "attempt-legacy-owner"))
     }
 
     func testOutboxAcknowledgementIsRevisionExactAndPreservesNewerEdits() throws {

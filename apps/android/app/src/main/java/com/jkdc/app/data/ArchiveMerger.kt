@@ -64,22 +64,22 @@ object ArchiveMerger {
     }
 
     private fun rewriteInTx(db: SqlDatabase, archive: Archive) {
-        db.exec("DELETE FROM sessions") // fragments follow by ON DELETE CASCADE
+        db.update("DELETE FROM sessions WHERE ${ownerClause(db)}", ownerArguments(db)) // fragments follow by ON DELETE CASCADE
         archive.sessions.forEach { session ->
             SessionsDao.upsert(db, session)
             FragmentsDao.replaceInTx(db, session.id, session.fragments)
         }
         // adoptLegacy = false on a wiped table: the merged archive is written
         // verbatim, exactly the coexistence ArchiveCodec.validate just accepted.
-        db.exec("DELETE FROM expressions")
+        db.update("DELETE FROM expressions WHERE ${ownerClause(db)}", ownerArguments(db))
         archive.expressions.forEach { ExpressionsDao.upsert(db, it, adoptLegacy = false) }
-        db.exec("DELETE FROM lesson_state")
+        db.update("DELETE FROM lesson_state WHERE ${ownerClause(db)}", ownerArguments(db))
         archive.lessons.forEach { LessonStateDao.upsert(db, it) }
         // add (insert-or-ignore) keeps the FIRST mark of a same-instant
         // cross-language pair — the schema-pinned narrowing documented above.
-        db.exec("DELETE FROM completions")
+        db.update("DELETE FROM completions WHERE ${ownerClause(db)}", ownerArguments(db))
         archive.completions?.forEach { CompletionsDao.add(db, it) }
-        db.exec("DELETE FROM skill_errors")
+        db.update("DELETE FROM skill_errors WHERE ${ownerClause(db)}", ownerArguments(db))
         archive.errors?.forEach { SkillErrorsDao.upsert(db, it) }
         PreferencesDao.put(db, archive.preferences)
         MetaDao.replaceMastery(db, archive.masteryCache ?: emptyMap())

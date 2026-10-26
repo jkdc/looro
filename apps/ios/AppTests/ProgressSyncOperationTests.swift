@@ -50,6 +50,18 @@ import LearningCore
         operation.identity(accountID: account, accessToken: credential)
     }
 
+    func testRecordLessonAttemptStoresAppleReferenceTimestamp() throws {
+        let store = try LearningStore(inMemory: true)
+        let before = Date.now.timeIntervalSinceReferenceDate
+
+        store.recordLessonAttempt("lesson-fixture")
+
+        let lastSeen = try XCTUnwrap(store.archive.lessons?.first { $0.lessonID == "lesson-fixture" }?.lastSeen)
+        let after = Date.now.timeIntervalSinceReferenceDate
+        XCTAssertGreaterThanOrEqual(lastSeen, before)
+        XCTAssertLessThanOrEqual(lastSeen, after)
+    }
+
     func testStaleFetchAfterImportPreservesReplacementMemoryAndRows() {
         let operation = ProgressSyncOperation()
         let token = operation.begin(identity(operation))!

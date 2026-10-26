@@ -50,11 +50,22 @@ data class ExamHistory(
 
 /** Transactional persistence for the local-first exam lifecycle. */
 object ExamHistoryDao {
+    /** Assigns pre-identity ownerless exam rows once, to the identity resolved before database open. */
+    fun assignOwnerlessToIdentityOnce(db: SqlDatabase, ownerAccountID: String): Boolean {
+        require(ownerAccountID.startsWith("member:") || ownerAccountID.startsWith("guest:")) {
+            "Owner backfill requires the resolved namespaced active identity"
+        }
+        val firstActivation = MetaDao.get(db, LearnerOwnershipDao.BACKFILL_KEY) == null
+        LearnerOwnershipDao.activate(db, ownerAccountID)
+        return firstActivation
+    }
+
     /** Returns only the authenticated owner's durable pending events, in revision order. */
     fun pendingOutbox(db: SqlDatabase, ownerAccountID: String): List<Row> = db.query(
         "SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
-            "WHERE a.owner_account_id = ? AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
-            "ORDER BY o.attempt_id, o.revision", listOf(ownerAccountID)
+            "WHERE a.owner_account_id = ? AND ${ownerClause(db, "a")} AND o.owner_key IS a.owner_key " +
+            "AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
+            "ORDER BY o.attempt_id, o.revision", listOf(ownerAccountID) + ownerArguments(db)
     )
 
     /** Acknowledges exactly one server-confirmed event; newer edits remain pending. */
@@ -496,6 +507,7 @@ object ExamHistoryDao {
     ): Boolean {
         val resultContent = resultJSON.parseJSONObject()
         return db.transaction { tx ->
+            requireActiveAttemptOwner(tx, attemptID)
             val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .singleOrNull() ?: error("Exam attempt does not exist")
             check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
@@ -546,6 +558,7 @@ object ExamHistoryDao {
     ): Long {
         require(questionID.isNotBlank() && position >= 0)
         val response = responseJSON.parseJSONObject()
+        requireActiveAttemptOwner(tx, attemptID)
         val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
             .singleOrNull() ?: error("Exam attempt does not exist")
         check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
@@ -574,21 +587,25 @@ object ExamHistoryDao {
     }
 
     fun load(db: SqlDatabase, attemptID: String, ownerAccountID: String? = null): ExamHistory? {
-        val attempt = if (ownerAccountID == null) {
-            db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id IS NULL",
-                listOf(attemptID)).singleOrNull()
-        } else {
-            db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ?",
-                listOf(attemptID, ownerAccountID)).singleOrNull()
-        } ?: return null
+        val ownerFilter = if (ownerAccountID == null) "owner_account_id IS NULL" else "owner_account_id = ?"
+        val ownerArgs = if (ownerAccountID == null) emptyList() else listOf(ownerAccountID)
+        val attempt = db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND $ownerFilter AND ${ownerClause(db)}",
+            listOf(attemptID) + ownerArgs + ownerArguments(db)).singleOrNull() ?: return null
         val snapshot = db.query("SELECT s.* FROM exam_snapshots s " +
             "JOIN exam_snapshot_ids i ON i.content_id = s.content_id WHERE i.exam_id = ?",
             listOf(attempt.text("exam_id"))).single()
+        val ownerKey = attempt.textOrNull("owner_key")
+        val childOwner = if (ownerKey == null) "a.owner_key IS NULL" else "a.owner_key = ?"
+        val latestOwner = if (ownerKey == null) "owner_key IS NULL" else "owner_key = ?"
+        val childArgs = if (ownerKey == null) listOf(attemptID, attemptID) else
+            listOf(attemptID, ownerKey, attemptID, ownerKey)
         val answers = db.query("SELECT a.* FROM exam_answers a JOIN " +
-            "(SELECT question_id, MAX(revision) AS revision FROM exam_answers WHERE attempt_id = ? GROUP BY question_id) latest " +
+            "(SELECT question_id, MAX(revision) AS revision FROM exam_answers WHERE attempt_id = ? AND $latestOwner GROUP BY question_id) latest " +
             "ON latest.question_id = a.question_id AND latest.revision = a.revision " +
-            "WHERE a.attempt_id = ? ORDER BY a.saved_at, a.question_id", listOf(attemptID, attemptID))
-        val result = db.query("SELECT * FROM exam_results WHERE attempt_id = ?", listOf(attemptID)).singleOrNull()
+            "WHERE a.attempt_id = ? AND $childOwner ORDER BY a.saved_at, a.question_id", childArgs)
+        val result = db.query("SELECT * FROM exam_results WHERE attempt_id = ? AND " +
+            if (ownerKey == null) "owner_key IS NULL" else "owner_key = ?",
+            if (ownerKey == null) listOf(attemptID) else listOf(attemptID, ownerKey)).singleOrNull()
         return ExamHistory(attempt, snapshot, answers, result)
     }
 
@@ -598,6 +615,14 @@ object ExamHistoryDao {
             "attempt_id" to attemptID, "revision" to revision, "event_type" to type,
             "payload_json" to payload, "delivery_state" to "pending", "created_at" to createdAt,
             "acknowledged_at" to null))
+    }
+
+    private fun requireActiveAttemptOwner(db: SqlDatabase, attemptID: String) {
+        val attempt = db.query("SELECT owner_key FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+            .singleOrNull() ?: throw IllegalStateException("Exam attempt does not exist")
+        check(activeOwnerKey(db) == attempt.textOrNull("owner_key")) {
+            "Exam attempt is not owned by the active learner"
+        }
     }
 
     private fun String.parseJSONObject(): JsonObject = Json.parseToJsonElement(this) as? JsonObject

@@ -24,6 +24,59 @@ func encodeStringList(_ value: [String]) throws -> String {
     return try DatabaseJSON.encode(value)
 }
 
+/// Device-local identity binding and one-time assignment of legacy ownerless learner rows.
+public enum LearnerOwnershipDao {
+    public static let activeIdentityKey = "active_learner_identity"
+    public static let backfillKey = "learner_owner_backfill_v1"
+
+    public static func activeIdentity(_ db: SqlDatabase) throws -> String? {
+        try MetaDao.get(db, activeIdentityKey)
+    }
+
+    public static func activate(_ db: SqlDatabase, identity: String) throws {
+        guard let separator = identity.firstIndex(of: ":"),
+              ["member", "guest"].contains(String(identity[..<separator])),
+              identity.index(after: separator) < identity.endIndex else {
+            throw SqlDatabaseError.unsupportedValue("learner identity must be namespaced and non-empty")
+        }
+        try db.transaction { tx in
+            try MetaDao.put(tx, activeIdentityKey, identity)
+            if try MetaDao.get(tx, backfillKey) != nil { return }
+            if identity.hasPrefix("member:") {
+                _ = try tx.update("UPDATE exam_attempts SET owner_account_id = ? WHERE owner_account_id IS NULL " +
+                    "AND (owner_key IS NULL OR owner_key = '')", args: [String(identity.dropFirst("member:".count))])
+            }
+            _ = try tx.update("UPDATE exam_attempts SET owner_key = CASE WHEN owner_account_id LIKE 'guest:%' " +
+                "THEN owner_account_id ELSE 'member:' || owner_account_id END WHERE owner_key IS NULL " +
+                "AND owner_account_id IS NOT NULL", args: [])
+            _ = try tx.update("UPDATE exam_attempts SET owner_key = ? WHERE owner_key IS NULL", args: [identity])
+            for table in ["exam_answers", "exam_results", "exam_sync_outbox", "exam_sync_conflicts"] {
+                _ = try tx.update("UPDATE \(table) SET owner_key = (SELECT owner_key FROM exam_attempts a " +
+                    "WHERE a.attempt_id = \(table).attempt_id) WHERE owner_key IS NULL", args: [])
+            }
+            for table in ["preferences", "sessions", "fragments", "expressions", "lesson_state", "completions",
+                          "skill_errors", "usage_outbox", "assessment_tickets"] {
+                _ = try tx.update("UPDATE \(table) SET owner_key = ? WHERE owner_key IS NULL OR owner_key = ''", args: [identity])
+            }
+            _ = try tx.update("UPDATE progress_recovery SET owner_key = ? WHERE owner_key = ''", args: [identity])
+            _ = try tx.update("INSERT OR IGNORE INTO meta(key, value) SELECT 'mastery:' || ? || ':' || " +
+                "substr(key, length('mastery:') + 1), value FROM meta WHERE key LIKE 'mastery:%' " +
+                "AND key NOT LIKE 'mastery:member:%' AND key NOT LIKE 'mastery:guest:%'", args: [identity])
+            _ = try tx.update("DELETE FROM meta WHERE key LIKE 'mastery:%' " +
+                "AND key NOT LIKE 'mastery:member:%' AND key NOT LIKE 'mastery:guest:%'", args: [])
+            try MetaDao.put(tx, backfillKey, "1")
+        }
+    }
+}
+
+func activeOwnerKey(_ db: SqlDatabase) throws -> String? { try LearnerOwnershipDao.activeIdentity(db) }
+func ownerClause(_ db: SqlDatabase, alias: String = "") throws -> String {
+    let column = alias.isEmpty ? "owner_key" : "\(alias).owner_key"
+    if try activeOwnerKey(db) == nil { return "(\(column) IS NULL OR \(column) = '')" }
+    return "\(column) = ?"
+}
+func ownerArguments(_ db: SqlDatabase) throws -> [Any?] { try activeOwnerKey(db).map { [$0] } ?? [] }
+
 // MARK: UPDATE with NULL assignments
 
 /// UPDATE with NULL assignments spelled as literals. `SqlDatabase.update`
@@ -51,9 +104,11 @@ private func updateRow(_ db: SqlDatabase, _ table: String, _ row: [String: Any?]
 
 public enum PreferencesDao {
     public static func put(_ db: SqlDatabase, _ p: Preferences) throws {
-        let exists = try !db.query("SELECT 1 AS matched FROM preferences WHERE id = 1").isEmpty
+        let scope = try ownerClause(db)
+        let args = try ownerArguments(db)
+        let exists = try !db.query("SELECT 1 AS matched FROM preferences WHERE id = 1 AND \(scope)", args: args).isEmpty
         if exists {
-            try updateRow(db, "preferences", row(p), where: "id = 1", whereArgs: [])
+            try updateRow(db, "preferences", row(p), where: "id = 1 AND \(scope)", whereArgs: args)
         } else {
             _ = try db.insert("preferences", row(p))
         }
@@ -61,7 +116,8 @@ public enum PreferencesDao {
 
     /// nil when the learner has no preferences row yet (fresh database).
     public static func get(_ db: SqlDatabase) throws -> Preferences? {
-        guard let row = try db.query("SELECT * FROM preferences WHERE id = 1").first else { return nil }
+        guard let row = try db.query("SELECT * FROM preferences WHERE id = 1 AND \(ownerClause(db))",
+                                     args: ownerArguments(db)).first else { return nil }
         var p = Preferences()
         p.learningLanguageID = row.text("learning_language_id")
         p.meaningVisible = row.bool("meaning_visible")
@@ -113,10 +169,11 @@ public enum SessionsDao {
     /// cascade-destroy the session's fragments (fragments.session_id ON
     /// DELETE CASCADE) on every session-end token/endedAt update.
     public static func upsert(_ db: SqlDatabase, _ session: SessionRecord) throws {
-        let exists = try !db.query("SELECT 1 AS matched FROM sessions WHERE id = ?",
-                                   args: [session.id.uuidString]).isEmpty
+        let scope = try ownerClause(db)
+        let args = [session.id.uuidString] + (try ownerArguments(db))
+        let exists = try !db.query("SELECT 1 AS matched FROM sessions WHERE id = ? AND \(scope)", args: args).isEmpty
         if exists {
-            try updateRow(db, "sessions", row(session), where: "id = ?", whereArgs: [session.id.uuidString])
+            try updateRow(db, "sessions", row(session), where: "id = ? AND \(scope)", whereArgs: args)
         } else {
             _ = try db.insert("sessions", row(session))
         }
@@ -124,17 +181,19 @@ public enum SessionsDao {
 
     /// Fragments go with it (fragments.session_id ON DELETE CASCADE).
     public static func delete(_ db: SqlDatabase, _ id: String) throws {
-        _ = try db.update("DELETE FROM sessions WHERE id = ?", args: [id])
+        _ = try db.update("DELETE FROM sessions WHERE id = ? AND \(ownerClause(db))", args: [id] + (try ownerArguments(db)))
     }
 
     /// All sessions in insertion order, fragments ordered by sort_index.
     public static func all(_ db: SqlDatabase) throws -> [SessionRecord] {
-        return try db.query("SELECT * FROM sessions ORDER BY rowid").map { try session($0, db) }
+        return try db.query("SELECT * FROM sessions WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map { try session($0, db) }
     }
 
     /// Sessions of one learning language in insertion order.
     public static func byLanguage(_ db: SqlDatabase, _ languageID: String) throws -> [SessionRecord] {
-        return try db.query("SELECT * FROM sessions WHERE language_id = ? ORDER BY rowid", args: [languageID])
+        return try db.query("SELECT * FROM sessions WHERE language_id = ? AND \(ownerClause(db)) ORDER BY rowid",
+                            args: [languageID] + (try ownerArguments(db)))
             .map { try session($0, db) }
     }
 
@@ -203,7 +262,8 @@ public enum SessionsDao {
 /// do not nest.
 public enum FragmentsDao {
     public static func bySession(_ db: SqlDatabase, _ sessionID: String) throws -> [Fragment] {
-        return try db.query("SELECT * FROM fragments WHERE session_id = ? ORDER BY sort_index", args: [sessionID])
+        return try db.query("SELECT * FROM fragments WHERE session_id = ? AND \(ownerClause(db)) ORDER BY sort_index",
+                            args: [sessionID] + (try ownerArguments(db)))
             .map(fragment)
     }
 
@@ -214,7 +274,8 @@ public enum FragmentsDao {
     }
 
     static func replaceInTx(_ db: SqlDatabase, _ sessionID: String, _ fragments: [Fragment]) throws {
-        _ = try db.update("DELETE FROM fragments WHERE session_id = ?", args: [sessionID])
+        _ = try db.update("DELETE FROM fragments WHERE session_id = ? AND \(ownerClause(db))",
+                          args: [sessionID] + (try ownerArguments(db)))
         for (index, f) in fragments.enumerated() {
             _ = try db.insert("fragments", row(sessionID, index, f))
         }
@@ -305,24 +366,26 @@ public enum ExpressionsDao {
     public static func upsert(_ db: SqlDatabase, _ expression: ExpressionState,
                               adoptLegacy: Bool = true) throws -> Bool {
         let normKey = RecallEngine.normalizeKey(expression.text)
+        let scope = try ownerClause(db)
+        let ownerArgs = try ownerArguments(db)
         let exactExists: Bool
         if expression.languageID == nil {
             exactExists = try !db.query(
-                "SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id IS NULL",
-                args: [normKey]).isEmpty
+                "SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id IS NULL AND \(scope)",
+                args: [normKey] + ownerArgs).isEmpty
         } else {
             exactExists = try !db.query(
-                "SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id = ?",
-                args: [normKey, expression.languageID!]).isEmpty
+                "SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id = ? AND \(scope)",
+                args: [normKey, expression.languageID!] + ownerArgs).isEmpty
         }
         if exactExists {
             // language_id already matches the key; the row() value for it is
             // rewritten as-is (NULL literal or bound) and lesson_id may clear.
             try updateRow(db, "expressions", row(normKey, expression),
                           where: expression.languageID == nil
-                              ? "norm_key = ? AND language_id IS NULL"
-                              : "norm_key = ? AND language_id = ?",
-                          whereArgs: expression.languageID == nil ? [normKey] : [normKey, expression.languageID!])
+                              ? "norm_key = ? AND language_id IS NULL AND \(scope)"
+                              : "norm_key = ? AND language_id = ? AND \(scope)",
+                          whereArgs: (expression.languageID == nil ? [normKey] : [normKey, expression.languageID!]) + ownerArgs)
             return true
         }
         if expression.languageID != nil, adoptLegacy,
@@ -341,8 +404,8 @@ public enum ExpressionsDao {
                                         _ languageID: String) throws -> Bool {
         let legacy = try db.query(
             "SELECT rowid AS rid, meaning, lesson_id, bars, attempts, last_seen, due_at "
-                + "FROM expressions WHERE norm_key = ? AND language_id IS NULL ORDER BY rowid",
-            args: [normKey])
+                + "FROM expressions WHERE norm_key = ? AND language_id IS NULL AND \(ownerClause(db)) ORDER BY rowid",
+            args: [normKey] + (try ownerArguments(db)))
         guard let kept = legacy.first else { return false }
         let keptId = kept.long("rid")
         // languageID is the only semantic change (RecallEngine adoption); the
@@ -367,8 +430,8 @@ public enum ExpressionsDao {
         } else {
             _ = try db.update("UPDATE expressions SET lesson_id = ? WHERE rowid = ?", args: [lessonID!, keptId])
         }
-        _ = try db.update("DELETE FROM expressions WHERE norm_key = ? AND language_id IS NULL AND rowid != ?",
-                          args: [normKey, keptId])
+        _ = try db.update("DELETE FROM expressions WHERE norm_key = ? AND language_id IS NULL AND rowid != ? AND \(ownerClause(db))",
+                          args: [normKey, keptId] + (try ownerArguments(db)))
         return true
     }
 
@@ -378,22 +441,23 @@ public enum ExpressionsDao {
     /// language-or-legacy). Returns the removed row count.
     @discardableResult
     public static func removeVisible(_ db: SqlDatabase, _ text: String, _ languageID: String) throws -> Int64 {
-        return try db.update("DELETE FROM expressions WHERE norm_key = ? AND (language_id = ? OR language_id IS NULL)",
-                             args: [RecallEngine.normalizeKey(text), languageID])
+        return try db.update("DELETE FROM expressions WHERE norm_key = ? AND (language_id = ? OR language_id IS NULL) AND \(ownerClause(db))",
+                             args: [RecallEngine.normalizeKey(text), languageID] + (try ownerArguments(db)))
     }
 
     /// All expressions in insertion order (legacy NULL rows wherever the
     /// archive listed them).
     public static func all(_ db: SqlDatabase) throws -> [ExpressionState] {
-        return try db.query("SELECT * FROM expressions ORDER BY rowid").map(expression)
+        return try db.query("SELECT * FROM expressions WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map(expression)
     }
 
     /// Expressions visible in `languageID`: its own rows plus the legacy
     /// NULL-language entries RecallEngine keeps reachable everywhere,
     /// insertion order.
     public static func byLanguage(_ db: SqlDatabase, _ languageID: String) throws -> [ExpressionState] {
-        return try db.query("SELECT * FROM expressions WHERE language_id = ? OR language_id IS NULL ORDER BY rowid",
-                            args: [languageID]).map(expression)
+        return try db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) AND \(ownerClause(db)) ORDER BY rowid",
+                            args: [languageID] + (try ownerArguments(db))).map(expression)
     }
 
     /// RecallEngine.due over the table: the language's rows plus legacy NULL
@@ -401,7 +465,8 @@ public enum ExpressionsDao {
     /// rowid` reproduces the engine's stable sort over rowid order.
     public static func due(_ db: SqlDatabase, _ languageID: String, _ now: Double) throws -> [ExpressionState] {
         return try db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) "
-            + "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", args: [languageID, now]).map(expression)
+            + "AND bars < 3 AND due_at <= ? AND \(ownerClause(db)) ORDER BY due_at, rowid",
+            args: [languageID, now] + (try ownerArguments(db))).map(expression)
     }
 
     /// Deletes the notebook rows of ONE language — `language_id = ?` EXACT.
@@ -415,7 +480,8 @@ public enum ExpressionsDao {
     @discardableResult
     public static func deleteExpressionsForLanguage(_ db: SqlDatabase, languageID: String) throws -> Int64 {
         return try db.transaction { tx in
-            try tx.update("DELETE FROM expressions WHERE language_id = ?", args: [languageID])
+            try tx.update("DELETE FROM expressions WHERE language_id = ? AND \(ownerClause(tx))",
+                          args: [languageID] + (try ownerArguments(tx)))
         }
     }
 
@@ -425,7 +491,8 @@ public enum ExpressionsDao {
     @discardableResult
     public static func deleteExpressionsLegacy(_ db: SqlDatabase) throws -> Int64 {
         return try db.transaction { tx in
-            try tx.update("DELETE FROM expressions WHERE language_id IS NULL", args: [])
+            try tx.update("DELETE FROM expressions WHERE language_id IS NULL AND \(ownerClause(tx))",
+                          args: ownerArguments(tx))
         }
     }
 
@@ -441,15 +508,16 @@ public enum ExpressionsDao {
         return try db.query(
             "SELECT language_id, COUNT(*) AS n, "
                 + "SUM(LENGTH(CAST(text AS BLOB)) + LENGTH(CAST(meaning AS BLOB))) AS bytes "
-                + "FROM expressions GROUP BY language_id "
-                + "ORDER BY n DESC, language_id IS NULL, language_id").map { row in
+                + "FROM expressions WHERE \(ownerClause(db)) GROUP BY language_id "
+                + "ORDER BY n DESC, language_id IS NULL, language_id", args: ownerArguments(db)).map { row in
             ExpressionLanguageStats(languageID: row.textOrNull("language_id"),
                                     count: row.int("n"), approxBytes: row.long("bytes"))
         }
     }
 
     private static func count(_ db: SqlDatabase) throws -> Int64 {
-        return try db.query("SELECT COUNT(*) AS n FROM expressions").first!.long("n")
+        return try db.query("SELECT COUNT(*) AS n FROM expressions WHERE \(ownerClause(db))",
+                            args: ownerArguments(db)).first!.long("n")
     }
 
     private static func expression(_ row: SqlRow) -> ExpressionState {
@@ -487,23 +555,42 @@ public enum ExpressionsDao {
 /// only — LessonState.bars and dueAt are intentionally not stored yet and
 /// read back as zero (shared/db/schema.sql, lesson_state).
 public enum LessonStateDao {
-    public static func upsert(_ db: SqlDatabase, _ state: LessonState) throws {
-        let exists = try !db.query("SELECT 1 AS matched FROM lesson_state WHERE lesson_id = ?",
-                                   args: [state.lessonID]).isEmpty
+    public static func upsert(_ db: SqlDatabase, _ state: LessonState,
+                              evidence: TimestampEvidence? = nil) throws {
+        if let evidence {
+            guard !evidence.source.isEmpty, evidence.source.utf8.count <= 80, evidence.sourceVersion > 0,
+                  ["apple_reference_seconds", "unix_seconds", "unix_milliseconds"].contains(evidence.unit) else {
+                throw SqlDatabaseError.unsupportedValue("invalid lesson timestamp evidence")
+            }
+        }
+        let prior = try db.query("SELECT last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+                                 "FROM lesson_state WHERE lesson_id = ? AND \(ownerClause(db))",
+                                 args: [state.lessonID] + (try ownerArguments(db))).first
+        let retainedEvidence = prior.flatMap { row -> TimestampEvidenceFields? in
+            guard row.real("last_seen") == state.lastSeen else { return nil }
+            return TimestampEvidenceFields(source: row.textOrNull("last_seen_source"),
+                sourceVersion: row.intOrNull("last_seen_source_version"), unit: row.textOrNull("last_seen_unit"))
+        }
+        let fields = evidence.map(TimestampEvidenceFields.init) ?? retainedEvidence ?? .empty
         let row: [String: Any?] = [
             "lesson_id": state.lessonID,
             "attempts": state.attempts,
             "last_seen": state.lastSeen,
+            "last_seen_source": fields.source,
+            "last_seen_source_version": fields.sourceVersion,
+            "last_seen_unit": fields.unit,
         ]
-        if exists {
-            try updateRow(db, "lesson_state", row, where: "lesson_id = ?", whereArgs: [state.lessonID])
+        if prior != nil {
+            try updateRow(db, "lesson_state", row, where: "lesson_id = ? AND \(ownerClause(db))",
+                          whereArgs: [state.lessonID] + (try ownerArguments(db)))
         } else {
             _ = try db.insert("lesson_state", row)
         }
     }
 
     public static func all(_ db: SqlDatabase) throws -> [LessonState] {
-        return try db.query("SELECT * FROM lesson_state ORDER BY rowid").map { row in
+        return try db.query("SELECT * FROM lesson_state WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map { row in
             LessonState(
                 lessonID: row.text("lesson_id"),
                 bars: 0,
@@ -511,6 +598,38 @@ public enum LessonStateDao {
                 lastSeen: row.real("last_seen"),
                 dueAt: 0.0)
         }
+    }
+
+    public static func syncEligible(_ db: SqlDatabase, nowUnixMilliseconds: Int64) throws -> [LessonState] {
+        return try all(db).filter {
+            ProgressTime.toUnixMilliseconds($0.lastSeen, nowUnixMilliseconds: Double(nowUnixMilliseconds)) != nil
+        }
+    }
+}
+
+public struct TimestampEvidence: Equatable, Sendable {
+    public var source: String
+    public var sourceVersion: Int
+    public var unit: String
+    public init(_ source: String, _ sourceVersion: Int, _ unit: String) {
+        self.source = source
+        self.sourceVersion = sourceVersion
+        self.unit = unit
+    }
+}
+
+private struct TimestampEvidenceFields {
+    var source: String?
+    var sourceVersion: Int?
+    var unit: String?
+    static let empty = TimestampEvidenceFields(source: nil, sourceVersion: nil, unit: nil)
+    init(source: String?, sourceVersion: Int?, unit: String?) {
+        self.source = source
+        self.sourceVersion = sourceVersion
+        self.unit = unit
+    }
+    init(_ evidence: TimestampEvidence) {
+        self.init(source: evidence.source, sourceVersion: evidence.sourceVersion, unit: evidence.unit)
     }
 }
 
@@ -531,18 +650,29 @@ public enum LessonStateDao {
 /// Returns true when the mark landed.
 public enum CompletionsDao {
     @discardableResult
-    public static func add(_ db: SqlDatabase, _ mark: CompletionMark) throws -> Bool {
+    public static func add(_ db: SqlDatabase, _ mark: CompletionMark,
+                           evidence: TimestampEvidence? = nil) throws -> Bool {
+        if let evidence {
+            guard !evidence.source.isEmpty, evidence.source.count <= 80, evidence.sourceVersion > 0,
+                  ["apple_reference_seconds", "unix_seconds", "unix_milliseconds"].contains(evidence.unit) else {
+                throw SqlDatabaseError.unsupportedValue("invalid completion timestamp evidence")
+            }
+        }
         return try db.insert("completions", [
             "kind": mark.kind,
             "item_id": mark.itemID,
             "at": mark.at,
             "best_score": mark.bestScore,
             "language_id": mark.languageID,
+            "at_source": evidence?.source,
+            "at_source_version": evidence?.sourceVersion,
+            "at_unit": evidence?.unit,
         ], strategy: .ignore) != -1
     }
 
     public static func all(_ db: SqlDatabase) throws -> [CompletionMark] {
-        return try db.query("SELECT * FROM completions ORDER BY rowid").map { row in
+        return try db.query("SELECT * FROM completions WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map { row in
             CompletionMark(
                 kind: row.text("kind"),
                 itemID: row.text("item_id"),
@@ -552,16 +682,275 @@ public enum CompletionsDao {
         }
     }
 
+    public static func syncEligible(_ db: SqlDatabase, nowUnixMilliseconds: Int64) throws -> [CompletionMark] {
+        return try all(db).filter {
+            ProgressTime.toUnixMilliseconds($0.at, nowUnixMilliseconds: Double(nowUnixMilliseconds)) != nil
+        }
+    }
+
     /// Rewrites the table to exactly `marks`, in list order (callers inside a
     /// transaction use this directly — transactions do not nest). The runtime
     /// ledger re-sorts by `at` descending and truncates on every append
     /// (recordCompletion), so an insert-only write would drift from the
     /// archive's order and cap; the archive's ledger IS the table's content,
     /// and rowid order must equal list order for export to rebuild it.
-    public static func replaceAllInTx(_ db: SqlDatabase, _ marks: [CompletionMark]) throws {
-        try db.exec("DELETE FROM completions")
+    public static func replaceAllInTx(_ db: SqlDatabase, _ marks: [CompletionMark],
+                                      evidence: TimestampEvidence? = nil) throws {
+        if let evidence {
+            guard !evidence.source.isEmpty, evidence.source.utf8.count <= 80, evidence.sourceVersion > 0,
+                  ["apple_reference_seconds", "unix_seconds", "unix_milliseconds"].contains(evidence.unit) else {
+                throw SqlDatabaseError.unsupportedValue("invalid completion timestamp evidence")
+            }
+        }
+        let existing = try db.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit FROM completions WHERE \(ownerClause(db))",
+                                    args: ownerArguments(db))
+        var prior: [CompletionTimestampKey: TimestampEvidenceFields] = [:]
+        for row in existing {
+            let key = CompletionTimestampKey(kind: row.text("kind"), itemID: row.text("item_id"), at: row.real("at"))
+            prior[key] = TimestampEvidenceFields(source: row.textOrNull("at_source"),
+                sourceVersion: row.intOrNull("at_source_version"), unit: row.textOrNull("at_unit"))
+        }
+        _ = try db.update("DELETE FROM completions WHERE \(ownerClause(db))", args: ownerArguments(db))
         for mark in marks {
-            _ = try add(db, mark)
+            let key = CompletionTimestampKey(kind: mark.kind, itemID: mark.itemID, at: mark.at)
+            let fields = prior[key] ?? evidence.map(TimestampEvidenceFields.init) ?? .empty
+            _ = try db.insert("completions", [
+                "kind": mark.kind, "item_id": mark.itemID, "at": mark.at,
+                "best_score": mark.bestScore, "language_id": mark.languageID,
+                "at_source": fields.source, "at_source_version": fields.sourceVersion, "at_unit": fields.unit,
+            ], strategy: .ignore)
+        }
+    }
+}
+
+private struct CompletionTimestampKey: Hashable {
+    let kind: String
+    let itemID: String
+    let at: Double
+}
+
+public struct RemoteProgressRollup: Equatable, Sendable {
+    public var ownerAccountID: String
+    public var languageID: String?
+    public var kind: String
+    public var itemID: String
+    public var firstAtMilliseconds: Int64
+    public var lastAtMilliseconds: Int64
+    public var attempts: Int
+    public var bestScore: Int
+    public var sourceVersion: Int
+
+    public init(ownerAccountID: String, languageID: String?, kind: String, itemID: String,
+                firstAtMilliseconds: Int64, lastAtMilliseconds: Int64, attempts: Int,
+                bestScore: Int, sourceVersion: Int) {
+        self.ownerAccountID = ownerAccountID
+        self.languageID = languageID
+        self.kind = kind
+        self.itemID = itemID
+        self.firstAtMilliseconds = firstAtMilliseconds
+        self.lastAtMilliseconds = lastAtMilliseconds
+        self.attempts = attempts
+        self.bestScore = bestScore
+        self.sourceVersion = sourceVersion
+    }
+}
+
+public enum RemoteProgressRollupsDao {
+    public static func all(_ db: SqlDatabase, ownerAccountID: String) throws -> [RemoteProgressRollup] {
+        return try db.query("SELECT * FROM remote_progress_rollups WHERE owner_account_id = ? " +
+                            "ORDER BY language_key, kind, item_id", args: [ownerAccountID]).map(decode)
+    }
+
+    public static func forLanguage(_ db: SqlDatabase, ownerAccountID: String,
+                                   languageID: String) throws -> [RemoteProgressRollup] {
+        return try db.query("SELECT * FROM remote_progress_rollups WHERE owner_account_id = ? AND language_id = ? " +
+                            "ORDER BY kind, item_id", args: [ownerAccountID, languageID]).map(decode)
+    }
+
+    public static func merge(_ db: SqlDatabase, _ incoming: RemoteProgressRollup) throws {
+        guard !incoming.ownerAccountID.isEmpty, !incoming.kind.isEmpty, !incoming.itemID.isEmpty,
+              incoming.languageID?.isEmpty != true, incoming.firstAtMilliseconds >= 0,
+              incoming.lastAtMilliseconds >= incoming.firstAtMilliseconds,
+              incoming.attempts >= 0, incoming.bestScore >= 0, incoming.sourceVersion > 0 else {
+            throw SqlDatabaseError.unsupportedValue("invalid remote progress rollup")
+        }
+        let whereClause = "owner_account_id = ? AND language_key = ? AND kind = ? AND item_id = ?"
+        let args: [Any?] = [incoming.ownerAccountID, incoming.languageID ?? "", incoming.kind, incoming.itemID]
+        let existing = try db.query("SELECT * FROM remote_progress_rollups WHERE \(whereClause)", args: args)
+            .first.map(decode)
+        let result = existing.map { previous in
+            RemoteProgressRollup(ownerAccountID: incoming.ownerAccountID, languageID: incoming.languageID,
+                                 kind: incoming.kind, itemID: incoming.itemID,
+                                 firstAtMilliseconds: min(previous.firstAtMilliseconds, incoming.firstAtMilliseconds),
+                                 lastAtMilliseconds: max(previous.lastAtMilliseconds, incoming.lastAtMilliseconds),
+                                 attempts: max(previous.attempts, incoming.attempts),
+                                 bestScore: max(previous.bestScore, incoming.bestScore),
+                                 sourceVersion: max(previous.sourceVersion, incoming.sourceVersion))
+        } ?? incoming
+        let values: [String: Any?] = [
+            "owner_account_id": result.ownerAccountID, "language_id": result.languageID,
+            "language_key": result.languageID ?? "", "kind": result.kind, "item_id": result.itemID,
+            "first_at_ms": result.firstAtMilliseconds, "last_at_ms": result.lastAtMilliseconds,
+            "attempts": result.attempts, "best_score": result.bestScore, "source_version": result.sourceVersion,
+        ]
+        if existing == nil {
+            _ = try db.insert("remote_progress_rollups", values)
+        } else {
+            try updateRow(db, "remote_progress_rollups", values, where: whereClause, whereArgs: args)
+        }
+    }
+
+    private static func decode(_ row: SqlRow) -> RemoteProgressRollup {
+        RemoteProgressRollup(ownerAccountID: row.text("owner_account_id"), languageID: row.textOrNull("language_id"),
+                             kind: row.text("kind"), itemID: row.text("item_id"),
+                             firstAtMilliseconds: row.long("first_at_ms"), lastAtMilliseconds: row.long("last_at_ms"),
+                             attempts: row.int("attempts"), bestScore: row.int("best_score"),
+                             sourceVersion: row.int("source_version"))
+    }
+}
+
+public struct ProgressSyncState: Equatable, Sendable {
+    public var ownerAccountID: String
+    public var direction: String
+    public var cursor: String?
+    public var passGeneration: Int64
+    public var updatedAtMilliseconds: Int64
+    public init(ownerAccountID: String, direction: String, cursor: String?, passGeneration: Int64,
+                updatedAtMilliseconds: Int64) {
+        self.ownerAccountID = ownerAccountID
+        self.direction = direction
+        self.cursor = cursor
+        self.passGeneration = passGeneration
+        self.updatedAtMilliseconds = updatedAtMilliseconds
+    }
+}
+
+public enum ProgressSyncStateDao {
+    public static func get(_ db: SqlDatabase, ownerAccountID: String, direction: String) throws -> ProgressSyncState? {
+        return try db.query("SELECT * FROM progress_sync_state WHERE owner_account_id = ? AND direction = ?",
+                            args: [ownerAccountID, direction]).first.map { row in
+            ProgressSyncState(ownerAccountID: row.text("owner_account_id"), direction: row.text("direction"),
+                              cursor: row.textOrNull("cursor"), passGeneration: row.long("pass_generation"),
+                              updatedAtMilliseconds: row.long("updated_at_ms"))
+        }
+    }
+
+    public static func put(_ db: SqlDatabase, _ state: ProgressSyncState) throws {
+        guard !state.ownerAccountID.isEmpty, ["download", "upload"].contains(state.direction),
+              state.passGeneration >= 0, state.updatedAtMilliseconds >= 0 else {
+            throw SqlDatabaseError.unsupportedValue("invalid progress sync state")
+        }
+        let values: [String: Any?] = ["owner_account_id": state.ownerAccountID, "direction": state.direction,
+                                     "cursor": state.cursor, "pass_generation": state.passGeneration,
+                                     "updated_at_ms": state.updatedAtMilliseconds]
+        if try get(db, ownerAccountID: state.ownerAccountID, direction: state.direction) == nil {
+            _ = try db.insert("progress_sync_state", values)
+        } else {
+            try updateRow(db, "progress_sync_state", values, where: "owner_account_id = ? AND direction = ?",
+                          whereArgs: [state.ownerAccountID, state.direction])
+        }
+    }
+}
+
+public struct ProgressRecoveryRecord: Equatable, Sendable {
+    public var ownerAccountID: String?
+    public var sourceTable: String
+    public var sourceKey: String
+    public var sourceVersion: Int
+    public var state: String
+    public var reason: String?
+    public var updatedAtMilliseconds: Int64
+    public init(ownerAccountID: String?, sourceTable: String, sourceKey: String, sourceVersion: Int,
+                state: String, reason: String?, updatedAtMilliseconds: Int64) {
+        self.ownerAccountID = ownerAccountID
+        self.sourceTable = sourceTable
+        self.sourceKey = sourceKey
+        self.sourceVersion = sourceVersion
+        self.state = state
+        self.reason = reason
+        self.updatedAtMilliseconds = updatedAtMilliseconds
+    }
+}
+
+public enum ProgressRecoveryDao {
+    private static let supportedEvidence = [
+        "ios.recordCompletion": 2,
+        "ios.recordLessonAttempt": 3,
+    ]
+
+    /// Classifies persisted timestamps before readers materialize progress; unknown values are never repaired.
+    public static func recover(_ db: SqlDatabase, nowUnixMilliseconds: Int64) throws {
+        try db.transaction { tx in
+            let completions = try tx.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit " +
+                                           "FROM completions WHERE \(ownerClause(tx)) ORDER BY rowid",
+                                           args: ownerArguments(tx))
+            for row in completions {
+                let at = row.real("at")
+                try classify(tx, table: "completions", key: completionKey(row.text("kind"), row.text("item_id"), at),
+                    value: at, source: row.textOrNull("at_source"), version: row.intOrNull("at_source_version"),
+                    unit: row.textOrNull("at_unit"), expectedUnit: "apple_reference_seconds",
+                    nowUnixMilliseconds: nowUnixMilliseconds, supportedSources: Set(supportedEvidence.keys))
+            }
+            let lessons = try tx.query("SELECT lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+                                       "FROM lesson_state WHERE \(ownerClause(tx)) ORDER BY rowid",
+                                       args: ownerArguments(tx))
+            for row in lessons {
+                try classify(tx, table: "lesson_state", key: row.text("lesson_id"), value: row.real("last_seen"),
+                    source: row.textOrNull("last_seen_source"), version: row.intOrNull("last_seen_source_version"),
+                    unit: row.textOrNull("last_seen_unit"), expectedUnit: "apple_reference_seconds",
+                    nowUnixMilliseconds: nowUnixMilliseconds, supportedSources: ["ios.recordLessonAttempt"])
+            }
+        }
+    }
+
+    private static func classify(_ db: SqlDatabase, table: String, key: String, value: Double,
+                                 source: String?, version: Int?, unit: String?, expectedUnit: String,
+                                 nowUnixMilliseconds: Int64, supportedSources: Set<String>) throws {
+        let valid = ProgressTime.toUnixMilliseconds(value, nowUnixMilliseconds: Double(nowUnixMilliseconds)) != nil
+        let noEvidence = source == nil && version == nil && unit == nil
+        if noEvidence && valid { return }
+        let recognized = source != nil && version != nil && unit == expectedUnit &&
+            source.map { supportedEvidence[$0] == version && supportedSources.contains($0) } == true
+        let state = !valid ? "excluded" : recognized ? "validated" : "unresolved"
+        let reason: String?
+        if !valid && noEvidence {
+            reason = "invalid timestamp; provenance unavailable"
+        } else if !valid {
+            reason = "invalid timestamp; persisted evidence does not authorize repair"
+        } else if !recognized {
+            reason = "persisted writer/version/unit tuple is unsupported"
+        } else {
+            reason = nil
+        }
+        try record(db, ProgressRecoveryRecord(ownerAccountID: nil, sourceTable: table, sourceKey: key,
+            sourceVersion: version ?? 0, state: state, reason: reason,
+            updatedAtMilliseconds: nowUnixMilliseconds))
+    }
+
+    private static func completionKey(_ kind: String, _ itemID: String, _ at: Double) -> String {
+        return "\(kind.utf8.count):\(kind)\(itemID.utf8.count):\(itemID):\(at.bitPattern)"
+    }
+
+    public static func record(_ db: SqlDatabase, _ record: ProgressRecoveryRecord) throws {
+        guard !record.sourceTable.isEmpty, !record.sourceKey.isEmpty, record.sourceVersion >= 0,
+              ["pending", "repaired", "excluded", "unresolved", "validated"].contains(record.state),
+              (record.reason?.count ?? 0) <= 160, record.updatedAtMilliseconds >= 0 else {
+            throw SqlDatabaseError.unsupportedValue("invalid progress recovery record")
+        }
+        let ownerKey = try activeOwnerKey(db) ?? ""
+        let ownerAccountID = ownerKey.hasPrefix("member:") ? String(ownerKey.dropFirst("member:".count)) : nil
+        let whereClause = "owner_key = ? AND source_table = ? AND source_key = ? AND source_version = ?"
+        let args: [Any?] = [ownerKey, record.sourceTable, record.sourceKey, record.sourceVersion]
+        let values: [String: Any?] = ["owner_account_id": ownerAccountID, "owner_key": ownerKey,
+                                     "source_table": record.sourceTable, "source_key": record.sourceKey,
+                                     "source_version": record.sourceVersion, "state": record.state,
+                                     "reason": record.reason, "updated_at_ms": record.updatedAtMilliseconds]
+        let existing = try db.query("SELECT state, reason FROM progress_recovery WHERE \(whereClause)",
+                                    args: args).first
+        if existing == nil {
+            _ = try db.insert("progress_recovery", values)
+        } else if existing!.text("state") != record.state || existing!.textOrNull("reason") != record.reason {
+            try updateRow(db, "progress_recovery", values, where: whereClause, whereArgs: args)
         }
     }
 }
@@ -575,8 +964,9 @@ public enum CompletionsDao {
 /// so rows keep their insertion-order rowid.
 public enum SkillErrorsDao {
     public static func upsert(_ db: SqlDatabase, _ error: SkillError) throws {
-        let exists = try !db.query("SELECT 1 AS matched FROM skill_errors WHERE skill_id = ?",
-                                   args: [error.skillID]).isEmpty
+        let scope = try ownerClause(db)
+        let args = [error.skillID] + (try ownerArguments(db))
+        let exists = try !db.query("SELECT 1 AS matched FROM skill_errors WHERE skill_id = ? AND \(scope)", args: args).isEmpty
         let row: [String: Any?] = [
             "skill_id": error.skillID,
             "count": error.count,
@@ -584,16 +974,18 @@ public enum SkillErrorsDao {
             "last_prompt": error.lastPrompt,
         ]
         if exists {
-            try updateRow(db, "skill_errors", row, where: "skill_id = ?", whereArgs: [error.skillID])
+            try updateRow(db, "skill_errors", row, where: "skill_id = ? AND \(scope)", whereArgs: args)
         } else {
             _ = try db.insert("skill_errors", row)
         }
-        try db.exec("DELETE FROM skill_errors WHERE skill_id NOT IN "
-            + "(SELECT skill_id FROM skill_errors ORDER BY count DESC, rowid LIMIT \(Archive.maximumErrors))")
+        _ = try db.update("DELETE FROM skill_errors WHERE \(ownerClause(db)) AND skill_id NOT IN "
+            + "(SELECT skill_id FROM skill_errors WHERE \(ownerClause(db)) ORDER BY count DESC, rowid LIMIT \(Archive.maximumErrors))",
+            args: (try ownerArguments(db)) + (try ownerArguments(db)))
     }
 
     public static func all(_ db: SqlDatabase) throws -> [SkillError] {
-        return try db.query("SELECT * FROM skill_errors ORDER BY rowid").map { row in
+        return try db.query("SELECT * FROM skill_errors WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map { row in
             SkillError(skillID: row.text("skill_id"), count: row.int("count"),
                        lastAt: row.real("last_at"), lastPrompt: row.text("last_prompt"))
         }
@@ -605,7 +997,7 @@ public enum SkillErrorsDao {
     /// (recordExerciseMistake), so the archive's list IS the table's content
     /// and rowid order must equal list order for export to rebuild it.
     public static func replaceAllInTx(_ db: SqlDatabase, _ errors: [SkillError]) throws {
-        try db.exec("DELETE FROM skill_errors")
+        _ = try db.update("DELETE FROM skill_errors WHERE \(ownerClause(db))", args: ownerArguments(db))
         for error in errors {
             try upsert(db, error)
         }
@@ -665,7 +1057,7 @@ public enum UsageOutboxDao {
     public static func pending(_ db: SqlDatabase) throws -> [QueuedUsageEvent] {
         let installID = try Self.installID(db)
         return try db.query("SELECT rowid AS row_id, name, at, props_json FROM usage_outbox "
-            + "WHERE dispatched = 0 ORDER BY at, row_id").map { row in
+            + "WHERE dispatched = 0 AND \(ownerClause(db)) ORDER BY at, row_id", args: ownerArguments(db)).map { row in
             let rowId = row.long("row_id")
             return QueuedUsageEvent(
                 rowId: rowId,
@@ -680,8 +1072,8 @@ public enum UsageOutboxDao {
     public static func markDispatched(_ db: SqlDatabase, _ rowIds: some Collection<Int64>) throws {
         if rowIds.isEmpty { return }
         let placeholders = rowIds.map { _ in "?" }.joined(separator: ", ")
-        _ = try db.update("UPDATE usage_outbox SET dispatched = 1 WHERE rowid IN (\(placeholders))",
-                          args: Array(rowIds))
+        _ = try db.update("UPDATE usage_outbox SET dispatched = 1 WHERE rowid IN (\(placeholders)) AND \(ownerClause(db))",
+                          args: Array(rowIds) + (try ownerArguments(db)))
     }
 
     // The event props ride the column as a JSON object, encoded like every
@@ -744,22 +1136,24 @@ public struct AssessmentTicketRow: Equatable {
 
 public enum AssessmentTicketsDao {
     public static func upsert(_ db: SqlDatabase, _ ticket: AssessmentTicketRow) throws {
-        let exists = try !db.query("SELECT 1 AS matched FROM assessment_tickets WHERE session_id = ?",
-                                   args: [ticket.sessionID]).isEmpty
+        let scope = try ownerClause(db)
+        let args = [ticket.sessionID] + (try ownerArguments(db))
+        let exists = try !db.query("SELECT 1 AS matched FROM assessment_tickets WHERE session_id = ? AND \(scope)", args: args).isEmpty
         let row: [String: Any?] = [
             "session_id": ticket.sessionID,
             "attempts": ticket.attempts,
             "last_attempt_at": ticket.lastAttemptAt,
         ]
         if exists {
-            try updateRow(db, "assessment_tickets", row, where: "session_id = ?", whereArgs: [ticket.sessionID])
+            try updateRow(db, "assessment_tickets", row, where: "session_id = ? AND \(scope)", whereArgs: args)
         } else {
             _ = try db.insert("assessment_tickets", row)
         }
     }
 
     public static func all(_ db: SqlDatabase) throws -> [AssessmentTicketRow] {
-        return try db.query("SELECT * FROM assessment_tickets ORDER BY rowid").map { row in
+        return try db.query("SELECT * FROM assessment_tickets WHERE \(ownerClause(db)) ORDER BY rowid",
+                            args: ownerArguments(db)).map { row in
             AssessmentTicketRow(row.text("session_id"), attempts: row.int("attempts"),
                                 lastAttemptAt: row.realOrNull("last_attempt_at"))
         }
@@ -768,11 +1162,12 @@ public enum AssessmentTicketsDao {
     /// Removes one session's ticket — the mirror of FinalAssessmentRecovery
     /// enqueue's removal branch and of the ledger filters in deleteSession.
     public static func delete(_ db: SqlDatabase, _ sessionID: String) throws {
-        _ = try db.update("DELETE FROM assessment_tickets WHERE session_id = ?", args: [sessionID])
+        _ = try db.update("DELETE FROM assessment_tickets WHERE session_id = ? AND \(ownerClause(db))",
+                          args: [sessionID] + (try ownerArguments(db)))
     }
 
     public static func clear(_ db: SqlDatabase) throws {
-        try db.exec("DELETE FROM assessment_tickets")
+        _ = try db.update("DELETE FROM assessment_tickets WHERE \(ownerClause(db))", args: ownerArguments(db))
     }
 }
 
@@ -802,18 +1197,20 @@ public enum MetaDao {
     /// skills behind (export = the archive, not a union). Callers inside a
     /// transaction (ArchiveMapper.import) make that atomic.
     public static func replaceMastery(_ db: SqlDatabase, _ mastery: [String: Int]) throws {
-        try db.exec("DELETE FROM meta WHERE key LIKE '\(masteryPrefix)%'")
+        let prefix = try activeOwnerKey(db).map { "\(masteryPrefix)\($0):" } ?? masteryPrefix
+        _ = try db.update("DELETE FROM meta WHERE key LIKE ?", args: ["\(prefix)%"])
         for (skill, level) in mastery {
-            try put(db, "\(masteryPrefix)\(skill)", String(level))
+            try put(db, "\(prefix)\(skill)", String(level))
         }
     }
 
     /// Every mastery row, keyed like the archive's mastery cache.
     public static func mastery(_ db: SqlDatabase) throws -> [String: Int] {
-        return try db.query("SELECT key, value FROM meta WHERE key LIKE '\(masteryPrefix)%' ORDER BY key")
+        let prefix = try activeOwnerKey(db).map { "\(masteryPrefix)\($0):" } ?? masteryPrefix
+        return try db.query("SELECT key, value FROM meta WHERE key LIKE ? ORDER BY key", args: ["\(prefix)%"])
             .reduce(into: [:]) { result, row in
                 let key = row.text("key")
-                result[String(key.dropFirst(masteryPrefix.count))] = Int(row.text("value"))!
+                result[String(key.dropFirst(prefix.count))] = Int(row.text("value"))!
             }
     }
 
@@ -866,9 +1263,10 @@ public enum SearchDao {
                 + "FROM fragments_fts "
                 + "JOIN fragments ON fragments.rowid = fragments_fts.rowid "
                 + "JOIN sessions s ON s.id = fragments.session_id "
-                + "WHERE fragments_fts MATCH ? AND s.language_id = ? "
+                + "WHERE fragments_fts MATCH ? AND s.language_id = ? AND fragments.owner_key = s.owner_key "
+                + "AND \(ownerClause(db)) "
                 + "ORDER BY s.started_at DESC, fragments.rowid",
-            args: [snippetStart, snippetEnd, snippetEllipsis, match, languageID]) {
+            args: [snippetStart, snippetEnd, snippetEllipsis, match, languageID] + (try ownerArguments(db))) {
             // one hit per session: the first (newest conversation, earliest
             // fragment) match decides the snippet
             if seen.insert(row.text("id")).inserted {

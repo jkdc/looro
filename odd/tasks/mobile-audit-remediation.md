@@ -1,4 +1,4 @@
-# Mobile audit remediation — implement all 16 audit findings using SDD/Superpowers.
+# Mobile audit remediation — implement all 16 audit findings and account-isolate local learner data using SDD/Superpowers.
 Branch: `feature/learning-platform`; delivery: sequential implementer/reviewer phases; worktree changes forbidden.
 Runner: `make check`, `make test-api`, offline Gradle, SwiftPM/Xcode only where available; no Gentle AI.
 
@@ -6,13 +6,13 @@ Runner: `make check`, `make test-api`, offline Gradle, SwiftPM/Xcode only where 
 
 1. **S1 — Owner-scoped exam history (M01)**
 
-History queries MUST use the requesting owner, including guest-only NULL ownership. Identity changes MUST immediately clear prior visible summaries and reject late results. Existing foreign-owner detail protections MUST remain intact.
+History queries MUST use the requesting active identity, including a stable guest identity; NULL ownership is legacy-only and MUST NOT act as a wildcard or active guest. Identity changes MUST immediately clear prior visible summaries and reject late results. Existing foreign-owner detail protections MUST remain intact.
 
 #### Scenario: Account isolation
 
-- **GIVEN** stored attempts owned by A, B and a NULL guest for the same language/level
+- **GIVEN** stored attempts owned by A, B and guest identity G for the same language/level
 - **WHEN** each identity requests history
-- **THEN** only its rows are returned and guest rows are not reassigned.
+- **THEN** only its rows are returned and guest G's rows are not exposed to A or B.
 
 #### Scenario: Late history response
 
@@ -22,7 +22,7 @@ History queries MUST use the requesting owner, including guest-only NULL ownersh
 
 2. **S2 — Time-safe progress and recoverable legacy data (M02)**
 
-Wire timestamps MUST be safe-integer Unix milliseconds; both native progress domains MUST use Apple-reference seconds, converting exactly once with offset 978307200 seconds and explicit millisecond rounding. V2 MUST preserve distinct firstAt and lastAt. Recovery MUST require persisted source/version evidence, retain unresolved records unchanged, exclude only invalid records from sync and remain transactionally idempotent. A plausible magnitude alone MUST NOT authorize repair.
+The instant recorded by the originating mobile device is canonical; the backend MUST preserve and return it unchanged. Wire timestamps MUST be safe-integer Unix milliseconds; both native progress domains MUST use Apple-reference seconds, converting exactly once with offset 978307200 seconds and explicit millisecond rounding. V2 MUST preserve distinct firstAt and lastAt. Recovery MUST use persisted evidence for the mobile writer/version and timestamp unit of the exact field; this is encoding evidence, not classification of local-versus-backend origin. Pre-v6 completion rows without such evidence MUST remain unchanged and MUST NOT be repaired from timestamp magnitude, field, kind, or database version. New writes that may participate in recovery MUST persist explicit writer/version and unit evidence. Missing or conflicting evidence MUST leave the record unchanged; exclude it from sync only if its timestamp is invalid in the supported internal domain. Recovery MUST be transactional and idempotent.
 
 #### Scenario: Distinct instants survive persistence
 
@@ -30,11 +30,11 @@ Wire timestamps MUST be safe-integer Unix milliseconds; both native progress dom
 - **WHEN** each client decodes, persists, reopens and uploads to a fresh v2 ledger
 - **THEN** both instants remain unchanged to millisecond precision and the local completion uses Apple-reference seconds.
 
-#### Scenario: Ambiguous legacy record
+#### Scenario: Evidence-backed recovery preserves ambiguous legacy data
 
-- **GIVEN** one valid record, one provably contaminated record and one ambiguous record
+- **GIVEN** one valid record, one contaminated record with persisted source/version and unit evidence, and one pre-v6 completion record without provenance
 - **WHEN** recovery runs twice or fails before commit
-- **THEN** only the provable value is repaired; ambiguous source data is preserved, valid sync continues, and replay/rollback produces no extra changes.
+- **THEN** only the evidence-backed value is repaired; the pre-v6 record remains byte-for-byte unchanged, valid sync continues, and replay/rollback produces no extra changes.
 
 3. **S3 — Account and generation fencing (M03)**
 
@@ -54,13 +54,19 @@ Sync MUST own one operation per coordinator and bind it to account, credential a
 
 4. **S4 — Bounded compatible resumable protocol (M04)**
 
-V2 MUST use existing /v1/progress with GET version=2 and POST {version:2,entries:[...]}. GET MUST return {version:2,progress,nextCursor,complete}, with at most 1000 rows and complete iff nextCursor is null. POST MUST accept at most 200 entries with kind,itemID,language,firstAt,lastAt,attempts,bestScore, validate both timestamps and acknowledge the whole batch with {merged:N}. The limits and strict existing v1 shape MUST remain separate. PROGRESS_SYNC_V2_ENABLED defaults false; authenticated v2 requests while disabled MUST return HTTP 503 and {error:{code:"progress_sync_version_unavailable"}}. Only that exact result permits one corrected v1 compatibility pass. Stable ASCII/codepoint identity order, validated opaque cursors and atomic rollup/page cursor commits MUST permit replay and later full-pass convergence. Invalid pages MUST leave cursor and stored data unchanged.
+V2 MUST use existing /v1/progress with GET version=2 and POST {version:2,entries:[...]}. Mobile devices upload progress generated on that device under the active account identity. GET is a one-time bootstrap for a newly authenticated account on a device that has no local progress for that account; after successful bootstrap, routine syncs MUST NOT download again. GET MUST return {version:2,progress,nextCursor,complete}, with at most 1000 rows and complete iff nextCursor is null. POST MUST accept at most 200 entries with kind,itemID,language,firstAt,lastAt,attempts,bestScore, validate both timestamps and acknowledge the whole batch with {merged:N}. The limits and strict existing v1 shape MUST remain separate. PROGRESS_SYNC_V2_ENABLED defaults false; authenticated v2 requests while disabled MUST return HTTP 503 and {error:{code:"progress_sync_version_unavailable"}}. Only that exact result permits one corrected v1 compatibility pass. Stable ASCII/codepoint identity order, validated opaque cursors and atomic rollup/page cursor commits MUST permit replay of bootstrap pages and later upload convergence. Invalid pages MUST leave cursor and stored data unchanged. Guest accounts remain separate identities per installation for now; their progress is isolated by the guest account ID.
 
 #### Scenario: Complete stable dataset
 
 - **GIVEN** 201 upload and 1001 download identities including mixed languages and equal timestamps
-- **WHEN** clients traverse and acknowledge all pages
+- **WHEN** an empty device bootstraps and uploads its resulting effective progress
 - **THEN** final identity sets match exactly; page bounds hold; replay and restart do not duplicate effects.
+
+#### Scenario: Existing device does not download again
+
+- **GIVEN** the account already has local progress or completed its bootstrap on this device
+- **WHEN** a later routine sync runs
+- **THEN** the client uploads local/effective progress and makes no backend progress download request.
 
 #### Scenario: Interrupted or concurrent pass
 
@@ -76,7 +82,7 @@ V2 MUST use existing /v1/progress with GET version=2 and POST {version:2,entries
 
 5. **S5 — Remote aggregate projection without invented history (M05)**
 
-Account/language scoped rollups MUST merge firstAt by minimum and lastAt/attempts/bestScore by maximum, not sum. Score, mastery, completion reads and future uploads MUST use the same effective aggregate without creating local events, sessions or streaks. Existing unknown-origin legacy completion marks MUST remain unchanged. Unresolved legacy-language rollups MUST NOT be assigned to an arbitrary active language.
+Account/language scoped rollups MUST merge firstAt by minimum and lastAt/attempts/bestScore by maximum, not sum. They represent progress originally recorded on mobile and retained by the backend for a later empty-device bootstrap; the backend MUST NOT invent progress. Score, mastery, completion reads and uploads MUST use the same effective aggregate without creating local events, sessions or streaks. Existing legacy completion marks MUST remain unchanged when their timestamp encoding cannot be proven. Unresolved legacy-language rollups MUST NOT be assigned to an arbitrary active language.
 
 #### Scenario: Monotonic score and upload
 
@@ -260,19 +266,47 @@ Secure persistence and in-memory adoption MUST complete before one adoption noti
 - **WHEN** profile refresh succeeds or credentials are genuinely rejected
 - **THEN** refresh does not duplicate adoption and rejection emits the appropriate invalidation transition.
 
+17. **S17 — Account-owned local learner data (user-approved scope extension)**
+
+Every learner-data read and write MUST be scoped to the currently active identity, which is always either a signed-in member or a local guest. Persist the namespaced owner key `member:<accountID>` or `guest:<installationUUID>` on each mutable learner-owned row; resolve it before migration. Switching identities MUST make the prior identity's learning data unavailable to the new identity. Sign-out MUST transition to a guest identity, not leave an ownerless active state. Existing ownerless development data MUST be assigned once to the identity active when the ownership migration runs; fresh installs and newly created accounts MUST not inherit it. Guest data MUST remain isolated when that guest later signs into or registers a member account: no automatic merge, copy, or visibility is allowed. Only member-owned progress is eligible for backend sync; the backend download remains a one-time bootstrap only when a member account has no local data on that device. Archive export/import, reset/delete, history and all learner-data stores MUST preserve these ownership boundaries; device-global cache/install metadata is not learner-owned data.
+
+#### Scenario: Account switch isolation
+
+- **GIVEN** accounts A and B have local exercises, sessions, preferences and assessment data
+- **WHEN** the active identity changes from A to B
+- **THEN** B can read and mutate only B-owned data and A's visible state is cleared immediately.
+
+#### Scenario: Existing ownerless development data
+
+- **GIVEN** a pre-migration database contains ownerless learner data and the active identity is A
+- **WHEN** the ownership migration runs
+- **THEN** the existing rows are assigned to A exactly once, while fresh databases and later accounts receive no copied rows.
+
+#### Scenario: Guest-to-member transition
+
+- **GIVEN** guest G has locally generated progress and the user signs into member A
+- **WHEN** the active identity changes
+- **THEN** A sees only A-owned data; G's progress remains isolated under G and is not merged, uploaded as A, or exposed to A.
+
+#### Scenario: Archive and member-only sync
+
+- **GIVEN** local records exist for A, B and guest G
+- **WHEN** A exports/imports an archive or performs progress sync
+- **THEN** the archive/sync contains only A-owned learner data; guest progress is local-only and an already-bootstrapped member device does not download backend state again.
+
 ## Tasks
 
 Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app-movil-2026-10-25.md` unchanged.
 
-- T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; connected UI verification pending; commit: `f4673e2`.
+- T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: ownership implementation and Android verification completed through T17; iOS runtime proof deferred to T16; original commit: `f4673e2` remains historical evidence.
 - T2 — linked S2,S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; Swift execution pending; commit: `d58a2c9`.
 - T3 — linked S3; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; iOS app execution pending T16; commit: `6a69351`.
 - T4 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; focused PostgreSQL 17/17, `make check` 146, API type-check, fresh full suite 756/756, independent review clean, parent focused spot-check 17/17; commit: `98ae12d`.
-- T5 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
+- T5 — linked S2,S4,S5; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: reopened/in progress after approved S2 scope revision; pre-v6 rows without provenance must remain unchanged; commit: pending.
 - T6 — linked S2, S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T7 — linked S2, S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T8 — linked S5; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
-- T9 — linked S6; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
+- T9 — linked S6; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: in progress; S6 topic transition can proceed independently while T5's evidence-backed historical repair remains unresolved; commit: pending.
 - T10 — linked S7, S8, S9; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T11 — linked S10; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T12 — linked S11, S12, S13; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
@@ -280,15 +314,14 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - T14 — linked S15; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T15 — linked S16; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T16 — linked S1–S16; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
+- T17 — linked S1,S17 and S3–S5; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: Android implementation and independent high-risk verification complete; iOS runtime proof deferred to T16; depends on resolved active identity before T6–T8 account-scoped persistence; one-time migration of existing ownerless learner data, account-aware stores/archive/import/reset, guest isolation and member-only sync; commit: pending with interleaved T5 schema/data changes.
 
 ## Log
-
 - L1 (2026-10-25): “implementa todo lo encontrado en el documento generado [informe-revision-app-movil-2026-10-25.md](informe-revision-app-movil-2026-10-25.md) utiliza sdd superpowers para ello”
 - L2 (2026-10-25): “ok, adelante” — baseline design approval and selection of sequential implementer/reviewer phases.
 - L3 (2026-10-25): “revisa el diseño que has planteado junto con la especificación y las tareas, si encuentras algo que no esté bien actualizalo” — review/correct planning artifacts only.
 - L4 (2026-10-25): “cuando hayas terminado implementa los cambios” — explicit authorization to execute the corrected plan.
 - L5: Begin T1 S1. The plan and OpenSpec tasks are canonical; this full feature document is the Engram recovery mirror. Parent owns git and commits reviewed bytes.
-- L19: T4 behavior commit `98ae12d` created after clean independent review, correction round 1, focused checks and a fresh full API suite pass (756/756); documentation records the earlier transient full-suite environment failure and successful rerun.
 - L6 (2026-10-25): T1 implements requesting-owner SQL isolation, guest-only NULL semantics, owner-scoped legacy summary display, and generation/request-sequence fencing. Focused and full Android unit tests pass; UI test source compiles; connected UI test unavailable because no emulator/device is attached. Independent review approved after one correction batch; no device proof is claimed. Commit: `f4673e2`.
 - L7 (2026-10-25): Begin T2 / S2,S4, using the approved version-2 shared contract and checked cross-platform time primitives. No persisted repair or production activation is authorized by this task.
 - L8 (2026-10-25): T2 adds the shared v2 contract, generated Kotlin/Swift constants, checked platform time conversions and provenance-based recovery rules. `make check` (146 tests), 5 exporter tests and Android focused/full suites pass; one unrelated voice assertion failed once, then passed isolated and on a second full suite (731/0). Swift execution is unavailable. Independent review approved; risk item 3 (cross-platform shared contract). Commit: `d58a2c9`.
@@ -302,3 +335,27 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L16 (2026-10-26): User resumed with “continua” and asked “no deberías hacer commit de t3 antes?”. Verified T3 is already committed before T4: code `6a69351`, verification record `674b0b2` (HEAD at T4 start). T4 mapping found existing route authenticates before v1 handling; v1 has strict body shape and 200-entry upload cap; current GET is capped at 1000 but has no cursor/tie-break ordering. DB integration tests require `make test-api` with isolated PostgreSQL. CodeGraph CLI unavailable, so mapping used scoped filesystem fallback. T4 implementation remains pending review and commit.
 - L17 (2026-10-26): Fresh T4 review found explicit unsupported/malformed GET version selectors return legacy 200 instead of an error, and valid historical v2 firstAt values fail against migration 030's `first_at > '2025-01-01'` check. Review also noted cursor tokens omit protocol version although the approved design requires it. Updated T4 brief/plan to add focused regression tests, a version-tagged cursor, and the next additive migration; migration 030 remains immutable. Parent full `make test-api` spot-check ended 582/757 passing and 175 failing, including admin-auth 401 and later database connection timeouts; independent reviewer passed the focused candidate (15/15) and baseline legacy probes (9/9). T4 is not complete or committed.
 - L18 (2026-10-26): T4 correction round 1 addresses all three review findings: only an absent GET version selector negotiates legacy v1; migration 054 removes only the old historical timestamp cutoff; cursors encode and validate protocol version 2. Fresh independent re-review passed. Focused PostgreSQL regression suite and parent rerun each passed 17/17; `make check` (146), API type-check, and a fresh full `make test-api` (756/756) passed. Parent's separate full-suite failure (582/757: admin-auth 401 and later PostgreSQL timeouts) is retained as contradictory-run evidence, not hidden. OpenSpec and Superpowers records updated; behavior commit is the remaining T4 step. Risk: items 1 and 3 (additive schema migration plus versioned public HTTP contract).
+- L19: T4 behavior commit `98ae12d` created after clean independent review, correction round 1, focused checks and a fresh full API suite pass (756/756); documentation records the earlier transient full-suite environment failure and successful rerun.
+- L20 (2026-10-26): “sigue con todas las tareas pendientes hasta finalizarlas todas” — continue the approved task sequence without asking for another continuation confirmation.
+- L21 (2026-10-26): Fresh T5 review blocked completion: baseline Android/iOS remote merges stored aggregates as ordinary completion marks without origin/unit metadata, and local records lack per-record provenance. S2 forbids guessing from magnitude, field, schema version or kind. Preserve the uncommitted partial candidate; ask the user whether to revise the recovery requirement or provide an authentic provenance source before T5/T6/T7 continue.
+- L22 (2026-10-26): User approved the safe recovery-scope revision: “si, adelante”. Update S2/T5 so pre-v6 records without per-record provenance remain unchanged and recovery applies only when explicit source/version and unit evidence is persisted; resume T5, keeping T6/T7 dependent on its completion.
+- L23 (2026-10-26): “no me queda claro  a qué viene esto del origen. todo debería generarse en el movil y sincronizarse al BE. el único momento en el que se sincroniza del BE al movil es cuando se inicia sesión en un dispositivo nuevo en el que no había datos de ese usuario. esta debería ser la premisa para todo” — clarified mobile as the source of progress and backend downloads as a one-time empty-device bootstrap; timestamp encoding evidence is distinct from local/server data origin.
+- L24 (2026-10-26): “la recuperación se puede seguir haciendo y las fechas deberían ser las establecidas en el dispositivo movil. necesital algo más o puedes continuar?” — retain evidence-bounded recovery and the mobile-recorded instant as canonical; no additional product detail was requested.
+- L25 (2026-10-26): “es obligatorio que el ususario haga login para poder asociar sus datos con un usuario, por tanto en local siempre debería haber un usuario” — local progress belongs to the active user identity.
+- L26 (2026-10-26): “la sesion invitada la usamos sólo para pruebas locales, en producción no habrá este tipo de sesiones esto también será así para el BE, todo se sincronizará/guardará en base al usuario logueado. si es un problema lo quitamos y dejamos listo ya, aunque tenía pensado hacerlo en las últimas fases de desarrollo en el futuro” and “vale entonces lo dejamos así por el momento, sigue por donde ibas” — keep the existing guest-session product code for now; each installation's guest account remains an isolated identity, while production progress is scoped to the logged-in member.
+- L27 (2026-10-26): “sí, cuando inicias cuentas distintas en la app no deberías ver mezclados datos de distintas cuentas, por tanto cada usuario debe tener los datos asignados a su cuenta” — explicit authorization that all local learner data is account-owned and isolated across account switches.
+- L28 (2026-10-26): “no entiendo qué quieres decir con al cerrar sesión se conserva el progreso local siempre debería haber una sesion de un usuario activa ya sea invitado o logueado, por tanto todos los ejercicios y examenes y datos que se guarden tienen que estar asociado a una cuenta de usuario, no es posible matener esta premisa siempre¿” — every persisted learner-data operation must have an active member or guest identity; sign-out transitions to a guest identity rather than an ownerless state.
+- L29 (2026-10-26): “sí lo autorizo, aunque estamos ahora mismo en fase de desarrollo por lo que lo que hay actualmente sólo es en fase de pruebas y no debería afectar para cuentas nuevas. si te refieres al paso de una cuenta invitada a usuario registrado, yo creo que de momento dejaría todo como está y el usuario logueado no tendría visibilidad de lo que hizo el invitado, así reducimos problemas, ya si más adelante queremos mergear lo vemos” — authorized one-time backfill of existing ownerless development data to the identity active at migration; future new-account data is unaffected, guest-to-member visibility/merge stays explicitly out of scope.
+- L30 (2026-10-26): Updated the SDD specification, plan, design and task dependencies for S17 after user approval. Existing ownerless development rows may be backfilled once to the resolved active identity; all future learner data stays owner-scoped, guest-to-member merge remains excluded, and only member progress syncs. S17 is a new high-risk migration task required before T6–T8. Documentation checks passed; implementation has not started.
+- L31 (2026-10-26): S17 changes S1 guest ownership from ownerless NULL to an explicit stable per-install guest identity. Reopened T1 history isolation; T17 will provide the identity foundation and update the S1 query/tests. NULL remains legacy-only during the one-time owner migration.
+- L32 (2026-10-26): T17 source implementation is blocked at the required fresh-implementer dispatch: the repository instruction assigns `gpt-6.1-luna`, but the active collaboration tool rejects that model as unknown and lists only `gpt-6-luna` among the available Luna profiles. No fallback model or inline bypass was used; the user-selected delegated implementation path must be clarified or made available before source edits. The S17/S1 documentation updates and Engram mirror remain in place; no source files were changed for T17.
+- L33 (2026-10-26): “sí adelante” — user authorized using the available `gpt-6-luna` implementation profile instead of the unavailable `gpt-6.1-luna` profile for the required fresh T17 implementer.
+- L34 (2026-10-26): “si” — user authorized expanding T17 allowed edit surfaces to exactly the nine additional paths enumerated in the prior approval request: Android/iOS exam-history DAO and tests, Android MainActivity, and Android/iOS progress-sync operations and tests.
+- L35 (2026-10-26): Architecture decision for S17: retain one shared SQLite DB per installation and add a stable namespaced owner key (`member:<accountID>` / `guest:<installationUUID>`) to each mutable learner-owned row. Keep content caches/device metadata global; resolve identity before the additive backfill migration. This reuses the existing shared database and explicit exam-attempt ownership field rather than splitting the application into per-account database files.
+- L36 (2026-10-26): “sí autorizo este y todos los que necesites en un futuro” — authorized the additional `apps/android/app/src/main/java/com/jkdc/app/data/LevelTestAttemptStore.kt` path and future paths demonstrably required within the already approved mobile-remediation scope; keep the task log and file changes bounded to that scope.
+- L37 (2026-10-26): “no me preocupa eso ahora mismo, documentalo para mirarlo más adelante. ahora me gustaría que continuaras con el resto de tareas que están pendientes que creo que son bastantes” — leave whole-install database backup export/import semantics unchanged for this remediation; track current-owner-only backup filtering as a future consideration and continue the remaining approved tasks. This does not weaken active-owner filtering in app reads/writes or the owner keys preserved in backup data.
+- L38 (2026-10-26): T17 implementation handoff reports Android focused ownership/history/sync tests and raw-backup owner-preservation regression passing, schema exporter/checker plus 37 Python tests passing, and `git diff --check` passing. The Android full unit suite had 754/755 passing before correcting a stale expectation about device-global exam snapshot retention; the targeted corrected test passed, but the full suite was not rerun. iOS tests are unavailable on Linux. Implementation is high risk (persisted-data migration); independent review and parent full-suite spot-check remain required. Full-install raw backups retain all owner partitions; active-owner projections remain scoped; backup filtering is deferred.
+- L39 (2026-10-26): Parent reran `./gradlew :app:testDebugUnitTest` successfully (49s). Independent scratch verification on baseline `88a64ea` plus candidate found high-risk blockers: database-global owner selector permits late callback cross-account writes; exam-history mutation accepts foreign attempts and computes max revision across owners; iOS RootView identity callback has compile-time type/property mismatches; iOS restore can project the backup's previous identity instead of the authenticated identity. Scratch focused tests passed; full candidate app suite passed 756/756; three targeted concurrency/foreign-attempt probes failed. One bounded correction batch is underway; no commit until correction recheck.
+- L40 (2026-10-26): First correction closed exam mutation and iOS binding/restore blockers, but the bounded recheck still reproduced stale A activation through `AccountViewModel.openLearningDb`; the permitted second correction now captures session+generation and gates the production callback. Fresh scratch final recheck rejected stale A and stale-generation activation with B identity/preferences and database hash unchanged; focused test passed. Writer's focused test and full Android app suite passed after correction; parent focused spot-check passed; `git diff --check` passed. iOS source was structurally rechecked, but execution remains deferred to T16 on macOS. T17 implementation and independent high-risk recheck are complete; no commit because T5 and T17 edits are interleaved in shared schema/DB files.
+- L41 (2026-10-26): T5 resume confirmed Android rollup/cursor and S5 projection tests pass, but no authentic persisted source/version/unit tuple supports a historical timestamp repair. Current supported writers already persist Apple-reference seconds; pre-v6 records lack row-level encoding evidence and remain unchanged. T5 cannot satisfy S2's positive evidence-backed repair scenario without a provenance source or a further requirement revision. No code changed in this pass; T5 remains open.
+- L42 (2026-10-26): Begin T9/S6, which depends on completed T3 and is independent of blocked T5/T6–T8. CodeGraph CLI is unavailable, so the task writer will read the scoped source and tests directly; no broad repository map was performed. S6 test-first behavior and the exact files are defined in the plan.

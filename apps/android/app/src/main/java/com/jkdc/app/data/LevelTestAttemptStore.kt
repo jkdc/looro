@@ -119,17 +119,19 @@ internal class LevelTestAttemptStore(private val db: SqlDatabase) {
     fun list(languageID: String, level: String, ownerAccountID: String?, limit: Int = 20): List<Restored> {
         require(limit in 1..100)
         val ownerPredicate = if (ownerAccountID == null) "a.owner_account_id IS NULL" else "a.owner_account_id = ?"
+        val identityPredicate = ownerClause(db, "a")
         val arguments = buildList {
             add(languageID)
             add(level)
             if (ownerAccountID != null) add(ownerAccountID)
+            addAll(ownerArguments(db))
             add(limit)
         }
         return db.query(
             "SELECT a.attempt_id, a.owner_account_id FROM exam_attempts a " +
                 "JOIN exam_snapshot_ids i ON i.exam_id = a.exam_id " +
                 "JOIN exam_snapshots s ON s.content_id = i.content_id " +
-                "WHERE s.language_id = ? AND s.level = ? AND $ownerPredicate " +
+                "WHERE s.language_id = ? AND s.level = ? AND $ownerPredicate AND $identityPredicate " +
                 "ORDER BY a.updated_at DESC, a.attempt_id LIMIT ?",
             arguments,
         ).mapNotNull { row -> load(row.text("attempt_id"), ownerAccountID) }

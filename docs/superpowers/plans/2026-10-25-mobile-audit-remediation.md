@@ -2,8 +2,8 @@
 
 > **For agentic workers:** Use `superpowers:subagent-driven-development` sequentially: a fresh implementer, fresh task reviewer, then the parent commits the reviewed candidate. No source implementation has started.
 
-**Goal:** Address M01–M16 from the mobile audit without data loss, false activity history or unsupported capability promises.
-**Architecture:** One negotiated progress contract, owner/generation-bound transactional persistence, bounded continuous voice capture and explicit App-layer error/cancellation states.
+**Goal:** Address M01–M16 from the mobile audit plus user-approved account isolation for all local learner data, without data loss, false activity history or unsupported capability promises.
+**Architecture:** One negotiated progress contract, always-present member/guest identity, account-partitioned learner storage, owner/generation-bound transactional persistence, bounded continuous voice capture and explicit App-layer error/cancellation states.
 **Tech Stack:** Kotlin/Compose/SQLite, Swift/SwiftUI/Speech/GRDB, TypeScript/Fastify/PostgreSQL and existing Python exporters.
 **Spec:** `openspec/changes/mobile-audit-remediation/design.md` and `openspec/changes/mobile-audit-remediation/specs/mobile-remediation/spec.md`. The latter contains the normative scenarios; S# are requirements and T# are tasks.
 **Status:** Revised after user-requested document review; all tasks pending. The baseline design was approved; this review does not start implementation.
@@ -63,7 +63,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - Modify: `apps/android/app/src/test/java/com/jkdc/app/data/LevelTestAttemptStoreTest.kt`
 - Create: `apps/android/app/src/androidTest/java/com/jkdc/app/MobileAuditHistoryTest.kt`
 
-**Interfaces:** Consumes the captured requesting account; produces owner-filtered history with explicit guest-only NULL semantics and UI request identity. `LevelTestAttemptStore.list` requires caller owner rather than authorizing from each returned row.
+**Interfaces:** Consumes the captured active member/guest identity; produces owner-filtered history with explicit identity equality semantics and UI request identity. NULL is legacy-only, never a wildcard or the active guest. `LevelTestAttemptStore.list` requires caller identity rather than authorizing from each returned row.
 
 - [x] **Step 1 — RED:** `historyIsScopedToRequestingOwner` and `lateOwnerHistoryCannotRepopulateNewAccount` regressions added; test-first failure observed before implementation (initial API/behavior failure).
 - [x] **Step 2 — Observe RED:** Focused test failed before implementing owner-aware history.
@@ -149,7 +149,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 5: Add durable rollups, recovery and atomic continuation
 
-**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** pending.
+**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** reopened after approved S2 scope revision; implementation in progress.
 
 **Files:**
 - Modify: `shared/db/schema.sql`
@@ -172,14 +172,35 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - Generate: `apps/android/app/src/main/java/com/jkdc/app/data/SchemaData.kt`
 - Generate: `apps/ios/Core/Database/SchemaData.swift`
 
-**Interfaces:** Produces account-scoped remote rollup and direction/cursor persistence, versioned recovery bookkeeping, atomic rollup-page+cursor apply and ack-only upload advance. `ProgressProjection` merges one aggregate identity using min(firstAt), max(lastAt,attempts,bestScore). T6/T7 must use these stores; T8 wires visible readers.
+**Interfaces:** Produces account-scoped remote rollup and direction/cursor persistence, per-record timestamp source/version and unit evidence, evidence-backed recovery, atomic rollup-page+cursor apply and ack-only upload advance. `ProgressProjection` merges one aggregate identity using min(firstAt), max(lastAt,attempts,bestScore). T6/T7 must use these stores; T8 wires visible readers. Pre-v6 completion rows without provenance remain unchanged; new writes that may participate in recovery persist explicit evidence.
 
-- [ ] **Step 1 — RED:** `pageAndCursorRollbackTogether`, `uncertainAckReplaysWithoutStarvation`, `upgradeFromV5PreservesExamOutboxAndConflicts`, `ambiguousTimestampIsRetainedAndValidRowsStillSync`, `recoverySecondRunIsIdempotent`, and `projectionDoesNotAppendLocalEvents` assert persisted rows after close/reopen, rollback, owner partition and full effective aggregate.
+- [ ] **Step 1 — RED:** `pageAndCursorRollbackTogether`, `uncertainAckReplaysWithoutStarvation`, `upgradeFromV5PreservesExamOutboxAndConflicts`, `preV6CompletionWithoutProvenanceIsPreserved`, `evidenceBackedRecoveryRepairsOnlyProvenRecord`, `ambiguousTimestampIsRetainedAndValidRowsStillSync`, `recoveryRollbackAndSecondRunAreIdempotent`, and `projectionDoesNotAppendLocalEvents` assert persisted rows after close/reopen, rollback, owner partition, provenance decisions and full effective aggregate.
 - [ ] **Step 2 — Observe RED:** Run `python3 scripts/export_db_schema.py --check && python3 scripts/check_db_schema.py` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Append schema version 6 only if still next; never edit old applied blocks. Update actual native openers, pinned inventory/versions and generate SQL outputs with export_db_schema.py. Test fresh install and every supported prior version. Run proven repairs before materialization; keep unresolved source records intact, with bounded reasons and retry-safe markers. Do not reclassify legacy completion history.
+- [ ] **Step 3 — Implement:** Append schema version 6 only if still next; never edit old applied blocks. Update actual native openers, pinned inventory/versions and generate SQL outputs with export_db_schema.py. Test fresh install and every supported prior version. Persist timestamp source/version and unit evidence per eligible new row. Run repair before materialization only when that exact row has explicit, supported provenance; pre-v6 completion rows without provenance remain unchanged and unresolved. Keep bounded reasons and retry-safe markers. Do not infer origin or reclassify legacy completion history.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Shared + Android unit + Swift Core** checks from the command table and record actual status/counts or exact unavailability.
 - [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): persist atomic rollup sync state`; record commit and evidence in OpenSpec tasks/verification report.
+
+**Review finding and approved scope revision (2026-10-26):** The fresh reviewer found persisted recovery is not implemented by marker writes alone. Historical Android and iOS remote merges stored downloaded aggregates as ordinary `CompletionMark` rows, and the v5 schema persists only `(kind,item_id,at,best_score,language_id)` with no per-record source/unit evidence. The local completion writer uses `nowSeconds()`. The user approved revising S2/T5: pre-v6 rows without evidence remain byte-for-byte unchanged; new eligible writes persist explicit source/version and unit evidence; recovery repairs only supported evidence-bearing records and never infers provenance. T5 is reopened; the partial candidate remains uncommitted pending the correction and review.
+
+**Verification note:** The initial T5 implementation observed RED only for the v5-to-v6 exporter/schema expectations; the six storage/projection tests were added during implementation, so per-behavior RED was not demonstrated. Python schema checks (36), Android app unit tests (743) and engine-local tests (11) passed; SwiftPM was unavailable (`swift` not installed). These checks do not clear the recovery blocker.
+
+### Task 17: Enforce active-account ownership across local learner data
+
+**Requirements:** S1, S17 and account-bound portions of S3–S5. **Prerequisites:** Identity/startup map, T3 and the local persistence contracts from T5; must be completed before T6–T8. **Status:** newly authorized, planned.
+
+**Files:** Android and iOS account identity/session stores, startup/root wiring, learning database schema/openers/DAOs/writers, archive export/import and reset/delete paths, progress sync admission, and their unit/integration tests. Exact paths are confirmed by the T17 implementation brief before code edits.
+
+**Interfaces:** Every learner-data access receives a resolved namespaced active key: `member:<accountID>` or `guest:<installationUUID>`. Persist it on each mutable learner-owned row in the shared SQLite database; resolve it before migration, then backfill ownerless development rows once. Existing ownerless development rows are assigned exactly once to the active identity during an additive migration. Sign-out transitions to guest; guest→member never merges or exposes guest rows. Guest progress is local-only and member rows are the only progress eligible for backend sync; backend bootstrap is one-time and only for a member without local data on this device. Device-global cache/install metadata remains unowned.
+
+- [ ] **Step 1 — RED:** Add public-flow regressions for A→B isolation across learner stores, migration-time backfill, guest→member isolation, owner-filtered archive/import/reset and member-only sync. Assert output and persisted data after close/reopen.
+- [ ] **Step 2 — Observe RED:** Run focused Android and Swift/Core or App-hosted tests available for changed boundaries; confirm failure is missing ownership behavior, not compile/setup.
+- [ ] **Step 3 — Implement:** Resolve identity before opening/migrating the learning database; scope every learner-data query and mutation; atomically switch active identity and invalidate stale work; backfill only currently ownerless development rows once; partition archives and destructive/reset operations by owner; prevent guest progress from backend requests. Do not merge guest data into a member or allow a later account to inherit the backfilled rows.
+- [ ] **Step 4 — GREEN:** Run focused regressions, Android unit suite, schema/export checks and available Swift tests; record unavailable Xcode/device proof honestly.
+- [ ] **Step 5 — Review:** Fresh reviewer validates every S17 scenario and migration/data-isolation boundary before parent commit.
+- [ ] **Step 6 — Commit:** Parent commits reviewed bytes conventionally; record identity and evidence in SDD artifacts.
+
+**Risk:** item 1 (persisted data migration and ownership boundaries).
 
 ### Task 6: Wire iOS time-safe complete transport
 
@@ -250,7 +271,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 9: Make Android topic selection transactional
 
-**Requirements:** S6. **Prerequisites:** T3. **Status:** pending.
+**Requirements:** S6. **Prerequisites:** T3. **Status:** in progress (independent of T5/T6–T8).
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/LibraryScreens.kt`

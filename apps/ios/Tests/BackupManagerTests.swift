@@ -176,6 +176,43 @@ final class BackupManagerTests: XCTestCase {
         XCTAssertEqual("{\"answer\":\"saved\"}", restoredExam.answers.first!.text("response_json"))
     }
 
+    func testWholeInstallBackupPreservesEveryOwnerPartitionOnRestore() throws {
+        let directory = try makeDirectory()
+        let dbURL = directory.appendingPathComponent("learning.db")
+        let db = try fileBacked(dbURL)
+        let sessionID = UUID(uuidString: "11111111-1111-4111-8111-000000000099")!
+        func saveSession(_ identity: String, _ title: String) throws {
+            try LearnerOwnershipDao.activate(db, identity: identity)
+            var session = SessionRecord(languageID: "en")
+            session.id = sessionID
+            session.startedAt = Date(timeIntervalSinceReferenceDate: 1)
+            session.title = title
+            try SessionsDao.upsert(db, session)
+        }
+        try saveSession("member:backup-a", "A session")
+        try saveSession("member:backup-b", "B session")
+        try saveSession("guest:installation-g", "Guest session")
+        try LearnerOwnershipDao.activate(db, identity: "member:backup-a")
+
+        let backup = try BackupManager.exportTo(db, databaseFile: dbURL,
+                                                openForVerify: BackupManager.openForVerification)
+        let backupURL = directory.appendingPathComponent("owners.db")
+        try backup.write(to: backupURL)
+        let validated = try BackupManager.readValidatedBackup(from: backupURL, workDirectory: directory,
+            openForVerify: BackupManager.openForVerification)
+        db.close()
+        try FileManager.default.removeItem(at: dbURL)
+        try BackupManager.installDatabase(dbURL, bytes: validated)
+
+        let restored = try fileBacked(dbURL)
+        try LearnerOwnershipDao.activate(restored, identity: "member:backup-a")
+        XCTAssertEqual(["guest:installation-g", "member:backup-a", "member:backup-b"],
+            try restored.query("SELECT owner_key FROM sessions ORDER BY owner_key").map { $0.text("owner_key") })
+        XCTAssertEqual(["A session"], try ArchiveMapper.export(restored).sessions.map(\.title))
+        try LearnerOwnershipDao.activate(restored, identity: "member:backup-b")
+        XCTAssertEqual(["B session"], try ArchiveMapper.export(restored).sessions.map(\.title))
+    }
+
     func testExportIsDeterministicAndItsCopyPassesTheImportGate() throws {
         let directory = try makeDirectory()
         let dbURL = directory.appendingPathComponent("learning.db")
@@ -323,9 +360,9 @@ final class BackupManagerTests: XCTestCase {
         XCTAssertEqual(Int64(2), deletion.lessonStates)
         XCTAssertEqual(Int64(1), deletion.tickets)
         XCTAssertEqual(Int64(1), deletion.examAttempts)
-        XCTAssertEqual(Int64(1), deletion.examSnapshots)
+        XCTAssertEqual(Int64(0), deletion.examSnapshots)
         XCTAssertEqual(Int64(1), try count(db, "exam_attempts"))
-        XCTAssertEqual(Int64(1), try count(db, "exam_snapshots"))
+        XCTAssertEqual(Int64(2), try count(db, "exam_snapshots"))
         XCTAssertEqual("es-attempt", try db.query("SELECT attempt_id FROM exam_attempts").first!.text("attempt_id"))
 
         // the survivors, row by row

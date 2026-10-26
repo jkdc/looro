@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define safe timestamp recovery and a separate synchronized-rollup projection so contaminated data can be repaired or quarantined idempotently while cross-device scores converge without inventing local learning events.
+Define safe timestamp recovery and a separate synchronized-rollup projection so contaminated device-recorded timestamps can be repaired or retained idempotently while progress is uploaded and later restored by a one-time empty-device bootstrap without inventing local learning events.
 
 ## ADDED Requirements
 
@@ -26,7 +26,7 @@ Native clients MUST convert Unix-millisecond wire timestamps to their internal A
 
 ### Requirement: Contaminated timestamps receive bounded idempotent recovery
 
-Each native client MUST require persisted per-record source/version evidence that identifies the historical writer and unit for the exact timestamp field before repairing a contaminated value. Numeric magnitude, field name, current database schema version, or a store-wide recovery marker alone MUST NOT authorize repair. A proven conversion MUST yield an instant inside the supported history and future-skew bounds. Missing or conflicting evidence MUST leave the record and evidence unchanged; only timestamps invalid for the supported internal domain are excluded from sync. Recovery MUST record a completion version or equivalent marker for idempotency, but that marker is not repair evidence.
+Each native client MUST require persisted per-record mobile-writer/version and timestamp-unit evidence for the exact field before repairing a contaminated value. This evidence identifies how the device encoded its canonical instant; it MUST NOT be used or required to classify whether data originated on-device or was later restored from the backend. Numeric magnitude, field name, current database schema version, or a store-wide recovery marker alone MUST NOT authorize repair. A proven conversion MUST yield the original mobile-recorded instant inside the supported history and future-skew bounds. Missing or conflicting evidence MUST leave the record and evidence unchanged; only timestamps invalid for the supported internal domain are excluded from upload. Recovery MUST record a completion version or equivalent marker for idempotency, but that marker is not repair evidence.
 
 #### Scenario: Persisted source/version evidence authorizes one repair
 
@@ -64,9 +64,9 @@ Clients MUST persist remote aggregate progress in a synchronized-rollup projecti
 - THEN each language has an independent rollup
 - AND merging one language does not alter the other language's score or timestamps
 
-### Requirement: Read models combine local and synchronized projections monotonically
+### Requirement: Read models combine mobile and bootstrapped projections monotonically
 
-Progress and score reads MUST combine local event-derived rollups with synchronized rollups for the same identity. The combined first-at MUST be the earliest known value, and last-at, attempts, and best-score MUST be the greatest known values. The combined projection MUST be independent of merge order and repeated application.
+Progress and score reads MUST combine local event-derived rollups with synchronized rollups restored by eligible bootstrap for the same identity. The combined first-at MUST preserve the earliest mobile-recorded instant, and last-at, attempts, and best-score MUST be the greatest known values. The combined projection MUST be independent of merge order and repeated application; subsequent routine syncs upload the effective aggregate but do not download newer backend values.
 
 #### Scenario: A remote score improves a known local score
 

@@ -380,7 +380,8 @@ class LearningCutoverFlowTest {
         assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_attempts").single().long("n"))
         assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_answers").single().long("n"))
         assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").single().long("n"))
-        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_snapshots").single().long("n"))
+        // Exam snapshots are immutable device-global content cache, not learner data.
+        assertEquals(1L, db.query("SELECT COUNT(*) AS n FROM exam_snapshots").single().long("n"))
         assertEquals("lessons are not this site's learning data", 1, state.lessons.size)
 
         // importData (restore path): the merger's projection becomes the new

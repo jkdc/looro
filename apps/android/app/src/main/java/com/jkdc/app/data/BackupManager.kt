@@ -308,33 +308,30 @@ object BackupManager {
         return db.transaction { tx ->
             val fragments = tx.query(
                 "SELECT COUNT(*) AS n FROM fragments WHERE session_id IN " +
-                    "(SELECT id FROM sessions WHERE language_id = ?)", listOf(languageID))
+                    "(SELECT id FROM sessions WHERE language_id = ? AND ${ownerClause(tx)}) AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx) + ownerArguments(tx))
                 .single().long("n")
             // Tickets first: after the sessions go, the subselect finds nothing.
             val tickets = tx.update(
                 "DELETE FROM assessment_tickets WHERE session_id IN " +
-                    "(SELECT id FROM sessions WHERE language_id = ?)", listOf(languageID))
-            val sessions = tx.update("DELETE FROM sessions WHERE language_id = ?", listOf(languageID))
-            val completions = tx.update("DELETE FROM completions WHERE language_id = ?",
-                listOf(languageID))
-            val expressions = tx.update("DELETE FROM expressions WHERE language_id = ?",
-                listOf(languageID))
+                    "(SELECT id FROM sessions WHERE language_id = ? AND ${ownerClause(tx)}) AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx) + ownerArguments(tx))
+            val sessions = tx.update("DELETE FROM sessions WHERE language_id = ? AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx))
+            val completions = tx.update("DELETE FROM completions WHERE language_id = ? AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx))
+            val expressions = tx.update("DELETE FROM expressions WHERE language_id = ? AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx))
             val lessonStates = tx.update(
-                "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\'",
-                listOf(lessonPattern))
+                "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\' AND ${ownerClause(tx)}",
+                listOf(lessonPattern) + ownerArguments(tx))
             val examAttempts = tx.query("SELECT COUNT(*) AS n FROM exam_attempts WHERE exam_id IN " +
                 "(SELECT i.exam_id FROM exam_snapshot_ids i JOIN exam_snapshots s ON s.content_id = i.content_id " +
-                "WHERE s.language_id = ?)", listOf(languageID)).single().long("n")
+                "WHERE s.language_id = ?) AND ${ownerClause(tx)}", listOf(languageID) + ownerArguments(tx)).single().long("n")
             tx.update("DELETE FROM exam_attempts WHERE exam_id IN (SELECT i.exam_id FROM exam_snapshot_ids i " +
-                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?)", listOf(languageID))
-            tx.update("DELETE FROM exam_snapshot_ids WHERE content_id IN " +
-                "(SELECT content_id FROM exam_snapshots WHERE language_id = ?)", listOf(languageID))
-            val examSnapshots = tx.query("SELECT COUNT(*) AS n FROM exam_snapshots WHERE language_id = ? " +
-                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
-                listOf(languageID)).single().long("n")
-            tx.update("DELETE FROM exam_snapshots WHERE language_id = ? " +
-                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
-                listOf(languageID))
+                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?) AND ${ownerClause(tx)}",
+                listOf(languageID) + ownerArguments(tx))
+            val examSnapshots = 0L // Immutable bundled exam snapshots are device-global content cache.
             LanguageDeletion(sessions, fragments, completions, expressions, lessonStates, tickets,
                 examAttempts, examSnapshots)
             // usage_outbox, meta, preferences, skill_errors: deliberately

@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Progress synchronization remains an aggregate protocol, but version 2 makes each boundary explicit and resumable. The API serves an opt-in paged envelope ordered by the immutable identity `(kind, itemID, language)`. Native clients persist the last acknowledged identity per account and direction, replay unacknowledged work safely, and start a new full pass after completion so mutations missed behind a stateless cursor converge later.
+Progress synchronization remains an aggregate protocol, but version 2 makes each boundary explicit and resumable. The mobile device records the canonical learning instants and uploads its progress under the active account. A paged backend download is a one-time bootstrap only when a newly authenticated account has no local progress on that device; routine syncs upload but never pull again. Native clients persist the last acknowledged identity per account and direction and replay unacknowledged work safely.
 
 Unix milliseconds exist only in the HTTP contract. Both clients decode them to the canonical local representation—Apple-reference seconds—before persistence and encode them back only when constructing requests. A versioned recovery runs before progress is loaded, repairs only evidence-backed epoch/unit contaminations inside the supported time window, and excludes ambiguous timestamps from upload without clamping them.
 
@@ -22,29 +22,29 @@ The cursor is base64url-encoded UTF-8 JSON with the exact schema `{"v":2,"kind":
 
 **Rationale**: Offset and mutable-time pagination can skip or repeat rows under concurrent updates. A transaction-wide snapshot conflicts with the stateless eventual-convergence requirement. The identity tuple contains no credential and can only narrow the authenticated account's own traversal; strict validation makes an HMAC unnecessary. Base64url JSON is debuggable, bounded, versioned, and still opaque to clients.
 
-### Decision: Keep request limits distinct from pass completeness
+### Decision: Keep request limits distinct from bootstrap completeness
 
-**Choice**: Downloads return at most 1,000 entries per page; uploads retain the existing maximum of 200 entries per request. Clients build the complete identity-sorted effective projection, select the strict suffix after the durable cursor, and send one bounded page at a time. Upload cursor advancement occurs only after the POST acknowledgement. Download cursor advancement occurs in the same local transaction that persists the received rollups. A final page clears the cursor; the next synchronization begins a fresh pass.
+**Choice**: The one-time bootstrap returns at most 1,000 entries per page; uploads retain the existing maximum of 200 entries per request. Clients build the complete identity-sorted effective projection, select the strict suffix after the durable cursor, and send one bounded page at a time. Upload cursor advancement occurs only after the POST acknowledgement. Bootstrap cursor advancement occurs in the same local transaction that persists the received rollups. A final bootstrap page clears its cursor and records completion; later sync invocations never download again for that account on that device.
 
 **Alternatives considered**: Raising the limits; marking each identity delivered; using timestamps as upload watermarks.
 
-**Rationale**: Larger limits defer rather than solve completeness. Per-row delivery flags add mutation and cleanup complexity. Timestamp watermarks can starve identities whose mutable aggregate changes behind the cursor. Identity passes plus replay-safe monotonic merge are sufficient, and later full passes recover concurrent changes without claiming snapshot isolation.
+**Rationale**: Larger limits defer rather than solve completeness. Per-row delivery flags add mutation and cleanup complexity. Timestamp watermarks can starve identities whose mutable aggregate changes behind the cursor. Identity pages make the one-time snapshot complete and replay-safe; uploads continue using bounded cursors to publish later mobile changes.
 
 ### Decision: Scope durable synchronization state by authenticated account
 
-**Choice**: Synchronized rollups use database identity `(account_id, kind, item_id, language)`, where the aggregate identity inside an account remains `(kind, itemID, language)`. Resume state uses `(account_id, direction)` because a download pass spans all languages and the upload iterator emits every language represented locally. The selected bearer session's `accountID` is captured before a pass and checked before each durable merge/advance. Account changes cancel or invalidate the in-flight pass. When no account is selected, read models use local evidence only.
+**Choice**: Synchronized rollups use database identity `(account_id, kind, item_id, language)`, where the aggregate identity inside an account remains `(kind, itemID, language)`. Resume state uses `(account_id, direction)`; download state records the one-time bootstrap and upload state resumes ordinary uploads. The selected bearer session's `accountID` is captured before a pass and checked before each durable merge/advance. Account changes cancel or invalidate the in-flight pass. An active local identity always exists and is a member or a stable per-install guest; guest progress is local-only and never uploaded. All local learner stores use that identity, with a one-time migration assigning existing ownerless development rows to the resolved migration-time identity. Fresh accounts do not inherit those rows, and guest-to-member login never merges or exposes guest progress. Backend bootstrap is only once for an authenticated member with no local progress for that member on the device.
 
 Legacy `nil`-language local marks are resolved from registered content identifiers when unambiguous; otherwise they upload as the existing server language `legacy`. A `legacy` remote rollup is retained for round-trip compatibility but is not projected into an arbitrary active language.
 
 **Alternatives considered**: One device-global cursor and rollup table; one cursor per language; discarding rollups on sign-out.
 
-**Rationale**: Device-global state can mix guest and member accounts. Per-language download cursors duplicate a server traversal that already includes language in identity. Account partitioning prevents cross-account display or resume, while retention permits returning to the same account without destructive churn.
+**Rationale**: Device-global state can mix guest and member accounts. Per-language cursors duplicate a server traversal that already includes language in identity. Account partitioning prevents cross-account display or resume; the bootstrap-complete marker prevents routine backend downloads.
 
 ### Decision: Negotiate version 2 without breaking shipped clients
 
 **Choice**: A request without `version=2` preserves the current legacy GET shape `{ progress: [...] }`. A version-2 request returns `{ version: 2, progress: [...], nextCursor: string | null, complete: boolean }`. Version-2 POST bodies are `{ version: 2, entries: [...] }`; the service continues accepting legacy `{ entries: [...] }` during rollout. The server has an explicit `PROGRESS_SYNC_V2_ENABLED` configuration flag: when disabled, version-2 GET/POST returns a documented `progress_sync_version_unavailable` response while legacy behavior remains available.
 
-New clients prefer version 2. On the documented unavailable response only—not on malformed data, authentication failure, or arbitrary transport errors—they may run one legacy compatibility pass using the corrected timestamp decoder. Compatibility mode never writes a version-2 cursor. Rollback disables the flag first and can then deploy legacy application code; additive local tables and repaired timestamps remain intact.
+New clients use version 2 for uploads and only for the eligible one-time bootstrap download. On the documented unavailable response only—not on malformed data, authentication failure, or arbitrary transport errors—they may run one legacy compatibility request using the corrected timestamp decoder, and must persist that the bootstrap decision is complete only after a valid full response. Compatibility mode never writes a version-2 cursor. Rollback disables the flag first and can then deploy legacy application code; additive local tables and repaired timestamps remain intact.
 
 **Alternatives considered**: Replacing the legacy response in place; a new `/v2/progress` path; permanent silent fallback after any error.
 
@@ -69,7 +69,7 @@ The lower bound comes from the shipped strict `user_progress.first_at > '2025-01
 
 ### Decision: Recover known contamination before loading progress
 
-**Choice**: The future recovery implementation (Task 5) runs after schema opening and before `Archive`/read-model materialization. It MUST inspect persisted per-record source/version evidence for each timestamp field before classifying `lesson_state.last_seen` or `completions.at`:
+**Choice**: The recovery implementation (Task 5) runs after schema opening and before `Archive`/read-model materialization. It MUST inspect persisted per-record mobile-writer/version and timestamp-unit evidence for each timestamp field before classifying `lesson_state.last_seen` or `completions.at`. This evidence describes timestamp encoding, not whether progress originated locally or was later downloaded:
 
 1. A recognized source/version may identify a documented writer and timestamp unit for that exact record/field. A store-wide recovery marker or a plausible numeric magnitude is not evidence of a record's source or unit.
 2. Preserve values already in the supported Apple-reference-second interval without conversion. Convert a contaminated value only when its persisted record evidence identifies the exact historical writer/unit and the resulting instant lies inside `[earliestAppleSeconds, nowAppleSeconds + futureSkewSeconds]`.

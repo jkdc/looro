@@ -306,28 +306,73 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             // (the outbox drains per owner); anonymous attempts stay local until
             // an explicit claim — never silently bound by a later sign-in.
             val started = attempts.start(selection, attemptID = attemptID,
-                ownerAccountID = examOwnerIdentity.value.ownerAccountID)
-            restored = attempts.load(started.attempt["attempt_id"] as String, examOwnerIdentity.value.ownerAccountID)
+                ownerAccountID = currentExamOwnerAccountID())
+            restored = attempts.load(started.attempt["attempt_id"] as String, currentExamOwnerAccountID())
         }
         return checkNotNull(restored) { "Started exam attempt could not be reloaded" }
     }
 
-    /** The signed-in account for new exam attempts; MainActivity mirrors the
-        account state here. Null keeps attempts anonymous (local-only). */
+    /** A signed-in member or one stable guest identity for this installation. */
+    private val localGuestIdentityID: String by lazy {
+        val preferences = getApplication<Application>().getSharedPreferences(
+            "app_local_learner_identity", android.content.Context.MODE_PRIVATE)
+        val current = preferences.getString("guest_id", null)
+        if (current != null && current.startsWith("guest:") && current.length > "guest:".length) current
+        else {
+            val created = "guest:${java.util.UUID.randomUUID()}"
+            check(preferences.edit().putString("guest_id", created).commit()) {
+                "Unable to persist the local guest identity"
+            }
+            created
+        }
+    }
     private val examOwnerIdentity = kotlinx.coroutines.flow.MutableStateFlow(
-        LevelTestAttemptHistoryIdentity(ownerAccountID = null, generation = 0),
+        LevelTestAttemptHistoryIdentity(ownerAccountID = localGuestIdentityID, generation = 0),
     )
     internal val levelTestAttemptHistoryIdentity = examOwnerIdentity.asStateFlow()
     private val ownerScopedLevelTestHistory = OwnerScopedLevelTestHistory<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
     internal val levelTestAttemptHistoryState = ownerScopedLevelTestHistory.visible
     internal var beforeLevelTestAttemptHistoryQuery: suspend (LevelTestAttemptHistoryIdentity) -> Unit = {}
     internal fun captureLevelTestAttemptHistoryIdentity(): LevelTestAttemptHistoryIdentity = examOwnerIdentity.value
+    private fun currentExamOwnerAccountID(): String? = examOwnerIdentity.value.ownerAccountID
+        ?.takeIf { it.startsWith("member:") }?.removePrefix("member:")
     fun setExamOwner(accountID: String?) {
+        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
         val current = examOwnerIdentity.value
-        if (current.ownerAccountID != accountID) {
-            val updated = LevelTestAttemptHistoryIdentity(accountID, current.generation + 1)
+        val resolvedIdentity = com.jkdc.app.core.LocalLearnerIdentity.resolve(accountID, localGuestIdentityID)
+        if (current.ownerAccountID != resolvedIdentity) {
+            val updated = LevelTestAttemptHistoryIdentity(resolvedIdentity, current.generation + 1)
             examOwnerIdentity.value = updated
             ownerScopedLevelTestHistory.setIdentity(updated)
+            // Remove the previous owner's projection before asynchronous reload begins.
+            archive = Archive()
+            session = null
+            finalAssessmentTickets = emptyList()
+            recoveredAssessmentIDs.clear()
+            if (storageReady && !jsonMode) viewModelScope.launch {
+                val currentGeneration = updated.generation
+                val loaded = withContext(Dispatchers.IO) {
+                    val activeStore = store ?: return@withContext null
+                    var result: Pair<Archive, List<com.jkdc.app.data.AssessmentTicketRow>>? = null
+                    val accepted = com.jkdc.app.data.LearnerOwnershipDao.runForIdentity(
+                        activeStore.db, resolvedIdentity,
+                        isCurrent = { examOwnerIdentity.value == updated },
+                    ) { db ->
+                        com.jkdc.app.data.ProgressRecoveryDao.recover(db, System.currentTimeMillis())
+                        val nextArchive = activeStore.recoverUnfinishedSessions(activeStore.loadInitialArchive())
+                        result = nextArchive to com.jkdc.app.data.AssessmentTicketsDao.all(db)
+                    }
+                    if (accepted) result else null
+                } ?: return@launch
+                if (examOwnerIdentity.value.generation != currentGeneration) return@launch
+                archive = loaded.first
+                finalAssessmentTickets = loaded.second.mapNotNull { row ->
+                    val passage = loaded.first.sessions.firstOrNull { it.id == row.sessionID }
+                        ?.let(FinalAssessmentRecovery::passage) ?: return@mapNotNull null
+                    FinalAssessmentTicket(row.sessionID, passage.id, passage.revisionKey, row.attempts, row.lastAttemptAt)
+                }
+            }
+        }
         }
     }
 
@@ -341,7 +386,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     internal suspend fun loadLevelTestAttempt(attemptID: String): com.jkdc.app.data.LevelTestAttemptStore.Restored? {
         var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
         persistDbAndWait { db ->
-            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, examOwnerIdentity.value.ownerAccountID)
+            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, currentExamOwnerAccountID())
         }
         return restored
     }
@@ -355,7 +400,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         beforeLevelTestAttemptHistoryQuery(identity)
         var attempts = emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
         persistDbAndWait { db ->
-            attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level, identity.ownerAccountID)
+            attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level,
+                identity.ownerAccountID?.takeIf { it.startsWith("member:") }?.removePrefix("member:"))
         }
         ownerScopedLevelTestHistory.publish(request, attempts)
     }
@@ -834,7 +880,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return DailyPlanEngine.plan(budget, dueRecallCount(), next != null, unplayedListening, unplayedReading)
     }
 
-    /** Push/pull the progress ledger against the account (guests included). Failures
+    /** Push/pull the progress ledger against the signed-in member. Guest progress stays local-only. Failures
         are silent for the user but logged for debugging — sync must never nag,
         the local ledger stays the source of truth. */
     fun syncProgress() {
@@ -843,9 +889,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
             try {
                 progressSyncRunner.run(
-                    resolveSession = { memberSessions?.read() ?: guests?.availableSession() },
+                    resolveSession = {
+                        com.jkdc.app.core.MemberProgressSyncPolicy.session(
+                            memberSessions?.read(), guests?.availableSession())
+                    },
                     fetch = client::fetch,
-                    readLiveSession = { memberSessions?.read() ?: guests?.availableSession() },
+                    readLiveSession = {
+                        com.jkdc.app.core.MemberProgressSyncPolicy.session(
+                            memberSessions?.read(), guests?.availableSession())
+                    },
                     mergeRemote = { body, operation, identity ->
                         val changed = mergeRemoteProgress(body, operation, identity)
                         if (changed) bumpLedgerRevision()
@@ -948,6 +1000,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val work: () -> Unit,
         val completion: CompletableDeferred<Boolean>? = null,
         val fencedWrite: (((() -> Unit) -> Boolean))? = null,
+        val ownerIdentity: String? = null,
+        val ownerGeneration: Long? = null,
     )
     private val writes = Channel<WriteRequest>(Channel.UNLIMITED)
 
@@ -1021,8 +1075,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      * JSON fail-safe mode: the legacy LearningRepository JSON path serves
      * this run, unchanged, with full tickets from the file.
      */
-    private fun loadLearningState(): Triple<Archive, List<FinalAssessmentTicket>, LearningDbStore> {
-        val opened = LearningDbStore.open(getApplication())
+    private fun loadLearningState(activeIdentity: String = examOwnerIdentity.value.ownerAccountID
+        ?: localGuestIdentityID): Triple<Archive, List<FinalAssessmentTicket>, LearningDbStore> {
+        val opened = LearningDbStore.open(getApplication(), activeIdentity = activeIdentity)
         if (opened.jsonMode) {
             android.util.Log.w("LearningDbStore",
                 "learning.db unavailable; staying on the JSON path: ${opened.jsonModeNotice}")
@@ -1043,7 +1098,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         guests?.let { controller -> viewModelScope.launch { controller.state.collect { guestState = it } } }
         viewModelScope.launch {
             try {
-                val loaded = withContext(Dispatchers.IO) { loadLearningState() }
+                val memberSession = withContext(Dispatchers.IO) { memberSessions?.read() }
+                setExamOwner(memberSession?.accountID)
+                val resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
+                val loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
                 store = loaded.third
                 archive = loaded.first
                 if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
@@ -1107,8 +1165,24 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     val written = withContext(Dispatchers.IO) {
                         val fence = request.fencedWrite
-                        if (fence == null) { request.work(); true }
-                        else fence(request.work)
+                        val identity = request.ownerIdentity
+                        val generation = request.ownerGeneration
+                        val activeStore = store
+                        if (identity != null && generation != null && activeStore != null && !activeStore.jsonMode) {
+                            com.jkdc.app.data.LearnerOwnershipDao.runForIdentity(
+                                activeStore.db, identity,
+                                isCurrent = {
+                                    examOwnerIdentity.value == LevelTestAttemptHistoryIdentity(identity, generation)
+                                },
+                            ) {
+                                if (fence == null) request.work() else fence(request.work)
+                            }
+                        } else {
+                            val stillCurrent = identity == null || generation == null ||
+                                examOwnerIdentity.value == LevelTestAttemptHistoryIdentity(identity, generation)
+                            if (!stillCurrent) false
+                            else if (fence == null) { request.work(); true } else fence(request.work)
+                        }
                     }
                     request.completion?.complete(written)
                 } catch (error: Exception) {
@@ -1211,7 +1285,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val target = store!!.db
             work = { write(target) }
         }
-        writes.trySend(WriteRequest(work))
+        val owner = examOwnerIdentity.value
+        writes.trySend(WriteRequest(work, ownerIdentity = owner.ownerAccountID, ownerGeneration = owner.generation))
     }
 
     private suspend fun persistFencedAndWait(
@@ -1228,7 +1303,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val target = store!!.db
             ({ write(target) })
         }
-        writes.send(WriteRequest(work, completion, fencedWrite))
+        val owner = examOwnerIdentity.value
+        writes.send(WriteRequest(work, completion, fencedWrite, owner.ownerAccountID, owner.generation))
         return completion.await()
     }
 
@@ -1253,7 +1329,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         check(!jsonMode) { "Durable exam history is unavailable in JSON fail-safe mode" }
         val target = checkNotNull(store?.db) { "Learning database is unavailable" }
         val completion = CompletableDeferred<Boolean>()
-        writes.send(WriteRequest({ write(target) }, completion))
+        val owner = examOwnerIdentity.value
+        val ownerIdentity = owner.ownerAccountID ?: localGuestIdentityID
+        writes.send(WriteRequest({ write(target) }, completion,
+            ownerIdentity = ownerIdentity, ownerGeneration = owner.generation))
         completion.await()
     }
 

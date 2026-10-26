@@ -68,9 +68,11 @@ public enum ExamHistoryError: Error, Equatable {
 public enum ExamHistoryDao {
     /// Lists only the authenticated owner's durable pending events in revision order.
     public static func pendingOutbox(_ db: SqlDatabase, ownerAccountID: String) throws -> [SqlRow] {
-        try db.query("SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
-            "WHERE a.owner_account_id = ? AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
-            "ORDER BY o.attempt_id, o.revision", args: [ownerAccountID])
+        guard try LearnerOwnershipDao.activeIdentity(db) == "member:\(ownerAccountID)" else { return [] }
+        return try db.query("SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
+            "WHERE a.owner_account_id = ? AND a.owner_key = ? AND o.owner_key = a.owner_key " +
+            "AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
+            "ORDER BY o.attempt_id, o.revision", args: [ownerAccountID, "member:\(ownerAccountID)"])
     }
 
     /// Acknowledges exactly one server-confirmed event and preserves newer pending edits.
@@ -496,6 +498,7 @@ public enum ExamHistoryDao {
             throw ExamHistoryError.invalidJSON
         }
         return try db.transaction { tx in
+            try requireActiveAttemptOwner(tx, attemptID: attemptID)
             guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
             guard try tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
@@ -529,6 +532,7 @@ public enum ExamHistoryDao {
                                 completedAt: Double) throws -> Bool {
         guard let result = object(resultJSON) else { throw ExamHistoryError.invalidJSON }
         return try db.transaction { tx in
+            try requireActiveAttemptOwner(tx, attemptID: attemptID)
             guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
             guard try tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
@@ -563,37 +567,66 @@ public enum ExamHistoryDao {
 
     public static func load(_ db: SqlDatabase, attemptID: String,
                             ownerAccountID: String? = nil) throws -> ExamHistory? {
+        let identity = try LearnerOwnershipDao.activeIdentity(db)
+        let ownerKeyFilter = identity == nil ? "owner_key IS NULL" : "owner_key = ?"
+        let ownerKeyArgs: [Any?] = identity.map { [$0] } ?? []
         let attempt: SqlRow?
         if let ownerAccountID {
-            attempt = try db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ?",
-                                   args: [attemptID, ownerAccountID]).first
+            attempt = try db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ? AND \(ownerKeyFilter)",
+                                   args: [attemptID, ownerAccountID] + ownerKeyArgs).first
         } else {
-            attempt = try db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id IS NULL",
-                                   args: [attemptID]).first
+            attempt = try db.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id IS NULL AND \(ownerKeyFilter)",
+                                   args: [attemptID] + ownerKeyArgs).first
         }
         guard let attempt else {
             return nil
         }
         let snapshot = try db.query("SELECT s.* FROM exam_snapshots s JOIN exam_snapshot_ids i " +
             "ON i.content_id = s.content_id WHERE i.exam_id = ?", args: [attempt.text("exam_id")]).first!
+        let childOwnerKey = attempt.textOrNull("owner_key")
+        let childFilter = childOwnerKey == nil ? "a.owner_key IS NULL" : "a.owner_key = ?"
+        let latestOwnerFilter = childOwnerKey == nil ? "owner_key IS NULL" : "owner_key = ?"
+        let childArgs: [Any?] = childOwnerKey.map { [attemptID, $0, attemptID, $0] } ?? [attemptID, attemptID]
         let answers = try db.query("SELECT a.* FROM exam_answers a JOIN " +
-            "(SELECT question_id, MAX(revision) AS revision FROM exam_answers WHERE attempt_id = ? GROUP BY question_id) latest " +
+            "(SELECT question_id, MAX(revision) AS revision FROM exam_answers WHERE attempt_id = ? AND \(latestOwnerFilter) GROUP BY question_id) latest " +
             "ON latest.question_id = a.question_id AND latest.revision = a.revision " +
-            "WHERE a.attempt_id = ? ORDER BY a.saved_at, a.question_id", args: [attemptID, attemptID])
-        let result = try db.query("SELECT * FROM exam_results WHERE attempt_id = ?", args: [attemptID]).first
+            "WHERE a.attempt_id = ? AND \(childFilter) ORDER BY a.saved_at, a.question_id", args: childArgs)
+        let resultFilter = childOwnerKey == nil ? "owner_key IS NULL" : "owner_key = ?"
+        let resultArgs: [Any?] = childOwnerKey.map { [attemptID, $0] } ?? [attemptID]
+        let result = try db.query("SELECT * FROM exam_results WHERE attempt_id = ? AND \(resultFilter)",
+                                  args: resultArgs).first
         return ExamHistory(attempt: attempt, snapshot: snapshot, answers: answers, result: result)
+    }
+
+    /// Assigns pre-identity ownerless exam rows once, to the identity resolved before database open.
+    @discardableResult
+    public static func assignOwnerlessToIdentityOnce(_ db: SqlDatabase, ownerAccountID: String) throws -> Bool {
+        guard ownerAccountID.hasPrefix("member:") || ownerAccountID.hasPrefix("guest:") else {
+            throw SqlDatabaseError.unsupportedValue("owner backfill requires a namespaced active identity")
+        }
+        let isFirst = try MetaDao.get(db, LearnerOwnershipDao.backfillKey) == nil
+        try LearnerOwnershipDao.activate(db, identity: ownerAccountID)
+        return isFirst
     }
 
     /// Returns only local rows or rows owned by the explicitly selected account.
     /// The caller must pass the current session's account ID; nil never means all accounts.
     public static func history(_ db: SqlDatabase, ownerAccountID: String? = nil) throws -> [ExamHistory] {
         let rows: [SqlRow]
+        let identity = try LearnerOwnershipDao.activeIdentity(db)
         if let ownerAccountID {
+            guard let identity else { return [] }
             rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id = ? " +
-                                "ORDER BY updated_at DESC, attempt_id DESC", args: [ownerAccountID])
+                                "AND owner_key = ? ORDER BY updated_at DESC, attempt_id DESC",
+                                args: [ownerAccountID, identity])
         } else {
-            rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id IS NULL " +
-                                "ORDER BY updated_at DESC, attempt_id DESC")
+            if let identity {
+                rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id IS NULL " +
+                                    "AND owner_key = ? ORDER BY updated_at DESC, attempt_id DESC", args: [identity])
+            } else {
+                rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id IS NULL " +
+                                    "AND owner_key IS NULL ORDER BY updated_at DESC, attempt_id DESC")
+            }
         }
         return try rows.compactMap { row in
             try load(db, attemptID: row.text("attempt_id"), ownerAccountID: ownerAccountID)
@@ -606,6 +639,14 @@ public enum ExamHistoryDao {
             "attempt_id": attemptID, "revision": revision, "event_type": type,
             "payload_json": payload, "delivery_state": "pending", "created_at": at,
             "acknowledged_at": nil])
+    }
+
+    private static func requireActiveAttemptOwner(_ db: SqlDatabase, attemptID: String) throws {
+        guard let attempt = try db.query("SELECT owner_key FROM exam_attempts WHERE attempt_id = ?",
+                                         args: [attemptID]).first,
+              attempt.textOrNull("owner_key") == (try LearnerOwnershipDao.activeIdentity(db)) else {
+            throw ExamHistoryError.missingAttempt
+        }
     }
 
     private static func object(_ json: String) -> [String: Any]? {

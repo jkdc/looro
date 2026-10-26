@@ -338,34 +338,31 @@ public enum BackupManager {
         return try db.transaction { tx in
             let fragments = try tx.query(
                 "SELECT COUNT(*) AS n FROM fragments WHERE session_id IN " +
-                "(SELECT id FROM sessions WHERE language_id = ?)", args: [languageID])
+                "(SELECT id FROM sessions WHERE language_id = ? AND \(ownerClause(tx))) AND \(ownerClause(tx))",
+                args: [languageID] + (try ownerArguments(tx)) + (try ownerArguments(tx)))
                 .first!.long("n")
             // Tickets first: after the sessions go, the subselect finds nothing.
             let tickets = try tx.update(
                 "DELETE FROM assessment_tickets WHERE session_id IN " +
-                "(SELECT id FROM sessions WHERE language_id = ?)", args: [languageID])
-            let sessions = try tx.update("DELETE FROM sessions WHERE language_id = ?",
-                                         args: [languageID])
-            let completions = try tx.update("DELETE FROM completions WHERE language_id = ?",
-                                            args: [languageID])
-            let expressions = try tx.update("DELETE FROM expressions WHERE language_id = ?",
-                                            args: [languageID])
+                "(SELECT id FROM sessions WHERE language_id = ? AND \(ownerClause(tx))) AND \(ownerClause(tx))",
+                args: [languageID] + (try ownerArguments(tx)) + (try ownerArguments(tx)))
+            let sessions = try tx.update("DELETE FROM sessions WHERE language_id = ? AND \(ownerClause(tx))",
+                                         args: [languageID] + (try ownerArguments(tx)))
+            let completions = try tx.update("DELETE FROM completions WHERE language_id = ? AND \(ownerClause(tx))",
+                                            args: [languageID] + (try ownerArguments(tx)))
+            let expressions = try tx.update("DELETE FROM expressions WHERE language_id = ? AND \(ownerClause(tx))",
+                                            args: [languageID] + (try ownerArguments(tx)))
             let lessonStates = try tx.update(
-                "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\'",
-                args: [lessonPattern])
+                "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\' AND \(ownerClause(tx))",
+                args: [lessonPattern] + (try ownerArguments(tx)))
             let examAttempts = try tx.query("SELECT COUNT(*) AS n FROM exam_attempts WHERE exam_id IN " +
                 "(SELECT i.exam_id FROM exam_snapshot_ids i JOIN exam_snapshots s ON s.content_id = i.content_id " +
-                "WHERE s.language_id = ?)", args: [languageID]).first!.long("n")
+                "WHERE s.language_id = ?) AND \(ownerClause(tx))",
+                args: [languageID] + (try ownerArguments(tx))).first!.long("n")
             _ = try tx.update("DELETE FROM exam_attempts WHERE exam_id IN (SELECT i.exam_id FROM exam_snapshot_ids i " +
-                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?)", args: [languageID])
-            _ = try tx.update("DELETE FROM exam_snapshot_ids WHERE content_id IN " +
-                "(SELECT content_id FROM exam_snapshots WHERE language_id = ?)", args: [languageID])
-            let examSnapshots = try tx.query("SELECT COUNT(*) AS n FROM exam_snapshots WHERE language_id = ? " +
-                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
-                args: [languageID]).first!.long("n")
-            _ = try tx.update("DELETE FROM exam_snapshots WHERE language_id = ? " +
-                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
-                args: [languageID])
+                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?) AND \(ownerClause(tx))",
+                args: [languageID] + (try ownerArguments(tx)))
+            let examSnapshots: Int64 = 0 // Immutable exam snapshots are device-global content cache.
             return LanguageDeletion(sessions: sessions, fragments: fragments,
                                     completions: completions, expressions: expressions,
                                     lessonStates: lessonStates, tickets: tickets,

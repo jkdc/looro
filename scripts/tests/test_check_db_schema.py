@@ -31,6 +31,27 @@ class SchemaTest(unittest.TestCase):
             'exam_answers', 'exam_results', 'exam_sync_outbox', 'exam_sync_conflicts',
         }.issubset(tables))
 
+    def test_remote_progress_tables_and_indexes_are_pinned(self):
+        tables, indexes = check_db_schema.read_inventory(self.conn)
+        self.assertEqual([], check_db_schema.check_inventory(tables, indexes))
+        self.assertTrue({'remote_progress_rollups', 'progress_sync_state',
+                         'progress_recovery'}.issubset(tables))
+        self.assertIn(('remote_progress_rollups_identity', 'remote_progress_rollups',
+                       ('owner_account_id', 'language_key', 'kind', 'item_id')), indexes)
+        self.assertIn(('progress_recovery_source', 'progress_recovery',
+                       ('owner_key', 'source_table', 'source_key', 'source_version')), indexes)
+
+    def test_timestamp_provenance_columns_are_pinned(self):
+        tables, indexes = check_db_schema.read_inventory(self.conn)
+        self.assertEqual([], check_db_schema.check_inventory(tables, indexes))
+        self.assertTrue({'at_source', 'at_source_version', 'at_unit'} <=
+                        {column[0] for column in tables['completions']})
+        self.assertTrue({'last_seen_source', 'last_seen_source_version', 'last_seen_unit'} <=
+                        {column[0] for column in tables['lesson_state']})
+        self.assertIn("CHECK (state IN ('pending', 'repaired', 'excluded', 'unresolved', 'validated'))",
+                      check_db_schema.SCHEMA.read_text())
+        self.assertIn('CHECK (source_version >= 0)', check_db_schema.SCHEMA.read_text())
+
     def test_unpinned_exam_snapshot_trigger_fails_contract(self):
         schema = check_db_schema.SCHEMA.read_text()
         mutated = re.sub(
@@ -53,19 +74,16 @@ class SchemaTest(unittest.TestCase):
                             'delivery_state' in issue for issue in issues), issues)
 
     def test_dropped_column_fails_inventory(self):
-        mutated = re.sub(r'\n\s*title\s+TEXT\s+NOT NULL,', '',
-                         check_db_schema.SCHEMA.read_text(), count=1)
-        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
-        conn = check_db_schema.build_schema(mutated)
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('ALTER TABLE sessions DROP COLUMN title')
         tables, indexes = check_db_schema.read_inventory(conn)
         issues = check_db_schema.check_inventory(tables, indexes)
         self.assertTrue(any('MISSING_COLUMN: sessions.title' in i for i in issues),
                         issues)
 
     def test_dropped_table_fails_inventory(self):
-        mutated = re.sub(r'\nCREATE TABLE skill_errors.*?\n\);\n', '\n',
-                         check_db_schema.SCHEMA.read_text(), count=1, flags=re.S)
-        conn = check_db_schema.build_schema(mutated)
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('DROP TABLE skill_errors')
         tables, indexes = check_db_schema.read_inventory(conn)
         issues = check_db_schema.check_inventory(tables, indexes)
         self.assertTrue(any("MISSING_TABLE: 'skill_errors'" in i for i in issues),
@@ -82,8 +100,13 @@ class SchemaTest(unittest.TestCase):
                             for i in issues), issues)
 
     def test_removed_foreign_key_fails_constraints(self):
-        mutated = re.sub(r'\s+REFERENCES sessions\(id\) ON DELETE CASCADE', '',
-                         check_db_schema.SCHEMA.read_text(), count=1)
+        mutated = check_db_schema.SCHEMA.read_text()
+        mutated = mutated.replace('REFERENCES sessions(id) ON DELETE CASCADE', '')
+        mutated = mutated.replace(
+            '    PRIMARY KEY (owner_key, id),\n'
+            '    FOREIGN KEY (owner_key, session_id) REFERENCES sessions(owner_key, id) ON DELETE CASCADE\n'
+            '        DEFERRABLE INITIALLY DEFERRED',
+            '    PRIMARY KEY (owner_key, id)')
         self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
         conn = check_db_schema.build_schema(mutated)
         issues = check_db_schema.check_constraints(conn, mutated)
@@ -92,8 +115,7 @@ class SchemaTest(unittest.TestCase):
                             for i in issues), issues)
 
     def test_removed_check_constraint_fails_constraints(self):
-        mutated = re.sub(r'\s+CHECK \(id = 1\)', '',
-                         check_db_schema.SCHEMA.read_text(), count=1)
+        mutated = check_db_schema.SCHEMA.read_text().replace('CHECK (id = 1)', '')
         conn = check_db_schema.build_schema(mutated)
         issues = check_db_schema.check_constraints(conn, mutated)
         self.assertTrue(any("MISSING_CONSTRAINT: preferences must define "
@@ -115,8 +137,8 @@ class SchemaTest(unittest.TestCase):
         # fragments_fts itself and its FTS4 external-content shadow tables
         # (_segments/_segdir/_docsize/_stat — external content keeps no
         # _content, and _data would be FTS5-only) are pinned or skipped,
-        # never inventory drift; the current learning-table count is sixteen.
-        self.assertEqual(17, len(tables))
+        # never inventory drift; v6 adds three install-local progress tables.
+        self.assertEqual(20, len(tables))
         self.assertNotIn('fragments_fts', tables)
         self.assertTrue(check_db_schema.is_internal_table('fragments_fts'))
         for shadow in ('fragments_fts_segments', 'fragments_fts_segdir',
@@ -125,13 +147,14 @@ class SchemaTest(unittest.TestCase):
         self.assertFalse(check_db_schema.is_internal_table('fragments'))
 
     def test_dropped_virtual_table_and_triggers_fail(self):
-        # the coherent "no FTS" mutation: a v1-shaped schema. Both pins must
-        # name every missing object.
-        mutated = re.sub(r'\nCREATE VIRTUAL TABLE fragments_fts.*?user_version = 2;',
-                         '\nPRAGMA user_version = 2;',
-                         check_db_schema.SCHEMA.read_text(), count=1, flags=re.S)
-        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
-        conn = check_db_schema.build_schema(mutated)
+        # Mutate the final v7 schema: its owner migration rebuilds the original
+        # v2 FTS objects, so editing only the historical v2 statements would
+        # no longer remove the active objects.
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('DROP TABLE fragments_fts')
+        for trigger in ('fragments_fts_after_insert', 'fragments_fts_after_update',
+                        'fragments_fts_before_delete', 'fragments_fts_before_update'):
+            conn.execute(f'DROP TRIGGER {trigger}')
         virtual_issues = check_db_schema.check_virtual_tables(conn)
         trigger_issues = check_db_schema.check_triggers(conn)
         self.assertTrue(any("MISSING_VIRTUAL_TABLE: 'fragments_fts'" in i
@@ -145,10 +168,9 @@ class SchemaTest(unittest.TestCase):
         # still a valid fts4 table, but no longer external content and with
         # the default tokenizer: the pin must catch the lost options without
         # the schema failing to build
-        mutated = re.sub(r",\n    content='fragments',\n    tokenize='unicode61'\n",
-                         '\n', check_db_schema.SCHEMA.read_text(), count=1)
-        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
-        conn = check_db_schema.build_schema(mutated)
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('DROP TABLE fragments_fts')
+        conn.execute("CREATE VIRTUAL TABLE fragments_fts USING fts4(text, tokenize='simple')")
         issues = check_db_schema.check_virtual_tables(conn)
         self.assertTrue(any('VIRTUAL_TABLE_DRIFT: fragments_fts is missing '
                             '"content=\'fragments\'"' in i for i in issues), issues)
@@ -156,9 +178,8 @@ class SchemaTest(unittest.TestCase):
                             '"tokenize=\'unicode61\'"' in i for i in issues), issues)
 
     def test_dropped_trigger_fails_trigger_pin(self):
-        mutated = re.sub(r'\nCREATE TRIGGER fragments_fts_after_update.*?END;\n', '\n',
-                         check_db_schema.SCHEMA.read_text(), count=1, flags=re.S)
-        conn = check_db_schema.build_schema(mutated)
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('DROP TRIGGER fragments_fts_after_update')
         issues = check_db_schema.check_triggers(conn)
         self.assertTrue(any("MISSING_TRIGGER: 'fragments_fts_after_update'" in i
                             for i in issues), issues)
@@ -167,11 +188,11 @@ class SchemaTest(unittest.TestCase):
         # a valid trigger with the wrong event: the pin must catch both the
         # missing AFTER on the insert trigger and the lost 'OF text' on the
         # before-update trigger (the column the index actually tracks)
-        mutated = check_db_schema.SCHEMA.read_text().replace(
-            'AFTER INSERT ON fragments', 'BEFORE INSERT ON fragments', 1)
-        mutated = mutated.replace('BEFORE UPDATE OF text ON fragments',
-                                  'BEFORE UPDATE ON fragments', 1)
-        conn = check_db_schema.build_schema(mutated)
+        conn = check_db_schema.build_schema(check_db_schema.SCHEMA.read_text())
+        conn.execute('DROP TRIGGER fragments_fts_after_insert')
+        conn.execute('DROP TRIGGER fragments_fts_before_update')
+        conn.execute('CREATE TRIGGER fragments_fts_after_insert BEFORE INSERT ON fragments BEGIN SELECT 1; END')
+        conn.execute('CREATE TRIGGER fragments_fts_before_update BEFORE UPDATE ON fragments BEGIN SELECT 1; END')
         issues = check_db_schema.check_triggers(conn)
         self.assertTrue(any("TRIGGER_DRIFT: fragments_fts_after_insert must be a "
                             "'AFTER INSERT' trigger" in i for i in issues), issues)
