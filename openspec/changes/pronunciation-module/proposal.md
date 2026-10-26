@@ -25,6 +25,12 @@ capture, some form of accuracy check, and skill evidence generation.
   transcribes the learner's attempt. The transcript is compared to the
   target phrase using word-error-rate; a threshold converts WER to a 0-100
   score. No audio fingerprinting or external API.
+- **Privacy and lifecycle**: pronunciation requests require an available
+  on-device recognizer and set its local-only request flag. Unsupported
+  locales remain non-scored listen-and-repeat practice. Each attempt owns a
+  unique temporary recording and request-scoped recognition task; denial,
+  error, timeout, navigation, and backgrounding settle through one cleanup
+  path. Permission explanations state that practice audio stays on device.
 - **Evidence**: a new `pronunciation` ledger kind stores (itemID = lesson
   pron target, bestScore). MasteryEngine picks it up at
   `CHECKPOINT_WEIGHT × 0.8`.

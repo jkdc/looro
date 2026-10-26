@@ -1,6 +1,19 @@
 import SwiftUI
 import AVFoundation
+import Foundation
 import LearningCore
+
+#if DEBUG
+private struct PronunciationUITestCleanupBadge: View {
+    @ObservedObject private var probe = PronunciationUITestProbe.shared
+
+    var body: some View {
+        Text("Cleanup count: \(probe.cleanupCount)")
+            .font(.caption2).padding(4).background(.white.opacity(0.9), in: Capsule())
+            .accessibilityIdentifier("pronunciation-cleanup-count")
+    }
+}
+#endif
 
 /// Learn tab: the course for the current language, its lessons and focused themes.
 /// Read-aloud uses local speech synthesis; a missing course-language voice degrades
@@ -95,6 +108,13 @@ struct CoursesView: View {
                 }.scrollIndicators(.hidden)
             }
         }.foregroundStyle(AppColor.ink)
+#if DEBUG
+        .overlay(alignment: .bottomTrailing) {
+            if ProcessInfo.processInfo.arguments.contains("--pronunciation-lifecycle-ui-test") {
+                PronunciationUITestCleanupBadge()
+            }
+        }
+#endif
     }
 }
 
@@ -548,7 +568,7 @@ private struct UnitSection: View {
                         if tier > 0 { MasteryStars(tier: tier) }
                         Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(AppColor.secondary)
                     }.padding(16).background(AppColor.cream, in: RoundedRectangle(cornerRadius: 18))
-                }.buttonStyle(.plain)
+                }.buttonStyle(.plain).accessibilityIdentifier("lesson-open-\(lesson.id)")
             }
         }
     }
@@ -560,6 +580,7 @@ private struct UnitSection: View {
 }
 
 private struct LessonDetailView: View {
+    @Environment(\.scenePhase) private var scenePhase
     let coordinator: ConversationCoordinator
     let lesson: Lesson
     @Binding var audioOn: Bool
@@ -632,10 +653,12 @@ private struct LessonDetailView: View {
                                 HStack {
                                     Text(expression.text).font(.subheadline.weight(.semibold))
                                     Spacer()
-                                    if drill.listeningTarget == expression.text {
-                                        Text("Listening…").font(.caption).foregroundStyle(AppColor.secondary)
+                                    if drill.state.isBusy {
+                                        Text(drill.state == .recognizing ? "Checking…" : "Listening…")
+                                            .font(.caption).foregroundStyle(AppColor.secondary)
                                     } else {
                                         Button {
+                                            reader.stop()
                                             drill.check(target: expression.text, lessonID: lesson.id,
                                                         language: lessonCourseLanguage,
                                                         store: coordinator.store) { _ in }
@@ -643,10 +666,14 @@ private struct LessonDetailView: View {
                                             Text("Check").font(.caption.weight(.semibold))
                                                 .padding(.horizontal, 12).padding(.vertical, 6)
                                                 .background(AppColor.orange, in: Capsule())
-                                        }.buttonStyle(.plain)
+                                        }.buttonStyle(.plain).accessibilityIdentifier("pronunciation-check")
                                     }
                                 }
                                 Text(expression.note).font(.caption).foregroundStyle(AppColor.secondary)
+                                if let statusMessage = drill.statusMessage {
+                                    Text(statusMessage).font(.caption).foregroundStyle(AppColor.secondary)
+                                        .accessibilityIdentifier("pronunciation-status")
+                                }
                                 if let hit = drill.result, hit.target == expression.text {
                                     Text(PronunciationEngine.passed(hit.score)
                                          ? "Pronunciation: \(hit.score)% — passed, well said!"
@@ -688,6 +715,8 @@ private struct LessonDetailView: View {
         }.scrollIndicators(.hidden)
         .onAppear { if audioOn { read() } }
         .onChange(of: audioOn) { _, on in if on { read() } }
+        .onChange(of: scenePhase) { _, phase in if phase == .background { drill.cancel() } }
+        .onDisappear { drill.cancel() }
     }
 
     private func read() {

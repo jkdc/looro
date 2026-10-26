@@ -9,7 +9,8 @@
 <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
 <key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
 <key>LSRequiresIPhoneOS</key><true/>
-<key>NSMicrophoneUsageDescription</key><string>Palique listens while you practise speaking. Your voice is sent to OpenAI during a conversation.</string>
+<key>NSMicrophoneUsageDescription</key><string>Palique uses your microphone while you practise speaking.</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>Palique checks pronunciation with on-device speech recognition. Your practice audio is not sent to a server.</string>
 <key>UIUserInterfaceStyle</key><string>Light</string>
 <key>UILaunchScreen</key><dict/>
 <key>UIApplicationSceneManifest</key><dict><key>UIApplicationSupportsMultipleScenes</key><false/></dict>

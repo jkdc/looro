@@ -132,6 +132,53 @@ final class AppUITests: XCTestCase {
         let app = XCUIApplication(); app.launchArguments = ["--preview"] + (ended ? ["--ended-conversation"] : [])
         app.launch(); return app
     }
+
+    private func launchPronunciationLifecycleFixture() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["--preview", "--pronunciation-lifecycle-ui-test"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        let preference = app.switches["Pronunciation practice (beta)"]
+        XCTAssertTrue(preference.waitForExistence(timeout: 5))
+        if preference.value as? String != "1" { preference.tap() }
+        app.buttons["Done"].tap()
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["language-en"].tap()
+        app.buttons["lesson-open-en-foundations-u1-introduce"].tap()
+        XCTAssertTrue(app.buttons["pronunciation-check"].waitForExistence(timeout: 5))
+        return app
+    }
+
+    func testBackgroundCancelsMountedPronunciationAttempt() {
+        let app = launchPronunciationLifecycleFixture()
+        let cleanupCount = app.staticTexts["pronunciation-cleanup-count"]
+        XCTAssertEqual(cleanupCount.label, "Cleanup count: 0")
+        app.buttons["pronunciation-check"].tap()
+        XCTAssertTrue(app.staticTexts["Checking…"].waitForExistence(timeout: 5))
+
+        XCUIDevice.shared.press(.home)
+        app.activate()
+
+        XCTAssertTrue(app.buttons["pronunciation-check"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["Checking…"].exists)
+        XCTAssertEqual(cleanupCount.label, "Cleanup count: 1")
+    }
+
+    func testNavigationCancelsPronunciationAttemptBeforeLessonCanBeRetried() {
+        let app = launchPronunciationLifecycleFixture()
+        let cleanupCount = app.staticTexts["pronunciation-cleanup-count"]
+        XCTAssertEqual(cleanupCount.label, "Cleanup count: 0")
+        app.buttons["pronunciation-check"].tap()
+        XCTAssertTrue(app.staticTexts["Checking…"].waitForExistence(timeout: 5))
+        app.buttons["Back to lessons"].tap()
+        XCTAssertEqual(cleanupCount.waitForExistence(timeout: 5), true)
+        XCTAssertEqual(cleanupCount.label, "Cleanup count: 1")
+
+        app.buttons["lesson-open-en-foundations-u1-introduce"].tap()
+        XCTAssertTrue(app.buttons["pronunciation-check"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["Checking…"].exists)
+    }
+
     private func launchAccountRecoveryFixture(scenario: String, account: String = "A") -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [

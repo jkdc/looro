@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Palique uses your microphone while you practise speaking.";
+"NSSpeechRecognitionUsageDescription" = "Palique checks pronunciation with on-device speech recognition. Your practice audio is not sent to a server.";
