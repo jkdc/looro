@@ -291,7 +291,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 10: Bound voice capture and unify live turn context
 
-**Requirements:** S7,S8,S9. **Prerequisites:** T9. **Status:** pending.
+**Requirements:** S7,S8,S9. **Prerequisites:** T9. **Status:** Needs decision after two correction rounds; S8 durable no-phantom-turn coverage still has a scheduling race because the fake source latch fires before producer classification. Independent scratch verification passed, but task review did not accept that as deterministic regression proof. No T10 commit; device audio/AEC proof also remains pending. T9 is complete; T5 remains independently partial. Baseline: `4d8942c`.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/core/voice/LocalVoiceTransport.kt`
@@ -330,7 +330,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 12: Make iOS pronunciation private and recoverable
 
-**Requirements:** S11,S12,S13. **Prerequisites:** T3. **Status:** pending.
+**Requirements:** S11,S12,S13. **Prerequisites:** T3. **Status:** implemented and reviewed; commit `c8c2d48`; iOS/Swift execution is deferred to T16 by user instruction.
 
 **Files:**
 - Modify: `apps/ios/App/Info.plist`
@@ -346,11 +346,11 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 **Interfaces:** Consumes T3 actual App test target. Produces request-scoped states and one terminal cleanup/cancel path with injected recognizer/recorder/time boundaries. Every adapter request requires on-device recognition; unsupported returns non-scored practice.
 
 - [ ] **Step 1 — RED:** `deniedPermissionNeverRecords`, `recognizerErrorSettlesBusy`, `timeoutAndCancelCleanExactlyOnce`, `lateCallbackCannotScoreNextAttempt`, `unsupportedLocalModelMakesNoRequest`, and built-bundle permission tests cover unique file removal, owned audio release, navigation/background and successive attempts.
-- [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
+- [ ] **Step 2 — RED evidence deferred:** Author the regression tests first, but do not run SwiftPM, Xcode, or `make ios-test` during T12; the user explicitly deferred iOS app testing to T16. Record RED/GREEN as pending, not passed.
 - [ ] **Step 3 — Implement:** Add accurate localized Speech/mic copy and resource membership without overwriting existing localizations. Retain recognition task, use unique attempt files, enforce supportsOnDeviceRecognition/requiresOnDeviceRecognition and preserve shared TTS audio ownership.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI/audio device gate** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S11,S12,S13 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): enforce local pronunciation lifecycle`; record commit and evidence in OpenSpec tasks/verification report.
+- [ ] **Step 4 — GREEN evidence deferred:** Do not execute SwiftPM, Xcode, or `make ios-test` during T12. Run the **Swift Core + iOS App + iOS UI/audio device gate** checks in T16 and record actual status/counts or exact unavailability; until then T12 remains verification-pending.
+- [x] **Step 5 — Review:** Scoped reviewer and independent verifier accepted the `PronunciationUITestProbe: ObservableObject` correction with no new breakage. App compilation and runtime proof remain deferred to T16; this is not full platform verification.
+- [x] **Step 6 — Commit:** Parent committed only reviewed task-owned files as `c8c2d48` (`fix(ios): enforce local pronunciation lifecycle`). iOS/Swift runtime proof remains deferred to T16.
 
 ### Task 13: Preserve typed replies across failure and retry
 

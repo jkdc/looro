@@ -14,9 +14,9 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 - [ ] T7 / S2,S3,S4,S5,S17 — Wire Android time-safe complete transport and enforce active-owner boundaries. Depends on T3,T4,T5,T17,T6. Evidence/commit: pending.
 - [ ] T8 / S5,S17 — Integrate effective progress reads and upload feedback by active owner. Depends on T5,T6,T7,T17. Evidence/commit: pending.
 - [x] T9 / S6 — Make Android topic selection transactional. Depends on T3; independent of T5/T6–T8 and therefore active while their provenance decision is open. Evidence: focused `ThemeTransitionTest` 7/7 passed in parent and independent scratch recheck; `:app:assembleUiTestAndroidTest` passed. Connected UI execution was unavailable (`adb devices -l` listed no device), and mounted AppViewModel behavior is not directly exercised. Commit: `442c585`.
-- [ ] T10 / S7,S8,S9 — Bound voice capture and unify live turn context. Depends on T9. Evidence/commit: pending.
+- [ ] T10 / S7,S8,S9 — Bound voice capture and unify live turn context. Depends on T9. Status: Needs decision after two correction rounds: the durable S8 no-phantom-turn assertion still lacks an acknowledgement after producer classification; independent scratch probes pass but the test remains scheduling-dependent. No commit. Device audio/AEC proof also remains pending.
 - [ ] T11 / S10 — Expose accessible manual microphone mute. Depends on T10. Evidence/commit: pending.
-- [ ] T12 / S11,S12,S13 — Make iOS pronunciation private and recoverable. Depends on T3. Evidence/commit: pending.
+- [ ] T12 / S11,S12,S13 — Make iOS pronunciation private and recoverable. Depends on T3. Implementation and scoped review complete; SwiftPM/Xcode/`make ios-test` execution remains deferred to T16. Commit: `c8c2d48`.
 - [ ] T13 / S14 — Preserve typed replies across failure and retry. Depends on T3. Evidence/commit: pending.
 - [ ] T14 / S15 — Gate topic search by real engine capability. Depends on T13. Evidence/commit: pending.
 - [ ] T15 / S16 — Notify session adoption before profile loading. Depends on T3,T14. Evidence/commit: pending.
