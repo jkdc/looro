@@ -271,7 +271,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 9: Make Android topic selection transactional
 
-**Requirements:** S6. **Prerequisites:** T3. **Status:** implementation checkpoint in progress; device UI proof remains pending (independent of T5/T6–T8; checkpoint commits `07685b5`, `3173fec` recorded first).
+**Requirements:** S6. **Prerequisites:** T3. **Status:** complete; code-level review and focused tests passed. Android connected UI execution was unavailable (no device; APK assembly passed). Commit: `442c585` (independent of T5/T6–T8; checkpoint commits `07685b5`, `3173fec` recorded first).
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/LibraryScreens.kt`
@@ -285,9 +285,9 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 1 — RED:** `cancelTopicSelectionLeavesSessionUnchanged`, `delayedCloseStartsExactlyOnce`, `timeoutDoesNotStartNewSession`, and `staleIntentCannotRestart` assert theme/title/context, sent instructions and session start counts; include double confirm.
 - [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.ThemeTransitionTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
 - [ ] **Step 3 — Implement:** Apply no active mutation before confirmation. Await real terminal close and settlement, not a fixed delay. Surface close failure/timeout and discard only the pending selection on cancel.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Android UI** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S6 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): await confirmed topic transitions`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 4 — GREEN:** Focused `ThemeTransitionTest` passed (7/7) in parent and independent scratch. Android UI test APK assembled successfully; connected UI execution unavailable because `adb devices -l` reported no device.
+- [x] **Step 5 — Review:** Independent bounded reviewer passed the typed/resumed terminal-close blocker and structurally checked pending-only selection, successful terminal close/settlement gating, stale/account/navigation checks, and cancel invalidation. Mounted AppViewModel state wiring was inspected but is not directly exercised by tests.
+- [x] **Step 6 — Commit:** `442c585` (`fix(android): await confirmed topic transitions`); includes task-owned code/tests and SDD status. `git diff --check` passed before commit.
 
 ### Task 10: Bound voice capture and unify live turn context
 
