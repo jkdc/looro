@@ -32,10 +32,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +53,7 @@ import com.jkdc.app.core.CloudAction
 import com.jkdc.app.AccountViewModel
 import com.jkdc.app.MinutePurchaseViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,10 +79,10 @@ fun AppRoot(
     var showConsent by rememberSaveable { mutableStateOf(false) }
     var showAccount by rememberSaveable { mutableStateOf(false) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
-    var pendingThemeSwitch by remember { mutableStateOf(false) }
     var showMinutes by rememberSaveable { mutableStateOf(false) }
     var showTokens by rememberSaveable { mutableStateOf(false) }
     var tokensExhausted by rememberSaveable { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     // Display hint only (GET /v1/wallet via the purchase view model); null when
     // billing is disabled, signed out, or the read failed.
     val tokensWallet = purchases?.tokenWallet?.collectAsStateWithLifecycle()?.value
@@ -88,6 +91,12 @@ fun AppRoot(
             com.jkdc.app.core.tokenCreditText(it.availableNanoUSD))
     }
     BackHandler(enabled = tab != 0 && !showSettings && !showAccount && !showMinutes && !showTokens) { tab = 0 }
+    LaunchedEffect(tab, showSettings, showAccount, showMinutes, showTokens) {
+        if (vm.pendingTopicTransition != null &&
+            (tab != 0 || showSettings || showAccount || showMinutes || showTokens)) {
+            vm.invalidatePendingTopicTransition()
+        }
+    }
     fun perform(action: CloudAction) {
         when (action) {
             CloudAction.StartVoice -> if (!vm.needsMinuteAccess()) onRequestMicrophone()
@@ -163,8 +172,7 @@ fun AppRoot(
                             1 -> TopicsScreen(
                                 vm,
                                 onChoose = {
-                                    if (vm.isRunning) pendingThemeSwitch = true
-                                    else withConsent(CloudAction.StartVoice)
+                                    if (vm.pendingTopicTransition == null) withConsent(CloudAction.StartVoice)
                                     tab = 0
                                 },
                                 onCurrentTopic = { query -> withConsent(CloudAction.CurrentTopic(query)) },
@@ -174,8 +182,7 @@ fun AppRoot(
                                     withConsent(CloudAction.StartLesson(lessonID)); tab = 0
                                 },
                                 onThemeChosen = {
-                                    if (vm.isRunning) pendingThemeSwitch = true
-                                    else withConsent(CloudAction.StartVoice)
+                                    if (vm.pendingTopicTransition == null) withConsent(CloudAction.StartVoice)
                                     tab = 0
                                 },
                             )
@@ -194,21 +201,19 @@ fun AppRoot(
                 }
             }
 
-            if (pendingThemeSwitch) {
-                androidx.compose.material3.AlertDialog(
-                    onDismissRequest = { pendingThemeSwitch = false },
-                    title = { Text(stringResource(R.string.theme_switch_title)) },
-                    text = { Text(stringResource(R.string.theme_switch_body, vm.selectedTheme?.title ?: "")) },
-                    confirmButton = {
-                        androidx.compose.material3.TextButton(onClick = {
-                            pendingThemeSwitch = false
-                            vm.end()
-                            withConsent(CloudAction.StartVoice)
-                        }) { Text(stringResource(R.string.theme_switch_confirm)) }
-                    },
-                    dismissButton = {
-                        androidx.compose.material3.TextButton(onClick = { pendingThemeSwitch = false }) {
-                            Text(stringResource(R.string.theme_switch_keep))
+            vm.pendingTopicTransition?.let { pending ->
+                TopicTransitionDialog(
+                    title = vm.pendingTopicTitle,
+                    onDismiss = { vm.cancelPendingTopicTransition(pending.token) },
+                    onConfirm = {
+                        scope.launch {
+                            vm.confirmPendingTopicTransition(
+                                token = pending.token,
+                                navigationStillCurrent = {
+                                    tab == 0 && !showSettings && !showAccount && !showMinutes && !showTokens
+                                },
+                                startNewConversation = { withConsent(CloudAction.StartVoice) },
+                            )
                         }
                     },
                 )

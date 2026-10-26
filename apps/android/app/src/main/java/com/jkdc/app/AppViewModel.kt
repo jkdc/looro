@@ -40,6 +40,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -104,6 +105,68 @@ internal fun hostedErrorMessageRes(failure: HostedFailure): Int = when (failure)
 internal fun needsAccountRecovery(error: Throwable): Boolean = error == HostedFailure.SignInRequired ||
     (error is HostedFailure.Http && (error.status == 401 || error.code == "sign_in_to_continue")) ||
     (error is AccountFailure.Http && error.status == 401)
+
+/** A selection is not applied to the current conversation until its close has settled. */
+internal class TopicTransitionGate<T> {
+    data class Pending<T>(val token: Long, val value: T)
+
+    private var revision = 0L
+    private val confirmation = Mutex()
+    var pending by mutableStateOf<Pending<T>?>(null)
+        private set
+
+    fun request(value: T): Long {
+        val token = ++revision
+        pending = Pending(token, value)
+        return token
+    }
+
+    fun cancel(token: Long? = null) {
+        if (token != null && pending?.token != token) return
+        revision++
+        pending = null
+    }
+
+    fun invalidate() = cancel()
+
+    suspend fun confirm(
+        token: Long,
+        closeAndSettle: suspend () -> Boolean,
+        stillCurrent: () -> Boolean = { true },
+        start: (T) -> Unit,
+    ): Boolean {
+        if (!confirmation.tryLock()) return false
+        try {
+            val selected = pending?.takeIf { it.token == token } ?: return false
+            val settled = try { closeAndSettle() }
+            catch (cancelled: CancellationException) { cancel(token); throw cancelled }
+            catch (_: Exception) { false }
+            if (!settled) {
+                cancel(token)
+                return false
+            }
+            if (pending?.token != token || !stillCurrent()) {
+                cancel(token)
+                return false
+            }
+            try { start(selected.value) }
+            finally { cancel(token) }
+            return true
+        } finally {
+            confirmation.unlock()
+        }
+    }
+}
+
+/** A completed typed-session end is a settled close, even without voice final-response data. */
+internal fun topicCloseSettledSuccessfully(voiceSession: Boolean, connecting: Boolean): Boolean =
+    !voiceSession && !connecting
+
+internal sealed interface TopicSelection {
+    data class Theme(val theme: ConversationTheme?) : TopicSelection
+    data class Scenario(val scenario: com.jkdc.app.core.Scenario) : TopicSelection
+    data class CurrentTopic(val brief: TopicBrief) : TopicSelection
+}
 
 internal fun requestErrorReference(error: Throwable): String? = safeRequestErrorReference(when (error) {
     is HostedFailure.Http -> error.reference
@@ -205,6 +268,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var selectedTheme by mutableStateOf<ConversationTheme?>(null); private set
     var selectedLesson by mutableStateOf<Lesson?>(null); private set
     var selectedScenario by mutableStateOf<Scenario?>(null); private set
+    private val topicTransition = TopicTransitionGate<TopicSelection>()
+    internal val pendingTopicTransition get() = topicTransition.pending
+    val pendingTopicTitle: String
+        get() = when (val selection = pendingTopicTransition?.value) {
+            is TopicSelection.Theme -> selection.theme?.title ?: language.defaultTitle
+            is TopicSelection.Scenario -> selection.scenario.title
+            is TopicSelection.CurrentTopic -> selection.brief.query
+            null -> ""
+        }
+    private var accountRevision = 0L
+    private var closeSettlement: Pair<String, CompletableDeferred<Boolean>>? = null
     var lookupResult by mutableStateOf<String?>(null); private set
     var lookupError by mutableStateOf<String?>(null); private set
     var lookupLoading by mutableStateOf(false); private set
@@ -1460,6 +1534,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onAccountChanged(account: AccountState) {
+        accountRevision++
+        topicTransition.invalidate()
         invalidateProgressSync()
         selectedAccount = account
         // Invalidate immediately. Slow guest or member reads may not restore access during a transition.
@@ -1725,17 +1801,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         usageReporter.enabled = preferences.usageMetricsEnabled != false && usageClient != null
     }
     fun selectLanguage(id: String) {
-        if (!isRunning && LanguageRegistry.get(id) != null) updatePreferences(archive.preferences.copy(learningLanguageID = id))
+        if (!isRunning && LanguageRegistry.get(id) != null) {
+            topicTransition.invalidate()
+            updatePreferences(archive.preferences.copy(learningLanguageID = id))
+        }
     }
     fun chooseTheme(theme: ConversationTheme?) {
-        if (!isRunning && session != null) resetConversation()
+        if (isRunning) {
+            topicTransition.request(TopicSelection.Theme(theme))
+            return
+        }
+        applyThemeSelection(theme)
+    }
+    private fun applyThemeSelection(theme: ConversationTheme?) {
+        if (session != null) resetConversation()
         selectedTheme = theme
         selectedLesson = null
+        selectedScenario = null
+        topicResult = null
         if (theme != null) usageReporter.record(UsageEvents.THEME_SELECTED) { put("themeID", theme.id) }
-        if (state == "active") {
-            updateSession { it.themeID = theme?.id; it.title = theme?.title ?: language.defaultTitle }
-            command("instructions", TeachingPolicy.theme(theme, language))
-        }
     }
     /** Marks an authored lesson as the next conversation; consent and microphone are handled by the caller. */
     fun selectLesson(lessonID: String) {
@@ -1751,10 +1835,64 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Marks a situation (curated or the learner's own) as the next practice; the
         caller handles consent and the microphone. No hot-switch while running. */
     fun chooseScenario(scenario: Scenario) {
-        if (isRunning) return
-        if (!isRunning && session != null) resetConversation()
+        if (isRunning) {
+            topicTransition.request(TopicSelection.Scenario(scenario))
+            return
+        }
+        applyScenarioSelection(scenario)
+    }
+    private fun applyScenarioSelection(scenario: Scenario) {
+        if (session != null) resetConversation()
         selectedTheme = null; selectedLesson = null; topicResult = null
         selectedScenario = scenario
+    }
+
+    fun cancelPendingTopicTransition(token: Long? = null) = topicTransition.cancel(token)
+    fun invalidatePendingTopicTransition() = topicTransition.invalidate()
+
+    suspend fun confirmPendingTopicTransition(
+        token: Long,
+        navigationStillCurrent: () -> Boolean,
+        startNewConversation: () -> Unit,
+    ): Boolean {
+        val activeSessionID = session?.id ?: return false
+        val ownerRevision = accountRevision
+        var closeFailed = false
+        val completed = topicTransition.confirm(
+            token = token,
+            closeAndSettle = {
+                try {
+                    endAndAwaitTopicClose(activeSessionID).also { closeFailed = !it }
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    closeFailed = true
+                    false
+                }
+            },
+            stillCurrent = {
+                navigationStillCurrent() && accountRevision == ownerRevision &&
+                    session?.id == activeSessionID && state == "ended"
+            },
+        ) { selection ->
+            when (selection) {
+                is TopicSelection.Theme -> applyThemeSelection(selection.theme)
+                is TopicSelection.Scenario -> applyScenarioSelection(selection.scenario)
+                is TopicSelection.CurrentTopic -> applyCurrentTopic(selection.brief)
+            }
+            startNewConversation()
+        }
+        if (!completed && closeFailed && accountRevision == ownerRevision) {
+            presentError(getApplication<Application>().getString(R.string.error_voice_connect_failed))
+        }
+        return completed
+    }
+
+    private suspend fun endAndAwaitTopicClose(sessionID: String): Boolean {
+        if (session?.id != sessionID || !isRunning) return false
+        if (state != "closing") end("Switching conversation topic")
+        val settlement = closeSettlement?.takeIf { it.first == sessionID }?.second ?: return false
+        return withTimeoutOrNull(6_000) { settlement.await() } == true
     }
 
     /** Most recent reviewed attempt at this situation feeds the next prompt, so
@@ -2103,12 +2241,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun end(reason: String = "Ended by you") {
         if (state !in listOf("active", "connecting")) return
         val connecting = state == "connecting"
+        session?.id?.let { closeSettlement = it to CompletableDeferred() }
         state = "closing"; isMuted = true
         connectionJob?.cancel(); durationJob?.cancel(); assessmentJob?.cancel(); actionJob?.cancel(); clearLookup()
         delegations.values.toList().forEach { it.cancel() }; delegations.clear(); working = false
         updateSession { it.endReason = reason }
-        if (!voiceSession || connecting) { finish(false); return }
-        transport.close()
+        if (!voiceSession || connecting) {
+            finish(false, closeSucceeded = topicCloseSettledSuccessfully(voiceSession, connecting))
+            return
+        }
+        try { transport.close() }
+        catch (_: Exception) { finish(false); return }
         closeJob = viewModelScope.launch { delay(5000); if (state == "closing") finish(false) }
     }
     fun background() {
@@ -2116,8 +2259,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         generation++; actionJob?.cancel(); clearLookup(); meanings.reset(); working = false
         if (isRunning) { updateSession { it.endReason = "App moved to background" }; finish(false) }
     }
-    private fun finish(final: Boolean) {
+    private fun finish(final: Boolean, closeSucceeded: Boolean = false) {
         if (!isRunning) return
+        val finishedSessionID = session?.id
         connectionJob?.cancel(); durationJob?.cancel(); closeJob?.cancel(); assessmentJob?.cancel()
         actionJob?.cancel(); replayJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
         delegations.values.toList().forEach { it.cancel() }; delegations.clear()
@@ -2149,6 +2293,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         state = "ended"
+        closeSettlement?.takeIf { it.first == finishedSessionID }?.second?.complete(closeSucceeded)
         viewModelScope.launch { usageReporter.flush() }
         syncProgress()
         session?.let {
@@ -2373,7 +2518,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             "session.usage.updated", "session.closed" -> {
                 val seconds = (event["usage"] as? JsonObject)?.get("seconds")?.jsonPrimitive?.doubleOrNull
                 if (seconds != null && seconds.isFinite() && seconds in 0.0..31536000.0) updateSession { it.voiceSeconds = seconds }
-                if (event["type"]?.jsonPrimitive?.content == "session.closed") finish(true)
+                if (event["type"]?.jsonPrimitive?.content == "session.closed") finish(true, closeSucceeded = true)
             }
             "error" -> { notice = getApplication<Application>().getString(R.string.notice_voice_update_rejected) }
         }
@@ -2686,8 +2831,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 // Only genuine engine failures (exceptions) surface as errors.
                 val brief = TopicBrief(languageID = module.id, query = query.trim().take(500), text = result.text, sources = result.sources)
                 topicResult = brief
-                if (isRunning) updateSession { it.topics += brief; addUsage(it, result.usage) }
-                else { val record = SessionRecord(languageID = module.id, title = brief.query, endedAt = nowSeconds()); record.topics += brief; addUsage(record, result.usage); save(record) }
+                if (!isRunning) {
+                    val record = SessionRecord(languageID = module.id, title = brief.query, endedAt = nowSeconds())
+                    record.topics += brief; addUsage(record, result.usage); save(record)
+                }
             } catch (_: CancellationException) { }
             catch (e: Exception) { if (token == generation) presentError(e, R.string.error_find_topic_failed) }
             finally { if (token == generation) working = false }
@@ -2695,15 +2842,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun discuss(brief: TopicBrief) {
         if (brief.languageID != language.id) return
-        if (state == "active") {
-            updateSession { if (it.topics.none { t -> t.id == brief.id }) it.topics += brief }
-            if (voiceSession) {
-                command("thinking", "Sourced context, data: ${brief.text}"); command("instructions", "Discuss this topic ONLY in ${language.name}.")
-                return
-            }
+        if (isRunning) {
+            topicTransition.request(TopicSelection.CurrentTopic(brief))
+            return
         } else resetConversation()
-        topicResult = brief; selectedTheme = currentTheme(brief)
+        applyCurrentTopic(brief)
         notice = getApplication<Application>().getString(R.string.notice_topic_ready)
+    }
+    private fun applyCurrentTopic(brief: TopicBrief) {
+        if (session != null) resetConversation()
+        topicResult = brief; selectedTheme = currentTheme(brief)
+        selectedLesson = null; selectedScenario = null
     }
     private fun currentTheme(brief: TopicBrief) = ConversationTheme("current", brief.query, getApplication<Application>().getString(R.string.topics_current_theme_subtitle), "newspaper", "Interests", "Discuss this sourced reference data: ${brief.text.take(3000)}", 0)
     fun deleteSession(id: String) {

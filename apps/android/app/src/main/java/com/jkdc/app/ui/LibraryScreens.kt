@@ -170,6 +170,25 @@ fun TopicsScreen(vm: AppViewModel, onChoose: () -> Unit, onCurrentTopic: (String
 }
 
 @Composable
+internal fun TopicTransitionDialog(title: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.theme_switch_title)) },
+        text = { Text(stringResource(R.string.theme_switch_body, title)) },
+        confirmButton = {
+            androidx.compose.material3.TextButton(onClick = onConfirm, modifier = Modifier.testTag("topic-switch-confirm")) {
+                Text(stringResource(R.string.theme_switch_confirm))
+            }
+        },
+        dismissButton = {
+            androidx.compose.material3.TextButton(onClick = onDismiss, modifier = Modifier.testTag("topic-switch-cancel")) {
+                Text(stringResource(R.string.theme_switch_keep))
+            }
+        },
+    )
+}
+
+@Composable
 private fun ScenarioCard(scenario: Scenario, index: Int, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).testTag("scenario-${scenario.id}"),

@@ -271,7 +271,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 9: Make Android topic selection transactional
 
-**Requirements:** S6. **Prerequisites:** T3. **Status:** queued (independent of T5/T6–T8; dispatch follows the requested checkpoint commit).
+**Requirements:** S6. **Prerequisites:** T3. **Status:** implementation checkpoint in progress; device UI proof remains pending (independent of T5/T6–T8; checkpoint commits `07685b5`, `3173fec` recorded first).
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/LibraryScreens.kt`
