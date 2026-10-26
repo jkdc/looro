@@ -43,7 +43,7 @@ import { registerAdminLevelTestAttemptRoutes } from './http/routes/admin-level-t
 import { log } from './log.js';
 import { registerAdminLevelTestLlmConfigRoutes } from './http/routes/admin-level-test-llm-config.js';
 import { paliqueMetrics } from './metrics.js';
-import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
+import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, mergeProgressV2, listProgress, listProgressV2 } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 import type { LevelTestSchedulerConfig } from './level-tests-scheduler.js';
 
@@ -574,10 +574,23 @@ export function createApp(services: Services) {
   // content slugs on purpose; the merge is monotonic so replays are harmless.
   app.post(PROGRESS_PATH, { bodyLimit: PROGRESS_BODY_LIMIT }, async (request, reply) => {
     const account = await authenticate(db, request.headers.authorization, true);
-    return reply.code(202).send(await mergeProgress(db, account, objectBody(request)));
+    const body = objectBody(request);
+    if (body.version === 2) {
+      if (environment.PROGRESS_SYNC_V2_ENABLED !== 'true') throw new ServiceError('progress_sync_version_unavailable', 503);
+      return reply.code(202).send(await mergeProgressV2(db, account, body));
+    }
+    return reply.code(202).send(await mergeProgress(db, account, body));
   });
-  app.get(PROGRESS_PATH, async request => {
+  app.get(PROGRESS_PATH, async (request, reply) => {
     const account = await authenticate(db, request.headers.authorization, true);
+    const query = request.query as Record<string, unknown>;
+    if (Object.hasOwn(query, 'version')) {
+      if (query.version !== '2') throw new ServiceError('invalid_progress_version');
+      if (environment.PROGRESS_SYNC_V2_ENABLED !== 'true') throw new ServiceError('progress_sync_version_unavailable', 503);
+      if (Object.keys(query).some(key => !['version', 'cursor'].includes(key)) ||
+          (query.cursor !== undefined && typeof query.cursor !== 'string')) throw new ServiceError('invalid_progress_cursor');
+      return reply.send(await listProgressV2(db, account, query.cursor));
+    }
     return listProgress(db, account);
   });
   app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {

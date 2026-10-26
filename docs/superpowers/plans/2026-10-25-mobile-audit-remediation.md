@@ -128,22 +128,23 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 4: Implement negotiated API v2 on the existing route
 
-**Requirements:** S4. **Prerequisites:** T2,T3. **Status:** pending.
+**Requirements:** S4. **Prerequisites:** T2,T3. **Status:** verified; behavior commit pending.
 
 **Files:**
 - Modify: `services/api/src/progress.ts`
 - Modify: `services/api/src/app.ts`
 - Modify: `services/api/.env.example`
+- Create: `services/api/migrations/054_progress_allow_historical_first_at.sql`
 - Modify: `services/api/tests/progress.test.ts`
 - Modify: `services/api/tests/progress-http.test.ts`
 
-**Interfaces:** Consumes the T2 contract. Produces GET version=2 envelope with 1000-row codepoint identity pages, strict bounded opaque cursor, and versioned POST with firstAt/lastAt and full-batch {merged:N} ack. Disabled requests authenticate first and return exact HTTP 503 / progress_sync_version_unavailable; unversioned v1 stays unchanged.
+**Interfaces:** Consumes the T2 contract. Produces GET version=2 envelope with 1000-row codepoint identity pages, strict bounded version-tagged opaque cursor, and versioned POST with firstAt/lastAt and full-batch {merged:N} ack. Disabled requests authenticate first and return exact HTTP 503 / progress_sync_version_unavailable; only absent GET version selectors use v1, and unversioned v1 behavior stays unchanged. Persisted v2 timestamps follow `0 < firstAt <= lastAt <= injectedNow + 172800000`; migration 054 removes the legacy 2025 lower-bound without editing migration 030.
 
-- [ ] **Step 1 — RED:** `versionTwoPreservesDistinctFirstAndLastAt`, `all1001IdentitiesTraverseWithEqualTimestamps`, `disabledV2DoesNotMaskAuthentication`, `invalidCursorDoesNotChangeLedger`, and `legacyBodyStillRejectsVersionTwoFields` assert HTTP status, full JSON, account-scoped DB state and strict ordering under database collation.
-- [ ] **Step 2 — Observe RED:** Run `make test-api` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Use explicit C/codepoint ordering on immutable identity, validate ranges and pair ordering, retain existing body bounds and v1 validation. Do not add a new /v2 route, credential, cursor-signing secret or database snapshot promise.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **API integration + Shared** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S4 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [x] **Step 1 — RED:** `versionTwoPreservesDistinctFirstAndLastAt`, `all1001IdentitiesTraverseWithEqualTimestamps`, `disabledV2DoesNotMaskAuthentication`, `invalidCursorDoesNotChangeLedger`, `legacyBodyStillRejectsVersionTwoFields`, `explicitUnsupportedVersionDoesNotFallThroughToLegacy`, and `versionTwoPersistsHistoricalTimestamps` assert HTTP status, full JSON, account-scoped DB state and strict ordering under database collation.
+- [x] **Step 2 — Observe RED:** Baseline `make test-api` reported four expected original v2 behavior failures; T4 correction regressions were also observed RED (3 failed) against the pre-correction candidate.
+- [x] **Step 3 — Implement:** Use explicit C/codepoint ordering on immutable identity, version-tag the opaque cursor, validate ranges and pair ordering, retain existing body bounds and v1 validation. Add the next additive migration to remove the arbitrary 2025 `first_at` constraint without editing migration 030. Do not add a new /v2 route, credential, cursor-signing secret or database snapshot promise.
+- [x] **Step 4 — GREEN:** T4 focused PostgreSQL tests passed 17/17; `make check` passed 146 Python tests and contract/export checks; `cd services/api && npm run check` passed. Fresh full API run passed 756/756. Parent full-suite spot-check had an earlier environment failure (582/757; auth 401 and DB timeouts); parent focused rerun passed 17/17.
+- [x] **Step 5 — Review:** Fresh independent review verified S4 after one correction round; all three findings were addressed with no new Critical/Important breakage.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): negotiate bounded version two sync`; record commit and evidence in OpenSpec tasks/verification report.
 
 ### Task 5: Add durable rollups, recovery and atomic continuation

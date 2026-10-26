@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { connectDatabase, type Database } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
-import { mergeProgress, parseProgressBatch, PROGRESS_BATCH, PROGRESS_KINDS } from '../src/progress.js';
+import { mergeProgress, parseProgressBatch, parseProgressV2Batch, PROGRESS_BATCH, PROGRESS_KINDS } from '../src/progress.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.endsWith('_test')) throw new Error('Use an isolated database ending in _test.');
@@ -56,6 +56,22 @@ test('the parser rejects anything outside the closed ledger shape', () => {
   }
   assert.deepEqual([...PROGRESS_KINDS].sort(), ['assessment', 'conversation_theme', 'exercise_set',
     'lesson', 'listening', 'pronunciation', 'reading', 'recall_round', 'scenario_practice', 'words_practice']);
+});
+
+test('version two validates distinct first and last timestamps and its strict batch shape', () => {
+  const firstAt = 1_700_000_000_000, lastAt = firstAt + 500;
+  const parsed = parseProgressV2Batch({ version: 2, entries: [{ kind: 'lesson', itemID: 'lesson-one', language: 'en',
+    firstAt, lastAt, attempts: 3, bestScore: 80 }] }, lastAt);
+  assert.equal(parsed.entries[0]!.firstAt.getTime(), firstAt);
+  assert.equal(parsed.entries[0]!.lastAt.getTime(), lastAt);
+  for (const invalid of [
+    { version: 1, entries: [{ kind: 'lesson', itemID: 'lesson-one', language: 'en', firstAt, lastAt, attempts: 1, bestScore: 0 }] },
+    { version: 2, entries: [{ kind: 'lesson', itemID: 'lesson-one', language: 'en', at: lastAt, attempts: 1, bestScore: 0 }] },
+    { version: 2, entries: [{ kind: 'lesson', itemID: 'lesson-one', language: 'en', firstAt: lastAt, lastAt: firstAt, attempts: 1, bestScore: 0 }] },
+    { version: 2, extra: true, entries: [{ kind: 'lesson', itemID: 'lesson-one', language: 'en', firstAt, lastAt, attempts: 1, bestScore: 0 }] },
+    { version: 2, entries: Array.from({ length: PROGRESS_BATCH + 1 }, () => ({ kind: 'lesson', itemID: 'lesson-one',
+      language: 'en', firstAt, lastAt, attempts: 1, bestScore: 0 })) },
+  ]) assert.throws(() => parseProgressV2Batch(invalid, lastAt));
 });
 
 integration('entries merge monotonically and replays change nothing', async () => {
