@@ -86,8 +86,15 @@ object MasteryEngine {
     fun stats(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
               lessons: List<LessonState>, completions: List<CompletionMark>,
               nowSeconds: Double, index: SkillCatalogIndex,
-              ledgerRevision: Long): MasteryStats {
+              ledgerRevision: Long, ownerAccountID: String? = null,
+              remote: List<ProgressAggregate> = emptyList()): MasteryStats {
         val tagged = index.taughtSkills
+        val lessonIDs = course.units.flatMap { it.lessons }.map { it.id }.toSet()
+        val scopedIDs = lessonIDs + listenings.map { it.id } + readings.map { it.id } + course.id
+        val readLessons = if (ownerAccountID != null) ProgressProjection.effectiveLessons(ownerAccountID, course.languageID, lessons, remote, lessonIDs) else lessons
+        val readCompletions = if (ownerAccountID != null)
+            completions.filter { it.languageID == course.languageID || (it.languageID == null && it.itemID in scopedIDs) } + ProgressProjection.effectiveCompletions(ownerAccountID, course.languageID, emptyList(), remote)
+            else completions
         val mastery = tagged.map { skillID ->
             val category = index.skillCategory[skillID] ?: skillID.substringBefore(':')
             val activityIDs = index.activitiesBySkillID[skillID] ?: emptySet()
@@ -107,21 +114,21 @@ object MasteryEngine {
             val pronSkill = skillID.startsWith("pron:")
             for (activityID in activityIDs) {
                 if (pronSkill) {
-                    completions.filter { it.kind == ProgressEngine.PRONUNCIATION && it.itemID == activityID }
+                    readCompletions.filter { it.kind == ProgressEngine.PRONUNCIATION && it.itemID == activityID }
                         .maxByOrNull { it.bestScore }?.let { offer(PRONUNCIATION_WEIGHT, it.bestScore, it.at) }
                 }
                 // Exercise set evidence
-                completions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == activityID }
+                readCompletions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(EXERCISE_WEIGHT, it.bestScore, it.at) }
                 // Guided oral evidence
-                val state = lessons.firstOrNull { it.lessonID == activityID }
+                val state = readLessons.firstOrNull { it.lessonID == activityID }
                 if (state != null && state.attempts > 0 && state.lastSeen > 0.0)
                     offer(ORAL_WEIGHT, ORAL_BASELINE, state.lastSeen)
                 // Listening evidence
-                completions.filter { it.kind == ProgressEngine.LISTENING && it.itemID == activityID }
+                readCompletions.filter { it.kind == ProgressEngine.LISTENING && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(LISTENING_WEIGHT, it.bestScore, it.at) }
                 // Reading evidence
-                completions.filter { it.kind == ProgressEngine.READING && it.itemID == activityID }
+                readCompletions.filter { it.kind == ProgressEngine.READING && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(READING_WEIGHT, it.bestScore, it.at) }
             }
 

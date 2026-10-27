@@ -40,7 +40,8 @@ object ProgressEngine {
     fun stats(sessions: List<SessionRecord>, lessons: List<LessonState>, completions: List<CompletionMark>,
               courses: List<Course>, listeningIDs: Set<String>, languageID: String,
               readingIDs: Set<String> = emptySet(),
-              zone: java.time.ZoneId = java.time.ZoneId.systemDefault(), now: Double = nowSeconds()): ProgressStats {
+              zone: java.time.ZoneId = java.time.ZoneId.systemDefault(), now: Double = nowSeconds(),
+              ownerAccountID: String? = null, remote: List<ProgressAggregate> = emptyList()): ProgressStats {
         fun epochDay(seconds: Double): Long = java.time.Instant.ofEpochSecond((seconds + APPLE_EPOCH_UNIX_SECONDS).toLong()).atZone(zone).toLocalDate().toEpochDay()
         // Content ids (lessons, exercises, listening, reading, course ids) embed the
         // language, so legacy null-language marks inside them stay unambiguous;
@@ -52,7 +53,12 @@ object ProgressEngine {
             mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
         val languageSessions = sessions.filter { it.languageID == languageID }
         val languageMarks = completions.filter { it.languageID == null || it.languageID == languageID }
-        val done = lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+        val scopedRemote = remote.filter { it.languageID == languageID }
+        val readLessons = ownerAccountID?.let { ProgressProjection.effectiveLessons(it, languageID, lessons, scopedRemote, contentIDs) } ?: lessons
+        val readCompletions = ownerAccountID?.let { owner ->
+            completions.filter { scoped(it) } + ProgressProjection.effectiveCompletions(owner, languageID, emptyList(), scopedRemote)
+        } ?: completions
+        val done = readLessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
         val courseProgress = courses.map { course ->
             val all = course.units.flatMap { it.lessons }
             CourseProgress(course.id, course.title, all.count { it.id in done }, all.size)
@@ -67,7 +73,7 @@ object ProgressEngine {
         while (cursor in activeDays) { active++; cursor-- }
         var longest = 0; var run = 0; var previous = Long.MIN_VALUE
         for (day in activeDays.sorted()) { run = if (day == previous + 1) run + 1 else 1; if (run > longest) longest = run; previous = day }
-        val byKind = completions.groupBy { it.kind }
+        val byKind = readCompletions.groupBy { it.kind }
         fun distinctItems(kind: String) = byKind[kind].orEmpty().filter { scoped(it) }.map { it.itemID }.toSet().size
         return ProgressStats(
             courses = courseProgress, lessonsDone = courseProgress.sumOf { it.lessonsDone },
@@ -77,7 +83,7 @@ object ProgressEngine {
             themesPractised = byKind[CONVERSATION_THEME].orEmpty().filter { it.languageID == languageID }.map { it.itemID }.toSet().size,
             exercisesCompleted = distinctItems(EXERCISE_SET),
             listeningCompleted = distinctItems(LISTENING), readingCompleted = distinctItems(READING),
-            practiceRounds = byKind[RECALL_ROUND].orEmpty().count { it.languageID == languageID },
+            practiceRounds = completions.count { it.kind == RECALL_ROUND && it.languageID == languageID },
             wordsPracticeItems = distinctItems(WORDS_PRACTICE),
             assessmentsPassed = byKind[ASSESSMENT].orEmpty().filter { scoped(it) && it.bestScore >= 100 }.map { it.itemID }.toSet().size,
         )
@@ -103,17 +109,20 @@ object ProgressSync {
         counters. Transport code applies the per-request batch bound. Lesson
         counters outrank the mark ledger so attempts never regress. */
     fun entries(lessons: List<LessonState>, completions: List<CompletionMark>, courses: List<Course>,
-                listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = emptySet()): List<ProgressSyncEntry> {
+                listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = emptySet(),
+                ownerAccountID: String = "", remote: List<ProgressAggregate> = emptyList()): List<ProgressSyncEntry> {
         val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
             courses.map { it.id }.toSet() + listeningIDs + readingIDs
         fun scoped(mark: CompletionMark): Boolean =
             mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
         val languageLessons = lessons.filter { it.attempts > 0 && lessonIn(it.lessonID, contentIDs) }
         val rollups = rollupsOf(languageLessons, completions.filter { scoped(it) })
-        return rollups.map { (key, value) ->
-            ProgressSyncEntry(key.substringBefore('|'), key.substringAfter('|'),
-                ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore, languageID,
-                ((value.firstAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong())
+        val local = rollups.map { (key, value) -> ProgressAggregate(ownerAccountID, languageID,
+            key.substringBefore('|'), key.substringAfter('|'),
+            ((value.firstAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(),
+            ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore) }
+        return ProgressProjection.merge(ownerAccountID, languageID, local, remote).map { value ->
+            ProgressSyncEntry(value.kind, value.itemID, value.lastAt, value.attempts, value.bestScore, languageID, value.firstAt)
         }.sortedWith(compareBy<ProgressSyncEntry> { it.kind }.thenBy { it.itemID }.thenBy { it.language })
     }
 

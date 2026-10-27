@@ -38,9 +38,15 @@ public enum LevelEngine {
 
     /// Day boundaries follow the local calendar on both platforms (tests pin UTC).
     public static func lessonTier(lessonID: String, lessons: [LessonState], completions: [CompletionMark],
-                                  calendar: Calendar = .current) -> Int {
-        guard let attempts = lessons.first(where: { $0.lessonID == lessonID })?.attempts, attempts >= 1 else { return 0 }
-        let best = completions.filter { $0.kind == ProgressEngine.exerciseSet && $0.itemID == lessonID }
+                                  calendar: Calendar = .current, ownerAccountID: String? = nil,
+                                  languageID: String? = nil, remote: [ProgressAggregate] = []) -> Int {
+        let readLessons = ownerAccountID.flatMap { owner in languageID.map { ProgressProjection.effectiveLessons(ownerAccountID: owner, languageID: $0, local: lessons, remote: remote, allowedIDs: [lessonID]) } } ?? lessons
+        guard let attempts = readLessons.first(where: { $0.lessonID == lessonID })?.attempts, attempts >= 1 else { return 0 }
+        let readCompletions = ownerAccountID.flatMap { owner in languageID.map { language in
+            completions.filter { $0.languageID == nil || $0.languageID == language } +
+                ProgressProjection.effectiveCompletions(ownerAccountID: owner, languageID: language, local: [], remote: remote)
+        } } ?? completions
+        let best = readCompletions.filter { $0.kind == ProgressEngine.exerciseSet && $0.itemID == lessonID }
             .map(\.bestScore).max()
         guard let best, best >= exerciseGood else { return 1 }
         func epochDay(_ seconds: Double) -> Int {
@@ -48,18 +54,25 @@ public enum LevelEngine {
             return calendar.dateComponents([.day], from: epoch,
                 to: calendar.startOfDay(for: Date(timeIntervalSinceReferenceDate: seconds))).day ?? 0
         }
-        let spaced = Set(completions.filter { $0.kind == ProgressEngine.lesson && $0.itemID == lessonID }
+        let spaced = Set(readCompletions.filter { $0.kind == ProgressEngine.lesson && $0.itemID == lessonID }
             .map { epochDay($0.at) }).count >= 2
         return best >= exerciseMastered || spaced ? 3 : 2
     }
 
     public static func stats(course: Course, lessons: [LessonState], completions: [CompletionMark],
-                             listeningTexts: [ListeningText] = [], calendar: Calendar = .current) -> LevelStats {
+                             listeningTexts: [ListeningText] = [], calendar: Calendar = .current,
+                             ownerAccountID: String? = nil, remote: [ProgressAggregate] = []) -> LevelStats {
+        let lessonIDs = Set(course.units.flatMap { $0.lessons.map(\.id) })
+        let scopedIDs = lessonIDs.union([course.id]).union(listeningTexts.map(\.id))
+        let readCompletions = ownerAccountID.map { owner in
+            completions.filter { $0.languageID == course.languageID || ($0.languageID == nil && scopedIDs.contains($0.itemID)) } +
+                ProgressProjection.effectiveCompletions(ownerAccountID: owner, languageID: course.languageID, local: [], remote: remote)
+        } ?? completions
         let mastery = course.units.flatMap(\.lessons).map {
-            LessonMastery(lessonID: $0.id, tier: lessonTier(lessonID: $0.id, lessons: lessons, completions: completions, calendar: calendar))
+            LessonMastery(lessonID: $0.id, tier: lessonTier(lessonID: $0.id, lessons: lessons, completions: readCompletions, calendar: calendar, ownerAccountID: ownerAccountID, languageID: course.languageID, remote: remote))
         }
         let lessonPoints = mastery.reduce(0) { $0 + $1.tier }
-        let listeningPoints = listeningTexts.reduce(0) { $0 + listeningTier(bestListeningScore(completions, itemID: $1.id)) }
+        let listeningPoints = listeningTexts.reduce(0) { $0 + listeningTier(bestListeningScore(readCompletions, itemID: $1.id)) }
         let points = lessonPoints + listeningPoints
         var level = 0
         for threshold in ladder where points >= threshold { level += 1 }

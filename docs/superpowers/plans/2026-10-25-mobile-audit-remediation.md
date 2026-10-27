@@ -65,6 +65,16 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 **Interfaces:** Consumes the captured active member/guest identity; produces owner-filtered history with explicit identity equality semantics and UI request identity. NULL is legacy-only, never a wildcard or the active guest. `LevelTestAttemptStore.list` requires caller identity rather than authorizing from each returned row.
 
+### Task 8: Project effective progress into learner reads and upload feedback
+
+**Requirements:** S5,S17. **Prerequisites:** T5,T6,T7,T17. **Status:** implementation and reviewer correction complete; fresh re-review approved; Android focused projection 9/9 and scratch probes passed. Full Android suite had one T10 voice-test failure; isolated rerun passed. Commit pending; iOS execution deferred T16.
+
+**Files:** `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`, `ProgressProjection.kt`, `LevelEngine.kt`, `MasteryEngine.kt`, `AppViewModel.kt`, `apps/android/app/src/test/java/com/jkdc/app/core/ProgressProjectionTest.kt`, `apps/ios/Core/ProgressEngine.swift`, `LevelEngine.swift`, `MasteryEngine.swift`, `apps/ios/App/Storage.swift`, `LearningProgressView.swift`, `ListeningView.swift`, `ConversationCoordinator.swift`, `CoursesViews.swift`, `apps/ios/Tests/ProgressProjectionTests.swift`.
+
+**Contract:** Effective reads combine local and remote aggregate rollups without summing duplicated counters; local activity/history/streak events remain local. Upload feedback uses that same aggregate and respects active-owner boundaries. Preserve legacy completions and language scoping. Android RED/GREEN required; do not run Swift/iOS commands before T16. Reviewer correction wires iOS lesson-row attempt labels through effective owner/language-scoped lessons; regression source added but execution remains deferred.
+
+**Verification evidence:** `cd apps/android && ./gradlew --offline --no-parallel --max-workers=1 --rerun-tasks :app:testDebugUnitTest --tests 'com.jkdc.app.core.ProgressProjectionTest'` passed (9 tests). Independent scratch probes passed the pure projection/upload contract. `./gradlew --offline --no-parallel --max-workers=1 :app:testDebugUnitTest :core:engine-local:testDebugUnitTest` reported 792 tests with one failure in the unrelated preserved T10 `LocalVoiceTransportTest.barge-in stops playback and never buffers the interrupted speech as a turn`, at the no-transcript assertion; isolated rerun passed. iOS tests/builds were not run per T16 deferral; test-first RED/GREEN for iOS remains unobserved.
+
 - [x] **Step 1 — RED:** `historyIsScopedToRequestingOwner` and `lateOwnerHistoryCannotRepopulateNewAccount` regressions added; test-first failure observed before implementation (initial API/behavior failure).
 - [x] **Step 2 — Observe RED:** Focused test failed before implementing owner-aware history.
 - [x] **Step 3 — Implement:** Added owner SQL predicate, guest `IS NULL`, owner-scoped summaries and generation/request-sequence fencing; late results cannot republish after owner changes.
@@ -256,13 +266,14 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 8: Integrate effective progress reads and upload feedback
 
-**Requirements:** S5. **Prerequisites:** T5,T6,T7. **Status:** pending.
+**Requirements:** S5. **Prerequisites:** T5,T6,T7. **Status:** implementation in progress; Android RED/GREEN and review required; Swift/iOS execution deferred to T16.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt`
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/core/MasteryEngine.kt`
 - Modify: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressProjectionTest.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt` (authorized by the user to connect Android read/upload entry points)
 - Modify: `apps/ios/Core/ProgressEngine.swift`
 - Modify: `apps/ios/Core/LevelEngine.swift`
 - Modify: `apps/ios/Core/MasteryEngine.swift`
@@ -276,7 +287,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 1 — RED:** `remote90ImprovesLocal40InEitherOrder`, `projectionReplayDoesNotInventActivity`, `otherOwnerOrLanguageDoesNotContribute`, and `nextUploadRetainsRemoteBestAndFirstAt` cover all 10 supported kinds, legacy language, account switch and event/session counts.
 - [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.core.ProgressProjectionTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
 - [ ] **Step 3 — Implement:** Wire score consumers rather than appending CompletionMark/SessionRecord. Preserve legacy rows unchanged and do not sum device attempts. Exercise v1 compatibility and local v2-on paths before clearing the integration gate; production stays untouched.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Swift Core + iOS App + API integration** checks from the command table and record actual status/counts or exact unavailability.
+- [ ] **Step 4 — GREEN:** Repeat the focused Android command; expected: regression passes. Run Android unit tests. Do not run SwiftPM/Xcode/iOS build or test commands; the user explicitly deferred all Swift/iOS execution to T16. Record those platform checks as deferred, not passed.
 - [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(progress): integrate aggregate projection without activity inflation`; record commit and evidence in OpenSpec tasks/verification report.
 

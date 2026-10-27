@@ -13,12 +13,15 @@ struct LearningProgressView: View {
     }
     private var level: LevelStats? {
         guard let course = foundationsCourse else { return nil }
+        let (owner, remote) = store.remoteProgressAggregates(languageID: course.languageID)
         return LevelEngine.stats(course: course, lessons: store.archive.lessons ?? [],
                                  completions: store.archive.completions ?? [],
-                                 listeningTexts: ListeningRegistry.forLanguage(course.languageID))
+                                 listeningTexts: ListeningRegistry.forLanguage(course.languageID),
+                                 ownerAccountID: owner, remote: remote)
     }
     private var mastery: MasteryStats? {
         guard let course = foundationsCourse else { return nil }
+        let (owner, remote) = store.remoteProgressAggregates(languageID: course.languageID)
         let idx = MasteryEngine.buildIndex(course: course,
             listenings: ListeningRegistry.forLanguage(course.languageID),
             readings: ReadingRegistry.forLanguage(course.languageID))
@@ -28,7 +31,8 @@ struct LearningProgressView: View {
                                    completions: store.archive.completions ?? [],
                                    nowSeconds: Date.timeIntervalSinceReferenceDate,
                                    index: idx,
-                                   ledgerRevision: Int64((store.archive.completions ?? []).count))
+                                   ledgerRevision: Int64((store.archive.completions ?? []).count),
+                                   ownerAccountID: owner, remote: remote)
     }
     private func categoryLabel(_ category: String) -> String {
         ["grammar": "Grammar", "vocab": "Vocabulary", "function": "Functions", "speaking": "Speaking",
@@ -36,9 +40,7 @@ struct LearningProgressView: View {
     }
     private var medals: Int {
         ListeningRegistry.forLanguage(store.language.id).filter { text in
-            let best = (store.archive.completions ?? [])
-                .filter { $0.kind == ProgressEngine.listening && $0.itemID == text.id &&
-                          ($0.languageID == nil || $0.languageID == store.language.id) }.map(\.bestScore).max()
+            let best = store.listeningScore(for: text.id)
             return LevelEngine.medal(bestScore: best) >= 1
         }.count
     }

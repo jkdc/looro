@@ -839,17 +839,38 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun progressStats(): ProgressStats = ProgressEngine.stats(archive.sessions, archive.lessons,
-        archive.completions.orEmpty(), CourseRegistry.forLanguage(language.id),
-        ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id,
-        ReadingRegistry.forLanguage(language.id).map { it.id }.toSet())
+    private fun remoteProgressForLanguage(languageID: String): Pair<String?, List<com.jkdc.app.core.ProgressAggregate>> {
+        val db = store?.db ?: return null to emptyList()
+        val ownerKey = com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) ?: return null to emptyList()
+        val accountID = ownerKey.takeIf { it.startsWith("member:") }?.removePrefix("member:") ?: return null to emptyList()
+        val rows = com.jkdc.app.data.RemoteProgressRollupsDao.forLanguage(db, accountID, languageID)
+        return accountID to rows.map { row -> com.jkdc.app.core.ProgressAggregate(
+            row.ownerAccountID, row.languageID, row.kind, row.itemID, row.firstAtMilliseconds,
+            row.lastAtMilliseconds, row.attempts, row.bestScore,
+        ) }
+    }
 
-    fun completedLessonIDs(): Set<String> = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+    fun progressStats(): ProgressStats {
+        val (owner, remote) = remoteProgressForLanguage(language.id)
+        return ProgressEngine.stats(archive.sessions, archive.lessons, archive.completions.orEmpty(),
+            CourseRegistry.forLanguage(language.id), ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id,
+            ReadingRegistry.forLanguage(language.id).map { it.id }.toSet(), ownerAccountID = owner, remote = remote)
+    }
+
+    fun completedLessonIDs(): Set<String> {
+        val (owner, remote) = remoteProgressForLanguage(language.id)
+        val lessons = if (owner == null) archive.lessons else
+            com.jkdc.app.core.ProgressProjection.effectiveLessons(owner, language.id, archive.lessons, remote)
+        return lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+    }
 
     /** Derived engagement level for a course — a pure projection of the ledger
         that mixes lesson mastery with the listening points. */
-    fun levelStats(course: Course): LevelStats = LevelEngine.stats(course, archive.lessons,
-        archive.completions.orEmpty(), ListeningRegistry.forLanguage(course.languageID))
+    fun levelStats(course: Course): LevelStats {
+        val (owner, remote) = remoteProgressForLanguage(course.languageID)
+        return LevelEngine.stats(course, archive.lessons, archive.completions.orEmpty(),
+            ListeningRegistry.forLanguage(course.languageID), ownerAccountID = owner, remote = remote)
+    }
     fun currentLevelStats(): LevelStats? = foundationsCourse()?.let { levelStats(it) }
     fun listeningMedals(): Int = ListeningRegistry.forLanguage(language.id)
         .count { LevelEngine.listeningMedal(listeningScore(it.id)) >= 1 }
@@ -885,12 +906,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val rev = ledgerRevision
         val ver = MasteryEngine.MASTERY_VERSION
         cachedMastery?.takeIf { it.first == lang && it.second.first == rev && it.second.second == ver }?.third
-            ?: MasteryEngine.stats(course,
+            ?: run {
+                val (owner, remote) = remoteProgressForLanguage(lang)
+                MasteryEngine.stats(course,
                 ListeningRegistry.forLanguage(language.id),
                 ReadingRegistry.forLanguage(language.id),
                 archive.lessons, archive.completions.orEmpty(),
-                nowSeconds(), skillIndex(course), rev
+                nowSeconds(), skillIndex(course), rev, owner, remote
             ).also { cachedMastery = Triple(lang, rev to ver, it) }
+            }
     }
 
     /** A finished reading: one ledger mark with the score, same bargain as listening. */
@@ -901,16 +925,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun readingScore(itemID: String): Int? {
         val key = ProgressEngine.completionKey(itemID)
-        return archive.completions.orEmpty()
+        val local = archive.completions.orEmpty()
             .filter { it.kind == ProgressEngine.READING && it.itemID == key }
             .maxOfOrNull { it.bestScore }
+        val remote = remoteProgressForLanguage(language.id).second
+            .filter { it.kind == ProgressEngine.READING && it.itemID == key }.maxOfOrNull { it.bestScore }
+        return listOfNotNull(local, remote).maxOrNull()
     }
 
     fun checkpoint(id: String): Checkpoint? = CheckpointRegistry.checkpoint(id)
 
-    fun checkpointBest(id: String): Int? = archive.completions.orEmpty()
-        .filter { it.kind == ProgressEngine.ASSESSMENT && it.itemID == id }
-        .maxOfOrNull { it.bestScore }
+    fun checkpointBest(id: String): Int? {
+        val local = archive.completions.orEmpty()
+            .filter { it.kind == ProgressEngine.ASSESSMENT && it.itemID == id }.maxOfOrNull { it.bestScore }
+        val remote = remoteProgressForLanguage(language.id).second
+            .filter { it.kind == ProgressEngine.ASSESSMENT && it.itemID == id }.maxOfOrNull { it.bestScore }
+        return listOfNotNull(local, remote).maxOrNull()
+    }
 
     /** Whether a checkpoint has been passed, using the same logic as
         CheckpointEngine.grade (overall threshold AND every category floor). */
@@ -923,7 +954,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         readiness as preparation, never a proficiency claim. */
     fun checkpointReady(): Checkpoint? {
         val course = foundationsCourse() ?: return null
-        val done = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+        val done = completedLessonIDs()
         return CheckpointRegistry.forLanguage(language.id).firstOrNull { checkpoint ->
             val levelLessons = course.units.filter { it.level == checkpoint.level }.flatMap { it.lessons }
             levelLessons.isNotEmpty() && levelLessons.all { it.id in done } && !checkpointPassed(checkpoint)
@@ -978,7 +1009,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun recommendedLesson(): Lesson? {
         val course = foundationsCourse() ?: return null
         val mastery = masteryStats()?.skills?.associate { it.skillID to it.effectiveMastery } ?: emptyMap()
-        val attempted = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+        val attempted = completedLessonIDs()
         val unattempted = course.units.flatMap { it.lessons }.filter { it.id !in attempted }
         return unattempted.firstOrNull { lesson ->
             lesson.prerequisites.all { prereq -> (mastery[prereq] ?: 0) >= 60 || prereq !in mastery }
@@ -1063,9 +1094,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun progressBatchJson(): String = buildJsonObject {
         putJsonArray("entries") {
-            ProgressSync.entries(archive.lessons, archive.completions.orEmpty(),
+        val (owner, remote) = remoteProgressForLanguage(language.id)
+        ProgressSync.entries(archive.lessons, archive.completions.orEmpty(),
                 CourseRegistry.forLanguage(language.id), ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(),
-                language.id, ReadingRegistry.forLanguage(language.id).map { it.id }.toSet()).forEach { entry ->
+            language.id, ReadingRegistry.forLanguage(language.id).map { it.id }.toSet(), ownerAccountID = owner ?: "", remote = remote).forEach { entry ->
                 addJsonObject {
                     put("kind", entry.kind); put("itemID", entry.itemID); put("firstAt", entry.firstAtMilliseconds)
                     put("lastAt", entry.atMilliseconds); put("attempts", entry.attempts); put("bestScore", entry.bestScore); put("language", entry.language)
@@ -1141,7 +1173,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     { db -> LearningDbWriter.remoteProgressPageApplied(db, owner, rows, cursor, generation, System.currentTimeMillis()) },
                     { write -> progressSyncOperation.writeCommit(commit, write) },
                 )
-                saved && progressSyncOperation.publishCommit(commit) { }
+                saved && progressSyncOperation.publishCommit(commit) {
+                    bumpLedgerRevision()
+                    cachedMastery = null
+                }
             }
         } finally { progressSyncOperation.finishCommit(commit) }
     }
@@ -1152,10 +1187,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     ) {
         val owner = session.accountID
         val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "upload") }
-        val entries = LanguageRegistry.all.flatMap { module -> ProgressSync.entries(
-            archive.lessons, archive.completions.orEmpty(), CourseRegistry.forLanguage(module.id),
-            ListeningRegistry.forLanguage(module.id).map { it.id }.toSet(), module.id,
-            ReadingRegistry.forLanguage(module.id).map { it.id }.toSet())
+        val entries = LanguageRegistry.all.flatMap { module ->
+            val (progressOwner, remote) = remoteProgressForLanguage(module.id)
+            ProgressSync.entries(archive.lessons, archive.completions.orEmpty(), CourseRegistry.forLanguage(module.id),
+                ListeningRegistry.forLanguage(module.id).map { it.id }.toSet(), module.id,
+                ReadingRegistry.forLanguage(module.id).map { it.id }.toSet(), ownerAccountID = progressOwner ?: "", remote = remote)
         }.sortedWith(compareBy<com.jkdc.app.core.ProgressSyncEntry> { it.kind }.thenBy { it.itemID }.thenBy { it.language })
         val generation = maxOf(1L, state?.passGeneration ?: 1L)
         suspend fun isCurrentIdentity(): Boolean {
@@ -1959,7 +1995,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         selectedTheme = null; topicResult = null
         selectedLesson = lesson
     }
-    fun lessonAttempts(lessonID: String): Int = archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
+    fun lessonAttempts(lessonID: String): Int {
+        val (owner, remote) = remoteProgressForLanguage(language.id)
+        return if (owner == null) archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
+            else com.jkdc.app.core.ProgressProjection.effectiveLessons(owner, language.id, archive.lessons, remote, setOf(lessonID))
+                .firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
+    }
 
     /** Marks a situation (curated or the learner's own) as the next practice; the
         caller handles consent and the microphone. No hot-switch while running. */
@@ -2144,9 +2185,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun listeningScore(itemID: String): Int? = archive.completions.orEmpty()
-        .filter { it.kind == ProgressEngine.LISTENING && it.itemID == ProgressEngine.completionKey(itemID) }
-        .maxOfOrNull { it.bestScore }
+    fun listeningScore(itemID: String): Int? {
+        val key = ProgressEngine.completionKey(itemID)
+        val local = archive.completions.orEmpty()
+            .filter { it.kind == ProgressEngine.LISTENING && it.itemID == key }.maxOfOrNull { it.bestScore }
+        val remote = remoteProgressForLanguage(language.id).second
+            .filter { it.kind == ProgressEngine.LISTENING && it.itemID == key }.maxOfOrNull { it.bestScore }
+        return listOfNotNull(local, remote).maxOrNull()
+    }
     fun toggleMeaning() {
         val stored = archive.preferences.copy(meaningVisible = !archive.preferences.meaningVisible)
         archive = archive.copy(preferences = stored)

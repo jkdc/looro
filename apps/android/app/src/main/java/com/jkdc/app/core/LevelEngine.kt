@@ -23,23 +23,37 @@ object LevelEngine {
     val LADDER = listOf(1, 6, 12, 19, 27, 37, 49, 61, 69, 78)
 
     fun lessonTier(lessonID: String, lessons: List<LessonState>, completions: List<CompletionMark>,
-                   zone: java.time.ZoneId = java.time.ZoneId.systemDefault()): Int {
-        val attempts = lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: return 0
+                   zone: java.time.ZoneId = java.time.ZoneId.systemDefault(),
+                   ownerAccountID: String? = null, languageID: String? = null,
+                   remote: List<ProgressAggregate> = emptyList()): Int {
+        val readLessons = if (ownerAccountID != null && languageID != null)
+            ProgressProjection.effectiveLessons(ownerAccountID, languageID, lessons, remote, setOf(lessonID)) else lessons
+        val attempts = readLessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: return 0
+        val readCompletions = if (ownerAccountID != null && languageID != null)
+            completions.filter { it.languageID == null || it.languageID == languageID } + ProgressProjection.effectiveCompletions(ownerAccountID, languageID, emptyList(), remote)
+            else completions
         if (attempts < 1) return 0
-        val best = completions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == lessonID }
+        val best = readCompletions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == lessonID }
             .maxOfOrNull { it.bestScore }
         if (best == null || best < EXERCISE_GOOD) return 1
-        val spaced = completions.filter { it.kind == ProgressEngine.LESSON && it.itemID == lessonID }
+        val spaced = readCompletions.filter { it.kind == ProgressEngine.LESSON && it.itemID == lessonID }
             .map { epochDay(it.at, zone) }.toSet().size >= 2
         return if (best >= EXERCISE_MASTERED || spaced) 3 else 2
     }
 
     fun stats(course: Course, lessons: List<LessonState>, completions: List<CompletionMark>,
               listeningTexts: List<ListeningText> = emptyList(),
-              zone: java.time.ZoneId = java.time.ZoneId.systemDefault()): LevelStats {
-        val mastery = course.units.flatMap { it.lessons }.map { LessonMastery(it.id, lessonTier(it.id, lessons, completions, zone)) }
+              zone: java.time.ZoneId = java.time.ZoneId.systemDefault(),
+              ownerAccountID: String? = null, remote: List<ProgressAggregate> = emptyList()): LevelStats {
+        val lessonIDs = course.units.flatMap { it.lessons }.map { it.id }.toSet()
+        val mastery = course.units.flatMap { it.lessons }.map { LessonMastery(it.id, lessonTier(it.id, lessons, completions, zone, ownerAccountID, course.languageID, remote)) }
         val lessonPoints = mastery.sumOf { it.tier }
-        val listeningPoints = listeningTexts.sumOf { listeningTier(bestListeningScore(completions, it.id)) }
+        val listeningIDs = listeningTexts.map { it.id }.toSet()
+        val scopedIDs = lessonIDs + course.id + listeningIDs
+        val readCompletions = if (ownerAccountID != null)
+            completions.filter { it.languageID == course.languageID || (it.languageID == null && it.itemID in scopedIDs) } + ProgressProjection.effectiveCompletions(ownerAccountID, course.languageID, emptyList(), remote)
+            else completions
+        val listeningPoints = listeningTexts.sumOf { listeningTier(bestListeningScore(readCompletions, it.id)) }
         val points = lessonPoints + listeningPoints
         var level = 0
         for (threshold in LADDER) if (points >= threshold) level++

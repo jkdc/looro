@@ -2,7 +2,7 @@ import XCTest
 @testable import LearningCore
 
 final class ProgressProjectionTests: XCTestCase {
-    func testRemoteBestScoreWinsAndRollupIsIdempotentInEitherOrder() {
+    func testRemote90ImprovesLocal40InEitherOrder() {
         let local = ProgressAggregate(ownerAccountID: "account-a", languageID: "es", kind: "exercise",
                                       itemID: "unit-1", firstAt: 10, lastAt: 20, attempts: 2, bestScore: 40)
         let remote = ProgressAggregate(ownerAccountID: "account-a", languageID: "es", kind: "exercise",
@@ -45,5 +45,33 @@ final class ProgressProjectionTests: XCTestCase {
         XCTAssertEqual(input, ProgressProjection.merge(ownerAccountID: "account-a", languageID: "es",
                                                        local: input, remote: []))
         XCTAssertEqual(1, input.count)
+    }
+
+    func testRemoteOnlyLessonAttemptsAreAvailableToCourseRows() {
+        let remote = [ProgressAggregate(ownerAccountID: "account-a", languageID: "es", kind: "lesson",
+            itemID: "lesson-1", firstAt: 1_700_000_000_000, lastAt: 1_700_000_001_000,
+            attempts: 3, bestScore: 0)]
+
+        let lessons = ProgressProjection.effectiveLessons(ownerAccountID: "account-a", languageID: "es",
+            local: [], remote: remote, allowedIDs: ["lesson-1"])
+
+        XCTAssertEqual(3, lessons.first?.attempts)
+    }
+
+    func testNextUploadRetainsRemoteBestAndFirstAtForAllKinds() {
+        let owner = "account-a"
+        let rows = ProgressEngine.kinds.map { kind in
+            ProgressAggregate(ownerAccountID: owner, languageID: "en", kind: kind, itemID: "item-\(kind)",
+                firstAt: 1_700_000_000_000, lastAt: 1_700_000_000_500, attempts: 4, bestScore: 90)
+        }
+        let local = [CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "item-\(ProgressEngine.exerciseSet)",
+            at: 1_699_999_999.5 - 978_307_200, bestScore: 40, languageID: "en")]
+        let entries = ProgressSync.entries(lessons: [], completions: local, courses: [], listeningIDs: [],
+            languageID: "en", ownerAccountID: owner, remote: rows)
+
+        XCTAssertEqual(Set(ProgressEngine.kinds), Set(entries.map(\.kind)))
+        XCTAssertEqual(1_700_000_000_000, entries.first?.firstAtMilliseconds)
+        XCTAssertEqual(90, entries.first?.bestScore)
+        XCTAssertEqual(4, entries.first(where: { $0.kind == ProgressEngine.exerciseSet })?.attempts)
     }
 }

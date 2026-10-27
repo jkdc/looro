@@ -29,6 +29,21 @@ struct CoursesView: View {
     @State private var audioOn = true
     @State private var reader = LessonReader()
 
+    private func projectedCourseData(for course: Course) -> (level: LevelStats, lessons: [LessonState]) {
+        let (owner, remote) = coordinator.store.remoteProgressAggregates(languageID: course.languageID)
+        let localLessons = coordinator.store.archive.lessons ?? []
+        let lessonIDs = Set(course.units.flatMap { $0.lessons.map(\.id) })
+        let lessons = owner.map {
+            ProgressProjection.effectiveLessons(ownerAccountID: $0, languageID: course.languageID,
+                local: localLessons, remote: remote, allowedIDs: lessonIDs)
+        } ?? localLessons.filter { lessonIDs.contains($0.lessonID) }
+        let level = LevelEngine.stats(course: course, lessons: localLessons,
+            completions: coordinator.store.archive.completions ?? [],
+            listeningTexts: ListeningRegistry.forLanguage(course.languageID),
+            ownerAccountID: owner, remote: remote)
+        return (level, lessons)
+    }
+
     var body: some View {
         let courses = CourseRegistry.forLanguage(coordinator.language.id)
         let dueRecall = RecallEngine.dueCount(coordinator.store.archive, now: Date.now.timeIntervalSinceReferenceDate)
@@ -76,6 +91,7 @@ struct CoursesView: View {
                             RecallCardView(count: dueRecall) { recallOpen = true }
                         }
                         ForEach(courses) { course in
+                            let projection = projectedCourseData(for: course)
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "graduationcap")
@@ -90,16 +106,10 @@ struct CoursesView: View {
                                    progress.lessonsTotal > 0 {
                                     Text("Completed: \(progress.percent)%").font(.caption2).foregroundStyle(AppColor.secondary)
                                 }
-                                LevelCardView(level: LevelEngine.stats(course: course,
-                                    lessons: coordinator.store.archive.lessons ?? [],
-                                    completions: coordinator.store.archive.completions ?? [],
-                                    listeningTexts: ListeningRegistry.forLanguage(course.languageID)))
+                                LevelCardView(level: projection.level)
                                 ForEach(course.units) { unit in
-                                    UnitSection(coordinator: coordinator, unit: unit,
-                                        level: LevelEngine.stats(course: course,
-                                            lessons: coordinator.store.archive.lessons ?? [],
-                                            completions: coordinator.store.archive.completions ?? [],
-                                            listeningTexts: ListeningRegistry.forLanguage(course.languageID))) { openLessonID = $0; reader.stop() }
+                                    UnitSection(coordinator: coordinator, unit: unit, level: projection.level,
+                                        lessons: projection.lessons) { openLessonID = $0; reader.stop() }
                                 }
                             }.padding(22)
                                 .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
@@ -543,6 +553,7 @@ private struct UnitSection: View {
     let coordinator: ConversationCoordinator
     let unit: CourseUnit
     let level: LevelStats
+    let lessons: [LessonState]
     let open: (String) -> Void
 
     var body: some View {
@@ -566,15 +577,16 @@ private struct UnitSection: View {
                         Spacer()
                         let tier = level.mastery.first { $0.lessonID == lesson.id }?.tier ?? 0
                         if tier > 0 { MasteryStars(tier: tier) }
-                        Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(AppColor.secondary)
+                        Text(attemptLabel(lesson.id, lessons: lessons))
+                            .font(.caption2).foregroundStyle(AppColor.secondary)
                     }.padding(16).background(AppColor.cream, in: RoundedRectangle(cornerRadius: 18))
                 }.buttonStyle(.plain).accessibilityIdentifier("lesson-open-\(lesson.id)")
             }
         }
     }
 
-    private func attemptLabel(_ lessonID: String) -> String {
-        let attempts = coordinator.store.archive.lessons?.first(where: { $0.lessonID == lessonID })?.attempts ?? 0
+    private func attemptLabel(_ lessonID: String, lessons: [LessonState]) -> String {
+        let attempts = lessons.first(where: { $0.lessonID == lessonID })?.attempts ?? 0
         return attempts == 0 ? "New" : "Practised \(attempts)×"
     }
 }

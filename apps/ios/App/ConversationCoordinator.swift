@@ -275,9 +275,11 @@ struct ConversationTopicSearchAdapter {
                 guard isCurrent() else { return }
                 let archive = self.store.archive
                 let entries = LanguageRegistry.all.flatMap { language -> [ProgressSyncEntry] in
+                    let (progressOwner, remote) = self.store.remoteProgressAggregates(languageID: language.id)
                     ProgressSync.entries(lessons: archive.lessons ?? [], completions: archive.completions ?? [],
                         courses: CourseRegistry.forLanguage(language.id),
-                        listeningIDs: Set(ListeningRegistry.forLanguage(language.id).map(\.id)), languageID: language.id)
+                        listeningIDs: Set(ListeningRegistry.forLanguage(language.id).map(\.id)), languageID: language.id,
+                        ownerAccountID: progressOwner ?? "", remote: remote)
                 }.sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
                 let uploadState = try self.store.remoteProgressSyncState(direction: "upload", ownerAccountID: owner)
                 var cursor = uploadState?.cursor
@@ -330,11 +332,12 @@ struct ConversationTopicSearchAdapter {
             archiveSnapshot: { try self.store.exportData() },
             applyRemote: { rows in self.store.applyRemoteProgress(rows) },
             send: { language, bearer in
+                let (progressOwner, remote) = self.store.remoteProgressAggregates(languageID: language)
                 let entries = ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
                                                    completions: self.store.archive.completions ?? [],
                                                    courses: CourseRegistry.forLanguage(language),
                                                    listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
-                                                   languageID: language)
+                                                   languageID: language, ownerAccountID: progressOwner ?? "", remote: remote)
                 return await client.send(entries, bearer: bearer)
             },
             onFinish: {})

@@ -85,8 +85,16 @@ public enum MasteryEngine {
     public static func stats(course: Course, listenings: [ListeningText], readings: [ReadingText],
                              lessons: [LessonState], completions: [CompletionMark],
                              nowSeconds: Double, index: SkillCatalogIndex,
-                             ledgerRevision: Int64) -> MasteryStats {
+                             ledgerRevision: Int64, ownerAccountID: String? = nil,
+                             remote: [ProgressAggregate] = []) -> MasteryStats {
         let tagged = index.taughtSkills
+        let lessonIDs = Set(course.units.flatMap { $0.lessons.map(\.id) })
+        let scopedIDs = lessonIDs.union(listenings.map(\.id)).union(readings.map(\.id)).union([course.id])
+        let readLessons = ownerAccountID.map { ProgressProjection.effectiveLessons(ownerAccountID: $0, languageID: course.languageID, local: lessons, remote: remote, allowedIDs: lessonIDs) } ?? lessons
+        let readCompletions = ownerAccountID.map { owner in
+            completions.filter { $0.languageID == course.languageID || ($0.languageID == nil && scopedIDs.contains($0.itemID)) } +
+                ProgressProjection.effectiveCompletions(ownerAccountID: owner, languageID: course.languageID, local: [], remote: remote)
+        } ?? completions
         let mastery = tagged.map { skillID -> SkillMastery in
             let category = index.skillCategory[skillID] ?? String(skillID.split(separator: ":").first ?? Substring(skillID))
             let activityIDs = index.activitiesBySkillID[skillID] ?? []
@@ -105,23 +113,23 @@ public enum MasteryEngine {
             // co-tagged grammar skill would inherit it.
             let pronSkill = skillID.hasPrefix("pron:")
             for activityID in activityIDs {
-                if pronSkill, let mark = completions.filter({ $0.kind == ProgressEngine.pronunciation && $0.itemID == activityID })
+                if pronSkill, let mark = readCompletions.filter({ $0.kind == ProgressEngine.pronunciation && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: pronunciationWeight, score: mark.bestScore, at: mark.at)
                 }
-                if let mark = completions.filter({ $0.kind == ProgressEngine.exerciseSet && $0.itemID == activityID })
+                if let mark = readCompletions.filter({ $0.kind == ProgressEngine.exerciseSet && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: exerciseWeight, score: mark.bestScore, at: mark.at)
                 }
-                if let state = lessons.first(where: { $0.lessonID == activityID }), state.attempts > 0, state.lastSeen > 0 {
+                if let state = readLessons.first(where: { $0.lessonID == activityID }), state.attempts > 0, state.lastSeen > 0 {
                     offer(weight: oralWeight, score: oralBaseline, at: state.lastSeen)
                 }
                 for textID in [] { /* listening placeholder */ }
-                if let mark = completions.filter({ $0.kind == ProgressEngine.listening && $0.itemID == activityID })
+                if let mark = readCompletions.filter({ $0.kind == ProgressEngine.listening && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: listeningWeight, score: mark.bestScore, at: mark.at)
                 }
-                if let mark = completions.filter({ $0.kind == ProgressEngine.reading && $0.itemID == activityID })
+                if let mark = readCompletions.filter({ $0.kind == ProgressEngine.reading && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: readingWeight, score: mark.bestScore, at: mark.at)
                 }

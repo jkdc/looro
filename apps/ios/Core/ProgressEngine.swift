@@ -55,7 +55,8 @@ public enum ProgressEngine {
     /// need the stamp.
     public static func stats(sessions: [SessionRecord], lessons: [LessonState], completions: [CompletionMark],
                              courses: [Course], listeningIDs: Set<String>, languageID: String,
-                             readingIDs: Set<String> = [], calendar: Calendar = .current, now: Date = .now) -> ProgressStats {
+                             readingIDs: Set<String> = [], calendar: Calendar = .current, now: Date = .now,
+                             ownerAccountID: String? = nil, remote: [ProgressAggregate] = []) -> ProgressStats {
         func epochDay(_ date: Date) -> Int {
             let epoch = calendar.startOfDay(for: Date(timeIntervalSinceReferenceDate: 0))
             return calendar.dateComponents([.day], from: epoch, to: calendar.startOfDay(for: date)).day ?? 0
@@ -67,7 +68,9 @@ public enum ProgressEngine {
         }
         let languageSessions = sessions.filter { $0.languageID == languageID }
         let languageMarks = completions.filter { $0.languageID == nil || $0.languageID == languageID }
-        let done = Set(lessons.filter { $0.attempts > 0 }.map(\.lessonID))
+        let readLessons = ownerAccountID.map { ProgressProjection.effectiveLessons(ownerAccountID: $0, languageID: languageID, local: lessons, remote: remote, allowedIDs: contentIDs) } ?? lessons
+        let readCompletions = ownerAccountID.map { completions.filter { scoped($0) } + ProgressProjection.effectiveCompletions(ownerAccountID: $0, languageID: languageID, local: [], remote: remote) } ?? completions
+        let done = Set(readLessons.filter { $0.attempts > 0 }.map(\.lessonID))
         let courseProgress = courses.map { course -> CourseProgress in
             let all = course.units.flatMap(\.lessons)
             return CourseProgress(courseID: course.id, title: course.title,
@@ -86,7 +89,7 @@ public enum ProgressEngine {
             previous = day
         }
         func distinctItems(_ kind: String) -> Int {
-            Set(completions.filter { $0.kind == kind && scoped($0) }.map(\.itemID)).count
+            Set(readCompletions.filter { $0.kind == kind && scoped($0) }.map(\.itemID)).count
         }
         return ProgressStats(
             courses: courseProgress,
@@ -96,13 +99,13 @@ public enum ProgressEngine {
             last30DaysActivities: stride(from: 29, through: 0, by: -1).map { offset in
                 languageMarks.filter { epochDay(Date(timeIntervalSinceReferenceDate: $0.at)) == today - offset }.count
             },
-            themesPractised: Set(completions.filter { $0.kind == conversationTheme && $0.languageID == languageID }.map(\.itemID)).count,
+            themesPractised: Set(readCompletions.filter { $0.kind == conversationTheme && $0.languageID == languageID }.map(\.itemID)).count,
             exercisesCompleted: distinctItems(exerciseSet),
             listeningCompleted: distinctItems(listening),
             readingCompleted: distinctItems(reading),
             practiceRounds: completions.filter { $0.kind == recallRound && $0.languageID == languageID }.count,
             wordsPracticeItems: distinctItems(wordsPractice),
-            assessmentsPassed: Set(completions.filter { $0.kind == assessment && scoped($0) && $0.bestScore >= 100 }.map(\.itemID)).count)
+            assessmentsPassed: Set(readCompletions.filter { $0.kind == assessment && scoped($0) && $0.bestScore >= 100 }.map(\.itemID)).count)
     }
 }
 
@@ -136,6 +139,78 @@ public struct RemoteProgress: Sendable {
     public var language: String?
 }
 
+/// Owner/language-scoped stored aggregate. It is evidence for read models, not
+/// a local completion event.
+public struct ProgressAggregate: Hashable, Sendable {
+    public var ownerAccountID: String
+    public var languageID: String?
+    public var kind: String
+    public var itemID: String
+    public var firstAt: Int64
+    public var lastAt: Int64
+    public var attempts: Int
+    public var bestScore: Int
+
+    public init(ownerAccountID: String, languageID: String?, kind: String, itemID: String,
+                firstAt: Int64, lastAt: Int64, attempts: Int, bestScore: Int) {
+        self.ownerAccountID = ownerAccountID; self.languageID = languageID; self.kind = kind; self.itemID = itemID
+        self.firstAt = firstAt; self.lastAt = lastAt; self.attempts = attempts; self.bestScore = bestScore
+    }
+}
+
+public enum ProgressProjection {
+    public static func unixMilliseconds(from appleReferenceSeconds: Double) -> Int64? {
+        guard appleReferenceSeconds.isFinite else { return nil }
+        let milliseconds = ((appleReferenceSeconds + ProgressSyncContractData.appleEpochOffsetSeconds) * 1000).rounded()
+        guard milliseconds.isFinite, milliseconds >= 0, milliseconds <= 9_007_199_254_740_991 else { return nil }
+        return Int64(milliseconds)
+    }
+    public static func merge(ownerAccountID: String, languageID: String,
+                             local: [ProgressAggregate], remote: [ProgressAggregate]) -> [ProgressAggregate] {
+        var result: [String: ProgressAggregate] = [:]
+        for row in local + remote where row.ownerAccountID == ownerAccountID && row.languageID == languageID {
+            let key = "\(row.kind)|\(row.itemID)"
+            if let old = result[key] {
+                result[key] = ProgressAggregate(ownerAccountID: ownerAccountID, languageID: languageID,
+                    kind: row.kind, itemID: row.itemID, firstAt: min(old.firstAt, row.firstAt),
+                    lastAt: max(old.lastAt, row.lastAt), attempts: max(old.attempts, row.attempts),
+                    bestScore: max(old.bestScore, row.bestScore))
+            } else { result[key] = row }
+        }
+        return result.values.sorted { ($0.kind, $0.itemID) < ($1.kind, $1.itemID) }
+    }
+
+    public static func effectiveCompletions(ownerAccountID: String, languageID: String,
+        local: [CompletionMark], remote: [ProgressAggregate]) -> [CompletionMark] {
+        let localRows = local.filter { $0.languageID == languageID }.compactMap { mark -> ProgressAggregate? in
+            guard let ms = unixMilliseconds(from: mark.at) else { return nil }
+            return ProgressAggregate(ownerAccountID: ownerAccountID, languageID: languageID, kind: mark.kind,
+                itemID: mark.itemID, firstAt: ms, lastAt: ms, attempts: 1, bestScore: mark.bestScore)
+        }
+        return merge(ownerAccountID: ownerAccountID, languageID: languageID, local: localRows, remote: remote).flatMap { row in
+            let instants = row.kind == ProgressEngine.lesson && row.firstAt != row.lastAt ? [row.firstAt, row.lastAt] : [row.lastAt]
+            return instants.map { instant in CompletionMark(kind: row.kind, itemID: row.itemID,
+                at: Double(instant) / 1000 - ProgressSyncContractData.appleEpochOffsetSeconds,
+                bestScore: row.bestScore, languageID: row.languageID) }
+        }
+    }
+
+    public static func effectiveLessons(ownerAccountID: String, languageID: String,
+        local: [LessonState], remote: [ProgressAggregate], allowedIDs: Set<String>) -> [LessonState] {
+        let localRows = local.filter { allowedIDs.contains($0.lessonID) }.compactMap { lesson -> ProgressAggregate? in
+            guard let ms = unixMilliseconds(from: lesson.lastSeen) else { return nil }
+            return ProgressAggregate(ownerAccountID: ownerAccountID, languageID: languageID, kind: ProgressEngine.lesson,
+                itemID: lesson.lessonID, firstAt: ms, lastAt: ms, attempts: lesson.attempts, bestScore: 0)
+        }
+        return merge(ownerAccountID: ownerAccountID, languageID: languageID, local: localRows, remote: remote)
+            .filter { $0.kind == ProgressEngine.lesson }.map { row in
+                LessonState(lessonID: row.itemID, attempts: row.attempts,
+                    lastSeen: max(local.first(where: { $0.lessonID == row.itemID })?.lastSeen ?? 0,
+                        Double(row.lastAt) / 1000 - ProgressSyncContractData.appleEpochOffsetSeconds))
+            }
+    }
+}
+
 public enum ProgressSync {
     public static let maximumEntries = 200
 
@@ -144,6 +219,7 @@ public enum ProgressSync {
     /// mark ledger so attempts never regress.
     public static func entries(lessons: [LessonState], completions: [CompletionMark], courses: [Course],
                                listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = [],
+                               ownerAccountID: String = "", remote: [ProgressAggregate] = [],
                                nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)) -> [ProgressSyncEntry] {
         let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
             .union(courses.map(\.id)).union(listeningIDs).union(readingIDs)
@@ -169,12 +245,16 @@ public enum ProgressSync {
             mark.attempts = max(mark.attempts, lesson.attempts)
             rollups["\(ProgressEngine.lesson)|\(lesson.lessonID)"] = mark
         }
-        return rollups
-            .map { key, value in ProgressSyncEntry(kind: String(key.split(separator: "|")[0]),
-                itemID: String(key.split(separator: "|", maxSplits: 1)[1]),
-                firstAtMilliseconds: value.firstAtMilliseconds, lastAtMilliseconds: value.lastAtMilliseconds,
-                attempts: value.attempts,
-                bestScore: value.bestScore, language: languageID) }
+        let local = rollups.map { key, value in
+            ProgressAggregate(ownerAccountID: ownerAccountID, languageID: languageID,
+                kind: String(key.split(separator: "|")[0]), itemID: String(key.split(separator: "|", maxSplits: 1)[1]),
+                firstAt: value.firstAtMilliseconds, lastAt: value.lastAtMilliseconds,
+                attempts: value.attempts, bestScore: value.bestScore)
+        }
+        return ProgressProjection.merge(ownerAccountID: ownerAccountID, languageID: languageID, local: local, remote: remote)
+            .map { row in ProgressSyncEntry(kind: row.kind, itemID: row.itemID,
+                firstAtMilliseconds: row.firstAt, lastAtMilliseconds: row.lastAt,
+                attempts: row.attempts, bestScore: row.bestScore, language: languageID) }
             .sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
     }
 

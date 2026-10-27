@@ -55,6 +55,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
 @MainActor @Observable final class LearningStore {
     private(set) var archive = Archive()
+    private(set) var progressRevision: UInt64 = 0
     var error: String?
     @ObservationIgnored var onSessionInvalidation: ((UUID) -> Void)?
     let container: ModelContainer
@@ -155,6 +156,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         try LearningDbWriter.remoteProgressPageApplied(dbStore.db, ownerAccountID: ownerAccountID,
             rollups: rows, nextCursor: nextCursor, passGeneration: passGeneration,
             updatedAtMilliseconds: updatedAtMilliseconds)
+        progressRevision &+= 1
     }
 
     func acknowledgeRemoteProgressUpload(ownerAccountID: String, nextCursor: String?,
@@ -454,13 +456,26 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
 
     var progressStats: ProgressStats {
+        _ = progressRevision
         let language = archive.preferences.learningLanguageID
+        let (owner, remote) = remoteProgressAggregates(languageID: language)
         return ProgressEngine.stats(sessions: archive.sessions, lessons: archive.lessons ?? [],
                                     completions: archive.completions ?? [],
                                     courses: CourseRegistry.forLanguage(language),
                                     listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
                                     languageID: language,
-                                    readingIDs: Set(ReadingRegistry.forLanguage(language).map(\.id)))
+                                    readingIDs: Set(ReadingRegistry.forLanguage(language).map(\.id)),
+                                    ownerAccountID: owner, remote: remote)
+    }
+
+    func remoteProgressAggregates(languageID: String) -> (String?, [ProgressAggregate]) {
+        _ = progressRevision
+        guard !dbStore.jsonMode, activeLearnerIdentity.hasPrefix("member:") else { return (nil, []) }
+        let owner = String(activeLearnerIdentity.dropFirst("member:".count))
+        guard let rows = try? RemoteProgressRollupsDao.forLanguage(dbStore.db, ownerAccountID: owner, languageID: languageID) else { return (owner, []) }
+        return (owner, rows.map { ProgressAggregate(ownerAccountID: $0.ownerAccountID, languageID: $0.languageID,
+            kind: $0.kind, itemID: $0.itemID, firstAt: $0.firstAtMilliseconds,
+            lastAt: $0.lastAtMilliseconds, attempts: $0.attempts, bestScore: $0.bestScore) })
     }
 
     /// Error memory: one wrong answer attributes a hit to every skill its lesson
@@ -489,25 +504,38 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
 
     func readingScore(for id: String) -> Int? {
-        (archive.completions ?? []).filter { $0.kind == ProgressEngine.reading && $0.itemID == id }.map(\.bestScore).max()
+        let local = (archive.completions ?? []).filter { $0.kind == ProgressEngine.reading && $0.itemID == id }.map(\.bestScore).max()
+        let remote = remoteProgressAggregates(languageID: archive.preferences.learningLanguageID).1
+            .filter { $0.kind == ProgressEngine.reading && $0.itemID == id }.map(\.bestScore).max()
+        return [local, remote].compactMap { $0 }.max()
+    }
+    func listeningScore(for id: String) -> Int? {
+        let local = (archive.completions ?? []).filter { $0.kind == ProgressEngine.listening && $0.itemID == id }.map(\.bestScore).max()
+        let remote = remoteProgressAggregates(languageID: archive.preferences.learningLanguageID).1
+            .filter { $0.kind == ProgressEngine.listening && $0.itemID == id }.map(\.bestScore).max()
+        return [local, remote].compactMap { $0 }.max()
     }
     var completedLessonIDs: Set<String> {
-        Set((archive.lessons ?? []).filter { $0.attempts > 0 }.map(\.lessonID))
+        let language = archive.preferences.learningLanguageID
+        let (owner, remote) = remoteProgressAggregates(languageID: language)
+        let lessons = owner.map { ProgressProjection.effectiveLessons(ownerAccountID: $0, languageID: language,
+            local: archive.lessons ?? [], remote: remote,
+            allowedIDs: Set(CourseRegistry.forLanguage(language).flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })) } ?? archive.lessons ?? []
+        return Set(lessons.filter { $0.attempts > 0 }.map(\.lessonID))
     }
     func applyRemoteProgress(_ rows: [RemoteProgress]) {
-        let lessonsBefore = archive.lessons ?? []
-        let markCountBefore = archive.completions?.count ?? 0
-        archive = ProgressSync.mergeRemote(archive: archive, rows: rows,
-                                           languageID: archive.preferences.learningLanguageID)
-        // ProgressSync.mergeRemote updates lessons in place or appends them,
-        // and appends unseen marks — the mirror upserts the changed/appended
-        // lessons and inserts the appended marks (append-only: no re-sort,
-        // rowid order stays archive order).
-        let changedLessons = (archive.lessons ?? []).enumerated()
-            .filter { $0.offset >= lessonsBefore.count || $0.element != lessonsBefore[$0.offset] }
-            .map { $0.element }
-        let appendedMarks = Array((archive.completions ?? []).dropFirst(markCountBefore))
-        write { try LearningDbWriter.progressMerged($0, lessons: changedLessons, marks: appendedMarks) }
+        guard activeLearnerIdentity.hasPrefix("member:") else { return }
+        let owner = String(activeLearnerIdentity.dropFirst("member:".count))
+        let language = archive.preferences.learningLanguageID
+        let rollups = rows.filter { $0.language == language }.compactMap { row -> RemoteProgressRollup? in
+            guard let firstAt = ProgressProjection.unixMilliseconds(from: row.firstAt),
+                  let lastAt = ProgressProjection.unixMilliseconds(from: row.lastAt) else { return nil }
+            return RemoteProgressRollup(ownerAccountID: owner, languageID: language, kind: row.kind, itemID: row.itemID,
+                firstAtMilliseconds: min(firstAt, lastAt), lastAtMilliseconds: max(firstAt, lastAt),
+                attempts: row.attempts, bestScore: row.bestScore, sourceVersion: ProgressSyncContractData.version)
+        }
+        write { db in try db.transaction { tx in for row in rollups { try RemoteProgressRollupsDao.merge(tx, row) } } }
+        progressRevision &+= 1
     }
     func hideWord(_ id: String) {
         archive.preferences.hiddenWords.append(id)

@@ -133,15 +133,11 @@ struct ListeningView: View {
     }
 
     private func bestScore(for id: String) -> Int? {
-        (coordinator.store.archive.completions ?? [])
-            .filter { $0.kind == ProgressEngine.listening && $0.itemID == id }
-            .map(\.bestScore).max()
+        coordinator.store.listeningScore(for: id)
     }
 
     private func readScore(for id: String) -> Int? {
-        (coordinator.store.archive.completions ?? [])
-            .filter { $0.kind == ProgressEngine.reading && $0.itemID == id }
-            .map(\.bestScore).max()
+        coordinator.store.readingScore(for: id)
     }
 
     private func bestLabel(_ score: Int?) -> String {

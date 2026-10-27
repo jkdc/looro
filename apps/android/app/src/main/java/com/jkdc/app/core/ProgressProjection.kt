@@ -32,5 +32,41 @@ object ProgressProjection {
         ))
     }
 
+    /** Converts scoped aggregate evidence to transient completion records. These
+     * records are read-model inputs only; callers must keep activity readers on
+     * their original local completion list. */
+    fun effectiveCompletions(ownerAccountID: String, languageID: String,
+        local: List<CompletionMark>, remote: List<ProgressAggregate>): List<CompletionMark> {
+        val localAggregates = local.filter { it.languageID == languageID }.map {
+            ProgressAggregate(ownerAccountID, languageID, it.kind, it.itemID,
+                unixMillis(it.at), unixMillis(it.at), 1, it.bestScore)
+        }
+        return merge(ownerAccountID, languageID, localAggregates, remote).flatMap { aggregate ->
+            val instants = if (aggregate.kind == ProgressEngine.LESSON && aggregate.firstAt != aggregate.lastAt)
+                listOf(aggregate.firstAt, aggregate.lastAt) else listOf(aggregate.lastAt)
+            instants.map { at -> CompletionMark(aggregate.kind, aggregate.itemID, appleSeconds(at), aggregate.bestScore, aggregate.languageID) }
+        }
+    }
+
+    fun effectiveLessons(ownerAccountID: String, languageID: String, local: List<LessonState>,
+        remote: List<ProgressAggregate>, allowedLessonIDs: Set<String> = local.map { it.lessonID }.toSet()): List<LessonState> {
+        val scopedLocal = local.filter { it.lessonID in allowedLessonIDs }
+        val localAggregates = scopedLocal.map { lesson ->
+            ProgressAggregate(ownerAccountID, languageID, ProgressEngine.LESSON, lesson.lessonID,
+                unixMillis(lesson.lastSeen), unixMillis(lesson.lastSeen), lesson.attempts, 0)
+        }
+        val effective = merge(ownerAccountID, languageID, localAggregates, remote)
+            .filter { it.kind == ProgressEngine.LESSON }
+        val localByID = scopedLocal.associateBy { it.lessonID }
+        return effective.map { row ->
+            val localLesson = localByID[row.itemID]
+            LessonState(lessonID = row.itemID, attempts = row.attempts,
+                lastSeen = maxOf(localLesson?.lastSeen ?: 0.0, appleSeconds(row.lastAt)))
+        }
+    }
+
+    private fun unixMillis(appleSeconds: Double) = ((appleSeconds + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong()
+    private fun appleSeconds(unixMillis: Long) = unixMillis / 1000.0 - APPLE_EPOCH_UNIX_SECONDS
+
     private data class Identity(val owner: String, val language: String?, val kind: String, val item: String)
 }
