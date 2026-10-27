@@ -66,4 +66,55 @@ class ProgressClientTest {
         assertEquals("GET", request.method)
         assertEquals("2", request.requestUrl?.queryParameter("version"))
     }
+
+    @Test fun legacyBootstrapAcceptsActualBackendFirstAndLastTimestamps() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+        server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"lesson","itemID":"en-l1","language":"en","firstAt":1792929599000,"lastAt":1792929600000,"attempts":2,"bestScore":80}]}"""))
+
+        val result = client.fetchBootstrap(session, null) { true }
+
+        assertTrue("The real v1 response must be accepted", result is ProgressFetchResult.Success)
+        val body = kotlinx.serialization.json.Json.parseToJsonElement((result as ProgressFetchResult.Success).body).jsonObject
+        val row = body["rows"]!!.jsonArray.single().jsonObject
+        assertEquals("1792929599000", row["firstAt"].toString())
+        assertEquals("1792929600000", row["lastAt"].toString())
+        assertEquals("2", server.takeRequest().requestUrl?.queryParameter("version"))
+        assertEquals(null, server.takeRequest().requestUrl?.queryParameter("version"))
+    }
+
+    @Test fun legacyBootstrapKeepsCompatibilityWithSingleTimestampRows() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+        server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"lesson","itemID":"en-l1","language":"en","at":1740000000000,"attempts":1,"bestScore":0}]}"""))
+
+        val result = client.fetchBootstrap(session, null) { true }
+
+        assertTrue(result is ProgressFetchResult.Success)
+    }
+
+    @Test fun legacyBootstrapRejectsInvalidTimestampRangeRatherThanPersistingIt() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+        server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"lesson","itemID":"en-l1","language":"en","firstAt":1740000001000,"lastAt":1740000000000,"attempts":1,"bestScore":0}]}"""))
+
+        assertTrue(client.fetchBootstrap(session, null) { true } is ProgressFetchResult.Failure)
+    }
+
+    @Test fun legacyBootstrapRejectsInvalidProgressIdentity() = runBlocking {
+        for ((kind, item, language) in listOf(
+            Triple("bogus", "en-l1", "en"), Triple("lesson", "!", "en"), Triple("lesson", "en-l1", "bogus"),
+        )) {
+            server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+            server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"$kind","itemID":"$item","language":"$language","firstAt":1740000000000,"lastAt":1740000001000,"attempts":1,"bestScore":0}]}"""))
+            assertTrue("Invalid identity $kind/$item/$language must be rejected", client.fetchBootstrap(session, null) { true } is ProgressFetchResult.Failure)
+        }
+    }
+
+    @Test fun legacyBootstrapNormalizesIntegralJsonNumbersForPersistence() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+        server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"lesson","itemID":"en-l1","language":"en","firstAt":1740000000000.0,"lastAt":1.740000001e12,"attempts":1,"bestScore":0}]}"""))
+
+        val result = client.fetchBootstrap(session, null) { true } as ProgressFetchResult.Success
+        val row = kotlinx.serialization.json.Json.parseToJsonElement(result.body).jsonObject["rows"]!!.jsonArray.single().jsonObject
+        assertEquals("1740000000000", row["firstAt"].toString())
+        assertEquals("1740000001000", row["lastAt"].toString())
+    }
 }

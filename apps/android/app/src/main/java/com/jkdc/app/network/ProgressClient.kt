@@ -139,11 +139,27 @@ class ProgressClient internal constructor(private val origin: HttpUrl, transport
                 val rows = json.parseToJsonElement(body).jsonObject["progress"]?.jsonArray ?: return@execute ProgressFetchResult.Failure()
                 if (rows.size > 1000) return@execute ProgressFetchResult.Failure()
                 // Preserve only a strict, complete legacy envelope; never interpret an arbitrary success as fallback data.
-                rows.forEach { value ->
+                val normalizedRows = rows.map { value ->
                     val row = value.jsonObject
-                    for (field in listOf("kind", "itemID", "at", "attempts", "bestScore", "language")) if (row[field] == null) return@execute ProgressFetchResult.Failure()
+                    for (field in listOf("kind", "itemID", "attempts", "bestScore", "language")) if (row[field] == null) return@execute ProgressFetchResult.Failure()
+                    val kind = row["kind"] as? JsonPrimitive ?: return@execute ProgressFetchResult.Failure()
+                    val item = row["itemID"] as? JsonPrimitive ?: return@execute ProgressFetchResult.Failure()
+                    if (!kind.isString || kind.content !in legacyKinds || !item.isString || !legacySlug.matches(item.content)) return@execute ProgressFetchResult.Failure()
+                    val language = row["language"]
+                    if (language != kotlinx.serialization.json.JsonNull &&
+                        ((language as? JsonPrimitive)?.let { it.isString && it.content in legacyLanguages } != true)) return@execute ProgressFetchResult.Failure()
+                    val oldAt = row["at"] as? JsonPrimitive
+                    val first = if (row.containsKey("firstAt") || row.containsKey("lastAt")) row["firstAt"] as? JsonPrimitive else oldAt
+                    val last = if (row.containsKey("firstAt") || row.containsKey("lastAt")) row["lastAt"] as? JsonPrimitive else oldAt
+                    val firstAt = first?.let(::safeUnixMilliseconds) ?: return@execute ProgressFetchResult.Failure()
+                    val lastAt = last?.let(::safeUnixMilliseconds) ?: return@execute ProgressFetchResult.Failure()
+                    if (lastAt < firstAt) return@execute ProgressFetchResult.Failure()
+                    val attempts = row["attempts"] as? JsonPrimitive ?: return@execute ProgressFetchResult.Failure()
+                    val score = row["bestScore"] as? JsonPrimitive ?: return@execute ProgressFetchResult.Failure()
+                    if (attempts.isString || attempts.intOrNull !in 1..10_000 || score.isString || score.intOrNull !in 0..100) return@execute ProgressFetchResult.Failure()
+                    JsonObject(row + mapOf("firstAt" to JsonPrimitive(firstAt), "lastAt" to JsonPrimitive(lastAt)))
                 }
-                ProgressFetchResult.Success("{\"legacy\":true,\"preserveCursor\":${JsonPrimitive(preserveCursor).toString()},\"rows\":${rows.joinToString(prefix="[", postfix="]")}}")
+                ProgressFetchResult.Success("{\"legacy\":true,\"preserveCursor\":${JsonPrimitive(preserveCursor).toString()},\"rows\":${normalizedRows.joinToString(prefix="[", postfix="]")}}")
             } catch (_: Exception) { ProgressFetchResult.Failure() }
         }
         return if (isCurrent()) result else ProgressFetchResult.Failure()
@@ -170,6 +186,16 @@ class ProgressClient internal constructor(private val origin: HttpUrl, transport
     }
 
     private fun endpoint() = origin.newBuilder().addPathSegments("v1/progress").build()
+
+    private val legacySlug = Regex("^[a-z0-9][a-z0-9_-]{0,63}$")
+    private val legacyKinds = setOf(
+        com.jkdc.app.core.ProgressEngine.LESSON, com.jkdc.app.core.ProgressEngine.CONVERSATION_THEME,
+        com.jkdc.app.core.ProgressEngine.EXERCISE_SET, com.jkdc.app.core.ProgressEngine.LISTENING,
+        com.jkdc.app.core.ProgressEngine.READING, com.jkdc.app.core.ProgressEngine.PRONUNCIATION,
+        com.jkdc.app.core.ProgressEngine.RECALL_ROUND, com.jkdc.app.core.ProgressEngine.WORDS_PRACTICE,
+        com.jkdc.app.core.ProgressEngine.ASSESSMENT, com.jkdc.app.core.ProgressEngine.SCENARIO_PRACTICE,
+    )
+    private val legacyLanguages = com.jkdc.app.core.LanguageRegistry.all.map { it.id }.toSet() + "legacy"
 
     private fun isVersionUnavailable(status: Int, body: String): Boolean = status == 503 && try {
         val error = json.parseToJsonElement(body).jsonObject["error"]?.jsonObject

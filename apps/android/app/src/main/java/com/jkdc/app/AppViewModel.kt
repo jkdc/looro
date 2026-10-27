@@ -1117,17 +1117,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val pages = if (legacy) listOf(root) else try { root["pages"]!!.jsonArray.map { it.jsonObject } } catch (_: Exception) { return false }
         if (legacy) {
             val rows = try { root["rows"]!!.jsonArray } catch (_: Exception) { return false }
-            val rollups = rows.map { row ->
-                val value = row.jsonObject
-                val kind = (value["kind"] as? JsonPrimitive)?.contentOrNull ?: return false
-                val item = (value["itemID"] as? JsonPrimitive)?.contentOrNull ?: return false
-                val at = (value["at"] as? JsonPrimitive)?.longOrNull ?: return false
-                val language = (value["language"] as? JsonPrimitive)?.contentOrNull
-                if (value["language"] != null && value["language"] != kotlinx.serialization.json.JsonNull && language == null) return false
-                val attempts = (value["attempts"] as? JsonPrimitive)?.intOrNull ?: return false
-                val score = (value["bestScore"] as? JsonPrimitive)?.intOrNull ?: return false
-                com.jkdc.app.data.RemoteProgressRollup(owner, language, kind, item, at, at, attempts, score, 1)
-            }
+            val rollups = com.jkdc.app.data.decodeLegacyProgressRows(rows, owner) ?: return false
             return applyProgressPage(rollups, owner, state?.cursor, 1L, operation, identity)
         }
         var expectedCursor = state?.cursor

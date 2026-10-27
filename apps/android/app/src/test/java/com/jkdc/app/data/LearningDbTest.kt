@@ -36,6 +36,49 @@ class LearningDbTest {
 
     @After fun closeConnection() { connection.close() }
 
+    @Test fun legacyBootstrapPersistsFirstAndLastForOwnerAndUploadsLastTimestamp() = runBlocking {
+        val server = MockWebServer().apply { start() }
+        try {
+            val client = ProgressClient(server.url("/"), OkHttpClient())
+            val session = AccountSession("12345678-1234-1234-1234-123456789012", "a".repeat(43), 100_000)
+            server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+            server.enqueue(MockResponse().setBody("""{"progress":[{"kind":"lesson","itemID":"en-l1","language":"en","firstAt":1740000000000,"lastAt":1740000001000,"attempts":2,"bestScore":80}]}"""))
+            val result = client.fetchBootstrap(session, null) { true } as ProgressFetchResult.Success
+            val rows = kotlinx.serialization.json.Json.parseToJsonElement(result.body).jsonObject["rows"]!!.jsonArray
+            val rollups = decodeLegacyProgressRows(rows, session.accountID)
+            assertTrue("The production legacy decoder must accept the server response", rollups != null)
+            LearningDbWriter.remoteProgressPageApplied(db, session.accountID, rollups!!, null, 1, 1740000002000)
+            val saved = RemoteProgressRollupsDao.all(db, session.accountID).single()
+            assertEquals(1740000000000L, saved.firstAtMilliseconds)
+            assertEquals(1740000001000L, saved.lastAtMilliseconds)
+            assertTrue(RemoteProgressRollupsDao.all(db, "other-account").isEmpty())
+            val remote = listOf(ProgressAggregate(saved.ownerAccountID, saved.languageID, saved.kind, saved.itemID,
+                saved.firstAtMilliseconds, saved.lastAtMilliseconds, saved.attempts, saved.bestScore))
+            val entries = com.jkdc.app.core.ProgressSync.entries(emptyList(), emptyList(), emptyList(), emptySet(),
+                "en", ownerAccountID = session.accountID, remote = remote)
+            assertEquals(1, entries.size)
+            assertEquals(1740000000000L, entries.single().firstAtMilliseconds)
+            assertEquals(1740000001000L, entries.single().atMilliseconds)
+            fun payload(batch: List<com.jkdc.app.core.ProgressSyncEntry>): String = buildJsonObject {
+                put("entries", buildJsonArray { batch.forEach { entry -> add(buildJsonObject {
+                    put("kind", entry.kind); put("itemID", entry.itemID); put("language", entry.language)
+                    put("firstAt", entry.firstAtMilliseconds); put("lastAt", entry.atMilliseconds)
+                    put("attempts", entry.attempts); put("bestScore", entry.bestScore)
+                }) } })
+            }.toString()
+            server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+            server.enqueue(MockResponse().setBody("""{"merged":1}"""))
+            val sent = com.jkdc.app.uploadProgressBatches(entries, null, 1,
+                isCurrent = { true }, sendV2 = { client.sendV2(session, payload(it)) },
+                sendLegacy = { client.sendLegacy(session, payload(it)) }, persistAcknowledgement = { _, _ -> false })
+            assertTrue(sent)
+            server.takeRequest(); server.takeRequest(); server.takeRequest()
+            val uploaded = kotlinx.serialization.json.Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject["entries"]!!.jsonArray.single().jsonObject
+            assertEquals("1740000001000", uploaded["at"].toString())
+            assertEquals(saved, RemoteProgressRollupsDao.all(db, session.accountID).single())
+        } finally { server.shutdown() }
+    }
+
     @Test fun learnerRowsPersistOwnerKeysForEveryMutableLearnerTable() {
         val expected = setOf("preferences", "sessions", "fragments", "expressions", "lesson_state",
             "completions", "skill_errors", "usage_outbox", "assessment_tickets", "exam_attempts",
