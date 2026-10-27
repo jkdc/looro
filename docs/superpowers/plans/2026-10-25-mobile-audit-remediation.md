@@ -331,7 +331,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 11: Expose accessible manual microphone mute
 
-**Requirements:** S10. **Prerequisites:** T10. **Status:** implementation/review complete; implementation commit pending. Verification remains incomplete: connected UI proof unavailable and no valid RED observed.
+**Requirements:** S10. **Prerequisites:** T10. **Status:** implementation committed as `f57e3ee`; review approved. Verification remains incomplete: connected UI proof unavailable and no valid RED observed.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/TalkScreen.kt`
@@ -350,7 +350,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Added separate manual mute UI, localized visible/action/state copy, and tests; existing input-only mute path preserves tutor playback and session.
 - [ ] **Step 4 — GREEN:** Writer reported focused voice 45/45 and full Android + engine-local 804/804; parent's focused rerun hit one T10 `manual mode never auto-processes...` failure (`endTurn` expected 1, got 0); T11-only test passed 1/1. `:app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest` passed (138 tasks, 13 executed). `:app:connectedUiTestAndroidTest` failed with `DeviceException: No connected devices!`; `emulator` CLI missing. Runtime UI proof remains pending.
 - [x] **Step 5 — Review:** Fresh reviewer approved; advisory: runtime Compose accessibility/localization unverified without device.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(android): expose accessible manual microphone mute`; record commit and evidence in OpenSpec tasks/verification report. Implementation commit does not close the task while RED/runtime proof is missing.
+- [x] **Step 6 — Commit:** `f57e3ee` (`feat(android): expose accessible manual microphone mute`) contains T11-owned files; unrelated T10 hunks remain unstaged. Implementation commit does not close the task while RED/runtime proof is missing.
 
 ### Task 12: Make iOS pronunciation private and recoverable
 
