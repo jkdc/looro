@@ -354,7 +354,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 13: Preserve typed replies across failure and retry
 
-**Requirements:** S14. **Prerequisites:** T3. **Status:** implementation and scoped review complete; commit pending; Swift/iOS execution deferred to T16 by user instruction.
+**Requirements:** S14. **Prerequisites:** T3. **Status:** implementation/review committed as `185b152`; Swift/iOS execution deferred to T16 by user instruction.
 
 **Files:**
 - Modify: `apps/ios/App/RootView.swift`
@@ -370,7 +370,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Distinguish success/cancel/failure, persist visible errors and do not auto-replay uncertain provider operations. Explicit dismissal invalidates local continuation; external provider costs are not exactly-once guaranteed.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
 - [x] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S14 scenarios, interfaces and task quality. Do not mark complete with missing required proof. Task review and two scoped correction re-reviews accepted; independent static verification found no blocker. Runtime proof remains deferred to T16.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): preserve typed replies across retries`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** Parent committed reviewed task-owned files as `185b152` (`fix(ios): preserve typed replies across retries`); Swift/iOS runtime proof remains pending T16.
 
 ### Task 14: Gate topic search by real engine capability
 
