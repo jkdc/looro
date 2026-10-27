@@ -19,15 +19,28 @@ extension Notification.Name {
     static let managedAccountSessionChanged = Notification.Name("com.jkdc.app.managedAccountSessionChanged")
 }
 
+@MainActor protocol ManagedAccountSessionPersistence {
+    func load() throws -> ManagedAccountSession?
+    func save(_ session: ManagedAccountSession) throws
+    func remove() throws
+}
+
+extension ManagedAccountKeychain: ManagedAccountSessionPersistence {}
+
 @MainActor @Observable
 final class ManagedAccountStore {
+    typealias CredentialProvider = @MainActor (
+        ManagedIdentityProvider, ManagedAccountConfiguration, String, any ManagedAccountRequestTransport
+    ) async throws -> ManagedAccountIdentity.Credential
+
     let configuration: ManagedAccountConfiguration?
     private(set) var session: ManagedAccountSession?
     private(set) var profile: ManagedAccountProfile?
     private(set) var isBusy = false
     var message: String?
     @ObservationIgnored private let client: ManagedAccountClient?
-    @ObservationIgnored private let keychain: ManagedAccountKeychain?
+    @ObservationIgnored private let keychain: (any ManagedAccountSessionPersistence)?
+    @ObservationIgnored private let identityCredentialProvider: CredentialProvider?
     @ObservationIgnored private let identity = ManagedAccountIdentity()
     @ObservationIgnored private var operation: Task<Void, Never>?
     @ObservationIgnored private var gate = ManagedAccountOperationGate()
@@ -38,7 +51,11 @@ final class ManagedAccountStore {
     var isExamRecoveryUITestFixture: Bool { uiTestFixture != nil }
     #endif
 
-    init(configuration: ManagedAccountConfiguration? = .load()) {
+    init(configuration: ManagedAccountConfiguration? = .load(),
+         requestTransport: (any ManagedAccountRequestTransport)? = nil,
+         sessionPersistence: (any ManagedAccountSessionPersistence)? = nil,
+         credentialProvider: CredentialProvider? = nil) {
+        identityCredentialProvider = credentialProvider
         let arguments = ProcessInfo.processInfo.arguments
         #if DEBUG && targetEnvironment(simulator)
         isPreview = arguments.contains("--preview")
@@ -72,8 +89,17 @@ final class ManagedAccountStore {
         }
         #endif
         self.configuration = configuration
-        client = configuration.map(ManagedAccountClient.init)
-        keychain = configuration.map { ManagedAccountKeychain(scope: $0.storageScope) }
+        if let configuration {
+            if let requestTransport {
+                client = ManagedAccountClient(configuration: configuration, transport: requestTransport)
+            } else {
+                client = ManagedAccountClient(configuration: configuration)
+            }
+            keychain = sessionPersistence ?? ManagedAccountKeychain(scope: configuration.storageScope)
+        } else {
+            client = nil
+            keychain = sessionPersistence
+        }
         // Screenshot and preview UI tests never read a real account or create a server session.
         if !isPreview {
             do { session = try keychain?.load() }
@@ -87,9 +113,14 @@ final class ManagedAccountStore {
         run { [self] token in
             let challenge = try await client.challenge()
             let expiresAt = Date.now.addingTimeInterval(TimeInterval(challenge.expiresInSeconds))
-            let credential = try await (provider == .google
-                ? identity.google(configuration: configuration, nonce: challenge.nonce, http: client.http)
-                : identity.apple(nonce: challenge.nonce))
+            let credential: ManagedAccountIdentity.Credential
+            if let identityCredentialProvider {
+                credential = try await identityCredentialProvider(provider, configuration, challenge.nonce, client.http)
+            } else {
+                credential = try await (provider == .google
+                    ? identity.google(configuration: configuration, nonce: challenge.nonce, http: client.http)
+                    : identity.apple(nonce: challenge.nonce))
+            }
             guard gate.accepts(token), Date.now < expiresAt else { throw ManagedAccountError.cancelled }
             let exchanged = try await client.exchange(provider: provider, token: credential.idToken, challenge: challenge)
             let newSession = try ManagedAccountSession(exchange: exchanged, provider: provider, scope: configuration.storageScope)
@@ -97,12 +128,15 @@ final class ManagedAccountStore {
                 try? await client.signOut(session: newSession); return
             }
             do { try keychain.save(newSession) }
-            catch { try? await client.signOut(session: newSession); throw error }
+            catch {
+                try? await client.signOut(session: newSession)
+                throw error
+            }
             session = newSession
+            announceSessionChange()
             let result = try await client.profile(session: newSession)
             guard gate.accepts(token) else { return }
             profile = result
-            announceSessionChange()
         }
     }
     /// Public exams need no bearer token; nil means this build has no API configuration.
@@ -339,6 +373,11 @@ final class ManagedAccountStore {
     private func announceSessionChange() {
         NotificationCenter.default.post(name: .managedAccountSessionChanged, object: nil)
     }
+    static func invalidatesSession(for error: Error) -> Bool {
+        error as? ManagedAccountError == .server("sign_in_required")
+    }
+    /// Lets async store tests await the same operation launched by public actions.
+    func waitForCurrentOperation() async { await operation?.value }
     private func run(_ body: @escaping @MainActor (UInt64) async throws -> Void) {
         let token = gate.begin(); isBusy = true; message = nil
         operation = Task { [self] in
@@ -346,7 +385,7 @@ final class ManagedAccountStore {
             do { try await body(token) }
             catch {
                 guard gate.accepts(token) else { return }
-                if error as? ManagedAccountError == .server("sign_in_required") {
+                if Self.invalidatesSession(for: error) {
                     session = nil; profile = nil
                     do { try keychain?.remove() } catch { message = Self.message(for: error); return }
                     announceSessionChange()

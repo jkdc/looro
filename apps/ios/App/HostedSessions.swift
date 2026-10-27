@@ -86,6 +86,12 @@ enum HelperPurpose: String {
     case scenarioReview = "scenario_review"
 }
 
+@MainActor protocol HostedProxyResponding {
+    func respond(instructions: String, input: String, schema: String?, search: Bool) async throws -> HostedProxyEngine.Result
+}
+
+extension HostedProxyEngine: HostedProxyResponding {}
+
 /// One route for every learning call: the backend helpers channel while a
 /// hosted session is active, the token-billing proxy when the learner selected
 /// Palique (tokens), the personal-key client otherwise. Prompts are identical
@@ -95,8 +101,15 @@ enum HelperPurpose: String {
     private(set) var hostedSessionID: String?
     private var client: ManagedAccountClient?
     private var session: ManagedAccountSession?
-    private var proxy: HostedProxyEngine?
-    init(api: APIClient) { self.api = api }
+    private var proxy: (any HostedProxyResponding)?
+    private let hostedProxyFactory: @MainActor (URL, String) -> any HostedProxyResponding
+    init(api: APIClient,
+         hostedProxyFactory: @escaping @MainActor (URL, String) -> any HostedProxyResponding = {
+             HostedProxyEngine(origin: $0, bearer: $1)
+         }) {
+        self.api = api
+        self.hostedProxyFactory = hostedProxyFactory
+    }
 
     /// The token proxy is text-only and discards source links, while hosted
     /// helpers and the personal API client preserve citations from search.
@@ -124,7 +137,7 @@ enum HelperPurpose: String {
     ///    the engine keeps sending a dead token and every call fails with
     ///    `Failure.signInRequired` (fail-closed, never a wrong account's wallet).
     func useHostedProxy(origin: URL, bearer: String) {
-        proxy = HostedProxyEngine(origin: origin, bearer: bearer)
+        proxy = hostedProxyFactory(origin, bearer)
     }
     func clearHostedProxy() { proxy = nil }
 

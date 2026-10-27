@@ -394,7 +394,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 15: Notify session adoption before profile loading
 
-**Requirements:** S16. **Prerequisites:** T3,T14. **Status:** pending.
+**Requirements:** S16. **Prerequisites:** T3; T14 committed as `e4a5375`; iOS/Swift execution deferred to T16 by user instruction. **Status:** implementation in progress.
 
 **Files:**
 - Modify: `apps/ios/App/ManagedAccountStore.swift`
