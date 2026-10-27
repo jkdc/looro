@@ -413,3 +413,4 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L89 (2026-10-27): Committed T8 source, regression tests and SDD evidence as `64275bb` (`feat(progress): project remote rollups in learner views`). T8 remains verification-pending until T16 iOS execution and a clean full Android suite; the observed suite failure is in preserved T10 voice code.
 - L90 (2026-10-27): T11 separate 52dp EN/ES mute; review approved. Writer reports 45/45 and 804/804; parent rerun failed one T10 manual-turn assert (expected 1, got 0). T11-only 1/1 and lint/build passed. No device or valid RED; preserve T10.
 - L91 (2026-10-27): Committed the T11 implementation and SDD evidence as `f57e3ee` (`feat(android): expose accessible manual microphone mute`). The task remains open until valid test-first/runtime UI proof is obtained; preserved T10 voice changes remain uncommitted.
+- L92 (2026-10-27): T11 evidence docs committed `5d4751f`.
