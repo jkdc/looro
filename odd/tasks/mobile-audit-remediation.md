@@ -301,11 +301,11 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - T1 — linked S1; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: ownership implementation and Android verification completed through T17; iOS runtime proof deferred to T16; original commit: `f4673e2` remains historical evidence.
 - T2 — linked S2,S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; Swift execution pending; commit: `d58a2c9`.
 - T3 — linked S3; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; iOS app execution pending T16; commit: `6a69351`.
-- T4 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; focused PostgreSQL 17/17, `make check` 146, API type-check, fresh full suite 756/756, independent review clean, parent focused spot-check 17/17; commit: `98ae12d`.
+- T4 — S4; commit `98ae12d`; PG 17/17, `make check` 146, type-check, suite 756/756, review/spot-check pass.
 - T5 — linked S2,S4,S5; inline continuation of tracked task; status: recovery committed `5dd7da4`; Android focused verification and independent high-risk recheck passed; Swift runtime verification deferred to T16. Untagged pre-v6 rows remain unchanged; checkpoint `07685b5` contains prior rollup/schema work.
 - T6 — linked S2,S3,S4,S5,S17; delegated-direct with configured default profile; source/tests committed as `c3719a0`; independent high-risk source review passed after one correction. Swift execution and platform proof deferred to T16; RED/GREEN was not observed for all App tests.
 - T7 — linked S2,S3,S4,S5,S17; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: Android implementation, review, scratch probes and full suite complete; test-first evidence incomplete for most writer tests; preserve existing voice edits; commit `8b1b153`.
-- T8 — S5; delegated-direct sequential (user-selected); implementation and reviewer correction complete; reviewer approved; Android projection 9/9 and scratch probes pass; full suite had one T10 voice-test failure (isolated rerun passes); iOS proof deferred T16; commit pending.
+- T8 — S5; delegated-direct; committed `64275bb`; review approved; Android projection 9/9, scratch passed; full suite one T10 failure (isolated pass); T16/iOS and full-suite verification pending.
 - T9 — S6; delegated-direct; complete; commit `442c585`.
 - T10 — S7-S9; delegated-direct; Needs decision after two correction rounds: S8 lacks deterministic discarded-frame acknowledgement; scratch probes do not eliminate scheduling race; commit pending.
 - T11 — linked S10; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
@@ -395,12 +395,12 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L75 (2026-10-27): User correction: “deja de intentar ese modelo luna, sigue con el que tengo configurado por defecto, ya es la 3 vez que bloqueas por esto”. Use the inherited default, no Luna override. Add required `project.pbxproj` AppTests membership under the user's earlier authorization for in-scope paths.
 - L76 (2026-10-27): Ruling for T6/T8 boundary: S4 and the user's one-time-bootstrap rule require active v2 bootstrap/upload in T6, persisting remote data only to T5 rollups/cursors. T8 alone connects the visible effective projection; leaving recurring v1 downloads active would contradict the contract.
 - L77 (2026-10-27): T6: exact v2-unavailable permits one full v1 bootstrap; atomically store rollups, preserve cursor, increment generation. Upload fallback leaves download state unchanged.
-- L78 (2026-10-27): T6 source/AppTests added; diff check passed. Swift/T16 and some RED/GREEN pending; risk 1,3,4.
-- L79 (2026-10-27): T6 review fixed `Rollup.lastAt`/duplicate conversion; Swift/T16 pending; risk 1,3,4.
+- L78 (2026-10-27): T6 AppTests added; diff check passed; Swift/T16 pending; risk 1,3,4.
+- L79 (2026-10-27): T6 review fixed `Rollup.lastAt`/conversion; Swift/T16 pending; risk 1,3,4.
 - L80 (2026-10-27): T6 `c3719a0`; Swift/T16 pending; some App tests lack RED/GREEN.
-- L81 (2026-10-27): T6 `fcaa8b3`/`c3719a0`; T7 compile and versioned-GET RED; preserve voice edits.
+- L81 (2026-10-27): T6 `fcaa8b3`/`c3719a0`; T7 compile/GET RED; preserve voice edits.
 
-- L82 (2026-10-27): User reiterated: “deja de intentar ese modelo luna, sigue con el que tengo configurado por defecto, ya es la 3 vez que bloqueas por esto”. T7 fixed timestamp/cursor, page tests, JDBC decoding; review clean; Android suite 786 + 11 passed.
+- L82 (2026-10-27): User reiterated: “deja de intentar ese modelo luna, sigue con el que tengo configurado por defecto, ya es la 3 vez que bloqueas por esto”. T7 fixed timestamp/cursor/JDBC decoding; review clean; Android 786 + 11 passed.
 
 - L83 (2026-10-27): T7 `8b1b153`; T10 voice edits/artifacts unstaged; iOS/T16 pending.
 
@@ -409,4 +409,5 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 
 - L86 (2026-10-27): User authorized `apps/ios/App/CoursesViews.swift` for T8 after review found course-card and unit-level projections still used local-only stats; iOS proof deferred T16.
 - L87 (2026-10-27): Fresh review found iOS lesson-row attempt labels still read local-only archive counts although mastery and completion were remote-aware (`CoursesViews.swift`). Added a remote-only attempt projection regression and wired unit lesson rows through owner/language-scoped `effectiveLessons`; iOS test execution is deferred to T16, so this correction has no observed Swift RED/GREEN yet.
-- L88 (2026-10-27): Re-review approved the course-row correction. Android `ProgressProjectionTest` passed 9/9 in a forced rerun; scratch projections passed. Full Android suite ran 792 tests and failed only the T10 voice test at its no-transcript assertion; the isolated test rerun passed. Preserve the T10 files. No Swift tests per user's T16 deferral; iOS RED/GREEN remains unobserved.
+- L88 (2026-10-27): Re-review approved T8 fix. Android projection forced 9/9; scratch passed. Full suite 792: one T10 no-transcript assertion failed; isolated rerun passed. Preserve T10 files. No Swift per T16; iOS RED/GREEN unobserved.
+- L89 (2026-10-27): Committed T8 source, regression tests and SDD evidence as `64275bb` (`feat(progress): project remote rollups in learner views`). T8 remains verification-pending until T16 iOS execution and a clean full Android suite; the observed suite failure is in preserved T10 voice code.

@@ -67,7 +67,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 8: Project effective progress into learner reads and upload feedback
 
-**Requirements:** S5,S17. **Prerequisites:** T5,T6,T7,T17. **Status:** implementation and reviewer correction complete; fresh re-review approved; Android focused projection 9/9 and scratch probes passed. Full Android suite had one T10 voice-test failure; isolated rerun passed. Commit pending; iOS execution deferred T16.
+**Requirements:** S5,S17. **Prerequisites:** T5,T6,T7,T17. **Status:** implementation committed as `64275bb`; fresh re-review approved; Android focused projection 9/9 and scratch probes passed. Full Android suite had one T10 voice-test failure; isolated rerun passed. Task verification remains pending T16 iOS execution and clean full Android suite.
 
 **Files:** `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`, `ProgressProjection.kt`, `LevelEngine.kt`, `MasteryEngine.kt`, `AppViewModel.kt`, `apps/android/app/src/test/java/com/jkdc/app/core/ProgressProjectionTest.kt`, `apps/ios/Core/ProgressEngine.swift`, `LevelEngine.swift`, `MasteryEngine.swift`, `apps/ios/App/Storage.swift`, `LearningProgressView.swift`, `ListeningView.swift`, `ConversationCoordinator.swift`, `CoursesViews.swift`, `apps/ios/Tests/ProgressProjectionTests.swift`.
 
