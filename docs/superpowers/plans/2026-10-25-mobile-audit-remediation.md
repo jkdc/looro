@@ -374,7 +374,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 14: Gate topic search by real engine capability
 
-**Requirements:** S15. **Prerequisites:** T13 committed as `185b152`; iOS/Swift execution deferred to T16 by user instruction. **Status:** implementation and scoped review complete; commit pending.
+**Requirements:** S15. **Prerequisites:** T13 committed as `185b152`; iOS/Swift execution deferred to T16 by user instruction. **Status:** implementation/review committed as `e4a5375`.
 
 **Files:**
 - Modify: `apps/ios/App/LibraryViews.swift`
@@ -390,7 +390,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Gate impossible operations without provider switch, new search backend, proxy, key or billing changes.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
 - [x] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S15 scenarios, interfaces and task quality. Do not mark complete with missing required proof. Scoped review and fix re-review accepted; iOS runtime proof remains pending T16.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): gate unsupported topic search`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** Parent committed reviewed task-owned files as `e4a5375` (`fix(ios): gate unsupported topic search`); Swift/iOS proof remains deferred to T16.
 
 ### Task 15: Notify session adoption before profile loading
 
