@@ -19,7 +19,7 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 - [ ] T12 / S11,S12,S13 — Make iOS pronunciation private and recoverable. Depends on T3. Implementation and scoped review complete; SwiftPM/Xcode/`make ios-test` execution remains deferred to T16. Commit: `c8c2d48`.
 - [ ] T13 / S14 — Preserve typed replies across failure and retry. Depends on T3. Status: implementation/scoped review committed as `185b152`; tests are integrated in AppTests; Swift/iOS execution remains deferred to T16. Evidence: task review, two scoped re-reviews, and independent static verification; commit: `185b152`.
 - [ ] T14 / S15 — Gate topic search by real engine capability. Depends on T13 committed as `185b152`. Status: committed as `e4a5375`; tests integrated; Swift/iOS execution deferred to T16. Minor: direct configured-hosted-route test is not covered; capability/dispatch source mapping reviewed. Evidence: task review and fix re-review; commit `e4a5375`.
-- [ ] T15 / S16 — Notify session adoption before profile loading. Depends on T3 and T14 committed as `e4a5375`. Status: source-verified; runtime verification deferred to T16. Evidence/commit: pending.
+- [ ] T15 / S16 — Notify session adoption before profile loading. Depends on T3 and T14 committed as `e4a5375`. Status: source-verified; runtime verification deferred to T16. Evidence/commit: `e545c79`.
 - [ ] T16 / S1–S17 — Verify the complete remediation and report gaps. Depends on T1–T15,T17. Evidence/commit: pending.
 
 ## Completion rules
