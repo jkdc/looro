@@ -125,11 +125,11 @@ internal class ProgressSyncRunner(
 ) {
     suspend fun run(
         resolveSession: suspend () -> AccountSession?,
-        fetch: suspend (AccountSession) -> String?,
+        fetch: suspend (AccountSession, ProgressSyncOperation.Token, ProgressSyncIdentity) -> String?,
         readLiveSession: suspend () -> AccountSession?,
         mergeRemote: suspend (String, ProgressSyncOperation.Token, ProgressSyncIdentity) -> Boolean,
         outboundSnapshot: () -> String,
-        send: suspend (AccountSession, String) -> Unit,
+        send: suspend (AccountSession, String, ProgressSyncOperation.Token, ProgressSyncIdentity) -> Unit,
     ) {
         val admissionLease = admission.acquire() ?: return
         var token: ProgressSyncOperation.Token? = null
@@ -141,23 +141,22 @@ internal class ProgressSyncRunner(
             val acquired = operation.begin(identity) ?: return
             token = acquired
 
-            val remote = fetch(captured)
+            val remote = fetch(captured, acquired, identity) ?: return
             if (!admission.isCurrent(admissionLease)) return
             val afterFetch = readLiveSession() ?: return
             if (!admission.isCurrent(admissionLease)) return
             val liveIdentity = operation.identity(afterFetch.accountID, afterFetch.accessToken)
             if (!operation.isCurrent(acquired, liveIdentity)) return
-            if (remote != null && mergeRemote(remote, acquired, liveIdentity)) {
-                if (!admission.isCurrent(admissionLease)) return
-                if (!operation.isCurrent(acquired, liveIdentity)) return
-            }
+            if (!mergeRemote(remote, acquired, liveIdentity)) return
+            if (!admission.isCurrent(admissionLease)) return
+            if (!operation.isCurrent(acquired, liveIdentity)) return
 
             val outbound = outboundSnapshot()
             val beforeSend = readLiveSession() ?: return
             if (!admission.isCurrent(admissionLease)) return
             val sendIdentity = operation.identity(beforeSend.accountID, beforeSend.accessToken)
             if (!operation.isCurrent(acquired, sendIdentity)) return
-            send(captured, outbound)
+            send(captured, outbound, acquired, sendIdentity)
         } finally {
             token?.let(operation::finish)
         }

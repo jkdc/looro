@@ -88,12 +88,12 @@ class JvmSqlDatabase(val connection: Connection) : SqlDatabase {
         val names = (1..meta.columnCount).map(meta::getColumnLabel)
         val values = names.indices.map { i ->
             val index = i + 1
-            if (getObject(index) == null) return@map null
-            when (meta.getColumnType(index)) {
-                Types.INTEGER -> getLong(index)
-                Types.REAL, Types.DOUBLE, Types.FLOAT -> getDouble(index)
-                Types.BLOB, Types.BINARY, Types.VARBINARY, Types.LONGVARBINARY -> getBytes(index)
-                else -> getString(index)
+            when (val value = getObject(index)) {
+                null -> null
+                is Byte, is Short, is Int, is Long -> (value as Number).toLong()
+                is Float, is Double -> (value as Number).toDouble()
+                is ByteArray -> value
+                else -> value.toString()
             }
         }
         return Row(names, values)

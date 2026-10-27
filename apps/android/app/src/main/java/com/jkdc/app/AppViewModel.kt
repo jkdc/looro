@@ -240,6 +240,46 @@ internal fun prepareImportedArchive(data: String, importedAt: Double = nowSecond
         }
     }
 
+internal suspend fun uploadProgressBatches(
+    entries: List<ProgressSyncEntry>,
+    initialCursor: String?,
+    passGeneration: Long,
+    isCurrent: suspend () -> Boolean,
+    sendV2: suspend (List<ProgressSyncEntry>) -> com.jkdc.app.network.ProgressSendResult,
+    sendLegacy: suspend (List<ProgressSyncEntry>) -> com.jkdc.app.network.ProgressSendResult,
+    persistAcknowledgement: suspend (String?, Long) -> Boolean,
+): Boolean {
+    val pending = entries.filter { "${it.kind}|${it.itemID}|${it.language}" > (initialCursor ?: "") }
+    var usedLegacyFallback = false
+    for (batch in pending.chunked(ProgressSync.MAXIMUM_ENTRIES)) {
+        if (!isCurrent()) return false
+        if (usedLegacyFallback) {
+            val legacy = sendLegacy(batch)
+            if (!isCurrent() || legacy !is com.jkdc.app.network.ProgressSendResult.Acknowledged ||
+                legacy.merged != batch.size) return false
+            continue
+        }
+
+        when (val result = sendV2(batch)) {
+            is com.jkdc.app.network.ProgressSendResult.Acknowledged -> {
+                if (!isCurrent() || result.merged != batch.size) return false
+                val last = batch.last()
+                val cursor = "${last.kind}|${last.itemID}|${last.language}"
+                if (!persistAcknowledgement(cursor, passGeneration)) return false
+            }
+            com.jkdc.app.network.ProgressSendResult.VersionUnavailable -> {
+                usedLegacyFallback = true
+                val legacy = sendLegacy(batch)
+                if (!isCurrent() || legacy !is com.jkdc.app.network.ProgressSendResult.Acknowledged ||
+                    legacy.merged != batch.size) return false
+            }
+            else -> return false
+        }
+    }
+    if (usedLegacyFallback) return true
+    return isCurrent() && persistAcknowledgement(null, passGeneration + 1)
+}
+
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     // Keep intent, not an Activity-capturing callback, while the learner reviews consent.
     var pendingCloudAction: CloudAction? = null
@@ -967,18 +1007,32 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         com.jkdc.app.core.MemberProgressSyncPolicy.session(
                             memberSessions?.read(), guests?.availableSession())
                     },
-                    fetch = client::fetch,
+                    fetch = { session, operation, identity ->
+                        val owner = session.accountID
+                        val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "download") }
+                        val shouldBootstrap = archive.lessons.none { it.attempts > 0 } && archive.completions.orEmpty().isEmpty() &&
+                            (state == null || state.passGeneration == 0L)
+                        if (!shouldBootstrap) "{\"legacy\":false,\"pages\":[]}" else {
+                            val cursor = state?.cursor
+                            val result = client.fetchBootstrap(session, cursor) {
+                                val current = com.jkdc.app.core.MemberProgressSyncPolicy.session(memberSessions?.read(), guests?.availableSession())
+                                current != null && progressSyncOperation.identity(current.accountID, current.accessToken) == identity &&
+                                    progressSyncOperation.isCurrent(operation, identity)
+                            }
+                            (result as? com.jkdc.app.network.ProgressFetchResult.Success)?.body
+                        }
+                    },
                     readLiveSession = {
                         com.jkdc.app.core.MemberProgressSyncPolicy.session(
                             memberSessions?.read(), guests?.availableSession())
                     },
                     mergeRemote = { body, operation, identity ->
-                        val changed = mergeRemoteProgress(body, operation, identity)
-                        if (changed) bumpLedgerRevision()
-                        changed
+                        persistRemoteProgressPages(body, operation, identity)
                     },
                     outboundSnapshot = ::progressBatchJson,
-                    send = { session, payload -> client.send(session, payload) },
+                    send = { session, payload, operation, identity ->
+                        uploadProgress(session, payload, operation, identity, client)
+                    },
                 )
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
@@ -1013,58 +1067,133 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 CourseRegistry.forLanguage(language.id), ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(),
                 language.id, ReadingRegistry.forLanguage(language.id).map { it.id }.toSet()).forEach { entry ->
                 addJsonObject {
-                    put("kind", entry.kind); put("itemID", entry.itemID); put("at", entry.atMilliseconds)
-                    put("attempts", entry.attempts); put("bestScore", entry.bestScore); put("language", entry.language)
+                    put("kind", entry.kind); put("itemID", entry.itemID); put("firstAt", entry.firstAtMilliseconds)
+                    put("lastAt", entry.atMilliseconds); put("attempts", entry.attempts); put("bestScore", entry.bestScore); put("language", entry.language)
                 }
             }
         }
     }.toString()
 
-    /** Returns true when the pull changed the archive. ProgressSync.mergeRemote
-        updates lessons in place or appends them, and appends unseen marks —
-        so the mirror upserts the changed/appended lessons and inserts the
-        appended marks (append-only: no re-sort, rowid order stays archive
-        order). */
-    private suspend fun mergeRemoteProgress(
-        body: String,
-        operation: com.jkdc.app.core.ProgressSyncOperation.Token,
+    private suspend fun persistRemoteProgressPages(
+        body: String, operation: com.jkdc.app.core.ProgressSyncOperation.Token,
         identity: com.jkdc.app.core.ProgressSyncIdentity,
     ): Boolean {
-        val rows = try { json.parseToJsonElement(body).jsonObject.getValue("progress").jsonArray
-            .map { it.jsonObject } } catch (_: Exception) { return false }
-        val merged = rows.mapNotNull { row ->
-            val kind = (row["kind"] as? JsonPrimitive)?.contentOrNull ?: return@mapNotNull null
-            val itemID = (row["itemID"] as? JsonPrimitive)?.contentOrNull ?: return@mapNotNull null
-            val firstAt = (row["firstAt"] as? JsonPrimitive)?.doubleOrNull ?: return@mapNotNull null
-            val lastAt = (row["lastAt"] as? JsonPrimitive)?.doubleOrNull ?: return@mapNotNull null
-            val attempts = (row["attempts"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
-            val bestScore = (row["bestScore"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
-            val language = (row["language"] as? JsonPrimitive)?.contentOrNull
-            RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore, language)
+        val root = try { json.parseToJsonElement(body).jsonObject } catch (_: Exception) { return false }
+        val legacy = (root["legacy"] as? JsonPrimitive)?.content == "true"
+        val owner = identity.accountID
+        val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "download") }
+        val pages = if (legacy) listOf(root) else try { root["pages"]!!.jsonArray.map { it.jsonObject } } catch (_: Exception) { return false }
+        if (legacy) {
+            val rows = try { root["rows"]!!.jsonArray } catch (_: Exception) { return false }
+            val rollups = rows.map { row ->
+                val value = row.jsonObject
+                val kind = (value["kind"] as? JsonPrimitive)?.contentOrNull ?: return false
+                val item = (value["itemID"] as? JsonPrimitive)?.contentOrNull ?: return false
+                val at = (value["at"] as? JsonPrimitive)?.longOrNull ?: return false
+                val language = (value["language"] as? JsonPrimitive)?.contentOrNull
+                if (value["language"] != null && value["language"] != kotlinx.serialization.json.JsonNull && language == null) return false
+                val attempts = (value["attempts"] as? JsonPrimitive)?.intOrNull ?: return false
+                val score = (value["bestScore"] as? JsonPrimitive)?.intOrNull ?: return false
+                com.jkdc.app.data.RemoteProgressRollup(owner, language, kind, item, at, at, attempts, score, 1)
+            }
+            return applyProgressPage(rollups, owner, state?.cursor, 1L, operation, identity)
         }
-        if (merged.isEmpty()) return false
-        val before = archive
-        val lessonsBefore = before.lessons.toList()
-        val markCountBefore = before.completions.orEmpty().size
-        val updated = ProgressSync.mergeRemote(before, merged, language.id)
-        val changedLessons = updated.lessons.filterIndexed { i, lesson ->
-            i >= lessonsBefore.size || lesson != lessonsBefore[i]
+        var expectedCursor = state?.cursor
+        pages.forEachIndexed { index, page ->
+            val progress = try { page["progress"]!!.jsonArray } catch (_: Exception) { return false }
+            val nextCursor = if (page["nextCursor"] == kotlinx.serialization.json.JsonNull) null
+                else (page["nextCursor"] as? JsonPrimitive)?.contentOrNull ?: return false
+            val complete = (page["complete"] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: return false
+            if (complete != (nextCursor == null) || (!complete && nextCursor == expectedCursor)) return false
+            val rollups = progress.map { row ->
+                val value = row.jsonObject
+                val kind = (value["kind"] as? JsonPrimitive)?.contentOrNull ?: return false
+                val item = (value["itemID"] as? JsonPrimitive)?.contentOrNull ?: return false
+                val language = (value["language"] as? JsonPrimitive)?.contentOrNull
+                if (value["language"] != null && value["language"] != kotlinx.serialization.json.JsonNull && language == null) return false
+                val firstAt = (value["firstAt"] as? JsonPrimitive)?.longOrNull ?: return false
+                val lastAt = (value["lastAt"] as? JsonPrimitive)?.longOrNull ?: return false
+                if (com.jkdc.app.core.ProgressTime.fromUnixMilliseconds(firstAt.toDouble(), System.currentTimeMillis().toDouble()) == null ||
+                    com.jkdc.app.core.ProgressTime.fromUnixMilliseconds(lastAt.toDouble(), System.currentTimeMillis().toDouble()) == null) return false
+                val attempts = (value["attempts"] as? JsonPrimitive)?.intOrNull ?: return false
+                val score = (value["bestScore"] as? JsonPrimitive)?.intOrNull ?: return false
+                com.jkdc.app.data.RemoteProgressRollup(owner, language, kind, item,
+                    firstAt, lastAt, attempts, score, 2)
+            }
+            val generation = if (complete && index == pages.lastIndex) 1L else 0L
+            if (!applyProgressPage(rollups, owner, nextCursor, generation, operation, identity)) return false
+            expectedCursor = nextCursor
         }
-        val appendedMarks = updated.completions.orEmpty().drop(markCountBefore)
-        val commit = progressSyncOperation.beginCommit(operation, identity) ?: return false
+        return true
+    }
+
+    private suspend fun applyProgressPage(
+        rows: List<com.jkdc.app.data.RemoteProgressRollup>, owner: String, cursor: String?, generation: Long,
+        operation: com.jkdc.app.core.ProgressSyncOperation.Token, identity: com.jkdc.app.core.ProgressSyncIdentity,
+    ): Boolean {
+        val current = com.jkdc.app.core.MemberProgressSyncPolicy.session(memberSessions?.read(), guests?.availableSession()) ?: return false
+        val liveIdentity = progressSyncOperation.identity(current.accountID, current.accessToken)
+        if (liveIdentity != identity || !progressSyncOperation.isCurrent(operation, liveIdentity)) return false
+        val commit = progressSyncOperation.beginCommit(operation, liveIdentity) ?: return false
         return try {
             withContext(NonCancellable) {
                 val saved = persistFencedAndWait(
-                    { db -> LearningDbWriter.progressMerged(db, changedLessons, appendedMarks) },
+                    { db -> LearningDbWriter.remoteProgressPageApplied(db, owner, rows, cursor, generation, System.currentTimeMillis()) },
                     { write -> progressSyncOperation.writeCommit(commit, write) },
-                    if (jsonMode) persistenceSnapshot(updated) else null,
                 )
-                if (!saved) false
-                else progressSyncOperation.publishCommit(commit) { archive = updated }
+                saved && progressSyncOperation.publishCommit(commit) { }
             }
-        } finally {
-            progressSyncOperation.finishCommit(commit)
+        } finally { progressSyncOperation.finishCommit(commit) }
+    }
+
+    private suspend fun uploadProgress(
+        session: AccountSession, ignoredPayload: String, operation: com.jkdc.app.core.ProgressSyncOperation.Token,
+        identity: com.jkdc.app.core.ProgressSyncIdentity, client: com.jkdc.app.network.ProgressClient,
+    ) {
+        val owner = session.accountID
+        val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "upload") }
+        val entries = LanguageRegistry.all.flatMap { module -> ProgressSync.entries(
+            archive.lessons, archive.completions.orEmpty(), CourseRegistry.forLanguage(module.id),
+            ListeningRegistry.forLanguage(module.id).map { it.id }.toSet(), module.id,
+            ReadingRegistry.forLanguage(module.id).map { it.id }.toSet())
+        }.sortedWith(compareBy<com.jkdc.app.core.ProgressSyncEntry> { it.kind }.thenBy { it.itemID }.thenBy { it.language })
+        val generation = maxOf(1L, state?.passGeneration ?: 1L)
+        suspend fun isCurrentIdentity(): Boolean {
+            val live = com.jkdc.app.core.MemberProgressSyncPolicy.session(memberSessions?.read(), guests?.availableSession()) ?: return false
+            val liveIdentity = progressSyncOperation.identity(live.accountID, live.accessToken)
+            return progressSyncOperation.isCurrent(operation, liveIdentity) && liveIdentity == identity
         }
+        fun payload(batch: List<com.jkdc.app.core.ProgressSyncEntry>): String = buildJsonObject {
+            putJsonArray("entries") { batch.forEach { entry -> addJsonObject {
+                put("kind", entry.kind); put("itemID", entry.itemID); put("language", entry.language)
+                put("firstAt", entry.firstAtMilliseconds); put("lastAt", entry.atMilliseconds)
+                put("attempts", entry.attempts); put("bestScore", entry.bestScore)
+            } } } }.toString()
+        uploadProgressBatches(
+            entries = entries,
+            initialCursor = state?.cursor,
+            passGeneration = generation,
+            isCurrent = ::isCurrentIdentity,
+            sendV2 = { batch -> client.sendV2(session, payload(batch)) },
+            sendLegacy = { batch -> client.sendLegacy(session, payload(batch)) },
+            persistAcknowledgement = { cursor, pass ->
+                if (!isCurrentIdentity()) false else saveUploadCursor(owner, cursor, pass, operation, identity)
+            },
+        )
+    }
+
+    private suspend fun saveUploadCursor(
+        owner: String, cursor: String?, generation: Long, operation: com.jkdc.app.core.ProgressSyncOperation.Token,
+        identity: com.jkdc.app.core.ProgressSyncIdentity,
+    ): Boolean {
+        val commit = progressSyncOperation.beginCommit(operation, identity) ?: return false
+        return try { withContext(NonCancellable) {
+            val saved = persistFencedAndWait(
+                { db -> LearningDbWriter.remoteProgressUploadAcknowledged(db, owner, cursor, generation, System.currentTimeMillis()) },
+                { write -> progressSyncOperation.writeCommit(commit, write) },
+            )
+            saved && progressSyncOperation.publishCommit(commit) { }
+        } } finally { progressSyncOperation.finishCommit(commit) }
     }
 
     /** One mutation site's directed durable write, run in FIFO order on the

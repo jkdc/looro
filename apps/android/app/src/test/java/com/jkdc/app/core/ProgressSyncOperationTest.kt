@@ -179,11 +179,11 @@ class ProgressSyncOperationTest {
         val task = async {
             runner.run(
                 resolveSession = { resolveStarted.complete(Unit); resolveSession.await() },
-                fetch = { fetches++; null },
+                fetch = { _, _, _ -> fetches++; null },
                 readLiveSession = { null },
                 mergeRemote = { _, _, _ -> false },
                 outboundSnapshot = { "snapshot" },
-                send = { _, _ -> sends++ },
+                send = { _, _, _, _ -> sends++ },
             )
         }
 
@@ -211,7 +211,7 @@ class ProgressSyncOperationTest {
         val task = async {
             runner.run(
                 resolveSession = { session },
-                fetch = { "remote" },
+                fetch = { _, _, _ -> "remote" },
                 readLiveSession = { session },
                 mergeRemote = { _, token, identity ->
                     val commit = operation.beginCommit(token, identity)
@@ -228,7 +228,7 @@ class ProgressSyncOperationTest {
                     }
                 },
                 outboundSnapshot = { "snapshot" },
-                send = { _, _ -> sends++ },
+                send = { _, _, _, _ -> sends++ },
             )
         }
 
@@ -254,11 +254,11 @@ class ProgressSyncOperationTest {
         var sends = 0
         runner.run(
             resolveSession = { captured },
-            fetch = { "remote" },
+            fetch = { _, _, _ -> "remote" },
             readLiveSession = { rotated },
             mergeRemote = { _, _, _ -> merges++; true },
             outboundSnapshot = { "snapshot" },
-            send = { _, _ -> sends++ },
+            send = { _, _, _, _ -> sends++ },
         )
 
         assertEquals(0, merges)
@@ -277,11 +277,11 @@ class ProgressSyncOperationTest {
         val task = async {
             runner.run(
                 resolveSession = { session },
-                fetch = { fetchStarted.complete(Unit); fetchResult.await() },
+                fetch = { _, _, _ -> fetchStarted.complete(Unit); fetchResult.await() },
                 readLiveSession = { session },
                 mergeRemote = { _, _, _ -> merges++; true },
                 outboundSnapshot = { "snapshot" },
-                send = { _, _ -> sends++ },
+                send = { _, _, _, _ -> sends++ },
             )
         }
 
@@ -292,4 +292,20 @@ class ProgressSyncOperationTest {
         assertEquals(0, merges)
         assertEquals(0, sends)
     }
+
+    @Test fun runnerPassesTheBoundTokenAndIdentityToUploadContinuation() = runTest {
+        val operation = ProgressSyncOperation()
+        val runner = ProgressSyncRunner(operation, ProgressSyncAdmission())
+        val session = com.jkdc.app.core.AccountSession("00000000-0000-0000-0000-00000000000a", "a".repeat(43), 100L)
+        var sendToken: ProgressSyncOperation.Token? = null
+        var sendIdentity: ProgressSyncIdentity? = null
+        runner.run(
+            resolveSession = { session }, fetch = { _, _, _ -> "remote" }, readLiveSession = { session },
+            mergeRemote = { _, _, _ -> true }, outboundSnapshot = { "snapshot" },
+            send = { _, _, token, identity -> sendToken = token; sendIdentity = identity },
+        )
+        assertNotNull(sendToken)
+        assertEquals(sendToken!!.identity, sendIdentity)
+    }
+
 }

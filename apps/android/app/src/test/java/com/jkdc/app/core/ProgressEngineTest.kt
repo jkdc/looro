@@ -98,7 +98,20 @@ class ProgressEngineTest {
         assertEquals(setOf("en-l1", "en-listen-coffee"), entries.map { it.itemID }.toSet())
         val l1 = entries.single { it.itemID == "en-l1" }
         assertEquals(7, l1.attempts)
+        assertEquals(((10.0 + 978_307_200.0) * 1000).toLong(), l1.firstAtMilliseconds)
         assertEquals(25.0, (l1.atMilliseconds - 978_307_200_000L) / 1000.0, 0.001)
+    }
+
+    @Test fun progressEntryCollectionDoesNotDropRowsBeforeUploadBatching() {
+        val marks = (0 until 201).map { index ->
+            CompletionMark(ProgressEngine.CONVERSATION_THEME, "theme-%03d".format(index), index.toDouble(), languageID = "en")
+        }
+
+        val entries = ProgressSync.entries(emptyList(), marks, emptyList(), emptySet(), "en")
+
+        assertEquals(201, entries.size)
+        assertEquals("theme-000", entries.first().itemID)
+        assertEquals("theme-200", entries.last().itemID)
     }
 
     @Test fun remoteMergeIgnoresOtherLanguagesAndStampsRestoredMarks() {

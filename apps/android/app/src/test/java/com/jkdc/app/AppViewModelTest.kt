@@ -16,6 +16,37 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppViewModelTest {
+    @Test fun exactUnavailableUploadFallbackDoesNotAdvanceV2ResumeCursor() = kotlinx.coroutines.runBlocking {
+        val entries = (0 until 201).map { index -> com.jkdc.app.core.ProgressSyncEntry(
+            kind = "lesson", itemID = "item-%03d".format(index), atMilliseconds = 1_792_929_600_000,
+            attempts = 1, bestScore = 0, language = "en", firstAtMilliseconds = 1_792_929_599_000)
+        }
+        var v2Requests = 0
+        var legacyRequests = 0
+        val acknowledgements = mutableListOf<Pair<String?, Long>>()
+
+        val succeeded = uploadProgressBatches(
+            entries = entries,
+            initialCursor = null,
+            passGeneration = 4,
+            isCurrent = { true },
+            sendV2 = { v2Requests++; com.jkdc.app.network.ProgressSendResult.VersionUnavailable },
+            sendLegacy = { batch ->
+                legacyRequests++
+                com.jkdc.app.network.ProgressSendResult.Acknowledged(batch.size)
+            },
+            persistAcknowledgement = { cursor, generation ->
+                acknowledgements += cursor to generation
+                true
+            },
+        )
+
+        assertTrue(succeeded)
+        assertEquals(1, v2Requests)
+        assertEquals(2, legacyRequests)
+        assertTrue(acknowledgements.isEmpty())
+    }
+
     @Test fun importedUnfinishedHistoryCannotLookLikeALocalInterruptedSession() {
         val partial = SessionRecord(languageID = "es", startedAt = 800_000_000.0).apply {
             append(Fragment(speaker = Speaker.user, text = "la radio", startMS = 0, endMS = 1_000))

@@ -232,22 +232,26 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 7: Wire Android time-safe complete transport
 
-**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5,T6. **Status:** pending.
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5,T6. **Status:** Android implementation and focused review corrections complete; final work-unit review/commit pending. Android focused RED observed for the missing v2 GET version selector. Keep unrelated pre-existing user modifications in `AppViewModel.kt` untouched.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/network/ProgressClient.kt`
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt`
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressEngine.kt`
+- Modify: `apps/android/app/src/main/java/com/jkdc/app/core/ProgressSyncOperation.kt` (extend the existing owner/generation-fenced runner for bounded page and upload-ack continuations)
 - Modify: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressEngineTest.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/core/ProgressSyncOperationTest.kt`
 - Create: `apps/android/app/src/test/java/com/jkdc/app/network/ProgressClientTest.kt`
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/data/LearningDbTest.kt` (1001-row restart and malformed later-page persistence coverage)
+- Modify: `apps/android/app/src/test/java/com/jkdc/app/data/JvmSqlDatabase.kt` (preserve 64-bit SQLite INTEGER values in the JVM test adapter)
 
 **Interfaces:** Consumes the same T2/T3/T5 interfaces as iOS. Replaces current Boolean/null transport conflation with typed outcomes and converts wire timestamps only in the transport adapter.
 
 - [ ] **Step 1 — RED:** `all201UploadsAnd1001DownloadsSurviveRestart`, `downloadPersistUploadKeepsBothInstants`, `onlyExactUnavailableResponseDowngrades`, `malformedPageLeavesCursorUnchanged` and stale-generation variants assert final persisted identity sets, emitted payloads, cursor and event counts.
 - [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.network.ProgressClientTest' --tests 'com.jkdc.app.core.ProgressEngineTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Wire ProgressClient.kt as well as AppViewModel/engine. Use exact version negotiation, bounded deterministic suffix traversal, ack validation and T5 rollup write path, including corrected v1 compatibility. No app-facing v2 activation before T8.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S3,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [x] **Step 3 — Implement:** Wire ProgressClient.kt as well as AppViewModel/engine. Use exact version negotiation, bounded deterministic suffix traversal, ack validation and T5 rollup write path, including corrected v1 compatibility. No app-facing v2 activation before T8.
+- [x] **Step 4 — GREEN:** Focused T7 regressions and full Android unit/core suites passed: 786 app tests + 11 engine-local tests, 0 failures/errors/skips. Exact command: `./gradlew --offline --no-parallel --max-workers=1 :app:testDebugUnitTest :core:engine-local:testDebugUnitTest`.
+- [x] **Step 5 — Review:** Fresh scoped review confirmed both Important transport findings fixed and found no blockers in the new database-backed regressions/JVM adapter update. Independent scratch verification passed all four targeted timestamp, fallback-cursor, 1001-row restart, and malformed-later-page tests.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
 
 ### Task 8: Integrate effective progress reads and upload feedback

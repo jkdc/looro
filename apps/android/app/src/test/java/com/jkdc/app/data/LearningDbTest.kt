@@ -16,6 +16,11 @@ import com.jkdc.app.core.LessonState
 import com.jkdc.app.core.ProgressAggregate
 import com.jkdc.app.core.ProgressProjection
 import com.jkdc.app.network.ExamAttemptOutboxSync
+import com.jkdc.app.network.ProgressClient
+import com.jkdc.app.network.ProgressFetchResult
+import okhttp3.OkHttpClient
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.buildJsonArray
@@ -147,6 +152,96 @@ class LearningDbTest {
             target.close()
         } finally { file.delete() }
     }
+
+    @Test fun remoteProgressBootstrapResumesAfterRestartAndKeepsAll1001Identities() = runBlocking {
+        val file = File.createTempFile("progress-bootstrap-resume", ".db")
+        val server = MockWebServer().apply { start() }
+        var target: SqlDatabase? = null
+        try {
+            val client = ProgressClient(server.url("/"), OkHttpClient())
+            val session = AccountSession("12345678-1234-1234-1234-123456789012", "a".repeat(43), 100_000)
+            server.enqueue(MockResponse().setBody(progressPageJson(0, 1000, "cursor-1000", complete = false)))
+            server.enqueue(MockResponse().setBody(progressPageJson(1000, 1, null, complete = true)))
+
+            val initial = client.fetchBootstrap(session, null) { true } as ProgressFetchResult.Success
+            val pages = kotlinx.serialization.json.Json.parseToJsonElement(initial.body).jsonObject["pages"]!!.jsonArray
+            assertEquals(2, pages.size)
+            val firstPage = pages.first().jsonObject
+            target = openFileBacked(file)
+            LearningDbWriter.remoteProgressPageApplied(
+                target, session.accountID, decodeRemoteProgress(firstPage, session.accountID),
+                firstPage["nextCursor"]!!.jsonPrimitive.content, 1, 3_000,
+            )
+            assertEquals(1000, RemoteProgressRollupsDao.all(target, session.accountID).size)
+
+            target.close()
+            target = openFileBacked(file)
+            val savedCursor = ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor
+            assertEquals("cursor-1000", savedCursor)
+            server.enqueue(MockResponse().setBody(progressPageJson(1000, 1, null, complete = true)))
+            val resumed = client.fetchBootstrap(session, savedCursor) { true } as ProgressFetchResult.Success
+            val resumedPages = kotlinx.serialization.json.Json.parseToJsonElement(resumed.body).jsonObject["pages"]!!.jsonArray
+            assertEquals(1, resumedPages.size)
+            val finalPage = resumedPages.single().jsonObject
+            LearningDbWriter.remoteProgressPageApplied(
+                target, session.accountID, decodeRemoteProgress(finalPage, session.accountID), null, 2, 4_000,
+            )
+
+            val identities = RemoteProgressRollupsDao.all(target, session.accountID).map { it.itemID }.toSet()
+            assertEquals(1001, identities.size)
+            assertEquals((0..1000).map(::progressItemID).toSet(), identities)
+            assertEquals(null, ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor)
+        } finally {
+            target?.close()
+            server.shutdown()
+            file.delete()
+        }
+    }
+
+    @Test fun malformedLaterProgressPageLeavesPersistedRowsAndCursorUnchanged() = runBlocking {
+        val file = File.createTempFile("progress-bootstrap-malformed", ".db")
+        val server = MockWebServer().apply { start() }
+        var target: SqlDatabase? = null
+        try {
+            val client = ProgressClient(server.url("/"), OkHttpClient())
+            val session = AccountSession("12345678-1234-1234-1234-123456789012", "a".repeat(43), 100_000)
+            target = openFileBacked(file)
+            val existing = RemoteProgressRollup(session.accountID, "en", "lesson", "existing", 1_792_929_599_000, 1_792_929_600_000, 1, 80, 1)
+            LearningDbWriter.remoteProgressPageApplied(target, session.accountID, listOf(existing), "saved-cursor", 3, 3_000)
+            server.enqueue(MockResponse().setBody(progressPageJson(0, 1000, "cursor-1000", complete = false)))
+            server.enqueue(MockResponse().setBody("""{"version":2,"progress":[{"kind":"lesson","itemID":"broken","language":"en","firstAt":1792929600000,"lastAt":1792929599000,"attempts":1,"bestScore":0}],"nextCursor":null,"complete":true}"""))
+
+            val result = client.fetchBootstrap(session, null) { true }
+            assertTrue(result is ProgressFetchResult.Failure)
+            assertEquals(listOf(existing), RemoteProgressRollupsDao.all(target, session.accountID))
+            assertEquals("saved-cursor", ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor)
+        } finally {
+            target?.close()
+            server.shutdown()
+            file.delete()
+        }
+    }
+
+    private fun progressPageJson(start: Int, count: Int, nextCursor: String?, complete: Boolean): String {
+        val rows = (start until start + count).joinToString(",") { index ->
+            """{"kind":"lesson","itemID":"${progressItemID(index)}","language":"en","firstAt":1792929599000,"lastAt":1792929600000,"attempts":1,"bestScore":80}"""
+        }
+        val cursor = nextCursor?.let { "\"$it\"" } ?: "null"
+        return """{"version":2,"progress":[$rows],"nextCursor":$cursor,"complete":$complete}"""
+    }
+
+    private fun progressItemID(index: Int) = "item-%04d".format(index)
+
+    private fun decodeRemoteProgress(page: kotlinx.serialization.json.JsonObject, owner: String): List<RemoteProgressRollup> =
+        page["progress"]!!.jsonArray.map { element ->
+            val row = element.jsonObject
+            RemoteProgressRollup(
+                owner, row["language"]!!.jsonPrimitive.content, row["kind"]!!.jsonPrimitive.content,
+                row["itemID"]!!.jsonPrimitive.content, row["firstAt"]!!.jsonPrimitive.content.toLong(),
+                row["lastAt"]!!.jsonPrimitive.content.toLong(), row["attempts"]!!.jsonPrimitive.content.toInt(),
+                row["bestScore"]!!.jsonPrimitive.content.toInt(), 1,
+            )
+        }
 
     @Test fun uncertainAckReplaysWithoutStarvation() {
         val row = RemoteProgressRollup("owner-a", "es", "exercise", "item-a", 100, 200, 2, 40, 2)

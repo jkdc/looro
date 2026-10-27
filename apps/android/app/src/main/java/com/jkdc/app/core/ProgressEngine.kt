@@ -88,7 +88,7 @@ object ProgressEngine {
     monotonically server-side, so cumulative counters are safe to resend. */
 data class ProgressSyncEntry(
     val kind: String, val itemID: String, val atMilliseconds: Long, val attempts: Int, val bestScore: Int,
-    val language: String,
+    val language: String, val firstAtMilliseconds: Long = atMilliseconds,
 )
 
 data class RemoteProgress(
@@ -99,9 +99,9 @@ data class RemoteProgress(
 object ProgressSync {
     const val MAXIMUM_ENTRIES = 200
 
-    /** Cumulative rollups for one language, from that language's marks + lesson
-        counters, newest first, wire-capped. Lesson counters outrank the (capped)
-        mark ledger so attempts never regress. */
+    /** Cumulative rollups for one language from that language's marks and lesson
+        counters. Transport code applies the per-request batch bound. Lesson
+        counters outrank the mark ledger so attempts never regress. */
     fun entries(lessons: List<LessonState>, completions: List<CompletionMark>, courses: List<Course>,
                 listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = emptySet()): List<ProgressSyncEntry> {
         val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
@@ -112,8 +112,9 @@ object ProgressSync {
         val rollups = rollupsOf(languageLessons, completions.filter { scoped(it) })
         return rollups.map { (key, value) ->
             ProgressSyncEntry(key.substringBefore('|'), key.substringAfter('|'),
-                ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore, languageID)
-        }.sortedByDescending { it.atMilliseconds }.take(MAXIMUM_ENTRIES)
+                ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore, languageID,
+                ((value.firstAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong())
+        }.sortedWith(compareBy<ProgressSyncEntry> { it.kind }.thenBy { it.itemID }.thenBy { it.language })
     }
 
     private data class Rollup(var attempts: Int, var firstAt: Double, var lastAt: Double, var bestScore: Int)
