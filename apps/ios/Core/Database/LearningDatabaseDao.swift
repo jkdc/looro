@@ -873,44 +873,96 @@ public struct ProgressRecoveryRecord: Equatable, Sendable {
 }
 
 public enum ProgressRecoveryDao {
-    private static let supportedEvidence = [
-        "ios.recordCompletion": 2,
-        "ios.recordLessonAttempt": 3,
+    private struct EvidenceRule: Equatable {
+        let source: String
+        let version: Int
+        let unit: String
+    }
+
+    private static let completionEvidence: [EvidenceRule] = [
+        EvidenceRule(source: "ios.recordCompletion", version: 2, unit: "apple_reference_seconds"),
+        EvidenceRule(source: "ios.recordLessonAttempt", version: 3, unit: "apple_reference_seconds"),
+        EvidenceRule(source: "android.recordCompletion", version: 2, unit: "apple_reference_seconds"),
+        EvidenceRule(source: "android.recordLessonAttempt", version: 2, unit: "apple_reference_seconds"),
+    ]
+    private static let lessonEvidence = completionEvidence + [
+        // Only a row already carrying this exact evidence is eligible. The v5 upgrade never labels old rows.
+        EvidenceRule(source: "ios.recordLessonAttempt", version: 1, unit: "unix_seconds")
     ]
 
     /// Classifies persisted timestamps before readers materialize progress; unknown values are never repaired.
     public static func recover(_ db: SqlDatabase, nowUnixMilliseconds: Int64) throws {
         try db.transaction { tx in
-            let completions = try tx.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit " +
+            let completions = try tx.query("SELECT rowid AS recovery_rowid, kind, item_id, at, at_source, at_source_version, at_unit " +
                                            "FROM completions WHERE \(ownerClause(tx)) ORDER BY rowid",
                                            args: ownerArguments(tx))
             for row in completions {
                 let at = row.real("at")
-                try classify(tx, table: "completions", key: completionKey(row.text("kind"), row.text("item_id"), at),
-                    value: at, source: row.textOrNull("at_source"), version: row.intOrNull("at_source_version"),
-                    unit: row.textOrNull("at_unit"), expectedUnit: "apple_reference_seconds",
-                    nowUnixMilliseconds: nowUnixMilliseconds, supportedSources: Set(supportedEvidence.keys))
+                let rowID = row.long("recovery_rowid")
+                try classify(tx, table: "completions", key: String(rowID), rowID: rowID, value: at,
+                    source: row.textOrNull("at_source"), version: row.intOrNull("at_source_version"),
+                    unit: row.textOrNull("at_unit"), nowUnixMilliseconds: nowUnixMilliseconds,
+                    evidenceRules: completionEvidence)
             }
-            let lessons = try tx.query("SELECT lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+            let lessons = try tx.query("SELECT rowid AS recovery_rowid, lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
                                        "FROM lesson_state WHERE \(ownerClause(tx)) ORDER BY rowid",
                                        args: ownerArguments(tx))
             for row in lessons {
-                try classify(tx, table: "lesson_state", key: row.text("lesson_id"), value: row.real("last_seen"),
+                try classify(tx, table: "lesson_state", key: row.text("lesson_id"), rowID: row.long("recovery_rowid"),
+                    value: row.real("last_seen"),
                     source: row.textOrNull("last_seen_source"), version: row.intOrNull("last_seen_source_version"),
-                    unit: row.textOrNull("last_seen_unit"), expectedUnit: "apple_reference_seconds",
-                    nowUnixMilliseconds: nowUnixMilliseconds, supportedSources: ["ios.recordLessonAttempt"])
+                    unit: row.textOrNull("last_seen_unit"), nowUnixMilliseconds: nowUnixMilliseconds,
+                    evidenceRules: lessonEvidence)
             }
         }
     }
 
-    private static func classify(_ db: SqlDatabase, table: String, key: String, value: Double,
-                                 source: String?, version: Int?, unit: String?, expectedUnit: String,
-                                 nowUnixMilliseconds: Int64, supportedSources: Set<String>) throws {
+    private static func classify(_ db: SqlDatabase, table: String, key: String, rowID: Int64, value: Double,
+                                 source: String?, version: Int?, unit: String?,
+                                 nowUnixMilliseconds: Int64, evidenceRules: [EvidenceRule]) throws {
+        let sourceVersion = version ?? 0
+        let ownerKey = try activeOwnerKey(db) ?? ""
+        let previous = try db.query("SELECT state FROM progress_recovery WHERE owner_key = ? AND source_table = ? " +
+            "AND source_key = ? AND source_version = ?",
+            args: [ownerKey, table, key, sourceVersion]).first
+        if previous?.text("state") == "repaired" { return }
+
+        let rule: EvidenceRule?
+        if let source, let version, let unit {
+            rule = evidenceRules.first { $0.source == source && $0.version == version && $0.unit == unit }
+        } else {
+            rule = nil
+        }
+        if rule?.unit == "unix_seconds" {
+            let unixMilliseconds = value * 1000
+            let roundedMilliseconds = unixMilliseconds.isFinite ?
+                unixMilliseconds.rounded(.toNearestOrAwayFromZero) : .nan
+            if let appleReferenceSeconds = ProgressTime.fromUnixMilliseconds(
+                roundedMilliseconds, nowUnixMilliseconds: Double(nowUnixMilliseconds)) {
+                let column: String
+                switch table {
+                case "lesson_state": column = "last_seen"
+                case "completions": column = "at"
+                default: throw SqlDatabaseError.unsupportedValue("unsupported progress recovery table")
+                }
+                _ = try db.update("UPDATE \(table) SET \(column) = ? WHERE rowid = ? AND \(ownerClause(db))",
+                    args: [appleReferenceSeconds, rowID] + ownerArguments(db))
+                let persisted = try db.query("SELECT \(column) AS recovered_value FROM \(table) WHERE rowid = ? AND \(ownerClause(db))",
+                    args: [rowID] + ownerArguments(db)).first?.real("recovered_value")
+                guard persisted == appleReferenceSeconds else {
+                    throw SqlDatabaseError.unsupportedValue("progress recovery source row changed during transaction")
+                }
+                try record(db, ProgressRecoveryRecord(ownerAccountID: nil, sourceTable: table, sourceKey: key,
+                    sourceVersion: sourceVersion, state: "repaired", reason: nil,
+                    updatedAtMilliseconds: nowUnixMilliseconds))
+                return
+            }
+        }
+
         let valid = ProgressTime.toUnixMilliseconds(value, nowUnixMilliseconds: Double(nowUnixMilliseconds)) != nil
         let noEvidence = source == nil && version == nil && unit == nil
         if noEvidence && valid { return }
-        let recognized = source != nil && version != nil && unit == expectedUnit &&
-            source.map { supportedEvidence[$0] == version && supportedSources.contains($0) } == true
+        let recognized = rule != nil
         let state = !valid ? "excluded" : recognized ? "validated" : "unresolved"
         let reason: String?
         if !valid && noEvidence {
@@ -923,12 +975,8 @@ public enum ProgressRecoveryDao {
             reason = nil
         }
         try record(db, ProgressRecoveryRecord(ownerAccountID: nil, sourceTable: table, sourceKey: key,
-            sourceVersion: version ?? 0, state: state, reason: reason,
+            sourceVersion: sourceVersion, state: state, reason: reason,
             updatedAtMilliseconds: nowUnixMilliseconds))
-    }
-
-    private static func completionKey(_ kind: String, _ itemID: String, _ at: Double) -> String {
-        return "\(kind.utf8.count):\(kind)\(itemID.utf8.count):\(itemID):\(at.bitPattern)"
     }
 
     public static func record(_ db: SqlDatabase, _ record: ProgressRecoveryRecord) throws {

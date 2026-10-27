@@ -791,40 +791,78 @@ data class ProgressRecoveryRecord(
 )
 
 object ProgressRecoveryDao {
-    private val supportedEvidence = mapOf(
-        "android.recordCompletion" to 2,
-        "android.recordLessonAttempt" to 2,
+    private data class EvidenceRule(val source: String, val version: Int, val unit: String)
+
+    private val completionEvidence = setOf(
+        EvidenceRule("android.recordCompletion", 2, "apple_reference_seconds"),
+        EvidenceRule("android.recordLessonAttempt", 2, "apple_reference_seconds"),
+        EvidenceRule("ios.recordCompletion", 2, "apple_reference_seconds"),
+        EvidenceRule("ios.recordLessonAttempt", 3, "apple_reference_seconds"),
+    )
+    private val lessonEvidence = setOf(
+        EvidenceRule("android.recordLessonAttempt", 2, "apple_reference_seconds"),
+        // This rule is honored only when a row already contains the full tuple; upgrades never infer it.
+        EvidenceRule("ios.recordLessonAttempt", 1, "unix_seconds"),
+        EvidenceRule("ios.recordLessonAttempt", 3, "apple_reference_seconds"),
     )
 
     /** Classifies timestamps before readers materialize progress; unknown encodings are never repaired. */
     fun recover(db: SqlDatabase, nowUnixMilliseconds: Long) {
         db.transaction { tx ->
-            tx.query("SELECT kind, item_id, at, at_source, at_source_version, at_unit FROM completions " +
+            tx.query("SELECT rowid AS recovery_rowid, kind, item_id, at, at_source, at_source_version, at_unit FROM completions " +
                 "WHERE ${ownerClause(tx)} ORDER BY rowid", ownerArguments(tx))
                 .forEach { row ->
                     val at = row.real("at")
-                    classify(tx, "completions", completionKey(row.text("kind"), row.text("item_id"), at), at,
+                    classify(tx, "completions", row.long("recovery_rowid").toString(), row.long("recovery_rowid"), at,
                         row.textOrNull("at_source"), row.intOrNull("at_source_version"), row.textOrNull("at_unit"),
-                        "apple_reference_seconds", nowUnixMilliseconds, supportedEvidence.keys)
+                        nowUnixMilliseconds, completionEvidence)
                 }
-            tx.query("SELECT lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+            tx.query("SELECT rowid AS recovery_rowid, lesson_id, last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
                 "FROM lesson_state WHERE ${ownerClause(tx)} ORDER BY rowid", ownerArguments(tx)).forEach { row ->
-                classify(tx, "lesson_state", row.text("lesson_id"), row.real("last_seen"),
+                classify(tx, "lesson_state", row.text("lesson_id"), row.long("recovery_rowid"), row.real("last_seen"),
                     row.textOrNull("last_seen_source"), row.intOrNull("last_seen_source_version"),
-                    row.textOrNull("last_seen_unit"), "apple_reference_seconds", nowUnixMilliseconds,
-                    setOf("android.recordLessonAttempt"))
+                    row.textOrNull("last_seen_unit"), nowUnixMilliseconds, lessonEvidence)
             }
         }
     }
 
-    private fun classify(db: SqlDatabase, table: String, key: String, value: Double,
-                         source: String?, version: Int?, unit: String?, expectedUnit: String,
-                         nowUnixMilliseconds: Long, supportedSources: Set<String>) {
+    private fun classify(db: SqlDatabase, table: String, key: String, rowID: Long, value: Double,
+                         source: String?, version: Int?, unit: String?, nowUnixMilliseconds: Long,
+                         evidenceRules: Set<EvidenceRule>) {
+        val sourceVersion = version ?: 0
+        val ownerKey = activeOwnerKey(db) ?: ""
+        val previous = db.query("SELECT state FROM progress_recovery WHERE owner_key = ? AND source_table = ? " +
+            "AND source_key = ? AND source_version = ?", listOf(ownerKey, table, key, sourceVersion)).firstOrNull()
+        if (previous?.text("state") == "repaired") return
+
+        val rule = evidenceRules.firstOrNull {
+            it.source == source && it.version == version && it.unit == unit
+        }
+        if (rule?.unit == "unix_seconds") {
+            val unixMilliseconds = value * 1000.0
+            val roundedMilliseconds = if (unixMilliseconds.isFinite()) unixMilliseconds.roundToLong().toDouble() else Double.NaN
+            val appleReferenceSeconds = ProgressTime.fromUnixMilliseconds(roundedMilliseconds, nowUnixMilliseconds.toDouble())
+            if (appleReferenceSeconds != null) {
+                val column = when (table) {
+                    "lesson_state" -> "last_seen"
+                    "completions" -> "at"
+                    else -> error("unsupported recovery table: $table")
+                }
+                db.update("UPDATE $table SET $column = ? WHERE rowid = ? AND ${ownerClause(db)}",
+                    listOf(appleReferenceSeconds, rowID) + ownerArguments(db))
+                val persisted = db.query("SELECT $column AS recovered_value FROM $table WHERE rowid = ? AND ${ownerClause(db)}",
+                    listOf(rowID) + ownerArguments(db)).firstOrNull()?.real("recovered_value")
+                check(persisted == appleReferenceSeconds) { "progress recovery source row changed during transaction" }
+                record(db, ProgressRecoveryRecord(null, table, key, sourceVersion, "repaired", null,
+                    nowUnixMilliseconds))
+                return
+            }
+        }
+
         val valid = ProgressTime.toUnixMilliseconds(value, nowUnixMilliseconds.toDouble()) != null
         val noEvidence = source == null && version == null && unit == null
         if (noEvidence && valid) return
-        val recognized = source != null && version != null && unit == expectedUnit &&
-            supportedEvidence[source] == version && source in supportedSources
+        val recognized = rule != null
         val state = if (!valid) "excluded" else if (recognized) "validated" else "unresolved"
         val reason = when {
             !valid && noEvidence -> "invalid timestamp; provenance unavailable"
@@ -832,11 +870,8 @@ object ProgressRecoveryDao {
             !recognized -> "persisted writer/version/unit tuple is unsupported"
             else -> null
         }
-        record(db, ProgressRecoveryRecord(null, table, key, version ?: 0, state, reason, nowUnixMilliseconds))
+        record(db, ProgressRecoveryRecord(null, table, key, sourceVersion, state, reason, nowUnixMilliseconds))
     }
-
-    private fun completionKey(kind: String, itemID: String, at: Double): String =
-        "${kind.length}:$kind${itemID.length}:$itemID:${at.toBits()}"
 
     fun record(db: SqlDatabase, record: ProgressRecoveryRecord) {
         require(record.sourceTable.isNotEmpty() && record.sourceKey.isNotEmpty() && record.sourceVersion >= 0)

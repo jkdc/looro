@@ -289,6 +289,38 @@ final class LearningDatabaseTests: XCTestCase {
         reopened.close()
     }
 
+    func testRecoveryRepairsExplicitUnixLessonEvidenceExactlyOnce() throws {
+        let nowMilliseconds: Int64 = 1_800_000_000_000
+        let unixSeconds = 1_750_000_000.125
+        let expectedAppleSeconds = 771_692_800.125
+        try LearnerOwnershipDao.activate(db, identity: "member:owner-a")
+        try LessonStateDao.upsert(db, LessonState(lessonID: "untagged-legacy", attempts: 1,
+            lastSeen: unixSeconds))
+        try LessonStateDao.upsert(db, LessonState(lessonID: "evidenced-legacy", attempts: 1,
+            lastSeen: unixSeconds), evidence: TimestampEvidence(source: "ios.recordLessonAttempt",
+                sourceVersion: 1, unit: "unix_seconds"))
+        try LessonStateDao.upsert(db, LessonState(lessonID: "valid-current", attempts: 1,
+            lastSeen: expectedAppleSeconds))
+
+        try runRecovery(db, nowMilliseconds)
+        try runRecovery(db, nowMilliseconds + 1)
+
+        let untagged = try db.query("SELECT last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+            "FROM lesson_state WHERE lesson_id = 'untagged-legacy'").first!
+        XCTAssertEqual(unixSeconds, try untagged.real("last_seen"), accuracy: 0)
+        XCTAssertNil(try untagged.textOrNull("last_seen_source"))
+        let repaired = try db.query("SELECT last_seen, last_seen_source_version, last_seen_unit " +
+            "FROM lesson_state WHERE lesson_id = 'evidenced-legacy'").first!
+        XCTAssertEqual(expectedAppleSeconds, try repaired.real("last_seen"), accuracy: 0.0001)
+        XCTAssertEqual(1, try repaired.int("last_seen_source_version"))
+        XCTAssertEqual("unix_seconds", try repaired.textOrNull("last_seen_unit"))
+        XCTAssertEqual(["evidenced-legacy", "valid-current"],
+            try LessonStateDao.syncEligible(db, nowUnixMilliseconds: nowMilliseconds).map(\.lessonID).sorted())
+        XCTAssertEqual(Int64(1), try db.query("SELECT COUNT(*) AS n FROM progress_recovery WHERE " +
+            "source_table = 'lesson_state' AND source_key = 'evidenced-legacy' AND state = 'repaired'")
+            .first!.long("n"))
+    }
+
     func testAmbiguousTimestampIsRetainedAndValidRowsStillSync() throws {
         _ = try db.insert("completions", ["kind": "exercise", "item_id": "ambiguous", "at": 123.0,
                                            "best_score": 40, "language_id": "es"])
@@ -393,10 +425,16 @@ final class LearningDatabaseTests: XCTestCase {
                                             bestScore: 2, languageID: "es")
         _ = try CompletionsDao.add(target, invalidLegacy)
         try LearningDbWriter.completions(target, [invalidLegacy, invalidCurrent, good])
+        let unixSeconds = 1_750_000_000.125
+        try LessonStateDao.upsert(target, LessonState(lessonID: "evidenced-legacy", attempts: 1,
+            lastSeen: unixSeconds), evidence: TimestampEvidence(source: "ios.recordLessonAttempt",
+                sourceVersion: 1, unit: "unix_seconds"))
         try target.exec("CREATE TRIGGER abort_recovery BEFORE INSERT ON progress_recovery " +
-            "WHEN NEW.source_version = 2 BEGIN SELECT RAISE(ABORT, 'injected recovery failure'); END")
+            "WHEN NEW.source_version = 1 BEGIN SELECT RAISE(ABORT, 'injected recovery failure'); END")
         XCTAssertThrowsError(try LearningDbWriter.progressRecoveryRun(target, nowUnixMilliseconds: now))
         XCTAssertEqual(Int64(0), try target.query("SELECT COUNT(*) AS n FROM progress_recovery").first!.long("n"))
+        XCTAssertEqual(unixSeconds, try target.query(
+            "SELECT last_seen FROM lesson_state WHERE lesson_id = 'evidenced-legacy'").first!.real("last_seen"), accuracy: 0)
         target.close()
 
         target = try LearningDatabase.open(at: path)
@@ -404,6 +442,10 @@ final class LearningDatabaseTests: XCTestCase {
             .first!.real("at"), accuracy: 0)
         try target.exec("DROP TRIGGER abort_recovery")
         try LearningDbWriter.progressRecoveryRun(target, nowUnixMilliseconds: now)
+        XCTAssertEqual(771_692_800.125, try target.query(
+            "SELECT last_seen FROM lesson_state WHERE lesson_id = 'evidenced-legacy'").first!.real("last_seen"), accuracy: 0.0001)
+        XCTAssertEqual("repaired", try target.query("SELECT state FROM progress_recovery WHERE " +
+            "source_table = 'lesson_state' AND source_key = 'evidenced-legacy'").first!.text("state"))
         let first = try target.query("SELECT source_version, state FROM progress_recovery ORDER BY source_version")
             .map { "\($0.long("source_version")):\($0.text("state"))" }
         try LearningDbWriter.progressRecoveryRun(target, nowUnixMilliseconds: now + 1)

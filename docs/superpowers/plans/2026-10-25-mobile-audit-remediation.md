@@ -149,7 +149,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 5: Add durable rollups, recovery and atomic continuation
 
-**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** reopened after approved S2 scope revision; implementation in progress.
+**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** source and tests implemented; Android targeted checks and independent high-risk recheck passed; Swift runtime verification is deferred to T16; commit pending.
 
 **Files:**
 - Modify: `shared/db/schema.sql`
@@ -181,9 +181,11 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): persist atomic rollup sync state`; record commit and evidence in OpenSpec tasks/verification report.
 
+**T5 recovery result:** Recovery recognizes only complete persisted writer/version/unit tuples, converts the explicitly tagged `ios.recordLessonAttempt` v1 Unix-seconds lesson timestamp to Apple-reference seconds, then reads back the exact owner-scoped row inside the transaction before persisting its repaired marker. Untagged pre-v6 rows are never tagged or changed. The tuple-bearing test fixture is synthetic and does not assert that existing v5 data contains provenance. Android focused tests and an independent fresh-scratch recheck passed; Swift execution remains deferred to T16. Risk: item 1 (persisted timestamp repair).
+
 **Review finding and approved scope revision (2026-10-26):** The fresh reviewer found persisted recovery is not implemented by marker writes alone. Historical Android and iOS remote merges stored downloaded aggregates as ordinary `CompletionMark` rows, and the v5 schema persists only `(kind,item_id,at,best_score,language_id)` with no per-record source/unit evidence. The local completion writer uses `nowSeconds()`. The user approved revising S2/T5: pre-v6 rows without evidence remain byte-for-byte unchanged; new eligible writes persist explicit source/version and unit evidence; recovery repairs only supported evidence-bearing records and never infers provenance. T5 is reopened; the partial candidate remains uncommitted pending the correction and review.
 
-**Verification note:** The initial T5 implementation observed RED only for the v5-to-v6 exporter/schema expectations; the six storage/projection tests were added during implementation, so per-behavior RED was not demonstrated. Python schema checks (36), Android app unit tests (743) and engine-local tests (11) passed; SwiftPM was unavailable (`swift` not installed). These checks do not clear the recovery blocker.
+**Verification note:** Original rollup/schema checks are recorded above. For the resumed recovery behavior, Android's exact recovery tests passed after a RED run; an independent verifier reproduced and closed the production adapter UPDATE-count mismatch, then passed the focused regression and rollback probe. The full Android suite passed before that final narrow adapter correction; it was not rerun afterward. SwiftPM/Xcode were not run per the user-requested T16 deferral.
 
 ### Task 17: Enforce active-account ownership across local learner data
 

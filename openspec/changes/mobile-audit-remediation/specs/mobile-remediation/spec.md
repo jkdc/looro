@@ -38,6 +38,12 @@ Wire timestamps MUST be safe-integer Unix milliseconds; both native progress dom
 - **WHEN** recovery runs twice or fails before commit
 - **THEN** only the evidence-backed value is repaired; the pre-v6 record remains byte-for-byte unchanged, valid sync continues, and replay/rollback produces no extra changes.
 
+#### Scenario: Explicit legacy lesson-writer evidence is required
+
+- **GIVEN** a `lesson_state.last_seen` row already persisted with the exact tuple `ios.recordLessonAttempt`, version `1`, unit `unix_seconds`, alongside an otherwise identical pre-v6 row with no provenance
+- **WHEN** recovery runs
+- **THEN** only the row carrying that complete tuple is converted; migrations never add that tuple to historical rows, and a repaired marker prevents a second conversion.
+
 ### Requirement: S3 — Account and generation fencing (M03)
 
 Sync MUST own one operation per coordinator and bind it to account, credential and data generation. It MUST compare live identity after suspension and under the same write authority as a transaction or upload snapshot. Account change/import MUST invalidate stale work, including cursor/ack writes. Cancellation MUST NOT become an ordinary retryable error.

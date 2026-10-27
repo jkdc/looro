@@ -12,6 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import com.jkdc.app.core.AccountSession
 import com.jkdc.app.core.LocalLearnerIdentity
+import com.jkdc.app.core.LessonState
 import com.jkdc.app.core.ProgressAggregate
 import com.jkdc.app.core.ProgressProjection
 import com.jkdc.app.network.ExamAttemptOutboxSync
@@ -202,6 +203,36 @@ class LearningDbTest {
         } finally { old.close(); file.delete() }
     }
 
+    @Test fun recoveryRepairsExplicitUnixLessonEvidenceExactlyOnce() {
+        val nowMilliseconds = 1_800_000_000_000L
+        val unixSeconds = 1_750_000_000.125
+        val expectedAppleSeconds = 771_692_800.125
+        LearnerOwnershipDao.activate(db, "member:owner-a")
+        LessonStateDao.upsert(db, LessonState("untagged-legacy", attempts = 1, lastSeen = unixSeconds))
+        LessonStateDao.upsert(db, LessonState("evidenced-legacy", attempts = 1, lastSeen = unixSeconds),
+            TimestampEvidence("ios.recordLessonAttempt", 1, "unix_seconds"))
+        LessonStateDao.upsert(db, LessonState("valid-current", attempts = 1, lastSeen = expectedAppleSeconds))
+
+        val androidContract = NoUpdateCountDatabase(db)
+        runRecovery(androidContract, nowMilliseconds)
+        runRecovery(androidContract, nowMilliseconds + 1)
+
+        val untagged = db.query("SELECT last_seen, last_seen_source, last_seen_source_version, last_seen_unit " +
+            "FROM lesson_state WHERE lesson_id = 'untagged-legacy'").single()
+        assertEquals(unixSeconds, untagged.real("last_seen"), 0.0)
+        assertEquals(null, untagged.textOrNull("last_seen_source"))
+        val repaired = db.query("SELECT last_seen, last_seen_source_version, last_seen_unit " +
+            "FROM lesson_state WHERE lesson_id = 'evidenced-legacy'").single()
+        assertEquals(expectedAppleSeconds, repaired.real("last_seen"), 0.0001)
+        assertEquals(1, repaired.int("last_seen_source_version"))
+        assertEquals("unix_seconds", repaired.textOrNull("last_seen_unit"))
+        assertEquals(listOf("evidenced-legacy", "valid-current"),
+            LessonStateDao.syncEligible(db, nowMilliseconds).map { it.lessonID }.sorted())
+        assertEquals(1L, db.query("SELECT COUNT(*) AS n FROM progress_recovery WHERE " +
+            "source_table = 'lesson_state' AND source_key = 'evidenced-legacy' AND state = 'repaired'")
+            .single().long("n"))
+    }
+
     @Test fun ambiguousTimestampIsRetainedAndValidRowsStillSync() {
         val ambiguous = com.jkdc.app.core.CompletionMark("exercise", "ambiguous", 123.0, 40, "es")
         CompletionsDao.add(db, ambiguous)
@@ -284,10 +315,16 @@ class LearningDbTest {
             val invalidCurrent = com.jkdc.app.core.CompletionMark("exercise", "invalid-current", 1_700_000_000.0, 2, "es")
             CompletionsDao.add(target, invalidLegacy)
             LearningDbWriter.completions(target, listOf(invalidLegacy, invalidCurrent, good))
+            val unixSeconds = 1_750_000_000.125
+            LessonStateDao.upsert(target,
+                LessonState("evidenced-legacy", attempts = 1, lastSeen = unixSeconds),
+                TimestampEvidence("ios.recordLessonAttempt", 1, "unix_seconds"))
             target.exec("CREATE TRIGGER abort_recovery BEFORE INSERT ON progress_recovery " +
-                "WHEN NEW.source_version = 2 BEGIN SELECT RAISE(ABORT, 'injected recovery failure'); END")
+                "WHEN NEW.source_version = 1 BEGIN SELECT RAISE(ABORT, 'injected recovery failure'); END")
             assertThrows(Exception::class.java) { runRecovery(target, now) }
             assertEquals(0L, target.query("SELECT COUNT(*) AS n FROM progress_recovery").single().long("n"))
+            assertEquals(unixSeconds, target.query("SELECT last_seen FROM lesson_state WHERE lesson_id = 'evidenced-legacy'")
+                .single().real("last_seen"), 0.0)
             target.close()
 
             target = openFileBacked(file)
@@ -295,6 +332,10 @@ class LearningDbTest {
                 .single().real("at"), 0.0)
             target.exec("DROP TRIGGER abort_recovery")
             runRecovery(target, now)
+            assertEquals(771_692_800.125, target.query(
+                "SELECT last_seen FROM lesson_state WHERE lesson_id = 'evidenced-legacy'").single().real("last_seen"), 0.0001)
+            assertEquals("repaired", target.query("SELECT state FROM progress_recovery WHERE " +
+                "source_table = 'lesson_state' AND source_key = 'evidenced-legacy'").single().text("state"))
             val firstRun = target.query("SELECT source_version, state FROM progress_recovery ORDER BY source_version")
                 .map { "${it.long("source_version")}:${it.text("state")}" }
             runRecovery(target, now + 1)
