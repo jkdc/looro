@@ -206,7 +206,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 6: Wire iOS time-safe complete transport
 
-**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5. **Status:** source and regressions authored; independent static/high-risk review passed after one correction; commit pending. All Swift/iOS execution remains deferred to T16, so runtime/platform completion is still pending.
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5. **Status:** source and regressions committed as `c3719a0`; independent static/high-risk review passed after one correction. All Swift/iOS execution remains deferred to T16, so runtime/platform completion is still pending. RED/GREEN was not observed because of the T16 deferral and some App tests were added after implementation.
 
 **Files:**
 - Modify: `apps/ios/App/ProgressClient.swift`
@@ -224,7 +224,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Correct the actual local lesson writer, decode once in HTTP adapter, validate complete/cursor consistency and page progress, traverse bounded passes and persist via T5. Enable the v2 bootstrap/upload transport in T6, but persist received rows only to T5 remote rollups/cursors; do not connect the visible progress projection until T8.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
 - [x] **Step 5 — Review:** Fresh high-risk reviewer checked S2,S3,S4,S5 and found one blocking ProgressEngine property/unit mismatch; the one-line correction was independently re-reviewed as addressed. Static source review only; runtime compile/tests remain deferred to T16.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** `c3719a0` (`fix(ios): wire checked resumable progress transport`); source-level review correction and static re-review are recorded. Swift compile/test evidence remains pending T16.
 
 **T6 ruling:** S4 and the user's established rule require downloading only for a newly authenticated account with no local progress on that device. Therefore T6 wires v2 bootstrap/upload now and stores fetched rows in T5 remote rollups only; T8 remains responsible for exposing the effective projection to app readers. A dormant-only client that leaves production on recurring v1 downloads would contradict S4 and the user's rule.
 
