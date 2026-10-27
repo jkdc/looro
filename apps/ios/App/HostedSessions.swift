@@ -98,6 +98,13 @@ enum HelperPurpose: String {
     private var proxy: HostedProxyEngine?
     init(api: APIClient) { self.api = api }
 
+    /// The token proxy is text-only and discards source links, while hosted
+    /// helpers and the personal API client preserve citations from search.
+    var supportsSourceBackedSearch: Bool {
+        if hostedSessionID != nil, client != nil, session != nil { return true }
+        return proxy == nil
+    }
+
     func useHosted(sessionID: String, client: ManagedAccountClient, session: ManagedAccountSession) {
         self.hostedSessionID = sessionID; self.client = client; self.session = session
     }

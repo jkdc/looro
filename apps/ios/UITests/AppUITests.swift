@@ -67,6 +67,31 @@ final class AppUITests: XCTestCase {
         XCTAssertEqual(app.staticTexts["target-caption"].label, "你好！")
     }
 
+    func testUnsupportedTopicSearchExplainsCapability() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--preview", "--preview-onboarding", "--preview-topic-search-unsupported"]
+        app.launch()
+
+        let language = app.buttons["onboarding-language-en"]
+        XCTAssertTrue(language.waitForExistence(timeout: 10))
+        reveal(language, in: app)
+        language.tap()
+        app.buttons["onboarding-continue"].tap()
+        XCTAssertTrue(app.buttons["onboarding-meaning-picker"].waitForExistence(timeout: 5))
+        app.buttons["onboarding-continue"].tap()
+        XCTAssertTrue(app.staticTexts["target-caption"].waitForExistence(timeout: 5))
+
+        app.tabBars.buttons["Themes"].tap()
+        let currentTopic = app.buttons["current-topic-entry"]
+        XCTAssertTrue(currentTopic.waitForExistence(timeout: 5))
+        reveal(currentTopic, in: app)
+        currentTopic.tap()
+
+        let warning = app.staticTexts["topic-search-capability-explanation"]
+        XCTAssertTrue(warning.waitForExistence(timeout: 5))
+        XCTAssertEqual(warning.label, "Source-backed topic search isn’t available with the selected conversation engine. You can still use saved topics.")
+    }
+
     func testNewLanguageSettingsThemesWordsAndReturnToNorwegian() {
         let app = launch()
         for (selection, name, greeting, theme) in [

@@ -49,6 +49,7 @@ struct ThemesView: View {
                             }.frame(maxWidth: .infinity, minHeight: 142, alignment: .leading).padding(19)
                                 .background(AppColor.panels[theme.colorIndex], in: RoundedRectangle(cornerRadius: 27))
                         }.buttonStyle(.plain)
+                            .accessibilityIdentifier(theme.id == "today" ? "current-topic-entry" : "theme-\(theme.id)")
                     }
                 }
                 if themes.isEmpty { ContentUnavailableView.search(text: search) }
@@ -150,6 +151,10 @@ struct CurrentTopicView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     PageHeading(eyebrow: "The world today", title: "A fresh conversation.", subtitle: "What would you like to talk about?")
                     TextField(coordinator.language.topicPlaceholder, text: $query, axis: .vertical).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 20))
+                    if let limitation = coordinator.topicSearchLimitation {
+                        Text(limitation).font(.footnote).foregroundStyle(AppColor.secondary)
+                            .accessibilityIdentifier("topic-search-capability-explanation")
+                    }
                     Button { find() } label: {
                         HStack { Text(loading ? "Finding something interesting…" : "Find a topic"); Spacer(); if loading { ProgressView() } else { Image(systemName: "sparkle.magnifyingglass") } }.padding(18).background(AppColor.peach, in: Capsule())
                     }.disabled(loading || query.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -160,7 +165,8 @@ struct CurrentTopicView: View {
                         Button("Talk about this", systemImage: "waveform") { coordinator.discuss(brief); selected(); dismiss() }
                             .font(.headline).padding(18).frame(maxWidth: .infinity).background(AppColor.orange, in: Capsule())
                     }
-                    Text("Search uses your OpenAI API account. Sources stay attached to the topic.").font(.footnote).foregroundStyle(AppColor.secondary)
+                    Text("Search requires an engine that can return sources. Sources stay attached to the topic.").font(.footnote).foregroundStyle(AppColor.secondary)
+                        .accessibilityIdentifier("topic-search-source-requirement")
                 }.padding(26)
             }.background(AppColor.cream).foregroundStyle(AppColor.ink)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }

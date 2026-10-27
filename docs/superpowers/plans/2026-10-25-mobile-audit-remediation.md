@@ -374,7 +374,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 14: Gate topic search by real engine capability
 
-**Requirements:** S15. **Prerequisites:** T13. **Status:** pending.
+**Requirements:** S15. **Prerequisites:** T13 committed as `185b152`; iOS/Swift execution deferred to T16 by user instruction. **Status:** implementation and scoped review complete; commit pending.
 
 **Files:**
 - Modify: `apps/ios/App/LibraryViews.swift`
@@ -387,9 +387,9 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 - [ ] **Step 1 — RED:** `unsupportedEngineMakesZeroSearchCalls`, `unsupportedEngineKeepsCachedTopics`, and `capableEngineKeepsRealRetry` assert UI explanation, cache selection, successful source-backed results and distinct genuine network errors.
 - [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Gate impossible operations without provider switch, new search backend, proxy, key or billing changes.
+- [x] **Step 3 — Implement:** Gate impossible operations without provider switch, new search backend, proxy, key or billing changes.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S15 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [x] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S15 scenarios, interfaces and task quality. Do not mark complete with missing required proof. Scoped review and fix re-review accepted; iOS runtime proof remains pending T16.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): gate unsupported topic search`; record commit and evidence in OpenSpec tasks/verification report.
 
 ### Task 15: Notify session adoption before profile loading
