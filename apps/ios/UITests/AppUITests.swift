@@ -726,4 +726,16 @@ final class AppUITests: XCTestCase {
         app.buttons["Done"].tap()
         XCTAssertEqual(app.staticTexts["target-caption"].label, "Hei!")
     }
+
+    func testTypedReplyEditorOpensFocusedWithRetryControls() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--preview", "--preview-existing-user", "--screenshot=conversation"]
+        app.launch()
+
+        app.buttons["typed-reply-open"].tap()
+        let editor = app.textViews["typed-reply-editor"]
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertTrue(editor.hasFocus)
+        XCTAssertTrue(app.buttons["typed-reply-send"].exists)
+    }
 }

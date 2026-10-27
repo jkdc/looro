@@ -132,6 +132,7 @@ struct TalkView: View {
                     HStack(spacing: 24) {
                         if coordinator.state == .active {
                             Button("Type instead", systemImage: "keyboard") { typing = true }
+                                .accessibilityIdentifier("typed-reply-open")
                             Button("A little help", systemImage: "sparkles") { coordinator.help() }
                         } else if coordinator.session == nil {
                             Text("Reply in whichever language comes to you.").foregroundStyle(AppColor.secondary)
@@ -146,7 +147,7 @@ struct TalkView: View {
                 }.padding(.horizontal, 30).frame(maxWidth: .infinity).frame(minHeight: geometry.size.height)
             }.scrollIndicators(.hidden)
         }
-        .sheet(isPresented: $typing) { TypedReplyView(coordinator: coordinator) }
+        .sheet(isPresented: $typing, onDismiss: { coordinator.cancelTypedReply() }) { TypedReplyView(coordinator: coordinator) }
         .animation(.smooth(duration: 0.35), value: coordinator.state)
         .sheet(item: $transcript) { session in
             TranscriptView(session: session, meaningLanguage: coordinator.store.preferences.meaningLanguage)
@@ -258,21 +259,33 @@ struct LookupView: View {
 
 struct TypedReplyView: View {
     let coordinator: ConversationCoordinator
-    @State private var text = ""
-    @State private var sending = false
+    @State private var editor = TypedReplyEditorState()
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focused: Bool
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Say it your way.").font(.system(.title, design: .rounded, weight: .semibold))
-                TextField("Reply in \(coordinator.language.name) or another language", text: $text, axis: .vertical).lineLimit(3...6).focused($focused).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 22))
-                Button { sending = true; Task { await coordinator.sendTyped(text); sending = false; dismiss() } } label: {
-                    HStack { Text(sending ? "Sending…" : "Send reply"); Spacer(); Image(systemName: "arrow.up") }.padding(18).background(AppColor.orange, in: Capsule())
-                }.disabled(sending || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                TextField("Reply in \(coordinator.language.name) or another language", text: $editor.draft, axis: .vertical).lineLimit(3...6).focused($focused).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 22))
+                    .accessibilityIdentifier("typed-reply-editor")
+                if let error = editor.error {
+                    Text(error).font(.footnote).foregroundStyle(AppColor.secondary).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("typed-reply-error")
+                }
+                Button {
+                    guard let attempt = editor.beginAttempt() else { return }
+                    Task {
+                        let result = await coordinator.sendTyped(editor.draft)
+                        editor.finishAttempt(result, id: attempt)
+                        if editor.isDismissed { dismiss() }
+                    }
+                } label: {
+                    HStack { Text(editor.isSending ? "Sending…" : "Send reply"); Spacer(); Image(systemName: "arrow.up") }.padding(18).background(AppColor.orange, in: Capsule())
+                }.disabled(editor.isSending || editor.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .accessibilityIdentifier("typed-reply-send")
                 Spacer()
             }.padding(26).foregroundStyle(AppColor.ink).background(AppColor.cream)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { editor.dismiss(); coordinator.cancelTypedReply(); dismiss() } } }
         }.presentationDetents([.medium, .large]).onAppear { focused = true }
     }
 }

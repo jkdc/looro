@@ -354,21 +354,22 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 13: Preserve typed replies across failure and retry
 
-**Requirements:** S14. **Prerequisites:** T3. **Status:** pending.
+**Requirements:** S14. **Prerequisites:** T3. **Status:** implementation and scoped review complete; commit pending; Swift/iOS execution deferred to T16 by user instruction.
 
 **Files:**
 - Modify: `apps/ios/App/RootView.swift`
 - Modify: `apps/ios/App/ConversationCoordinator.swift`
 - Create: `apps/ios/AppTests/TypedReplyTests.swift`
 - Modify: `apps/ios/UITests/AppUITests.swift`
+- Modify: `apps/ios/App.xcodeproj/project.pbxproj` (register the new AppTests source in the explicit target source phase)
 
 **Interfaces:** Produces a typed send result and stable pending message identity bound to conversation/account. Only success closes the matching editor; manual retries reuse the local entry and one in-flight operation.
 
 - [ ] **Step 1 — RED:** `failedSendKeepsDraftFocusAndSheet`, `twoManualRetriesKeepOneLocalMessage`, `doubleSubmitStartsOneGeneration`, and `lateReplyCannotCloseNewSheet` assert UI/error persistence, transcript identity and request count. Preserve auth/balance behavior.
 - [ ] **Step 2 — Observe RED:** Run `make ios-test` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Distinguish success/cancel/failure, persist visible errors and do not auto-replay uncertain provider operations. Explicit dismissal invalidates local continuation; external provider costs are not exactly-once guaranteed.
+- [x] **Step 3 — Implement:** Distinguish success/cancel/failure, persist visible errors and do not auto-replay uncertain provider operations. Explicit dismissal invalidates local continuation; external provider costs are not exactly-once guaranteed.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App + iOS UI** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S14 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [x] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S14 scenarios, interfaces and task quality. Do not mark complete with missing required proof. Task review and two scoped correction re-reviews accepted; independent static verification found no blocker. Runtime proof remains deferred to T16.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): preserve typed replies across retries`; record commit and evidence in OpenSpec tasks/verification report.
 
 ### Task 14: Gate topic search by real engine capability

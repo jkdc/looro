@@ -36,6 +36,75 @@ struct ConversationProgressSyncAdapter {
     let onFinish: () -> Void
 }
 
+enum TypedReplyResult: Equatable {
+    case sent
+    case failed(String)
+    case cancelled
+    case inFlight
+}
+
+struct ConversationTypedReplyAdapter {
+    let respond: @MainActor (String, String) async throws -> APIResult
+}
+
+@MainActor @Observable final class TypedReplyEditorState {
+    var draft: String
+    private(set) var error: String?
+    private(set) var isSending = false
+    private(set) var isDismissed = false
+    private var attemptID: UUID?
+
+    init(draft: String = "") { self.draft = draft }
+
+    func beginAttempt() -> UUID? {
+        guard !isSending, !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+        isSending = true
+        error = nil
+        let id = attemptID ?? UUID()
+        attemptID = id
+        return id
+    }
+
+    func finishAttempt(_ result: TypedReplyResult, id: UUID) {
+        guard attemptID == id else { return }
+        isSending = false
+        switch result {
+        case .sent:
+            attemptID = nil
+            isDismissed = true
+        case .failed(let message): error = message
+        case .cancelled, .inFlight: break
+        }
+    }
+
+    func dismiss() {
+        attemptID = nil
+        isSending = false
+        isDismissed = true
+    }
+}
+
+@MainActor final class TypedReplyRequestIdentity {
+    private struct Owner: Equatable {
+        let text: String
+        let conversationID: UUID
+        let learnerGeneration: UUID
+    }
+    private var owner: Owner?
+    private var storedMessageID: String?
+
+    func messageID(for text: String, conversationID: UUID, learnerGeneration: UUID) -> String {
+        let next = Owner(text: text, conversationID: conversationID, learnerGeneration: learnerGeneration)
+        if owner != next {
+            owner = next
+            storedMessageID = UUID().uuidString
+        }
+        return storedMessageID!
+    }
+
+    func clear() { owner = nil; storedMessageID = nil }
+}
+
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
@@ -182,7 +251,8 @@ struct ConversationProgressSyncAdapter {
     var meaning: String { meanings.text }
     var translating: Bool { meanings.isLoading }
     var meaningError: String? { meanings.error }
-    private(set) var working = false
+    private(set) var typedReplyWorking = false
+    var working: Bool { typedReplyWorking || !delegationTasks.isEmpty }
     var error: String?
     var notice: String?
     var showSettings = false
@@ -190,6 +260,7 @@ struct ConversationProgressSyncAdapter {
     private var startAfterConsent = false
     private let api: APIClient
     private let helperRouter: HelperRouter
+    private let injectedTypedReplyAdapter: ConversationTypedReplyAdapter?
     private let transport = LiveTransport()
     private var connectionTask: Task<Void, Never>?
     private var assessmentTask: Task<Void, Never>?
@@ -206,13 +277,18 @@ struct ConversationProgressSyncAdapter {
     private var lastAssessmentKey = ""
     private var pendingTopic: TopicBrief?
     private var languageGeneration = UUID()
+    private var learnerGeneration = UUID()
+    private let typedReplyRequestIdentity = TypedReplyRequestIdentity()
+    private var typedReplyOperationInFlight: UUID?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private var resetTask: Task<Void, Never>?
     private var resetDeadline: Date?
 
-    init(store: LearningStore, progressSyncAdapter: ConversationProgressSyncAdapter? = nil) {
+    init(store: LearningStore, progressSyncAdapter: ConversationProgressSyncAdapter? = nil,
+         typedReplyAdapter: ConversationTypedReplyAdapter? = nil) {
         self.store = store
         injectedProgressSyncAdapter = progressSyncAdapter
+        injectedTypedReplyAdapter = typedReplyAdapter
         let api = APIClient(); self.api = api
         let router = HelperRouter(api: api); self.helperRouter = router
         managed = ManagedAccountConfiguration.load().map { (ManagedAccountClient(configuration: $0), $0) }
@@ -411,6 +487,7 @@ struct ConversationProgressSyncAdapter {
     /// expiry — the Keychain read decides which. Never called while a
     /// conversation is running (the notification only arrives between sessions).
     private func accountSessionChanged() {
+        invalidateTypedReplyContinuation()
         progressSyncOperation.invalidate()
         progressSyncTask?.cancel()
         progressSyncTask = nil
@@ -521,13 +598,14 @@ struct ConversationProgressSyncAdapter {
     }
     func selectLanguage(_ id: String) {
         guard !isRunning, id != language.id, LanguageRegistry.module(for: id) != nil else { return }
+        invalidateTypedReplyContinuation()
         cancelReset(); languageGeneration = UUID()
         connectionTask?.cancel(); closeTask?.cancel(); durationTask?.cancel()
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         scenarioReviewTask?.cancel(); scenarioReviewState = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
         session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
-        working = false; notice = nil; error = nil
+        typedReplyWorking = false; notice = nil; error = nil
         lastAssessmentKey = ""; lastLanguageCheck = ""; pendingCommands = [:]
         inputLevel = 0; outputLevel = 0; state = .idle; isMuted = false
         store.selectLanguage(id)
@@ -670,11 +748,12 @@ struct ConversationProgressSyncAdapter {
     }
     func end(reason: String = "Ended by you") {
         guard state == .active || state == .connecting else { return }
+        invalidateTypedReplyContinuation()
         let wasConnecting = state == .connecting
         state = .closing; isMuted = true
         connectionTask?.cancel(); assessmentTask?.cancel()
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
-        durationTask?.cancel(); working = false
+        durationTask?.cancel(); typedReplyWorking = false
         session?.endReason = reason
         if wasConnecting { finish(final: false); return }
         transport.close()
@@ -693,10 +772,11 @@ struct ConversationProgressSyncAdapter {
     }
     private func finish(final: Bool) {
         guard isRunning else { return }
+        invalidateTypedReplyContinuation()
         closeTask?.cancel(); durationTask?.cancel(); connectionTask?.cancel()
         assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
-        transport.disconnect(); pendingCommands = [:]; working = false
+        transport.disconnect(); pendingCommands = [:]; typedReplyWorking = false
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
         if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
@@ -837,10 +917,12 @@ struct ConversationProgressSyncAdapter {
     func retryMeaning() { scheduleTranslation(); meanings.retry() }
     func resetConversation() {
         guard !isRunning else { return }
+        invalidateTypedReplyContinuation()
         cancelReset(); meanings.reset(); saveTask?.cancel(); saveTask = nil
         languageGeneration = UUID()
+        typedReplyRequestIdentity.clear()
         session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
-        notice = nil; error = nil; working = false; isMuted = false
+        notice = nil; error = nil; typedReplyWorking = false; isMuted = false
         inputLevel = 0; outputLevel = 0; state = .idle
     }
     private func cancelReset() { resetTask?.cancel(); resetTask = nil; resetDeadline = nil }
@@ -1066,10 +1148,9 @@ struct ConversationProgressSyncAdapter {
     }
     private func delegate(id: String) {
         guard delegationTasks[id] == nil, let snapshot = session else { return }
-        working = true
         delegationTasks[id] = Task { [weak self] in
             guard let self else { return }
-            defer { self.delegationTasks.removeValue(forKey: id); self.working = !self.delegationTasks.isEmpty }
+            defer { self.delegationTasks.removeValue(forKey: id) }
             do {
                 // Transcript delivery may lag the delegation metadata slightly.
                 try await Task.sleep(for: .milliseconds(500))
@@ -1091,31 +1172,71 @@ struct ConversationProgressSyncAdapter {
             }
         }
     }
-    func sendTyped(_ text: String) async {
+    func sendTyped(_ text: String) async -> TypedReplyResult {
         let clean = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard state == .active, !clean.isEmpty, let snapshot = session else { return }
+        guard state == .active, !clean.isEmpty, let snapshot = session else { return .cancelled }
+        guard typedReplyOperationInFlight == nil else { return .inFlight }
+        let capturedLearnerGeneration = learnerGeneration
+        let messageID = typedReplyRequestIdentity.messageID(for: String(clean.prefix(2000)),
+                                                            conversationID: snapshot.id,
+                                                            learnerGeneration: capturedLearnerGeneration)
+        let operationID = UUID()
+        typedReplyOperationInFlight = operationID
+        defer {
+            if typedReplyOperationInFlight == operationID {
+                typedReplyOperationInFlight = nil
+                typedReplyWorking = false
+            }
+        }
         let offset = Int(Date().timeIntervalSince(snapshot.startedAt) * 1000)
-        session?.append(Fragment(speaker: .user, text: String(clean.prefix(2000)), startMS: offset, endMS: offset + 1,
+        session?.append(Fragment(id: messageID, speaker: .user, text: String(clean.prefix(2000)), startMS: offset, endMS: offset + 1,
                                  meaningVisible: store.preferences.meaningVisible, typed: true))
-        save(); working = true
-        defer { if session?.id == snapshot.id { working = false } }
+        save(); typedReplyWorking = true
         do {
             // Captured after the append and before the await: the reply must see the typed fragment,
             // and a local avoids the force unwrap across suspension.
-            guard let current = session else { return }
+            guard let current = session else { return .cancelled }
             let lesson = session?.lessonID.flatMap { CourseRegistry.lesson(id: $0) }
             let scenario = session?.scenarioID.flatMap { id in selectedScenario?.id == id ? selectedScenario : Scenarios.byID(id) }
-            let result = try await helperRouter.respond(purpose: .typedReply, instructions: TeachingPolicy.typedReply(language: language, lesson: lesson, scenario: scenario), input: TeachingPolicy.context(current))
-            guard session?.id == snapshot.id, state == .active else { return }
+            let instructions = TeachingPolicy.typedReply(language: language, lesson: lesson, scenario: scenario)
+            let input = TeachingPolicy.context(current)
+            let result: APIResult
+            if let adapter = injectedTypedReplyAdapter {
+                result = try await adapter.respond(instructions, input)
+            } else {
+                result = try await helperRouter.respond(purpose: .typedReply, instructions: instructions, input: input)
+            }
+            guard session?.id == snapshot.id, state == .active, learnerGeneration == capturedLearnerGeneration else { return .cancelled }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
             append("commentary", result.text); scheduleAssessment(); save()
+            typedReplyRequestIdentity.clear()
+            error = nil; proxyActionAvailable = false; tokensExhaustedBanner = false
+            return .sent
+        } catch is CancellationError {
+            return .cancelled
         } catch {
+            guard session?.id == snapshot.id, state == .active, learnerGeneration == capturedLearnerGeneration else { return .cancelled }
             // A token-proxy block keeps the message but gains the paywall route.
             noteProxyBlock(error)
-            if session?.id == snapshot.id { self.error = error.localizedDescription }
+            self.error = error.localizedDescription
+            return .failed(error.localizedDescription)
         }
     }
+    func cancelTypedReply() {
+        invalidateTypedReplyContinuation()
+    }
+    private func invalidateTypedReplyContinuation() {
+        learnerGeneration = UUID()
+        typedReplyRequestIdentity.clear()
+        typedReplyWorking = false
+    }
+#if DEBUG
+    func prepareTypedReplyTesting() {
+        session = SessionRecord(languageID: language.id, title: "Typed reply fixture")
+        state = .active
+    }
+#endif
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
         // No term is ever recorded — only that a lookup happened, and from where.
