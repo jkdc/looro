@@ -149,7 +149,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 5: Add durable rollups, recovery and atomic continuation
 
-**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** source and tests implemented; Android targeted checks and independent high-risk recheck passed; Swift runtime verification is deferred to T16; commit pending.
+**Requirements:** S2,S4,S5. **Prerequisites:** T2,T3,T4. **Status:** recovery source/tests committed as `5dd7da4`; Android targeted checks and independent high-risk recheck passed; Swift runtime verification is deferred to T16.
 
 **Files:**
 - Modify: `shared/db/schema.sql`
@@ -179,7 +179,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 3 — Implement:** Append schema version 6 only if still next; never edit old applied blocks. Update actual native openers, pinned inventory/versions and generate SQL outputs with export_db_schema.py. Test fresh install and every supported prior version. Persist timestamp source/version and unit evidence per eligible new row. Run repair before materialization only when that exact row has explicit, supported provenance; pre-v6 completion rows without provenance remain unchanged and unresolved. Keep bounded reasons and retry-safe markers. Do not infer origin or reclassify legacy completion history.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Shared + Android unit + Swift Core** checks from the command table and record actual status/counts or exact unavailability.
 - [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(progress): persist atomic rollup sync state`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** Recovery correction committed as `5dd7da4` (`fix(progress): repair explicitly evidenced legacy timestamps`). The earlier rollup checkpoint is `07685b5`; both remain separate work units. Platform-level completion remains open for T16 Swift verification.
 
 **T5 recovery result:** Recovery recognizes only complete persisted writer/version/unit tuples, converts the explicitly tagged `ios.recordLessonAttempt` v1 Unix-seconds lesson timestamp to Apple-reference seconds, then reads back the exact owner-scoped row inside the transaction before persisting its repaired marker. Untagged pre-v6 rows are never tagged or changed. The tuple-bearing test fixture is synthetic and does not assert that existing v5 data contains provenance. Android focused tests and an independent fresh-scratch recheck passed; Swift execution remains deferred to T16. Risk: item 1 (persisted timestamp repair).
 

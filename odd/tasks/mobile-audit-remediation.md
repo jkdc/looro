@@ -302,7 +302,7 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - T2 — linked S2,S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; Swift execution pending; commit: `d58a2c9`.
 - T3 — linked S3; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; iOS app execution pending T16; commit: `6a69351`.
 - T4 — linked S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: committed; focused PostgreSQL 17/17, `make check` 146, API type-check, fresh full suite 756/756, independent review clean, parent focused spot-check 17/17; commit: `98ae12d`.
-- T5 — linked S2,S4,S5; inline continuation of tracked task; status: recovery source/tests implemented; Android focused verification and independent high-risk recheck passed; Swift runtime verification deferred to T16; commit pending. Untagged pre-v6 rows remain unchanged; checkpoint `07685b5` contains prior rollup/schema work.
+- T5 — linked S2,S4,S5; inline continuation of tracked task; status: recovery committed `5dd7da4`; Android focused verification and independent high-risk recheck passed; Swift runtime verification deferred to T16. Untagged pre-v6 rows remain unchanged; checkpoint `07685b5` contains prior rollup/schema work.
 - T6 — linked S2, S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T7 — linked S2, S4; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
 - T8 — linked S5; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
@@ -391,3 +391,4 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 
 - L72 (2026-10-27): Fixed OpenSpec: `e545c79` belongs to T15, not T6; T6 remains planned.
 - L73 (2026-10-27): T5 repairs only exact persisted evidence tuples; legacy untagged rows stay unchanged. Android UPDATE count is unreliable (-1 on success), so recovery validates owner-scoped readback inside the transaction before marking repaired. Targeted tests and independent high-risk recheck passed; Swift runtime verification is deferred to T16. Risk: item 1.
+- L74 (2026-10-27): Committed T5 recovery correction as `5dd7da4`; SDD now links the commit. Swift/iOS runtime proof remains explicitly deferred to T16. Risk: item 1.
