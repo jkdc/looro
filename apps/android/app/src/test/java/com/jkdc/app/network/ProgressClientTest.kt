@@ -46,6 +46,16 @@ class ProgressClientTest {
         assertEquals(1, payload["entries"]!!.jsonArray.size)
     }
 
+    @Test fun uploadTimestampValidationUsesInjectedDeviceClock() = runBlocking {
+        client = ProgressClient(server.url("/"), OkHttpClient()) { 1_750_000_000_000L }
+
+        val result = client.sendV2(session,
+            """[{"kind":"lesson","itemID":"en-l1","language":"en","firstAt":1760000000000,"lastAt":1760000000000,"attempts":1,"bestScore":0}]""")
+
+        assertTrue(result is ProgressSendResult.Failure)
+        assertEquals(0, server.requestCount)
+    }
+
     @Test fun malformedPageIsRejectedInsteadOfBecomingBootstrapData() = runBlocking {
         server.enqueue(MockResponse().setBody("""{"version":2,"progress":[{"kind":"lesson","itemID":"x","firstAt":2000,"lastAt":1000,"attempts":1,"bestScore":0,"language":"en"}],"nextCursor":null,"complete":true}"""))
         assertTrue(client.fetchV2(session) is ProgressFetchResult.Failure)

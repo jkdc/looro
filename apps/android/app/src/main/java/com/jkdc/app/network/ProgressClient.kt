@@ -40,7 +40,11 @@ sealed interface ProgressSendResult {
 }
 
 /** Authenticated transport for the existing managed progress endpoint. */
-class ProgressClient internal constructor(private val origin: HttpUrl, transport: OkHttpClient) {
+class ProgressClient internal constructor(
+    private val origin: HttpUrl,
+    transport: OkHttpClient,
+    private val nowUnixMilliseconds: () -> Long = System::currentTimeMillis,
+) {
     constructor(config: ManagedAccountConfiguration) : this(config.origin, OkHttpClient())
     private val client = transport.newBuilder().followRedirects(false).followSslRedirects(false)
         .cookieJar(CookieJar.NO_COOKIES).cache(null).authenticator(Authenticator.NONE)
@@ -265,7 +269,7 @@ class ProgressClient internal constructor(private val origin: HttpUrl, transport
         val milliseconds = number.toLong()
         if (milliseconds.toDouble() != number) return null
         return milliseconds.takeIf {
-            com.jkdc.app.core.ProgressTime.fromUnixMilliseconds(it.toDouble(), System.currentTimeMillis().toDouble()) != null
+            com.jkdc.app.core.ProgressTime.fromUnixMilliseconds(it.toDouble(), nowUnixMilliseconds().toDouble()) != null
         }
     }
 

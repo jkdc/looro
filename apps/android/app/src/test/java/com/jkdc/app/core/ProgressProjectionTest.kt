@@ -5,6 +5,8 @@ import org.junit.Test
 import java.time.ZoneId
 
 class ProgressProjectionTest {
+    private val fixedNowMilliseconds = 1_750_000_000_000L
+
     @Test fun remote90ImprovesLocal40InEitherOrder() {
         val local = ProgressAggregate("account-a", "es", ProgressEngine.EXERCISE_SET, "unit-1", 10, 20, 2, 40)
         val remote = ProgressAggregate("account-a", "es", ProgressEngine.EXERCISE_SET, "unit-1", 5, 30, 4, 90)
@@ -40,6 +42,44 @@ class ProgressProjectionTest {
         assertEquals(90, entries.first { it.kind == ProgressEngine.EXERCISE_SET }.bestScore)
         assertEquals(4, entries.first { it.kind == ProgressEngine.EXERCISE_SET }.attempts)
         assertEquals(1_700_000_000_000, entries.first { it.kind == ProgressEngine.EXERCISE_SET }.firstAtMilliseconds)
+    }
+
+    @Test fun invalidLocalTimestampContributionsDoNotBlockValidSameIdentityOrChangeArchive() {
+        val nowMilliseconds = fixedNowMilliseconds
+        val valid = CompletionMark(ProgressEngine.EXERCISE_SET, "shared-item",
+            ProgressTime.fromUnixMilliseconds(nowMilliseconds.toDouble(), nowMilliseconds.toDouble())!!, 60, "en")
+        val invalid = CompletionMark(ProgressEngine.EXERCISE_SET, "shared-item",
+            1_700_000_000_000.0, 99, "en")
+        val invalidLesson = LessonState("en-lesson", attempts = 3, lastSeen = 1_700_000_000_000.0)
+        val completions = listOf(valid, invalid)
+        val lessons = listOf(invalidLesson)
+        val lesson = Lesson("en-lesson", "Lesson", "Grammar", LessonIntro(emptyList(), emptyList()),
+            emptyList(), "s", LessonPractice(emptyList()))
+        val course = Course("en-foundations", "en", "Foundations", "s", "g", "d", listOf(
+            CourseUnit("u1", "Unit", "", "A1", emptyList(), listOf(lesson))))
+
+        val entries = ProgressSync.entries(lessons, completions, listOf(course), emptySet(), "en",
+            ownerAccountID = "account-a", nowUnixMilliseconds = nowMilliseconds)
+
+        assertEquals(1, entries.size)
+        assertEquals(ProgressEngine.EXERCISE_SET, entries.single().kind)
+        assertEquals("shared-item", entries.single().itemID)
+        assertEquals(60, entries.single().bestScore)
+        assertEquals(nowMilliseconds, entries.single().atMilliseconds)
+        assertEquals(listOf(valid, invalid), completions)
+        assertEquals(listOf(invalidLesson), lessons)
+    }
+
+    @Test fun validFractionalTimestampUsesValidatedRoundedMillisecondOnWire() {
+        val nowMilliseconds = fixedNowMilliseconds
+        val rawUnixMilliseconds = 1_735_689_600_000.75
+        val appleSeconds = rawUnixMilliseconds / 1000.0 - ProgressSyncContractData.APPLE_EPOCH_OFFSET_SECONDS
+        val entries = ProgressSync.entries(emptyList(), listOf(CompletionMark(
+            ProgressEngine.EXERCISE_SET, "fractional", appleSeconds, 50, "en")),
+            emptyList(), emptySet(), "en", ownerAccountID = "account-a", nowUnixMilliseconds = nowMilliseconds)
+
+        assertEquals(1, entries.size)
+        assertEquals(1_735_689_600_001L, entries.single().atMilliseconds)
     }
 
     @Test fun remoteReadModelsImproveCompletionWithoutAddingActivity() {

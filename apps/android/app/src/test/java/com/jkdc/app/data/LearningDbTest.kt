@@ -79,6 +79,44 @@ class LearningDbTest {
         } finally { server.shutdown() }
     }
 
+    @Test fun invalidTimestampRowForSharedIdentityStaysLocalAndDoesNotBlockLegacyUpload() = runBlocking {
+        val owner = "12345678-1234-1234-1234-123456789012"
+        val nowMilliseconds = 1_750_000_000_000L
+        val validAt = com.jkdc.app.core.ProgressTime.fromUnixMilliseconds(
+            nowMilliseconds.toDouble(), nowMilliseconds.toDouble())!!
+        LearnerOwnershipDao.activate(db, "member:$owner")
+        val valid = com.jkdc.app.core.CompletionMark("exercise_set", "shared-item", validAt, 40, "en")
+        val invalid = com.jkdc.app.core.CompletionMark("exercise_set", "shared-item", 1_700_000_000_000.0, 99, "en")
+        CompletionsDao.add(db, valid)
+        CompletionsDao.add(db, invalid)
+
+        val entries = com.jkdc.app.core.ProgressSync.entries(emptyList(), CompletionsDao.all(db),
+            emptyList(), emptySet(), "en", ownerAccountID = owner, nowUnixMilliseconds = nowMilliseconds)
+        assertEquals(1, entries.size)
+        assertEquals(40, entries.single().bestScore)
+        assertEquals(listOf(valid, invalid), CompletionsDao.all(db))
+
+        val server = MockWebServer().apply { start() }
+        try {
+            val client = ProgressClient(server.url("/"), OkHttpClient()) { nowMilliseconds }
+            val session = AccountSession(owner, "a".repeat(43), 100_000)
+            server.enqueue(MockResponse().setResponseCode(503).setBody("""{"error":{"code":"progress_sync_version_unavailable"}}"""))
+            server.enqueue(MockResponse().setBody("""{"merged":1}"""))
+            val sent = com.jkdc.app.uploadProgressBatches(entries, null, 1,
+                isCurrent = { true }, sendV2 = { client.sendV2(session, """{"entries":[{"kind":"${it.single().kind}","itemID":"${it.single().itemID}","language":"en","firstAt":${it.single().firstAtMilliseconds},"lastAt":${it.single().atMilliseconds},"attempts":${it.single().attempts},"bestScore":${it.single().bestScore}}]}""") },
+                sendLegacy = { batch -> client.sendLegacy(session, """{"entries":[{"kind":"${batch.single().kind}","itemID":"${batch.single().itemID}","language":"en","firstAt":${batch.single().firstAtMilliseconds},"lastAt":${batch.single().atMilliseconds},"attempts":${batch.single().attempts},"bestScore":${batch.single().bestScore}}]}""") },
+                persistAcknowledgement = { _, _ -> false })
+            assertTrue(sent)
+            server.takeRequest()
+            val request = server.takeRequest()
+            val uploaded = kotlinx.serialization.json.Json.parseToJsonElement(request.body.readUtf8())
+                .jsonObject["entries"]!!.jsonArray.single().jsonObject
+            assertEquals("shared-item", uploaded["itemID"]!!.jsonPrimitive.content)
+            assertEquals("40", uploaded["bestScore"]!!.jsonPrimitive.content)
+            assertEquals(listOf(valid, invalid), CompletionsDao.all(db))
+        } finally { server.shutdown() }
+    }
+
     @Test fun learnerRowsPersistOwnerKeysForEveryMutableLearnerTable() {
         val expected = setOf("preferences", "sessions", "fragments", "expressions", "lesson_state",
             "completions", "skill_errors", "usage_outbox", "assessment_tickets", "exam_attempts",

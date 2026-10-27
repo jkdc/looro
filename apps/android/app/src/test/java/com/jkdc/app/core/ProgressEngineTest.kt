@@ -88,26 +88,32 @@ class ProgressEngineTest {
     }
 
     @Test fun syncEntriesRollUpOnlyTheRequestedLanguageAndCarryIt() {
+        val nowMilliseconds = 1_750_000_000_000L
+        fun at(unixMilliseconds: Long) = ProgressTime.fromUnixMilliseconds(
+            unixMilliseconds.toDouble(), nowMilliseconds.toDouble())!!
         val marks = listOf(
-            CompletionMark(ProgressEngine.LESSON, "en-l1", 10.0),
-            CompletionMark(ProgressEngine.LESSON, "fr-l1", 15.0, languageID = "fr"),
-            CompletionMark(ProgressEngine.LISTENING, "en-listen-coffee", 30.0, 60))
-        val entries = ProgressSync.entries(listOf(LessonState("en-l1", attempts = 7, lastSeen = 25.0)), marks,
-            listOf(course("en", "en-l1", "fr-l1")), listeningIDs, "en")
+            CompletionMark(ProgressEngine.LESSON, "en-l1", at(nowMilliseconds - 15_000)),
+            CompletionMark(ProgressEngine.LESSON, "fr-l1", at(nowMilliseconds - 10_000), languageID = "fr"),
+            CompletionMark(ProgressEngine.LISTENING, "en-listen-coffee", at(nowMilliseconds - 5_000), 60))
+        val entries = ProgressSync.entries(listOf(LessonState("en-l1", attempts = 7, lastSeen = at(nowMilliseconds - 1_000))), marks,
+            listOf(course("en", "en-l1", "fr-l1")), listeningIDs, "en", nowUnixMilliseconds = nowMilliseconds)
         assertEquals(listOf("en", "en"), entries.map { it.language })
         assertEquals(setOf("en-l1", "en-listen-coffee"), entries.map { it.itemID }.toSet())
         val l1 = entries.single { it.itemID == "en-l1" }
         assertEquals(7, l1.attempts)
-        assertEquals(((10.0 + 978_307_200.0) * 1000).toLong(), l1.firstAtMilliseconds)
-        assertEquals(25.0, (l1.atMilliseconds - 978_307_200_000L) / 1000.0, 0.001)
+        assertEquals(nowMilliseconds - 15_000, l1.firstAtMilliseconds)
+        assertEquals(nowMilliseconds - 1_000, l1.atMilliseconds)
     }
 
     @Test fun progressEntryCollectionDoesNotDropRowsBeforeUploadBatching() {
+        val nowMilliseconds = 1_750_000_000_000L
         val marks = (0 until 201).map { index ->
-            CompletionMark(ProgressEngine.CONVERSATION_THEME, "theme-%03d".format(index), index.toDouble(), languageID = "en")
+            val unixMilliseconds = nowMilliseconds - (201 - index) * 1_000L
+            CompletionMark(ProgressEngine.CONVERSATION_THEME, "theme-%03d".format(index),
+                ProgressTime.fromUnixMilliseconds(unixMilliseconds.toDouble(), nowMilliseconds.toDouble())!!, languageID = "en")
         }
 
-        val entries = ProgressSync.entries(emptyList(), marks, emptyList(), emptySet(), "en")
+        val entries = ProgressSync.entries(emptyList(), marks, emptyList(), emptySet(), "en", nowUnixMilliseconds = nowMilliseconds)
 
         assertEquals(201, entries.size)
         assertEquals("theme-000", entries.first().itemID)

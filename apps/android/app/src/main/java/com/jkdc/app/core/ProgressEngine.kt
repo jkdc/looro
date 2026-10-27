@@ -110,17 +110,28 @@ object ProgressSync {
         counters outrank the mark ledger so attempts never regress. */
     fun entries(lessons: List<LessonState>, completions: List<CompletionMark>, courses: List<Course>,
                 listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = emptySet(),
-                ownerAccountID: String = "", remote: List<ProgressAggregate> = emptyList()): List<ProgressSyncEntry> {
+                ownerAccountID: String = "", remote: List<ProgressAggregate> = emptyList(),
+                nowUnixMilliseconds: Long = System.currentTimeMillis()): List<ProgressSyncEntry> {
         val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
             courses.map { it.id }.toSet() + listeningIDs + readingIDs
         fun scoped(mark: CompletionMark): Boolean =
             mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
-        val languageLessons = lessons.filter { it.attempts > 0 && lessonIn(it.lessonID, contentIDs) }
-        val rollups = rollupsOf(languageLessons, completions.filter { scoped(it) })
-        val local = rollups.map { (key, value) -> ProgressAggregate(ownerAccountID, languageID,
-            key.substringBefore('|'), key.substringAfter('|'),
-            ((value.firstAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(),
-            ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore) }
+        val now = nowUnixMilliseconds.toDouble()
+        val languageLessons = lessons.filter {
+            it.attempts > 0 && lessonIn(it.lessonID, contentIDs) &&
+                ProgressTime.toUnixMilliseconds(it.lastSeen, now) != null
+        }
+        val eligibleCompletions = completions.filter {
+            scoped(it) && ProgressTime.toUnixMilliseconds(it.at, now) != null
+        }
+        val rollups = rollupsOf(languageLessons, eligibleCompletions)
+        val local = rollups.mapNotNull { (key, value) ->
+            val firstAt = ProgressTime.toUnixMilliseconds(value.firstAt, now) ?: return@mapNotNull null
+            val lastAt = ProgressTime.toUnixMilliseconds(value.lastAt, now) ?: return@mapNotNull null
+            ProgressAggregate(ownerAccountID, languageID,
+                key.substringBefore('|'), key.substringAfter('|'), firstAt, lastAt,
+                value.attempts, value.bestScore)
+        }
         return ProgressProjection.merge(ownerAccountID, languageID, local, remote).map { value ->
             ProgressSyncEntry(value.kind, value.itemID, value.lastAt, value.attempts, value.bestScore, languageID, value.firstAt)
         }.sortedWith(compareBy<ProgressSyncEntry> { it.kind }.thenBy { it.itemID }.thenBy { it.language })
