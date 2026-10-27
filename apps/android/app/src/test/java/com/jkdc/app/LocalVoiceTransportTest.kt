@@ -1136,4 +1136,31 @@ class LocalVoiceTransportTest {
         assertTrue(failures.single().contains("engine offline"))
         transport.close()
     }
+    @Test
+    fun `manual microphone mute does not stop tutor playback`() {
+        val tts = FakeTts()
+        val speaking = CountDownLatch(1)
+        val allowPlaybackToFinish = CountDownLatch(1)
+        tts.onSpeak = {
+            speaking.countDown()
+            allowPlaybackToFinish.await(5, TimeUnit.SECONDS)
+        }
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), FakeTeachingClient(), tts,
+            frameSourceProvider = { FakeFrameSource() }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        assertTrue(transport.send(buildAppend("session.commentary.append", "Tutor output continues")))
+        assertTrue("tutor output started", speaking.await(5, TimeUnit.SECONDS))
+        transport.mute(true)
+        assertEquals("mute changes microphone input only", 0, tts.stopCalls)
+        allowPlaybackToFinish.countDown()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (transport.turnInFlight && System.currentTimeMillis() < deadline) Thread.sleep(10)
+        assertEquals(listOf("Tutor output continues"), tts.spoken)
+        transport.close()
+    }
 }

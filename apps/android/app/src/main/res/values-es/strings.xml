@@ -77,6 +77,8 @@
     <string name="talk_resume_label">Reanudar</string>
     <string name="talk_mic_unmute_desc">Activar micrófono</string>
     <string name="talk_mic_mute_desc">Silenciar micrófono</string>
+    <string name="talk_manual_mic_mute">Silenciar</string>
+    <string name="talk_manual_mic_unmute">Activar</string>
     <string name="talk_end_label">Terminar</string>
     <string name="talk_transcript_label">Texto</string>
     <string name="talk_type_button">Escribir</string>

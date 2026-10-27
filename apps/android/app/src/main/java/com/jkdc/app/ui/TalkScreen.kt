@@ -64,6 +64,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -267,10 +268,13 @@ fun TalkScreen(
                     initialValue = 1f, targetValue = 0.55f,
                     animationSpec = infiniteRepeatable(tween(650), RepeatMode.Reverse), label = "end-turn-alpha",
                 )
-                RoundAction(AppSymbol.Check,
-                    stringResource(if (turnPending) R.string.talk_end_turn_pending else R.string.talk_end_turn_button),
-                    selected = turnPending, pending = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,
-                    modifier = Modifier.alpha(if (turnPending) pendingAlpha else 1f))
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    ManualMuteControl(isMuted = vm.isMuted, enabled = !vm.working, onClick = vm::toggleMute)
+                    RoundAction(AppSymbol.Check,
+                        stringResource(if (turnPending) R.string.talk_end_turn_pending else R.string.talk_end_turn_button),
+                        selected = turnPending, pending = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,
+                        modifier = Modifier.alpha(if (turnPending) pendingAlpha else 1f))
+                }
             }
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
                 stringResource(if (vm.isRunning) R.string.talk_end_label else R.string.talk_transcript_label),
@@ -385,6 +389,29 @@ private fun RoundAction(symbol: AppSymbol, label: String, selected: Boolean = fa
             },
             enabled = enabled, filledIcon = selected)
         Text(label, style = MaterialTheme.typography.labelSmall, color = AppColors.Ink.copy(alpha = if (enabled) 1f else .45f))
+    }
+}
+
+@Composable
+private fun ManualMuteControl(isMuted: Boolean, enabled: Boolean, onClick: () -> Unit) {
+    val actionLabel = stringResource(if (isMuted) R.string.talk_mic_unmute_desc else R.string.talk_mic_mute_desc)
+    val stateLabel = stringResource(if (isMuted) R.string.talk_status_muted else R.string.talk_status_listening)
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        Box(
+            Modifier.size(52.dp)
+                .testTag("manual-mute-control")
+                .semantics {
+                    contentDescription = actionLabel
+                    stateDescription = stateLabel
+                }
+                .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+                .background(if (isMuted) AppColors.Cream else Color.White.copy(alpha = .78f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            AppIcon(if (isMuted) AppSymbol.MicOff else AppSymbol.Mic, Modifier.size(23.dp), color = AppColors.Ink)
+        }
+        Text(stringResource(if (isMuted) R.string.talk_manual_mic_unmute else R.string.talk_manual_mic_mute),
+            style = MaterialTheme.typography.labelSmall, color = AppColors.Ink)
     }
 }
 

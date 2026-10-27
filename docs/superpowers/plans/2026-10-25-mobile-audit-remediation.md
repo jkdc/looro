@@ -331,7 +331,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 11: Expose accessible manual microphone mute
 
-**Requirements:** S10. **Prerequisites:** T10. **Status:** pending.
+**Requirements:** S10. **Prerequisites:** T10. **Status:** implementation/review complete; implementation commit pending. Verification remains incomplete: connected UI proof unavailable and no valid RED observed.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/ui/TalkScreen.kt`
@@ -343,12 +343,14 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 **Interfaces:** Consumes T10 voice input state. Produces a separate observable microphone mute with EN/ES text, preserved test tags/state description and >=48 dp target. It is not session pause or tutor-output stop.
 
-- [ ] **Step 1 — RED:** `manualMuteIsVisibleAndAccessible`, `mutedSamplesNeverReachNextTurn` and `muteDoesNotStopTutorOutput` assert semantics/state, focus, touch target, STT payloads and unchanged active session.
-- [ ] **Step 2 — Observe RED:** Run `cd apps/android && ./gradlew --offline :app:testDebugUnitTest --tests 'com.jkdc.app.LocalVoiceTransportTest'` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Connect the manual UI action to existing mute semantics, discard buffered input at mute boundaries and retain session context.
-- [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Android unit + Android UI + Android lint/build** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S10 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(android): expose accessible manual microphone mute`; record commit and evidence in OpenSpec tasks/verification report.
+**Risk:** none. T11 adds a manual-mode UI action and reuses the existing input-only mute operation; it does not change shared transport/API contracts.
+
+- [ ] **Step 1 — RED:** `manualMuteIsVisibleAndAccessible`, `mutedSamplesNeverReachNextTurn` and `muteDoesNotStopTutorOutput` assert semantics/state, focus, touch target, STT payloads and unchanged active session. Tests authored; no valid RED observed because the UI runner had no device and transport mute behavior was already present.
+- [ ] **Step 2 — Observe RED:** `LocalVoiceTransportTest` did not demonstrate the new separate UI control's absence; the test-first gate remains pending device-backed test execution or a deterministic unit seam.
+- [x] **Step 3 — Implement:** Added separate manual mute UI, localized visible/action/state copy, and tests; existing input-only mute path preserves tutor playback and session.
+- [ ] **Step 4 — GREEN:** Writer reported focused voice 45/45 and full Android + engine-local 804/804; parent's focused rerun hit one T10 `manual mode never auto-processes...` failure (`endTurn` expected 1, got 0); T11-only test passed 1/1. `:app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest` passed (138 tasks, 13 executed). `:app:connectedUiTestAndroidTest` failed with `DeviceException: No connected devices!`; `emulator` CLI missing. Runtime UI proof remains pending.
+- [x] **Step 5 — Review:** Fresh reviewer approved; advisory: runtime Compose accessibility/localization unverified without device.
+- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `feat(android): expose accessible manual microphone mute`; record commit and evidence in OpenSpec tasks/verification report. Implementation commit does not close the task while RED/runtime proof is missing.
 
 ### Task 12: Make iOS pronunciation private and recoverable
 

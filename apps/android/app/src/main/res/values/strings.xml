@@ -77,6 +77,8 @@
     <string name="talk_resume_label">Resume</string>
     <string name="talk_mic_unmute_desc">Unmute microphone</string>
     <string name="talk_mic_mute_desc">Mute microphone</string>
+    <string name="talk_manual_mic_mute">Mute</string>
+    <string name="talk_manual_mic_unmute">Unmute</string>
     <string name="talk_end_label">End</string>
     <string name="talk_transcript_label">Transcript</string>
     <string name="talk_type_button">Type instead</string>
