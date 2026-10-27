@@ -387,6 +387,6 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L68 (2026-10-27): Committed T14 as `e4a5375` (`fix(ios): gate unsupported topic search`) with coordinator/UI regressions and AppTests target registration. `git show --check --oneline --stat HEAD` passed; runtime Swift/iOS checks remain deferred to T16.
 - L69 (2026-10-27): After T14, start T15/S16. Preserve secure-persist/adopt/notify order, profile-500 recovery and the user's T16 Swift-test deferral.
 - L70 (2026-10-27): T15 review found two Important coverage gaps: production adoption/profile and refresh/invalidation. Fix round 1 added actual `signIn`/`refresh`, persistence, notification and router assertions.
-- L71 (2026-10-27): T15 rereview addressed both findings; independent fresh-scratch verification passed 12/12 assertions and parent checks passed. Minor deferred: stale-exchange test does not model replacement owner. Swift runtime and RED/GREEN await T16. Code commit: `e545c79`; status record follows separately. Risk: item 2.
+- L71 (2026-10-27): T15 rereview addressed both findings; independent verifier passed 12/12 assertions. Minor: stale-exchange test omits replacement owner. Swift runtime and RED/GREEN await T16. Commit: `e545c79`. Risk: item 2.
 
-- L72 (2026-10-27): Corrected a documentation slip: the T15 commit `e545c79` had been attached to T6 in OpenSpec; T6 remains planned with no commit. No source or task scope changed.
+- L72 (2026-10-27): Fixed OpenSpec: `e545c79` belongs to T15, not T6; T6 remains planned.
