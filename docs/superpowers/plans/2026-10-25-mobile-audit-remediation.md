@@ -232,7 +232,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 7: Wire Android time-safe complete transport
 
-**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5,T6. **Status:** Android implementation and focused review corrections complete; final work-unit review/commit pending. Android focused RED observed for the missing v2 GET version selector. Keep unrelated pre-existing user modifications in `AppViewModel.kt` untouched.
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5,T6. **Status:** Android implementation committed as `8b1b153`; Android proof and scoped review passed; shared iOS/runtime proof remains deferred to T16. Android focused RED observed for the missing v2 GET version selector. Keep unrelated pre-existing user modifications in `AppViewModel.kt` untouched.
 
 **Files:**
 - Modify: `apps/android/app/src/main/java/com/jkdc/app/network/ProgressClient.kt`
@@ -252,7 +252,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [x] **Step 3 — Implement:** Wire ProgressClient.kt as well as AppViewModel/engine. Use exact version negotiation, bounded deterministic suffix traversal, ack validation and T5 rollup write path, including corrected v1 compatibility. No app-facing v2 activation before T8.
 - [x] **Step 4 — GREEN:** Focused T7 regressions and full Android unit/core suites passed: 786 app tests + 11 engine-local tests, 0 failures/errors/skips. Exact command: `./gradlew --offline --no-parallel --max-workers=1 :app:testDebugUnitTest :core:engine-local:testDebugUnitTest`.
 - [x] **Step 5 — Review:** Fresh scoped review confirmed both Important transport findings fixed and found no blockers in the new database-backed regressions/JVM adapter update. Independent scratch verification passed all four targeted timestamp, fallback-cursor, 1001-row restart, and malformed-later-page tests.
-- [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(android): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
+- [x] **Step 6 — Commit:** Parent committed reviewed T7 files as `8b1b153` (`fix(android): wire checked resumable progress transport`).
 
 ### Task 8: Integrate effective progress reads and upload feedback
 
