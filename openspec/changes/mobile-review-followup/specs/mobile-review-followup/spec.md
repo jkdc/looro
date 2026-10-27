@@ -3,7 +3,7 @@
 ## ADDED Requirements
 
 ### Requirement: Quarantine unattributed fallback (R01)
-When legacy fallback data cannot be tied to the active identity, clients MUST NOT read, expose, rewrite, delete or assign it to that identity. They MUST offer a non-destructive recovery or retry path.
+After database-open or migration failure, clients MUST NOT load, expose, rewrite, delete or assign the shared legacy fallback to the active identity. The previously authorized verified one-time development-data migration may inspect the source during its attempt. Clients MUST offer a non-destructive recovery or retry path.
 
 #### Scenario: Failed migration followed by account change
 - **GIVEN** an ownerless fallback archive and a failed database open or migration

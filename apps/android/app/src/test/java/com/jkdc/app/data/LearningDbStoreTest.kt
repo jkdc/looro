@@ -17,6 +17,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -129,6 +130,106 @@ class LearningDbStoreTest {
         assertFalse(files.migrated.exists())
         assertNull(MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
         assertEquals(0L, count("sessions"))
+    }
+
+    @Test fun corruptOwnerlessFallbackIsQuarantinedAcrossAccountChanges() {
+        val bytes = "{not json".toByteArray()
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+
+        for (owner in listOf("member:account-a", "member:account-b", "guest:device")) {
+            assertThrows("An active identity must not access shared fallback data", IllegalStateException::class.java) {
+                LearningDbStore.open(db, files, activeIdentity = owner, clock = { now })
+            }
+            assertTrue("The legacy backup must remain byte-identical", files.json.readBytes().contentEquals(bytes))
+            assertFalse("A failed migration must not rename the backup", files.migrated.exists())
+        }
+    }
+
+    @Test fun legacyReadPreservesAtomicBaseBackupAndNewFilesWithoutRecoveryMutation() {
+        val dir = tmp.newFolder()
+        val base = File(dir, "learning.json")
+        val backup = File(dir, "learning.json.bak")
+        val pending = File(dir, "learning.json.new")
+        val baseBytes = "base bytes".toByteArray()
+        val backupBytes = "backup bytes".toByteArray()
+        val pendingBytes = "pending bytes".toByteArray()
+        base.writeBytes(baseBytes)
+        backup.writeBytes(backupBytes)
+        pending.writeBytes(pendingBytes)
+        val files = AndroidLearningFiles(base)
+
+        assertArrayEquals(backupBytes, files.readLearningJson())
+        assertArrayEquals(baseBytes, base.readBytes())
+        assertArrayEquals(backupBytes, backup.readBytes())
+        assertArrayEquals(pendingBytes, pending.readBytes())
+
+        assertTrue(base.delete())
+        assertArrayEquals(backupBytes, files.readLearningJson())
+        assertFalse(base.exists())
+        assertArrayEquals(backupBytes, backup.readBytes())
+        assertArrayEquals(pendingBytes, pending.readBytes())
+    }
+
+    @Test fun failedMigrationPreservesAllAtomicRecoveryFiles() {
+        val dir = tmp.newFolder()
+        val base = File(dir, "learning.json")
+        val backup = File(dir, "learning.json.bak")
+        val pending = File(dir, "learning.json.new")
+        val baseBytes = "incomplete base".toByteArray()
+        val backupBytes = "unreadable recovery backup".toByteArray()
+        val pendingBytes = "unfinished write".toByteArray()
+        base.writeBytes(baseBytes); backup.writeBytes(backupBytes); pending.writeBytes(pendingBytes)
+
+        assertThrows(LearningDbStore.QuarantinedLegacyArchive::class.java) {
+            LearningDbStore.open(db, AndroidLearningFiles(base), activeIdentity = "member:account-a")
+        }
+
+        assertArrayEquals(baseBytes, base.readBytes())
+        assertArrayEquals(backupBytes, backup.readBytes())
+        assertArrayEquals(pendingBytes, pending.readBytes())
+        assertFalse(File(base.path + ".migrated").exists())
+        assertFalse(File(base.path + ".migrated.bak").exists())
+    }
+
+    @Test fun successfulMigrationArchivesExactlyTheAtomicBackupThatWasRead() {
+        val dir = tmp.newFolder()
+        val base = File(dir, "learning.json")
+        val backup = File(dir, "learning.json.bak")
+        val pending = File(dir, "learning.json.new")
+        val baseBytes = ArchiveCodec.encode(Archive(completions = mutableListOf(
+            CompletionMark("exercise_set", "incomplete-base", now, 10, "en")))).toByteArray()
+        val backupBytes = ArchiveCodec.encode(Archive(completions = mutableListOf(
+            CompletionMark("exercise_set", "recovered-backup", now, 90, "en")))).toByteArray()
+        val pendingBytes = "unfinished write".toByteArray()
+        base.writeBytes(baseBytes); backup.writeBytes(backupBytes); pending.writeBytes(pendingBytes)
+
+        val store = LearningDbStore.open(db, AndroidLearningFiles(base),
+            activeIdentity = "member:account-a", clock = { now })
+
+        assertFalse(store.jsonMode)
+        assertEquals(listOf("recovered-backup"), CompletionsDao.all(db).map { it.itemID })
+        assertArrayEquals(baseBytes, base.readBytes())
+        assertArrayEquals(backupBytes, File(base.path + ".migrated.bak").readBytes())
+        assertFalse(backup.exists())
+        assertArrayEquals(pendingBytes, pending.readBytes())
+    }
+
+    @Test fun migratedBackupCollisionDoesNotReplaceEitherRecoveryCopy() {
+        val dir = tmp.newFolder()
+        val base = File(dir, "learning.json")
+        val backup = File(dir, "learning.json.bak")
+        val archived = File(dir, "learning.json.migrated.bak")
+        val backupBytes = "recovery backup".toByteArray()
+        val archivedBytes = "previous migrated backup".toByteArray()
+        backup.writeBytes(backupBytes)
+        archived.writeBytes(archivedBytes)
+        val files = AndroidLearningFiles(base)
+        assertArrayEquals(backupBytes, files.readLearningJson())
+
+        assertThrows(IllegalStateException::class.java) { files.renameLearningJsonToMigrated() }
+
+        assertArrayEquals(backupBytes, backup.readBytes())
+        assertArrayEquals(archivedBytes, archived.readBytes())
     }
 
     @Test fun oversizeJsonEngagesFailSafeAndLeavesTheFileUntouched() {

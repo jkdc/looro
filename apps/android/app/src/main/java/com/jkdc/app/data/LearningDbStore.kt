@@ -1,7 +1,6 @@
 package com.jkdc.app.data
 
 import android.content.Context
-import android.util.AtomicFile
 import com.jkdc.app.core.Archive
 import com.jkdc.app.core.ArchiveCodec
 import com.jkdc.app.core.FinalAssessmentRecovery
@@ -9,6 +8,7 @@ import com.jkdc.app.core.FinalAssessmentTicket
 import com.jkdc.app.core.nowSeconds
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.security.MessageDigest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -81,17 +81,11 @@ import kotlinx.serialization.json.jsonObject
  * is in database mode and never re-migrates — a learning.json that
  * reappears later is IGNORED, not merged again.
  *
- * Fail-safe contract for Task 2: [open] never throws while learning.json
- * exists. When the database cannot be opened or the migration aborts (corrupt
- * JSON, oversized file, invalid retry ledger, verified-count mismatch), the
- * store comes back with [jsonMode] = true and [jsonModeNotice] set: the app
- * must spend that launch on LearningRepository's JSON path (which still owns
- * the intact file) and surface the notice. In JSON mode [db] throws, so no
- * code can write to a database the next launch would not read. The migration
- * retries on the next launch because the hash gate only closes after a
- * verified commit. Without a JSON to fall back to, [open] RETHROWS (a
- * database that cannot open included): there is no data to serve either way,
- * and a silent jsonMode would strand a session's work with no durable copy.
+ * Runtime fail-safe: when opening the database or migrating learning.json
+ * fails for an active learner, [open] quarantines the ownerless JSON rather
+ * than serving it to that identity. The file is preserved for a later retry.
+ * The platform-free nullable-identity overload retains JSON mode for legacy
+ * migration tests; the Android entry point always requires an identity.
  *
  * Known fail-safe trigger, accepted by design: an archive holding two
  * completions that differ only by language at the same instant passes
@@ -115,6 +109,11 @@ class LearningDbStore private constructor(
     val jsonMode: Boolean,
     val jsonModeNotice: String?,
 ) {
+    /** A shared legacy fallback cannot safely be served to an active learner. */
+    class QuarantinedLegacyArchive(cause: Throwable) : IllegalStateException(
+        "The legacy learning archive is quarantined; existing data was not replaced.", cause,
+    )
+
     init {
         require(jsonMode == (jsonModeNotice != null)) {
             "jsonMode and jsonModeNotice must go together"
@@ -193,15 +192,43 @@ class LearningDbStore private constructor(
 
         private val metadataJson = Json { ignoreUnknownKeys = true }
 
-        /** Production entry point: open (or create) learning.db and migrate
-         *  learning.json when due. Never throws while a learning.json exists
-         *  to fall back on — see the fail-safe contract in the class KDoc.
-         *  Without one, a failed open (a database that cannot open included)
-         *  RETHROWS: jsonMode would promise a fallback that cannot serve
-         *  anything and silently drop the session's work on the next
-         *  launch. */
+        /** Selects the bytes AtomicFile.openRead() would recover, without changing any files.
+         *  Android gives `.bak` precedence and normally renames it over the base. */
+        internal fun legacyJsonSourceWithoutAtomicRecovery(base: File): File {
+            val backup = File(base.path + ".bak")
+            return when {
+                backup.exists() -> backup
+                base.exists() -> base
+                else -> throw java.io.FileNotFoundException(base.path)
+            }
+        }
+
+        internal fun readLearningJsonWithoutAtomicRecovery(base: File): ByteArray {
+            val source = legacyJsonSourceWithoutAtomicRecovery(base)
+            return readLegacyJsonFile(source)
+        }
+
+        internal fun readLegacyJsonFile(source: File): ByteArray {
+            FileInputStream(source).use { input ->
+                val output = ByteArrayOutputStream()
+                val buffer = ByteArray(65536)
+                while (true) {
+                    val count = input.read(buffer)
+                    if (count < 0) break
+                    require(output.size() + count <= ArchiveCodec.MAXIMUM_ENCODED_BYTES) {
+                        "El respaldo local es demasiado grande."
+                    }
+                    output.write(buffer, 0, count)
+                }
+                return output.toByteArray()
+            }
+        }
+
+        /** Production entry point: migrate when due, and quarantine an
+         *  unattributed fallback on failure instead of exposing it to the
+         *  active identity. A later launch can retry without deleting it. */
         fun open(context: Context, clock: () -> Double = ::nowSeconds,
-                 activeIdentity: String? = null): LearningDbStore {
+                 activeIdentity: String): LearningDbStore {
             val files = androidFiles(context)
             val adopted = adoptPreimportDatabase(context.getDatabasePath(LearningDb.NAME))
             if (adopted) {
@@ -210,18 +237,18 @@ class LearningDbStore private constructor(
             }
             return try {
                 open(LearningDb.open(context), files, activeIdentity = activeIdentity, clock = clock).also { store ->
-                    activeIdentity?.let { ExamHistoryDao.assignOwnerlessToIdentityOnce(store.db, it) }
+                    ExamHistoryDao.assignOwnerlessToIdentityOnce(store.db, activeIdentity)
                 }
             } catch (failure: Exception) {
                 if (!files.learningJsonExists()) throw failure
-                jsonMode(files, failure)
+                if (failure is QuarantinedLegacyArchive) throw failure
+                throw QuarantinedLegacyArchive(failure)
             }
         }
 
-        /** Platform-free core of [open] (the JVM-testable seam): the caller
-         *  supplies the opened database and the file operations. Same
-         *  fail-safe split: jsonMode while a learning.json exists, rethrow
-         *  without one. */
+        /** Platform-free core of [open] (the JVM-testable seam). Active
+         *  identities quarantine failures; a null identity keeps the legacy
+         *  JSON-mode behavior for migration tooling and historical tests. */
         fun open(database: SqlDatabase, files: Files, activeIdentity: String? = null,
                  clock: () -> Double = ::nowSeconds): LearningDbStore {
             return try {
@@ -240,6 +267,7 @@ class LearningDbStore private constructor(
                 // rethrow instead of a jsonMode that would drop the session's
                 // work.
                 if (!files.learningJsonExists()) throw failure
+                if (activeIdentity != null) throw QuarantinedLegacyArchive(failure)
                 jsonMode(files, failure)
             }
         }
@@ -387,47 +415,31 @@ class LearningDbStore private constructor(
             MessageDigest.getInstance("SHA-256").digest(bytes)
                 .joinToString("") { "%02x".format(it.toInt() and 0xff) }
 
-        /** The Android [Files]: AtomicFile read (same bytes LearningRepository
-         *  reads, .bak fallback included), plain same-directory rename. */
+        /** Android file adapter keeps AtomicFile recovery semantics without mutating pre-commit data. */
         private fun androidFiles(context: Context): Files {
             val base = File(context.applicationContext.filesDir, "learning.json")
-            val atomic = AtomicFile(base)
-            return object : Files {
-                override fun learningJsonExists() = base.exists() || File(base.path + ".bak").exists()
-                override fun readLearningJson(): ByteArray {
-                    atomic.openRead().use { input ->
-                        val output = ByteArrayOutputStream()
-                        val buffer = ByteArray(65536)
-                        while (true) {
-                            val count = input.read(buffer)
-                            if (count < 0) break
-                            require(output.size() + count <= ArchiveCodec.MAXIMUM_ENCODED_BYTES) {
-                                "El respaldo local es demasiado grande."
-                            }
-                            output.write(buffer, 0, count)
-                        }
-                        return output.toByteArray()
-                    }
-                }
-                override fun renameLearningJsonToMigrated() {
-                    val migrated = File(base.path + ".migrated")
-                    val backup = File(base.path + ".bak")
-                    if (base.exists()) {
-                        check(base.renameTo(migrated)) { "could not rename $base to $migrated" }
-                        // A leftover AtomicFile .bak is stale the moment the
-                        // base is gone: openRead RESTORES backup → base before
-                        // reading, so the bytes just migrated are the base's.
-                        // Leaving it would keep learningJsonExists() true
-                        // forever (a .bak without a base still counts as a
-                        // fallback), re-arming the migration on every launch.
-                        if (backup.exists()) check(backup.delete()) {
-                            "could not remove the stale learning.json backup"
-                        }
-                    } else check(backup.renameTo(File(base.path + ".migrated.bak"))) {
-                        "could not rename the learning.json backup"
-                    }
-                }
-            }
+            return AndroidLearningFiles(base)
         }
+    }
+}
+
+/** Android's AtomicFile recovery semantics implemented without pre-commit file mutation. */
+internal class AndroidLearningFiles(private val base: File) : LearningDbStore.Files {
+    private var migrationSource: File? = null
+
+    override fun learningJsonExists() = base.exists() || File(base.path + ".bak").exists()
+
+    override fun readLearningJson(): ByteArray {
+        val source = LearningDbStore.legacyJsonSourceWithoutAtomicRecovery(base)
+        migrationSource = source
+        return LearningDbStore.readLegacyJsonFile(source)
+    }
+
+    override fun renameLearningJsonToMigrated() {
+        val source = checkNotNull(migrationSource) { "legacy archive was not read before migration cleanup" }
+        val suffix = if (source.path == base.path) ".migrated" else ".migrated.bak"
+        val migrated = File(base.path + suffix)
+        check(!migrated.exists()) { "refusing to replace existing migration archive $migrated" }
+        java.nio.file.Files.move(source.toPath(), migrated.toPath())
     }
 }
