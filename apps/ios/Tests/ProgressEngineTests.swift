@@ -114,6 +114,39 @@ final class ProgressEngineTests: XCTestCase {
         XCTAssertEqual(25, (Double(l1.atMilliseconds) - 978_307_200_000) / 1000, accuracy: 0.001)
     }
 
+    func testDownloadPersistUploadKeepsBothInstants() {
+        let firstAtMilliseconds: Int64 = 1_792_929_599_000
+        let lastAtMilliseconds: Int64 = 1_792_929_600_000
+        let firstAt = Double(firstAtMilliseconds) / 1000 - 978_307_200
+        let lastAt = Double(lastAtMilliseconds) / 1000 - 978_307_200
+        let entries = ProgressSync.entries(lessons: [], completions: [
+            CompletionMark(kind: ProgressEngine.lesson, itemID: "en-foundations-u1-to-be", at: firstAt,
+                           languageID: "en"),
+            CompletionMark(kind: ProgressEngine.lesson, itemID: "en-foundations-u1-to-be", at: lastAt,
+                           languageID: "en")],
+            courses: [course("en", ["en-foundations-u1-to-be"])], listeningIDs: [], languageID: "en",
+            nowUnixMilliseconds: 1_793_000_000_000)
+
+        XCTAssertEqual(1, entries.count)
+        XCTAssertEqual(firstAtMilliseconds, entries[0].firstAtMilliseconds)
+        XCTAssertEqual(lastAtMilliseconds, entries[0].lastAtMilliseconds)
+        XCTAssertEqual(2, entries[0].attempts)
+    }
+
+    func testLocalLessonUsesReferenceEpoch() {
+        let unixMilliseconds: Int64 = 1_792_929_600_000
+        let appleReferenceSeconds = Double(unixMilliseconds) / 1000 - 978_307_200
+        let entries = ProgressSync.entries(
+            lessons: [LessonState(lessonID: "en-foundations-u1-to-be", attempts: 2,
+                                  lastSeen: appleReferenceSeconds)],
+            completions: [], courses: [course("en", ["en-foundations-u1-to-be"])],
+            listeningIDs: [], languageID: "en", nowUnixMilliseconds: 1_793_000_000_000)
+
+        XCTAssertEqual(1, entries.count)
+        XCTAssertEqual(unixMilliseconds, entries[0].firstAtMilliseconds)
+        XCTAssertEqual(unixMilliseconds, entries[0].lastAtMilliseconds)
+    }
+
     func testRemoteMergeIgnoresOtherLanguagesAndStampsRestoredMarks() {
         var archive = Archive()
         archive.lessons = [LessonState(lessonID: "en-l1", attempts: 2, lastSeen: 10)]

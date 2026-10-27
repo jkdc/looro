@@ -134,6 +134,39 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     var jsonMode: Bool { dbStore.jsonMode }
 
+    /// Reads only the active member's durable remote-sync cursor.
+    func remoteProgressSyncState(direction: String, ownerAccountID: String) throws -> ProgressSyncState? {
+        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return nil }
+        return try ProgressSyncStateDao.get(dbStore.db, ownerAccountID: ownerAccountID, direction: direction)
+    }
+
+    func hasLocalProgress(ownerAccountID: String) -> Bool {
+        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return false }
+        return !(archive.lessons ?? []).isEmpty || !(archive.completions ?? []).isEmpty
+    }
+
+    /// Persists one remote page and its cursor atomically without creating local history.
+    func applyRemoteProgressPage(_ rows: [RemoteProgressRollup], ownerAccountID: String,
+                                 nextCursor: String?, passGeneration: Int64,
+                                 updatedAtMilliseconds: Int64) throws {
+        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else {
+            throw SqlDatabaseError.unsupportedValue("progress owner changed")
+        }
+        try LearningDbWriter.remoteProgressPageApplied(dbStore.db, ownerAccountID: ownerAccountID,
+            rollups: rows, nextCursor: nextCursor, passGeneration: passGeneration,
+            updatedAtMilliseconds: updatedAtMilliseconds)
+    }
+
+    func acknowledgeRemoteProgressUpload(ownerAccountID: String, nextCursor: String?,
+                                        passGeneration: Int64, updatedAtMilliseconds: Int64) throws {
+        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else {
+            throw SqlDatabaseError.unsupportedValue("progress owner changed")
+        }
+        try LearningDbWriter.remoteProgressUploadAcknowledged(dbStore.db, ownerAccountID: ownerAccountID,
+            nextCursor: nextCursor, passGeneration: passGeneration,
+            updatedAtMilliseconds: updatedAtMilliseconds)
+    }
+
     func activateLearnerIdentity(_ accountID: String?) {
         let identity = accountID.map { "member:\($0)" } ?? Self.stableGuestIdentity()
         guard identity != activeLearnerIdentity else { return }

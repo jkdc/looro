@@ -111,10 +111,19 @@ public enum ProgressEngine {
 public struct ProgressSyncEntry: Sendable {
     public var kind: String
     public var itemID: String
-    public var atMilliseconds: Int64
+    public var firstAtMilliseconds: Int64
+    public var lastAtMilliseconds: Int64
+    public var atMilliseconds: Int64 { lastAtMilliseconds }
     public var attempts: Int
     public var bestScore: Int
     public var language: String
+
+    public init(kind: String, itemID: String, firstAtMilliseconds: Int64, lastAtMilliseconds: Int64,
+                attempts: Int, bestScore: Int, language: String) {
+        self.kind = kind; self.itemID = itemID; self.firstAtMilliseconds = firstAtMilliseconds
+        self.lastAtMilliseconds = lastAtMilliseconds; self.attempts = attempts
+        self.bestScore = bestScore; self.language = language
+    }
 }
 
 public struct RemoteProgress: Sendable {
@@ -134,39 +143,39 @@ public enum ProgressSync {
     /// counters, newest first, wire-capped. Lesson counters outrank the (capped)
     /// mark ledger so attempts never regress.
     public static func entries(lessons: [LessonState], completions: [CompletionMark], courses: [Course],
-                               listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = []) -> [ProgressSyncEntry] {
+                               listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = [],
+                               nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)) -> [ProgressSyncEntry] {
         let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
             .union(courses.map(\.id)).union(listeningIDs).union(readingIDs)
         func scoped(_ mark: CompletionMark) -> Bool {
             mark.languageID == languageID || (mark.languageID == nil && contentIDs.contains(mark.itemID))
         }
         let languageLessons = lessons.filter { $0.attempts > 0 && contentIDs.contains($0.lessonID) }
-        struct Rollup { var attempts = 0; var firstAt = 0.0; var lastAt = 0.0; var bestScore = 0 }
+        struct Rollup { var attempts = 0; var firstAtMilliseconds: Int64; var lastAtMilliseconds: Int64; var bestScore = 0 }
         var rollups: [String: Rollup] = [:]
-        func rollup(_ kind: String, _ item: String, _ at: Double, _ score: Int) -> Rollup {
-            var entry = rollups["\(kind)|\(item)"] ?? Rollup(firstAt: at, lastAt: at)
+        func rollup(_ kind: String, _ item: String, _ at: Double, _ score: Int) -> Rollup? {
+            guard let milliseconds = ProgressTime.toUnixMilliseconds(at, nowUnixMilliseconds: Double(nowUnixMilliseconds)) else { return nil }
+            var entry = rollups["\(kind)|\(item)"] ?? Rollup(firstAtMilliseconds: milliseconds, lastAtMilliseconds: milliseconds)
             entry.attempts += 1
-            entry.firstAt = min(entry.firstAt, at)
-            entry.lastAt = max(entry.lastAt, at)
+            entry.firstAtMilliseconds = min(entry.firstAtMilliseconds, milliseconds)
+            entry.lastAtMilliseconds = max(entry.lastAtMilliseconds, milliseconds)
             entry.bestScore = max(entry.bestScore, score)
             rollups["\(kind)|\(item)"] = entry
             return entry
         }
         for mark in completions where scoped(mark) { _ = rollup(mark.kind, mark.itemID, mark.at, mark.bestScore) }
         for lesson in languageLessons {
-            var mark = rollup(ProgressEngine.lesson, lesson.lessonID, lesson.lastSeen, 0)
+            guard var mark = rollup(ProgressEngine.lesson, lesson.lessonID, lesson.lastSeen, 0) else { continue }
             mark.attempts = max(mark.attempts, lesson.attempts)
-            mark.lastAt = max(mark.lastAt, lesson.lastSeen)
             rollups["\(ProgressEngine.lesson)|\(lesson.lessonID)"] = mark
         }
         return rollups
             .map { key, value in ProgressSyncEntry(kind: String(key.split(separator: "|")[0]),
                 itemID: String(key.split(separator: "|", maxSplits: 1)[1]),
-                atMilliseconds: Int64((value.lastAt + 978_307_200) * 1000), attempts: value.attempts,
+                firstAtMilliseconds: value.firstAtMilliseconds, lastAtMilliseconds: value.lastAtMilliseconds,
+                attempts: value.attempts,
                 bestScore: value.bestScore, language: languageID) }
-            .sorted { $0.atMilliseconds > $1.atMilliseconds }
-            .prefix(maximumEntries)
-            .map { $0 }
+            .sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
     }
 
     /// Applies a server pull for the current language: rows of other languages are

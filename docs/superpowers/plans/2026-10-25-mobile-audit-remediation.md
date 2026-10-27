@@ -206,7 +206,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 6: Wire iOS time-safe complete transport
 
-**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5. **Status:** pending.
+**Requirements:** S2,S3,S4,S5. **Prerequisites:** T3,T4,T5. **Status:** source and regressions authored; independent static/high-risk review passed after one correction; commit pending. All Swift/iOS execution remains deferred to T16, so runtime/platform completion is still pending.
 
 **Files:**
 - Modify: `apps/ios/App/ProgressClient.swift`
@@ -215,15 +215,20 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - Modify: `apps/ios/Core/ProgressEngine.swift`
 - Modify: `apps/ios/Tests/ProgressEngineTests.swift`
 - Create: `apps/ios/AppTests/ProgressClientTests.swift`
+- Modify: `apps/ios/App.xcodeproj/project.pbxproj` (register the AppTests source explicitly)
 
 **Interfaces:** Consumes T2 time types, T3 fences and T5 atomic rollup/cursor APIs. Produces typed success, protocol-unavailable, cancellation and failure transport outcomes, not Boolean/nil conflation. V1 fallback uses corrected conversion and rollup writes but does not advance v2 cursors.
 
 - [ ] **Step 1 — RED:** `all201UploadsAnd1001DownloadsSurviveRestart`, `downloadPersistUploadKeepsBothInstants`, `localLessonUsesReferenceEpoch`, `onlyExactUnavailableResponseDowngrades`, and `malformedPageLeavesCursorUnchanged` cover status/code and complete identity sets with no synthetic events.
 - [ ] **Step 2 — Observe RED:** Run `swift test --package-path apps/ios --filter ProgressEngineTests` after adding the regression. Expected: the new behavior assertion fails for the original defect, not a test setup/compile typo. For a genuinely new contract/target, prove the intended unsupported behavior/configuration is the failure.
-- [ ] **Step 3 — Implement:** Correct the actual local lesson writer, decode once in HTTP adapter, validate complete/cursor consistency and page progress, traverse bounded passes and persist via T5. Do not activate app-facing v2 before T8 projection integration.
+- [x] **Step 3 — Implement:** Correct the actual local lesson writer, decode once in HTTP adapter, validate complete/cursor consistency and page progress, traverse bounded passes and persist via T5. Enable the v2 bootstrap/upload transport in T6, but persist received rows only to T5 remote rollups/cursors; do not connect the visible progress projection until T8.
 - [ ] **Step 4 — GREEN:** Repeat the focused command; expected: regression passes. Run the **Swift Core + iOS App** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S2,S3,S4,S5 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [x] **Step 5 — Review:** Fresh high-risk reviewer checked S2,S3,S4,S5 and found one blocking ProgressEngine property/unit mismatch; the one-line correction was independently re-reviewed as addressed. Static source review only; runtime compile/tests remain deferred to T16.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `fix(ios): wire checked resumable progress transport`; record commit and evidence in OpenSpec tasks/verification report.
+
+**T6 ruling:** S4 and the user's established rule require downloading only for a newly authenticated account with no local progress on that device. Therefore T6 wires v2 bootstrap/upload now and stores fetched rows in T5 remote rollups only; T8 remains responsible for exposing the effective projection to app readers. A dormant-only client that leaves production on recurring v1 downloads would contradict S4 and the user's rule.
+
+**Fallback-state ruling:** On the exact unavailable response, a successful full v1 compatibility bootstrap may persist rollups and increment `passGeneration` as its completion marker while preserving the current opaque v2 cursor unchanged. This is not v2 cursor advancement; it prevents the v1 bootstrap from repeating before T8 projects remote rollups. Upload fallback must not mutate download state.
 
 ### Task 7: Wire Android time-safe complete transport
 

@@ -157,6 +157,10 @@ struct ConversationTopicSearchAdapter {
     /// Push/pull the progress ledger against the account (guests included). Failures
     /// are silent: sync must never nag, the local ledger stays the source of truth.
     func syncProgress() {
+        if injectedProgressSyncAdapter == nil {
+            syncVersionedProgress()
+            return
+        }
         guard let adapter = injectedProgressSyncAdapter ?? productionProgressSyncAdapter(),
               let capturedSession = adapter.loadSession() else { return }
         let identity = progressSyncOperation.identity(accountID: capturedSession.accountID,
@@ -190,6 +194,126 @@ struct ConversationTopicSearchAdapter {
             } catch is CancellationError {
                 return
             }
+        }
+    }
+
+    /// Authenticated accounts bootstrap once only when this device has no local
+    /// progress. Pulled rows remain in the owner-scoped remote ledger until T8.
+    private func syncVersionedProgress() {
+        guard !store.jsonMode, let configuration = managed?.configuration,
+              let client = ProgressClient(configuration: configuration) else { return }
+        let keychain = ManagedAccountKeychain(scope: configuration.storageScope)
+        guard let session = try? keychain.load(),
+              store.activeLearnerIdentity == "member:\(session.accountID.uuidString)" else { return }
+        let identity = progressSyncOperation.identity(accountID: session.accountID.uuidString,
+                                                       accessToken: session.accessToken)
+        guard let capturedArchive = try? store.exportData() else { return }
+        guard let operation = progressSyncOperation.begin(identity) else { return }
+        progressSyncTask = Task { [weak self] in
+            guard let self else { return }
+            defer { self.progressSyncOperation.finish(operation) }
+            func isCurrent() -> Bool {
+                guard !Task.isCancelled, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
+                      (try? self.store.exportData()) == capturedArchive,
+                      let live = try? keychain.load(),
+                      live.accountID == session.accountID, live.accessToken == session.accessToken else { return false }
+                return self.progressSyncOperation.owns(operation,
+                    liveIdentity: self.progressSyncOperation.identity(accountID: live.accountID.uuidString,
+                                                                       accessToken: live.accessToken))
+            }
+            do {
+                let owner = session.accountID.uuidString
+                let download = try self.store.remoteProgressSyncState(direction: "download", ownerAccountID: owner)
+                if ProgressClient.shouldBootstrap(
+                    localProgressExists: self.store.hasLocalProgress(ownerAccountID: owner), state: download) {
+                    var cursor = download?.cursor
+                    let generation = max(1, download?.passGeneration ?? 1)
+                    var pageCount = 0
+                    downloadLoop: while true {
+                        guard isCurrent(), pageCount < 10_000 else { return }
+                        switch await client.fetchPage(cursor: cursor, bearer: session.accessToken) {
+                        case .success(let page):
+                            guard isCurrent(), page.rows.count <= 1000,
+                                  page.complete == (page.nextCursor == nil),
+                                  page.complete || page.nextCursor != cursor else { return }
+                            let rows = page.rows.map { row in RemoteProgressRollup(ownerAccountID: owner,
+                                languageID: row.languageID, kind: row.kind, itemID: row.itemID,
+                                firstAtMilliseconds: row.firstAtMilliseconds, lastAtMilliseconds: row.lastAtMilliseconds,
+                                attempts: row.attempts, bestScore: row.bestScore, sourceVersion: 2) }
+                            guard try self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity, {
+                                try self.store.applyRemoteProgressPage(rows, ownerAccountID: owner,
+                                    nextCursor: page.nextCursor, passGeneration: page.complete ? generation : 0,
+                                    updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+                            }) != nil else { return }
+                            pageCount += 1
+                            if page.complete { break downloadLoop }
+                            cursor = page.nextCursor
+                        case .protocolUnavailable:
+                            // Only this exact outcome permits one v1 bootstrap. The
+                            // existing v2 cursor is preserved; generation marks the
+                            // compatibility bootstrap complete to prevent repeats.
+                            switch await client.fetchLegacy(bearer: session.accessToken) {
+                            case .success(let legacyRows):
+                                guard isCurrent() else { return }
+                                let rows = legacyRows.map { row in RemoteProgressRollup(ownerAccountID: owner,
+                                    languageID: row.languageID, kind: row.kind, itemID: row.itemID,
+                                    firstAtMilliseconds: row.firstAtMilliseconds, lastAtMilliseconds: row.lastAtMilliseconds,
+                                    attempts: row.attempts, bestScore: row.bestScore, sourceVersion: 1) }
+                                guard try self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity, {
+                                    try self.store.applyRemoteProgressPage(rows, ownerAccountID: owner,
+                                        nextCursor: download?.cursor, passGeneration: generation,
+                                        updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+                                }) != nil else { return }
+                                break downloadLoop
+                            case .protocolUnavailable, .cancelled, .failure: return
+                            }
+                        case .cancelled, .failure: return
+                        }
+                        if cursor == nil { break }
+                    }
+                }
+                guard isCurrent() else { return }
+                let archive = self.store.archive
+                let entries = LanguageRegistry.all.flatMap { language -> [ProgressSyncEntry] in
+                    ProgressSync.entries(lessons: archive.lessons ?? [], completions: archive.completions ?? [],
+                        courses: CourseRegistry.forLanguage(language.id),
+                        listeningIDs: Set(ListeningRegistry.forLanguage(language.id).map(\.id)), languageID: language.id)
+                }.sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
+                let uploadState = try self.store.remoteProgressSyncState(direction: "upload", ownerAccountID: owner)
+                var cursor = uploadState?.cursor
+                let generation = max(1, uploadState?.passGeneration ?? 1)
+                let pending = entries.filter { "\($0.kind)|\($0.itemID)|\($0.language)" > (cursor ?? "") }
+                var usedLegacyUpload = false
+                for batch in ProgressClient.uploadBatches(pending) {
+                    guard isCurrent() else { return }
+                    let outcome = await client.upload(batch, bearer: session.accessToken)
+                    let acknowledged: Int
+                    switch outcome {
+                    case .success(let count): acknowledged = count
+                    case .protocolUnavailable:
+                        guard case .success(let legacyCount) = await client.uploadLegacy(batch, bearer: session.accessToken),
+                              legacyCount == batch.count, isCurrent() else { return }
+                        // Legacy POST has no v2 acknowledgement cursor; leave the
+                        // durable v2 upload state untouched so retries remain safe.
+                        usedLegacyUpload = true
+                        continue
+                    case .cancelled, .failure: return
+                    }
+                    guard acknowledged == batch.count, isCurrent() else { return }
+                    cursor = "\(batch.last!.kind)|\(batch.last!.itemID)|\(batch.last!.language)"
+                    guard try self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity, {
+                        try self.store.acknowledgeRemoteProgressUpload(ownerAccountID: owner, nextCursor: cursor,
+                            passGeneration: generation, updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+                    }) != nil else { return }
+                }
+                guard isCurrent() else { return }
+                if !usedLegacyUpload {
+                    try self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity, {
+                        try self.store.acknowledgeRemoteProgressUpload(ownerAccountID: owner, nextCursor: nil,
+                            passGeneration: generation + 1, updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+                    })
+                }
+            } catch { return }
         }
     }
 
