@@ -427,3 +427,8 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 4 — Final proof:** Run the final applicable command set; expected: every executed required check exits zero, with no hidden skipped integration cases. Run the **Shared + API integration + Android unit + Android lint/build + Swift Core + iOS App + Android UI + device gates** checks from the command table and record actual status/counts or exact unavailability.
 - [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S1–S16 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `docs(mobile): record remediation verification`; record commit and evidence in OpenSpec tasks/verification report.
+
+
+## Task 15 implementation record
+
+Commit `e545c79` implements session adoption notification before profile loading, with deterministic production-flow tests. Static source checks and independent review passed; Swift/iOS runtime validation remains deferred to T16 by user instruction.
