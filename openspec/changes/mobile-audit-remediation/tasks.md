@@ -1,6 +1,6 @@
 # Tasks: Mobile Audit Remediation
 
-All tasks are pending. Sequential Superpowers implementation/review uses `docs/superpowers/plans/2026-10-25-mobile-audit-remediation.md`. S# denote audit requirements, T# denote implementation tasks. Do not tick a task or requirement merely because its pure unit test passes; persisted/HTTP/App/UI proof is required where specified.
+Unchecked tasks remain open; completed tasks are marked `[x]`. Sequential Superpowers implementation/review uses `docs/superpowers/plans/2026-10-25-mobile-audit-remediation.md`. S# denote audit requirements, T# denote implementation tasks. Do not tick a task or requirement merely because its pure unit test passes; persisted/HTTP/App/UI proof is required where specified.
 
 ## Implementation
 
@@ -20,7 +20,7 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 - [ ] T13 / S14 — Preserve typed replies across failure and retry. Depends on T3. Status: implementation/scoped review committed as `185b152`; tests are integrated in AppTests; Swift/iOS execution remains deferred to T16. Evidence: task review, two scoped re-reviews, and independent static verification; commit: `185b152`.
 - [ ] T14 / S15 — Gate topic search by real engine capability. Depends on T13 committed as `185b152`. Status: committed as `e4a5375`; tests integrated; Swift/iOS execution deferred to T16. Minor: direct configured-hosted-route test is not covered; capability/dispatch source mapping reviewed. Evidence: task review and fix re-review; commit `e4a5375`.
 - [ ] T15 / S16 — Notify session adoption before profile loading. Depends on T3 and T14 committed as `e4a5375`. Status: source-verified; runtime verification deferred to T16. Evidence/commit: `e545c79`.
-- [ ] T16 / S1–S17 — Verify the complete remediation and report gaps. Depends on T1–T15,T17. Evidence/commit: pending.
+- [ ] T16 / S1–S17 — Verify the complete remediation and report gaps. Depends on T1–T15,T17. Partial final verification recorded; T5 provenance, T8/T11 platform proof, T10 needs-decision, connected UI, and Swift/iOS proof remain open. Evidence commit pending.
 
 ## Completion rules
 
@@ -32,6 +32,7 @@ All tasks are pending. Sequential Superpowers implementation/review uses `docs/s
 
 ## Review log
 
+- 2026-10-27: T16 final Linux pass: `make check` passed (148 Python tests; generated schema current), `make test-api` passed 756/756, Android unit tests passed 804/804, and Android lint/debug/UI-test APK assembly passed. Connected Android UI failed because no device was attached; Swift Core and iOS App checks could not run because Linux lacks `swift`/`xcodebuild`. Final report preserves T5 provenance and T10 scheduling concerns, and leaves platform/device proof pending; T16 remains open.
 - 2026-10-25: User requested review and correction of design, specification and tasks. Corrected protocol negotiation/timestamp loss, persistence ordering, real exporter/test targets, retry wording and task independence. All implementation tasks remain pending; see verify-report.md for document-only checks.
 - 2026-10-25: T1 code passes focused and full Android unit suites; independent review approved after one correction batch. Android UI source compiles, but connected execution is pending because `adb devices -l` lists no devices and `:app:connectedUiTestAndroidTest` reports “No connected devices!”. Keep S1 unverified until device execution.
 - 2026-10-25: T2 S2/S4 contract/time primitives implemented and independently approved after one correction batch. `make check` (146 tests), exporter tests, Android focused/full unit suites passed; the first full Android run had one non-reproducible `LocalVoiceTransportTest` assertion (`cloud turn processed`), which passed in isolation and on a second full run (731 tests, 0 failures). Swift is unavailable, so `swift test --package-path apps/ios` remains unverified.

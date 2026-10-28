@@ -309,11 +309,11 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - T9 — S6; complete; `442c585`.
 - T10 — S7-S9; Needs decision after two rounds: S8 lacks deterministic discarded-frame acknowledgement; commit pending.
 - T11 — S10; delegated-direct; implementation committed `f57e3ee`, review approved; verification pending: T11-only test 1/1, lint/build pass, but no valid RED/device UI; parent rerun hit one T10 manual-turn failure.
-- T12 — linked S11, S12, S13; delegated-direct (sequential fresh implementer then reviewer; user-authorized available model `gpt-6-luna`); status: implemented and scoped review complete; Swift/iOS verification deferred to T16; commit: `c8c2d48`.
-- T13 — linked S14; delegated-direct (sequential fresh implementer then reviewer; user-authorized available model `gpt-6-luna`); status: implementation/review committed as `185b152`; Swift/iOS verification deferred to T16; mounted focus-after-failure proof also pending T16.
-- T14 — linked S15; delegated-direct (sequential fresh implementer then reviewer; user-authorized available model `gpt-6-luna`); status: implementation/review committed as `e4a5375`; Swift/iOS verification deferred to T16; direct configured-hosted-route test remains a minor follow-up.
-- T15 — linked S16; delegated-direct (sequential fresh implementer then reviewer; user-authorized available model `gpt-6-luna`); status: source-verified; Swift/iOS execution deferred to T16; commit: `e545c79`.
-- T16 — linked S1–S16; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: planned; commit: pending.
+- T12 — S11–S13; implementation/review complete; commit `c8c2d48`; iOS proof T16.
+- T13 — S14; implementation/review commit `185b152`; iOS and mounted focus-after-failure proof T16.
+- T14 — S15; implementation/review commit `e4a5375`; iOS proof T16; configured-hosted-route test follow-up.
+- T15 — S16; source-verified commit `e545c79`; iOS execution T16.
+- T16 — S1–S17; delegated-direct (user-selected final verification); partial evidence recorded 2026-10-27; shared/API/Android unit and build checks pass, but connected UI and Swift/iOS proof are unavailable; T5 provenance, T8/T11 platform proof and T10 decision remain open.
 - T17 — linked S1,S17 and S3–S5; delegated-direct (sequential fresh implementer then reviewer; explicit user-selected method); status: Android implementation and independent high-risk verification complete; iOS runtime proof deferred to T16; depends on resolved active identity before T6–T8 account-scoped persistence; one-time migration of existing ownerless learner data, account-aware stores/archive/import/reset, guest isolation and member-only sync; commit: `07685b5` (includes shared T5 schema/rollup checkpoint; T5 remains partial).
 
 ## Log
@@ -414,3 +414,5 @@ Preserve the pre-existing untracked `.playwright-mcp/` and `informe-revision-app
 - L90 (2026-10-27): T11 separate 52dp EN/ES mute; review approved. Writer reports 45/45 and 804/804; parent rerun failed one T10 manual-turn assert (expected 1, got 0). T11-only 1/1 and lint/build passed. No device or valid RED; preserve T10.
 - L91 (2026-10-27): Committed the T11 implementation and SDD evidence as `f57e3ee` (`feat(android): expose accessible manual microphone mute`). The task remains open until valid test-first/runtime UI proof is obtained; preserved T10 voice changes remain uncommitted.
 - L92 (2026-10-27): T11 evidence docs committed `5d4751f`.
+- L93 (2026-10-27): Began T16 final verification across S1–S17, preserving the recorded T10 needs-decision and T8/T11 proof gaps rather than treating them as green.
+- L94 (2026-10-27): T16 Linux checks: `make check` passed (148 Python tests; schema current), `make test-api` passed 756/756, Android app+engine unit tests passed 804/804, and lint/debug/UI-test APK assembly passed. Connected UI could not run (`DeviceException: No connected devices!`); SwiftPM/Xcode unavailable (`swift`/`xcodebuild` missing). Verification report records S1–S17 statuses; T16 stays open because device/platform proof and T5/T10 gates remain.

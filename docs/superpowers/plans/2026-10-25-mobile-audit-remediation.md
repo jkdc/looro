@@ -437,7 +437,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 
 ### Task 16: Verify the complete remediation and report gaps
 
-**Requirements:** S1–S16. **Prerequisites:** T1–T15. **Status:** pending.
+**Requirements:** S1–S17. **Prerequisites:** T1–T15,T17. **Status:** partial final verification recorded 2026-10-27; T5 provenance, T8/T11 platform proof, T10 needs-decision, connected UI, and Swift/iOS proof remain open.
 
 **Files:**
 - Modify: `openspec/changes/mobile-audit-remediation/verify-report.md`
@@ -449,7 +449,7 @@ A failed command is investigated, not hidden by `--offline` or skipped database 
 - [ ] **Step 2 — Baseline checks:** Run `make check` and read every output. Evidence documentation itself does not require an artificial failing behavior test.
 - [ ] **Step 3 — Implement:** Run shared/API/Android/Swift/App/UI checks where available, fresh whole-feature review, and one bounded correction batch with RED→GREEN for actual blockers. Keep production activation and physical audio validation separate; unexecuted proof stays pending.
 - [ ] **Step 4 — Final proof:** Run the final applicable command set; expected: every executed required check exits zero, with no hidden skipped integration cases. Run the **Shared + API integration + Android unit + Android lint/build + Swift Core + iOS App + Android UI + device gates** checks from the command table and record actual status/counts or exact unavailability.
-- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S1–S16 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
+- [ ] **Step 5 — Review:** Parent freezes the task candidate; fresh reviewer checks S1–S17 scenarios, interfaces and task quality. Do not mark complete with missing required proof.
 - [ ] **Step 6 — Commit:** Parent commits only reviewed task-owned files using `docs(mobile): record remediation verification`; record commit and evidence in OpenSpec tasks/verification report.
 
 
