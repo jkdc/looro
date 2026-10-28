@@ -73,7 +73,9 @@ struct ConversationTopicSearchAdapter {
     private(set) var error: String?
     private(set) var isSending = false
     private(set) var isDismissed = false
+    private(set) var isPresented = false
     private var attemptID: UUID?
+    private var submittedDraft: String?
 
     init(draft: String = "") { self.draft = draft }
 
@@ -81,6 +83,7 @@ struct ConversationTopicSearchAdapter {
         guard !isSending, !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
         isSending = true
         error = nil
+        submittedDraft = draft
         let id = attemptID ?? UUID()
         attemptID = id
         return id
@@ -92,16 +95,38 @@ struct ConversationTopicSearchAdapter {
         switch result {
         case .sent:
             attemptID = nil
-            isDismissed = true
+            let draftWasUnchanged = draft == submittedDraft
+            submittedDraft = nil
+            isDismissed = draftWasUnchanged
         case .failed(let message): error = message
-        case .cancelled, .inFlight: break
+        case .cancelled: break
+        case .inFlight:
+            error = "A reply is still being sent. Please wait."
         }
     }
 
     func dismiss() {
         attemptID = nil
+        submittedDraft = nil
         isSending = false
         isDismissed = true
+    }
+
+    func presentationDidAppear(draft: String) {
+        isPresented = true
+        isDismissed = false
+        isSending = false
+        attemptID = nil
+        submittedDraft = nil
+        error = nil
+        self.draft = draft
+    }
+
+    func presentationDidDisappear() {
+        isPresented = false
+        isSending = false
+        attemptID = nil
+        submittedDraft = nil
     }
 }
 
@@ -438,7 +463,10 @@ struct ConversationTopicSearchAdapter {
     var meaning: String { meanings.text }
     var translating: Bool { meanings.isLoading }
     var meaningError: String? { meanings.error }
+    private(set) var typedReplyDraft = ""
+    private(set) var typedReplyError: String?
     private(set) var typedReplyWorking = false
+    var typedReplyInFlight: Bool { typedReplyOperationInFlight != nil }
     var working: Bool { typedReplyWorking || !delegationTasks.isEmpty }
     var error: String?
     var notice: String?
@@ -806,6 +834,7 @@ struct ConversationTopicSearchAdapter {
         scenarioReviewTask?.cancel(); scenarioReviewState = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
         session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
+        resetTypedReplyDraft()
         typedReplyWorking = false; notice = nil; error = nil
         lastAssessmentKey = ""; lastLanguageCheck = ""; pendingCommands = [:]
         inputLevel = 0; outputLevel = 0; state = .idle; isMuted = false
@@ -978,6 +1007,7 @@ struct ConversationTopicSearchAdapter {
         transport.disconnect(); pendingCommands = [:]; typedReplyWorking = false
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
+        resetTypedReplyDraft()
         if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
         else if let themeID = session?.themeID, !themeID.isEmpty { store.recordCompletion(kind: ProgressEngine.conversationTheme, itemID: themeID) }
         if let ended = session {
@@ -1121,6 +1151,7 @@ struct ConversationTopicSearchAdapter {
         languageGeneration = UUID()
         typedReplyRequestIdentity.clear()
         session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
+        resetTypedReplyDraft()
         notice = nil; error = nil; typedReplyWorking = false; isMuted = false
         inputLevel = 0; outputLevel = 0; state = .idle
     }
@@ -1375,6 +1406,8 @@ struct ConversationTopicSearchAdapter {
         let clean = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard state == .active, !clean.isEmpty, let snapshot = session else { return .cancelled }
         guard typedReplyOperationInFlight == nil else { return .inFlight }
+        typedReplyDraft = clean
+        typedReplyError = nil
         let capturedLearnerGeneration = learnerGeneration
         let messageID = typedReplyRequestIdentity.messageID(for: String(clean.prefix(2000)),
                                                             conversationID: snapshot.id,
@@ -1410,6 +1443,8 @@ struct ConversationTopicSearchAdapter {
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
             append("commentary", result.text); scheduleAssessment(); save()
             typedReplyRequestIdentity.clear()
+            if typedReplyDraft == clean { typedReplyDraft = "" }
+            typedReplyError = nil
             error = nil; proxyActionAvailable = false; tokensExhaustedBanner = false
             return .sent
         } catch is CancellationError {
@@ -1418,6 +1453,7 @@ struct ConversationTopicSearchAdapter {
             guard session?.id == snapshot.id, state == .active, learnerGeneration == capturedLearnerGeneration else { return .cancelled }
             // A token-proxy block keeps the message but gains the paywall route.
             noteProxyBlock(error)
+            typedReplyError = error.localizedDescription
             self.error = error.localizedDescription
             return .failed(error.localizedDescription)
         }
@@ -1425,10 +1461,18 @@ struct ConversationTopicSearchAdapter {
     func cancelTypedReply() {
         invalidateTypedReplyContinuation()
     }
+    func updateTypedReplyDraft(_ draft: String) {
+        typedReplyDraft = draft
+    }
+    private func resetTypedReplyDraft() {
+        typedReplyDraft = ""
+        typedReplyError = nil
+    }
     private func invalidateTypedReplyContinuation() {
         learnerGeneration = UUID()
         typedReplyRequestIdentity.clear()
         typedReplyWorking = false
+        resetTypedReplyDraft()
     }
 #if DEBUG
     func prepareTypedReplyTesting() {

@@ -150,7 +150,7 @@ struct TalkView: View {
                 }.padding(.horizontal, 30).frame(maxWidth: .infinity).frame(minHeight: geometry.size.height)
             }.scrollIndicators(.hidden)
         }
-        .sheet(isPresented: $typing, onDismiss: { coordinator.cancelTypedReply() }) { TypedReplyView(coordinator: coordinator) }
+        .sheet(isPresented: $typing) { TypedReplyView(coordinator: coordinator) }
         .animation(.smooth(duration: 0.35), value: coordinator.state)
         .sheet(item: $transcript) { session in
             TranscriptView(session: session, meaningLanguage: coordinator.store.preferences.meaningLanguage)
@@ -271,24 +271,33 @@ struct TypedReplyView: View {
                 Text("Say it your way.").font(.system(.title, design: .rounded, weight: .semibold))
                 TextField("Reply in \(coordinator.language.name) or another language", text: $editor.draft, axis: .vertical).lineLimit(3...6).focused($focused).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 22))
                     .accessibilityIdentifier("typed-reply-editor")
-                if let error = editor.error {
+                if let error = editor.error ?? coordinator.typedReplyError {
                     Text(error).font(.footnote).foregroundStyle(AppColor.secondary).fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier("typed-reply-error")
                 }
+                if coordinator.typedReplyInFlight {
+                    Text("A reply is still being sent.").font(.footnote).foregroundStyle(AppColor.secondary)
+                        .accessibilityIdentifier("typed-reply-in-flight")
+                }
                 Button {
                     guard let attempt = editor.beginAttempt() else { return }
+                    let submittedText = editor.draft
                     Task {
-                        let result = await coordinator.sendTyped(editor.draft)
+                        let result = await coordinator.sendTyped(submittedText)
                         editor.finishAttempt(result, id: attempt)
-                        if editor.isDismissed { dismiss() }
+                        if editor.isDismissed && editor.isPresented { dismiss() }
                     }
                 } label: {
                     HStack { Text(editor.isSending ? "Sending…" : "Send reply"); Spacer(); Image(systemName: "arrow.up") }.padding(18).background(AppColor.orange, in: Capsule())
-                }.disabled(editor.isSending || editor.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }.disabled(editor.isSending || coordinator.typedReplyInFlight || editor.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityIdentifier("typed-reply-send")
                 Spacer()
             }.padding(26).foregroundStyle(AppColor.ink).background(AppColor.cream)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { editor.dismiss(); coordinator.cancelTypedReply(); dismiss() } } }
-        }.presentationDetents([.medium, .large]).onAppear { focused = true }
+                .onChange(of: editor.draft) { _, draft in coordinator.updateTypedReplyDraft(draft) }
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { editor.dismiss(); dismiss() } } }
+        }.presentationDetents([.medium, .large]).onAppear {
+            editor.presentationDidAppear(draft: coordinator.typedReplyDraft)
+            focused = true
+        }.onDisappear { editor.presentationDidDisappear() }
     }
 }

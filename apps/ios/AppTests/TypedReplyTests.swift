@@ -110,14 +110,126 @@ import LearningCore
         XCTAssertNil(editor.beginAttempt())
     }
 
+    func testSuccessfulSendPreservesDraftEditedWhileProviderIsPending() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = TypedReplyFixture()
+        fixture.suspendFirstRequest = true
+        fixture.providerStarted = expectation(description: "typed reply reached provider boundary")
+        let coordinator = ConversationCoordinator(store: store, typedReplyAdapter: fixture.adapter())
+        coordinator.prepareTypedReplyTesting()
+        let editor = TypedReplyEditorState(draft: "first draft")
+        let attempt = editor.beginAttempt()!
+        let submittedText = editor.draft
+
+        let send = Task { await coordinator.sendTyped(submittedText) }
+        await fulfillment(of: [fixture.providerStarted!], timeout: 2)
+        editor.draft = "second draft"
+        coordinator.updateTypedReplyDraft(editor.draft)
+        fixture.pendingResponse?.resume(returning: APIResult(text: "Thanks.", sources: [], usage: APIUsage()))
+
+        let result = await send.value
+        editor.finishAttempt(result, id: attempt)
+
+        XCTAssertEqual(result, .sent)
+        XCTAssertEqual(editor.draft, "second draft")
+        XCTAssertFalse(editor.isDismissed)
+        XCTAssertEqual(coordinator.typedReplyDraft, "second draft")
+        XCTAssertEqual(coordinator.session?.fragments.filter { $0.typed }.map(\.text), ["first draft"])
+    }
+
+    func testFailedSendPreservesDraftEditedWhileProviderIsPending() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = TypedReplyFixture()
+        fixture.suspendFirstRequest = true
+        fixture.providerStarted = expectation(description: "typed reply reached provider boundary")
+        let coordinator = ConversationCoordinator(store: store, typedReplyAdapter: fixture.adapter())
+        coordinator.prepareTypedReplyTesting()
+        let editor = TypedReplyEditorState(draft: "first draft")
+        let attempt = editor.beginAttempt()!
+
+        let send = Task { await coordinator.sendTyped(editor.draft) }
+        await fulfillment(of: [fixture.providerStarted!], timeout: 2)
+        editor.draft = "second draft"
+        coordinator.updateTypedReplyDraft(editor.draft)
+        fixture.pendingResponse?.resume(throwing: TypedReplyFixture.Failure.provider)
+
+        let result = await send.value
+        editor.finishAttempt(result, id: attempt)
+
+        XCTAssertEqual(result, .failed("The reply could not be sent."))
+        XCTAssertEqual(editor.draft, "second draft")
+        XCTAssertEqual(editor.error, "The reply could not be sent.")
+        XCTAssertEqual(coordinator.typedReplyDraft, "second draft")
+        XCTAssertFalse(editor.isDismissed)
+    }
+
+    func testInFlightReplyStateRemainsVisibleUntilProviderReturns() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = TypedReplyFixture()
+        fixture.suspendFirstRequest = true
+        fixture.providerStarted = expectation(description: "typed reply reached provider boundary")
+        let coordinator = ConversationCoordinator(store: store, typedReplyAdapter: fixture.adapter())
+        coordinator.prepareTypedReplyTesting()
+
+        let send = Task { await coordinator.sendTyped("first draft") }
+        await fulfillment(of: [fixture.providerStarted!], timeout: 2)
+        XCTAssertTrue(coordinator.typedReplyInFlight)
+        coordinator.updateTypedReplyDraft("second draft")
+        XCTAssertTrue(coordinator.typedReplyInFlight)
+        XCTAssertEqual(coordinator.typedReplyDraft, "second draft")
+
+        fixture.pendingResponse?.resume(returning: APIResult(text: "Late reply.", sources: [], usage: APIUsage()))
+        let firstResult = await send.value
+        XCTAssertEqual(firstResult, .sent)
+        XCTAssertFalse(coordinator.typedReplyInFlight)
+        let recovery = await coordinator.sendTyped("second draft")
+        XCTAssertEqual(recovery, .sent)
+        XCTAssertEqual(fixture.requests, 2)
+    }
+
+    func testInFlightSubmitShowsRecoverableMessage() {
+        let editor = TypedReplyEditorState(draft: "second draft")
+        let attempt = editor.beginAttempt()!
+
+        editor.finishAttempt(.inFlight, id: attempt)
+
+        XCTAssertEqual(editor.error, "A reply is still being sent. Please wait.")
+        XCTAssertFalse(editor.isDismissed)
+        XCTAssertFalse(editor.isSending)
+    }
+
+    func testInvalidatingReplyContinuationClearsDraftAndError() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = TypedReplyFixture()
+        fixture.failuresRemaining = 1
+        let coordinator = ConversationCoordinator(store: store, typedReplyAdapter: fixture.adapter())
+        coordinator.prepareTypedReplyTesting()
+        coordinator.updateTypedReplyDraft("first draft")
+
+        let result = await coordinator.sendTyped("first draft")
+        XCTAssertEqual(result, .failed("The reply could not be sent."))
+        XCTAssertEqual(coordinator.typedReplyError, "The reply could not be sent.")
+        coordinator.updateTypedReplyDraft("private draft for previous owner")
+
+        coordinator.cancelTypedReply()
+
+        XCTAssertEqual(coordinator.typedReplyDraft, "")
+        XCTAssertNil(coordinator.typedReplyError)
+    }
+
     func testLateReplyCannotCloseNewSheet() {
         let oldEditor = TypedReplyEditorState(draft: "old")
+        oldEditor.presentationDidAppear(draft: "old")
         let oldAttempt = oldEditor.beginAttempt()!
         oldEditor.dismiss()
+        oldEditor.presentationDidDisappear()
         let newEditor = TypedReplyEditorState(draft: "new")
+        newEditor.presentationDidAppear(draft: "new")
 
         oldEditor.finishAttempt(.sent, id: oldAttempt)
 
+        XCTAssertFalse(oldEditor.isPresented)
+        XCTAssertTrue(newEditor.isPresented)
         XCTAssertFalse(newEditor.isDismissed)
         XCTAssertEqual(newEditor.draft, "new")
     }
