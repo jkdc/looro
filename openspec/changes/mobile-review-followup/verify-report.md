@@ -35,3 +35,19 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 - The existing uncommitted mobile-audit documentation/artifacts were not staged or included in the voice work-unit commit.
 
 **Risk:** item 4 — asynchronous microphone capture, bounded queue overflow, greeting completion, and first-turn ordering.
+
+## F11 — Android manual mute during pending work
+
+**Outcome:** Implemented in code commit `c67c2cd`. While a voice session is active, the manual mute control is enabled even if unrelated provider work is pending; outside the active state it remains disabled/absent. The mute handler changes microphone capture state without cancelling the tutor operation.
+
+**Evidence**
+
+- Independent fresh-scratch inspection at `/var/tmp/f11-verify.2cziWr` confirmed the `TalkScreen` gate depends on active session state rather than `working`, and `toggleMute` updates mute/transport state without clearing pending work or cancelling the turn.
+- Scratch commands `:app:compileDebugKotlin`, `:app:compileUiTestAndroidTestKotlin`, and `:app:testDebugUnitTest --tests '*AppViewModelTest'` passed; the focused ViewModel suite reported 14/14 tests.
+- Parent `:app:compileUiTestAndroidTestKotlin` passed after adding a state assertion that an already-pending tutor-turn indicator remains pending through mute/unmute. `git diff --check` passed before commit.
+- Connected `ManualMuteUiTest` was not executed: the emulator appeared booted but Gradle reported “Unknown API Level / No compatible devices connected.” The test compile succeeded.
+- The full `make android-build` was attempted and failed at `:app:testDebugUnitTest`: 824 tests completed, 190 failed, predominantly SQLite native-load and disk-quota errors. This is recorded as a failed environment run, not a green suite and not evidence of an F11 regression.
+
+**Remaining proof:** no live blocked-provider scenario or tutor-audio playback continuation was exercised. Re-run connected UI and actual voice interaction in F16 when the Android device/test environment is available.
+
+**Risk:** item 4 — concurrent microphone mute and pending tutor work.
