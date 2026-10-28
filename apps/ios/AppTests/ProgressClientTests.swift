@@ -177,6 +177,27 @@ final class ProgressClientTests: XCTestCase {
         XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: true, state: nil))
     }
 
+    func testInProgressBootstrapResumesAfterLocalActivityAndDatabaseRestart() throws {
+        let owner = "account-bootstrap"
+        let file = FileManager.default.temporaryDirectory
+            .appendingPathComponent("progress-bootstrap-\(UUID().uuidString).sqlite")
+        defer { try? FileManager.default.removeItem(at: file) }
+        var db = try openProgressDatabase(file, owner: owner)
+        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner, rollups: [],
+            nextCursor: "page-1", passGeneration: 0, updatedAtMilliseconds: 1_792_929_600_000)
+        db.close()
+
+        db = try openProgressDatabase(file, owner: owner)
+        let state = try XCTUnwrap(ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "download"))
+        XCTAssertEqual("page-1", state.cursor)
+        XCTAssertTrue(ProgressClient.shouldBootstrap(localProgressExists: true, state: state),
+                      "a previously authorized partial bootstrap must resume despite later local activity")
+        XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: true,
+            state: ProgressSyncState(ownerAccountID: owner, direction: "download", cursor: nil,
+                passGeneration: 1, updatedAtMilliseconds: 1_792_929_600_001)))
+        db.close()
+    }
+
     func testUploadResumeUsesTupleOrderingForPrefixIds() {
         let entries = ["a", "a-1", "b"].map { id in
             ProgressSyncEntry(kind: "lesson", itemID: id, firstAtMilliseconds: 1_792_929_600_000,

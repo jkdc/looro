@@ -2,6 +2,7 @@ package com.jkdc.app.core
 
 import org.junit.Assert.*
 import org.junit.Test
+import com.jkdc.app.data.ProgressSyncState
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CompletableDeferred
@@ -12,6 +13,18 @@ import kotlinx.coroutines.test.runTest
 class ProgressSyncOperationTest {
     private fun identity(operation: ProgressSyncOperation, account: String = "A", credential: String = "bearer-A") =
         operation.identity(account, credential)
+
+    @Test fun successfulLegacyFallbackClearsStaleV2CursorAndCompletesBootstrap() {
+        val oldV2State = ProgressSyncState("account-A", "download", "v2-page-42", 0, 100)
+
+        val completed = ProgressBootstrapPolicy.completeLegacyFallback("account-A", oldV2State, updatedAtMilliseconds = 200)
+
+        assertEquals("account-A", completed.ownerAccountID)
+        assertEquals("download", completed.direction)
+        assertNull(completed.cursor)
+        assertEquals(1L, completed.passGeneration)
+        assertEquals(200L, completed.updatedAtMilliseconds)
+    }
 
     @Test fun progressSyncStatusIsOwnerScopedAndDropsStaleCompletion() {
         val pending = ProgressSyncStatus("account-A", ProgressSyncStatus.Phase.PENDING)

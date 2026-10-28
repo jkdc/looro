@@ -70,7 +70,8 @@ struct ProgressClient {
     private struct UploadWire: Encodable { let version = 2; let entries: [EntryWire] }
 
     static func shouldBootstrap(localProgressExists: Bool, state: ProgressSyncState?) -> Bool {
-        !localProgressExists && (state == nil || state?.passGeneration == 0)
+        if let state { return state.passGeneration == 0 }
+        return !localProgressExists
     }
 
     static func hasUserGeneratedProgress(sessions: Int, lessons: Int, completions: Int,

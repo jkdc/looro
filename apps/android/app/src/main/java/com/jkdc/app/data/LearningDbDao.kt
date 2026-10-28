@@ -114,6 +114,7 @@ object LearnerOwnershipDao {
 /** Durable owner-scoped evidence that local activity has consumed the first-device bootstrap opportunity. */
 object OwnerBootstrapEligibilityDao {
     private const val PREFIX = "progress_bootstrap_has_local_data:"
+    private const val IN_PROGRESS_PREFIX = "progress_bootstrap_in_progress:"
 
     fun markLocalData(db: SqlDatabase, ownerIdentity: String) {
         require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
@@ -146,6 +147,41 @@ object OwnerBootstrapEligibilityDao {
                 defaultPreferences.hasOnboarded),
         ).single().bool("has_data")
         return !userDataExists
+    }
+
+    /** Persist the one-time bootstrap decision before issuing its first request. */
+    fun beginBootstrapIfEligible(db: SqlDatabase, ownerIdentity: String): Boolean {
+        require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
+        return db.transaction { tx ->
+            if (MetaDao.get(tx, IN_PROGRESS_PREFIX + ownerIdentity) == "1") return@transaction true
+            if (!canBootstrap(tx, ownerIdentity)) return@transaction false
+            MetaDao.put(tx, IN_PROGRESS_PREFIX + ownerIdentity, "1")
+            true
+        }
+    }
+
+    fun isBootstrapInProgress(db: SqlDatabase, ownerIdentity: String): Boolean {
+        require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
+        return MetaDao.get(db, IN_PROGRESS_PREFIX + ownerIdentity) == "1"
+    }
+
+    /** Explicit reset/import consumes the bootstrap opportunity and revokes partial remote state. */
+    fun clearBootstrapIntent(db: SqlDatabase, ownerIdentity: String) {
+        db.transaction { tx -> clearBootstrapIntentInTransaction(tx, ownerIdentity) }
+    }
+
+    /** Same transition for callers already inside their write transaction. */
+    fun clearBootstrapIntentInTransaction(db: SqlDatabase, ownerIdentity: String) {
+        require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
+        db.update("DELETE FROM meta WHERE key = ?", listOf(IN_PROGRESS_PREFIX + ownerIdentity))
+        markLocalData(db, ownerIdentity)
+        if (ownerIdentity.startsWith("member:")) {
+            val accountID = ownerIdentity.removePrefix("member:")
+            val previous = ProgressSyncStateDao.get(db, accountID, "download")
+            ProgressSyncStateDao.put(db, ProgressSyncState(accountID, "download", cursor = null,
+                passGeneration = maxOf(1L, previous?.passGeneration ?: 0L),
+                updatedAtMilliseconds = previous?.updatedAtMilliseconds ?: 0L))
+        }
     }
 }
 
@@ -815,6 +851,21 @@ object ProgressSyncStateDao {
         if (get(db, state.ownerAccountID, state.direction) == null) db.insert("progress_sync_state", values)
         else updateRow(db, "progress_sync_state", values, "owner_account_id = ? AND direction = ?",
             listOf(state.ownerAccountID, state.direction))
+    }
+
+    /** Applies a download page atomically with its cursor and bootstrap completion marker. */
+    fun applyDownloadPage(db: SqlDatabase, ownerAccountID: String,
+                          rollups: List<RemoteProgressRollup>, nextCursor: String?,
+                          passGeneration: Long, updatedAtMilliseconds: Long) {
+        require(rollups.all { it.ownerAccountID == ownerAccountID })
+        db.transaction { tx ->
+            rollups.forEach { RemoteProgressRollupsDao.merge(tx, it) }
+            put(tx, ProgressSyncState(ownerAccountID, "download", nextCursor,
+                passGeneration, updatedAtMilliseconds))
+            if (passGeneration > 0 && nextCursor == null) {
+                OwnerBootstrapEligibilityDao.clearBootstrapIntentInTransaction(tx, "member:$ownerAccountID")
+            }
+        }
     }
 }
 

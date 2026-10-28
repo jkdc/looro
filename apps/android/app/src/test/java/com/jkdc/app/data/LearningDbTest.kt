@@ -55,6 +55,65 @@ class LearningDbTest {
         assertFalse(OwnerBootstrapEligibilityDao.canBootstrap(db, "member:bootstrap-preferences"))
     }
 
+    @Test fun startedBootstrapIntentSurvivesLaterLocalActivityAndIsOwnerScoped() {
+        val ownerA = "member:bootstrap-in-progress-a"
+        val ownerB = "member:bootstrap-in-progress-b"
+        LearnerOwnershipDao.activate(db, ownerA)
+
+        assertTrue(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+        assertTrue(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerA))
+
+        LearningDbWriter.preferences(db, com.jkdc.app.core.Preferences(sessionMinutes = 30))
+        assertTrue(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+
+        LearnerOwnershipDao.activate(db, ownerB)
+        OwnerBootstrapEligibilityDao.markLocalData(db, ownerB)
+        assertFalse(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerB))
+        assertFalse(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerB))
+        assertTrue(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerA))
+
+        LearningDbWriter.learningDataDeleted(db, com.jkdc.app.core.Preferences())
+        assertFalse(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+    }
+
+    @Test fun completedDownloadPageClearsBootstrapIntentAndStaleCursor() {
+        val owner = "member:bootstrap-complete"
+        LearnerOwnershipDao.activate(db, owner)
+        assertTrue(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, owner))
+        ProgressSyncStateDao.put(db, ProgressSyncState(owner.removePrefix("member:"), "download",
+            "stale-v2-cursor", 0, 100))
+
+        ProgressSyncStateDao.applyDownloadPage(db, owner.removePrefix("member:"), emptyList(),
+            nextCursor = null, passGeneration = 1, updatedAtMilliseconds = 200)
+
+        val completed = ProgressSyncStateDao.get(db, owner.removePrefix("member:"), "download")!!
+        assertEquals(null, completed.cursor)
+        assertEquals(1L, completed.passGeneration)
+        assertFalse(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, owner))
+    }
+
+    @Test fun explicitResetRevokesPartialBootstrapCursorOnlyForThatOwner() {
+        val ownerA = "member:bootstrap-reset-a"
+        val ownerB = "member:bootstrap-reset-b"
+        LearnerOwnershipDao.activate(db, ownerA)
+        assertTrue(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+        ProgressSyncStateDao.put(db, ProgressSyncState("bootstrap-reset-a", "download",
+            "after-page-1", 0, 100))
+        ProgressSyncStateDao.put(db, ProgressSyncState("bootstrap-reset-b", "download",
+            "other-owner-cursor", 0, 100))
+
+        OwnerBootstrapEligibilityDao.clearBootstrapIntent(db, ownerA)
+
+        val revoked = ProgressSyncStateDao.get(db, "bootstrap-reset-a", "download")!!
+        assertEquals("An explicit reset must not leave a resumable cursor", null, revoked.cursor)
+        assertEquals(1L, revoked.passGeneration)
+        assertFalse(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerA))
+        assertFalse("Reset consumes this owner's bootstrap eligibility",
+            OwnerBootstrapEligibilityDao.canBootstrap(db, ownerA))
+        assertEquals("other-owner-cursor",
+            ProgressSyncStateDao.get(db, "bootstrap-reset-b", "download")!!.cursor)
+    }
+
     @Test fun persistedOwnerLearningRowsWithoutEligibilityMarkerBlockBootstrap() {
         val owner = "member:bootstrap-existing-progress"
         db.insert("lesson_state", mapOf("lesson_id" to "lesson-1", "attempts" to 1,

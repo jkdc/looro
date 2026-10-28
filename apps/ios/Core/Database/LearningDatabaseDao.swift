@@ -850,6 +850,17 @@ public enum ProgressSyncStateDao {
                           whereArgs: [state.ownerAccountID, state.direction])
         }
     }
+
+    /// Consumes an explicitly reset/imported owner's bootstrap opportunity and revokes any partial cursor.
+    public static func revokeBootstrap(_ db: SqlDatabase, ownerAccountID: String) throws {
+        guard try LearnerOwnershipDao.activeIdentity(db) == "member:\(ownerAccountID)" else {
+            throw SqlDatabaseError.unsupportedValue("progress owner changed")
+        }
+        let previous = try get(db, ownerAccountID: ownerAccountID, direction: "download")
+        try put(db, ProgressSyncState(ownerAccountID: ownerAccountID, direction: "download", cursor: nil,
+            passGeneration: max(1, previous?.passGeneration ?? 0),
+            updatedAtMilliseconds: previous?.updatedAtMilliseconds ?? 0))
+    }
 }
 
 public struct ProgressRecoveryRecord: Equatable, Sendable {

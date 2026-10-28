@@ -1,5 +1,6 @@
 package com.jkdc.app.core
 
+import com.jkdc.app.data.ProgressSyncState
 import java.security.MessageDigest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CancellationException
@@ -52,6 +53,21 @@ internal class OwnerLearningLoadCoordinator<T>(
             if (currentIdentity() != identity) continue
             return false
         }
+    }
+}
+
+/** Small state transitions for the member's one-time remote bootstrap. */
+internal object ProgressBootstrapPolicy {
+    fun completeLegacyFallback(
+        ownerAccountID: String,
+        previous: ProgressSyncState?,
+        updatedAtMilliseconds: Long,
+    ): ProgressSyncState {
+        require(ownerAccountID.isNotBlank())
+        require(previous == null || (previous.ownerAccountID == ownerAccountID && previous.direction == "download"))
+        return ProgressSyncState(ownerAccountID, "download", cursor = null,
+            passGeneration = maxOf(1L, previous?.passGeneration ?: 0L),
+            updatedAtMilliseconds = updatedAtMilliseconds)
     }
 }
 

@@ -869,6 +869,12 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
                 Self.deleteJournalSiblings(of: databaseURL)
                 try BackupManager.installDatabase(staged, target: databaseURL)
                 try reloadAfterImport()
+                if activeLearnerIdentity.hasPrefix("member:") {
+                    let ownerAccountID = String(activeLearnerIdentity.dropFirst("member:".count))
+                    try dbStore.db.transaction { tx in
+                        try ProgressSyncStateDao.revokeBootstrap(tx, ownerAccountID: ownerAccountID)
+                    }
+                }
                 try? FileManager.default.removeItem(at: keep)
             } catch {
                 // This path NEVER deletes a database file: databaseURL may be

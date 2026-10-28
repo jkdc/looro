@@ -154,8 +154,9 @@ object LearningDbWriter {
             tx.update("DELETE FROM sessions WHERE ${ownerClause(tx)}", ownerArguments(tx))
             AssessmentTicketsDao.clear(tx)
             PreferencesDao.put(tx, preferences)
-            // A reset is an explicit local-data decision, not permission to bootstrap over the account.
-            markActiveOwnerHasLocalData(tx)
+            LearnerOwnershipDao.activeIdentity(tx)?.let {
+                OwnerBootstrapEligibilityDao.clearBootstrapIntentInTransaction(tx, it)
+            }
         }
     }
 

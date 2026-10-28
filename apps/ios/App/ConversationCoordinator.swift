@@ -46,7 +46,7 @@ struct ProgressSyncStatus: Equatable {
 struct ConversationProgressSyncAdapter {
     let loadSession: () -> ProgressSyncSession?
     let fetch: (String) async -> [RemoteProgress]?
-    let archiveSnapshot: () throws -> Data
+    let generationSnapshot: () -> UInt64
     let applyRemote: ([RemoteProgress]) -> Void
     let send: (String, String) async -> Bool
     let onFinish: () -> Void
@@ -209,12 +209,13 @@ struct ConversationTopicSearchAdapter {
                                                      accessToken: capturedSession.accessToken)
         guard let operation = progressSyncOperation.begin(identity) else { return }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: capturedSession.accountID, phase: .pending)
-        let capturedArchive = try? adapter.archiveSnapshot()
+        let capturedGeneration = adapter.generationSnapshot()
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
             var succeeded = false
             defer {
-                if let liveSession = adapter.loadSession(),
+                if adapter.generationSnapshot() == capturedGeneration,
+                   let liveSession = adapter.loadSession(),
                    self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
                     accountID: liveSession.accountID, accessToken: liveSession.accessToken)) {
                     self.progressSyncStatus = ProgressSyncStatus.finished(capturedOwner: capturedSession.accountID,
@@ -229,7 +230,7 @@ struct ConversationTopicSearchAdapter {
                       let liveSession = adapter.loadSession(),
                       self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
                         accountID: liveSession.accountID, accessToken: liveSession.accessToken)),
-                      let capturedArchive, (try? adapter.archiveSnapshot()) == capturedArchive else { return }
+                      adapter.generationSnapshot() == capturedGeneration else { return }
                 if !rows.isEmpty {
                     self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity) {
                         adapter.applyRemote(rows)
@@ -258,14 +259,15 @@ struct ConversationTopicSearchAdapter {
               store.activeLearnerIdentity == "member:\(session.accountID.uuidString)" else { return }
         let identity = progressSyncOperation.identity(accountID: session.accountID.uuidString,
                                                        accessToken: session.accessToken)
-        guard let capturedArchive = try? store.exportData() else { return }
+        let capturedDataGeneration = store.dataGeneration
         guard let operation = progressSyncOperation.begin(identity) else { return }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: session.accountID.uuidString, phase: .pending)
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
             var succeeded = false
             defer {
-                if !Task.isCancelled, let live = try? keychain.load(),
+                if !Task.isCancelled, self.store.dataGeneration == capturedDataGeneration,
+                   let live = try? keychain.load(),
                    self.store.activeLearnerIdentity == "member:\(live.accountID.uuidString)" {
                     let liveIdentity = self.progressSyncOperation.identity(accountID: live.accountID.uuidString,
                                                                            accessToken: live.accessToken)
@@ -278,7 +280,7 @@ struct ConversationTopicSearchAdapter {
             }
             func isCurrent() -> Bool {
                 guard !Task.isCancelled, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
-                      (try? self.store.exportData()) == capturedArchive,
+                      self.store.dataGeneration == capturedDataGeneration,
                       let live = try? keychain.load(),
                       live.accountID == session.accountID, live.accessToken == session.accessToken else { return false }
                 return self.progressSyncOperation.owns(operation,
@@ -290,6 +292,12 @@ struct ConversationTopicSearchAdapter {
                 let download = try self.store.remoteProgressSyncState(direction: "download", ownerAccountID: owner)
                 if ProgressClient.shouldBootstrap(
                     localProgressExists: self.store.hasLocalProgress(ownerAccountID: owner), state: download) {
+                    guard isCurrent(), try self.progressSyncOperation.writeIfCurrent(operation,
+                        liveIdentity: identity, {
+                            try self.store.applyRemoteProgressPage([], ownerAccountID: owner,
+                                nextCursor: download?.cursor, passGeneration: 0,
+                                updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+                        }) != nil else { return }
                     var cursor = download?.cursor
                     let generation = max(1, download?.passGeneration ?? 1)
                     var pageCount = 0
@@ -409,7 +417,7 @@ struct ConversationTopicSearchAdapter {
                 return ProgressSyncSession(accountID: session.accountID.uuidString, accessToken: session.accessToken)
             },
             fetch: { bearer in await client.fetch(bearer: bearer) },
-            archiveSnapshot: { try self.store.exportData() },
+            generationSnapshot: { self.store.dataGeneration },
             applyRemote: { rows in self.store.applyRemoteProgress(rows) },
             send: { language, bearer in
                 let (progressOwner, remote) = self.store.remoteProgressAggregates(languageID: language)

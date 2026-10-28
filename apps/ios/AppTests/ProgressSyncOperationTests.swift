@@ -30,7 +30,7 @@ import LearningCore
                 return [RemoteProgress(kind: ProgressEngine.lesson, itemID: "lesson-fixture", firstAt: 1,
                                        lastAt: 2, attempts: 3, bestScore: 80, language: "en")]
             },
-            archiveSnapshot: { try store.exportData() },
+            generationSnapshot: { store.dataGeneration },
             applyRemote: { rows in store.applyRemoteProgress(rows) },
             send: { _, _ in
                 self.sent += 1
@@ -143,6 +143,84 @@ import LearningCore
 
         XCTAssertEqual(fixture.sent, 1)
         XCTAssertEqual(store.archive.lessons?.first(where: { $0.lessonID == "lesson-fixture" })?.attempts, 3)
+    }
+
+    func testLocalProgressDuringSuspendedBootstrapDoesNotDiscardRemotePage() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = ProgressSyncFixture()
+        fixture.suspendFetch = true
+        let fetchStarted = expectation(description: "bootstrap request is suspended")
+        fixture.fetchStarted = fetchStarted
+        let sent = expectation(description: "continued bootstrap reaches upload")
+        let finished = expectation(description: "continued bootstrap finishes")
+        fixture.finished = finished
+        let coordinator = ConversationCoordinator(store: store,
+            progressSyncAdapter: fixture.adapter(store: store, sendExpectation: sent))
+
+        coordinator.syncProgress()
+        await fulfillment(of: [fetchStarted], timeout: 2)
+        store.recordLessonAttempt("local-during-bootstrap")
+        fixture.pendingFetch?.resume(returning: [RemoteProgress(kind: ProgressEngine.lesson,
+            itemID: "remote-during-bootstrap", firstAt: 1, lastAt: 2, attempts: 1,
+            bestScore: 20, language: "en")])
+
+        await fulfillment(of: [sent, finished], timeout: 2)
+        XCTAssertNotNil(store.archive.lessons?.first { $0.lessonID == "local-during-bootstrap" })
+        XCTAssertNotNil(store.archive.lessons?.first { $0.lessonID == "remote-during-bootstrap" },
+                        "ordinary local progress must not invalidate the owner's bootstrap")
+    }
+
+    func testImportGenerationDiscardsSuspendedFetchEvenWhenArchiveBytesAreUnchanged() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = ProgressSyncFixture()
+        fixture.suspendFetch = true
+        let fetchStarted = expectation(description: "bootstrap request is suspended")
+        fixture.fetchStarted = fetchStarted
+        let finished = expectation(description: "stale bootstrap is discarded")
+        fixture.finished = finished
+        let coordinator = ConversationCoordinator(store: store, progressSyncAdapter: fixture.adapter(store: store))
+
+        coordinator.syncProgress()
+        await fulfillment(of: [fetchStarted], timeout: 2)
+        try store.importData(store.exportData())
+        fixture.pendingFetch?.resume(returning: [RemoteProgress(kind: ProgressEngine.lesson,
+            itemID: "stale-after-import", firstAt: 1, lastAt: 2, attempts: 1,
+            bestScore: 20, language: "en")])
+
+        await fulfillment(of: [finished], timeout: 2)
+        XCTAssertNil(store.archive.lessons?.first { $0.lessonID == "stale-after-import" },
+                     "data-generation changes must fence late results even when archive bytes match")
+        XCTAssertEqual(0, fixture.sent)
+    }
+
+    func testExplicitResetRevokesPartialBootstrapCursor() throws {
+        let store = try LearningStore(inMemory: true)
+        let owner = "00000000-0000-0000-0000-0000000000A1"
+        store.activateLearnerIdentity(owner)
+        try store.applyRemoteProgressPage([], ownerAccountID: owner, nextCursor: "after-page-1",
+                                          passGeneration: 0, updatedAtMilliseconds: 100)
+
+        store.deleteAll()
+
+        let state = try XCTUnwrap(store.remoteProgressSyncState(direction: "download", ownerAccountID: owner))
+        XCTAssertNil(state.cursor, "An explicit reset must not leave a resumable remote cursor")
+        XCTAssertEqual(1, state.passGeneration)
+        XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: false, state: state))
+    }
+
+    func testArchiveImportRevokesPartialBootstrapCursor() throws {
+        let store = try LearningStore(inMemory: true)
+        let owner = "00000000-0000-0000-0000-0000000000A2"
+        store.activateLearnerIdentity(owner)
+        try store.applyRemoteProgressPage([], ownerAccountID: owner, nextCursor: "after-page-1",
+                                          passGeneration: 0, updatedAtMilliseconds: 100)
+
+        try store.importData(store.exportData())
+
+        let state = try XCTUnwrap(store.remoteProgressSyncState(direction: "download", ownerAccountID: owner))
+        XCTAssertNil(state.cursor, "An explicit import must not leave a resumable remote cursor")
+        XCTAssertEqual(1, state.passGeneration)
+        XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: false, state: state))
     }
 
     func testCoordinatorExposesFailureAndExplicitRetryCanRecover() async throws {

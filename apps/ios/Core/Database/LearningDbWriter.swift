@@ -140,6 +140,7 @@ public enum LearningDbWriter {
             _ = try tx.update("DELETE FROM sessions WHERE \(ownerClause(tx))", args: ownerArguments(tx))
             try AssessmentTicketsDao.clear(tx)
             try PreferencesDao.put(tx, preferences)
+            try revokeActiveMemberBootstrap(tx)
         }
     }
 
@@ -206,8 +207,15 @@ public enum LearningDbWriter {
             let current = try ArchiveMapper.export(tx)
             let merged = try current.merging(incoming)
             try rewriteInTx(tx, merged)
+            try revokeActiveMemberBootstrap(tx)
             return try ArchiveMapper.export(tx)
         }
+    }
+
+    private static func revokeActiveMemberBootstrap(_ db: SqlDatabase) throws {
+        guard let identity = try LearnerOwnershipDao.activeIdentity(db),
+              identity.hasPrefix("member:") else { return }
+        try ProgressSyncStateDao.revokeBootstrap(db, ownerAccountID: String(identity.dropFirst("member:".count)))
     }
 
     /// Persists the immutable snapshot, attempt and create event before the UI

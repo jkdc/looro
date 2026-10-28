@@ -1060,11 +1060,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         val owner = session.accountID
                         val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "download") }
                         val ownerIdentity = "member:$owner"
-                        val bootstrapInProgress = state?.cursor != null
+                        val bootstrapInProgress = state?.cursor != null || store?.db?.let {
+                            com.jkdc.app.data.OwnerBootstrapEligibilityDao.isBootstrapInProgress(it, ownerIdentity)
+                        } == true
                         val bootstrapComplete = state?.passGeneration?.let { it > 0L && state.cursor == null } == true
                         val shouldBootstrap = !bootstrapComplete && (bootstrapInProgress ||
                             (state == null && store?.db?.let {
-                                com.jkdc.app.data.OwnerBootstrapEligibilityDao.canBootstrap(it, ownerIdentity)
+                                com.jkdc.app.data.OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(it, ownerIdentity)
                             } == true))
                         if (!shouldBootstrap) "{\"legacy\":false,\"pages\":[]}" else {
                             val cursor = state?.cursor
@@ -1181,7 +1183,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (legacy) {
             val rows = try { root["rows"]!!.jsonArray } catch (_: Exception) { return false }
             val rollups = com.jkdc.app.data.decodeLegacyProgressRows(rows, owner) ?: return false
-            return applyProgressPage(rollups, owner, state?.cursor, 1L, operation, identity)
+            val completed = com.jkdc.app.core.ProgressBootstrapPolicy.completeLegacyFallback(
+                owner, state, System.currentTimeMillis())
+            return applyProgressPage(rollups, owner, completed.cursor, completed.passGeneration, operation, identity)
         }
         var expectedCursor = state?.cursor
         pages.forEachIndexed { index, page ->
@@ -1223,7 +1227,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return try {
             withContext(NonCancellable) {
                 val saved = persistFencedAndWait(
-                    { db -> LearningDbWriter.remoteProgressPageApplied(db, owner, rows, cursor, generation, System.currentTimeMillis()) },
+                    { db -> com.jkdc.app.data.ProgressSyncStateDao.applyDownloadPage(
+                        db, owner, rows, cursor, generation, System.currentTimeMillis()) },
                     { write -> progressSyncOperation.writeCommit(commit, write) },
                 )
                 saved && progressSyncOperation.publishCommit(commit) {
@@ -3169,6 +3174,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun deleteLearningData() {
         if (isRunning || !storageReady) return
+        invalidateProgressSync()
         reports.dismiss()
         finalAssessments.cancelAll(); hostedSessionIDs.forEach(hostedBindings::forgetLearning)
         hostedFinalAssessmentJobs.values.toList().forEach { it.cancel() }; hostedFinalAssessmentJobs.clear(); resetConversation()
@@ -3178,7 +3184,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // faithful to the previous full-archive write: sessions (with their
         // fragments, by cascade) and the retry ledger go; lessons, expressions,
         // completions and skill errors are not this site's learning data
-        persist { db -> LearningDbWriter.learningDataDeleted(db, stored) }
+        persist { db ->
+            LearningDbWriter.learningDataDeleted(db, stored)
+        }
     }
     suspend fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
@@ -3328,6 +3336,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     deleteJournalSiblings(dbFile)
                     BackupManager.installDatabase(staged, dbFile)
                     reloadAfterImport()
+                    examOwnerIdentity.value.ownerAccountID?.let { ownerIdentity ->
+                        com.jkdc.app.data.OwnerBootstrapEligibilityDao.clearBootstrapIntent(store!!.db, ownerIdentity)
+                    }
                     keep.delete()
                 } catch (failure: Throwable) {
                     // This path NEVER deletes a database file: dbFile may be
