@@ -145,3 +145,13 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 - Swift/Xcode AppTests, real Keychain removal-failure behavior, process-restart, and mounted account-consumer proof are deferred to F16 on macOS. The memory-backed test reconstructs a new store and the marker test reconstructs its wrapper; neither is a process-restart test.
 
 **Risk:** item 2 — rejected bearer credentials and authentication consumers.
+## F01 — Android local-history retry and owner serialization
+
+- Commit: `ea3c2f8`.
+- Added a localized retry action for quarantined local history; retry reuses the identity-fenced load coordinator and refreshes owner-scoped derived state only after current-owner success.
+- Serialized active-owner activation across migration, recovery and ownerless exam backfill. This closes an A/B race where A could pause after activation, B could activate, and A could then import or assign data under B.
+- RED: `concurrentOwnerOpenCannotImportFirstLearnersArchiveUnderSecondOwner` failed before the serialization boundary because B entered the migration source while A was paused.
+- Focused retry and concurrent-open tests passed. Full Android app unit suite: 95 suites, 826 tests, zero failures/errors/skips. `git diff --check` passed.
+- Independent scratch recheck found no blocker. The test's 250ms negative wait has a theoretical scheduler-delay sensitivity; B-start latch and final persisted-owner assertions also verify the boundary.
+- Risk: items 1 and 4 (owner-scoped durable records and concurrent identity-bound migration ordering).
+- Not verified here: mounted multi-account UI and iOS XCTest/build/runtime; these remain in F16. No iOS verification is claimed on Linux.
