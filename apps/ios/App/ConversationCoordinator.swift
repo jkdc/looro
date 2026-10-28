@@ -193,6 +193,10 @@ struct ConversationTopicSearchAdapter {
     }
     @ObservationIgnored private let progressSyncOperation = ProgressSyncOperation()
     @ObservationIgnored private var progressSyncTask: Task<Void, Never>?
+    /// The account whose sync the current progressSyncTask serves — the S08
+    /// fence key: a late session-changed notification must not cancel a sync
+    /// that already serves the keychain's current account.
+    @ObservationIgnored private var progressSyncTaskAccountID: String?
     @ObservationIgnored private let injectedProgressSyncAdapter: ConversationProgressSyncAdapter?
     private(set) var progressSyncStatus: ProgressSyncStatus?
 
@@ -210,6 +214,7 @@ struct ConversationTopicSearchAdapter {
         guard let operation = progressSyncOperation.begin(identity) else { return }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: capturedSession.accountID, phase: .pending)
         let capturedGeneration = adapter.generationSnapshot()
+        progressSyncTaskAccountID = capturedSession.accountID
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
             var succeeded = false
@@ -262,6 +267,7 @@ struct ConversationTopicSearchAdapter {
         let capturedDataGeneration = store.dataGeneration
         guard let operation = progressSyncOperation.begin(identity) else { return }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: session.accountID.uuidString, phase: .pending)
+        progressSyncTaskAccountID = session.accountID.uuidString
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
             var succeeded = false
@@ -714,7 +720,24 @@ struct ConversationTopicSearchAdapter {
     /// conversation is running (the notification only arrives between sessions).
     private func accountSessionChanged() {
         invalidateTypedReplyContinuation()
-        invalidateProgressSync()
+        // SwiftUI's account adoption (activateAccountAndSync) and this
+        // notification react to the SAME session transition in unspecified
+        // order; a handler that runs late must not cancel the fresh
+        // bootstrap the adoption just started. Skip the invalidation only
+        // when a sync task is live AND already serves the keychain's current
+        // account — every other combination (another account, sign-out, no
+        // task) still invalidates, and a replaced credential stops the old
+        // bearer through the task's own owns(liveIdentity) re-checks.
+        let liveAccountID: String?
+        if let configuration = managed?.configuration,
+           let session = try? ManagedAccountKeychain(scope: configuration.storageScope).load() {
+            liveAccountID = session.accountID.uuidString
+        } else {
+            liveAccountID = nil
+        }
+        if !(progressSyncTask != nil && progressSyncTaskAccountID == liveAccountID) {
+            invalidateProgressSync()
+        }
         guard prefersHostedProxy else { return }
         attachHostedProxy()
     }
