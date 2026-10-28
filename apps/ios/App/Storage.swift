@@ -28,27 +28,30 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     init(container: ModelContainer) { self.container = container }
 
     var hasPayload: Bool {
-        fetchRecord(Self.migratedKey) == nil && fetchRecord(Self.payloadKey) != nil
+        get throws {
+            guard try fetchRecord(Self.migratedKey) == nil else { return false }
+            return try fetchRecord(Self.payloadKey) != nil
+        }
     }
 
     func readPayload() throws -> Data {
-        guard let record = fetchRecord(Self.payloadKey) else { throw ArchiveError.invalid }
+        guard let record = try fetchRecord(Self.payloadKey) else { throw ArchiveError.invalid }
         return record.payload
     }
 
     func markMigrated() throws {
-        guard fetchRecord(Self.migratedKey) == nil else { return }
+        guard try fetchRecord(Self.migratedKey) == nil else { return }
         let context = ModelContext(container)
         context.insert(StoredArchive(key: Self.migratedKey, payload: Data()))
         try context.save()
     }
 
-    private func fetchRecord(_ key: String) -> StoredArchive? {
+    private func fetchRecord(_ key: String) throws -> StoredArchive? {
         let context = ModelContext(container)
         let recordKey = key
         var descriptor = FetchDescriptor<StoredArchive>(predicate: #Predicate { $0.key == recordKey })
         descriptor.fetchLimit = 1
-        guard let records = try? context.fetch(descriptor) else { return nil }
+        let records = try context.fetch(descriptor)
         return records.first
     }
 }

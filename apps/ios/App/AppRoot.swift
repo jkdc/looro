@@ -15,6 +15,10 @@ import SwiftUI
         return try LearningStore(inMemory: false)
         #endif
     }
+    private func retryOpeningStore() {
+        do { store = try makeStore(); startupError = nil }
+        catch { startupError = "Palique still couldn’t open your learning data. Nothing was erased. Please try again." }
+    }
     /// Reachable only through the confirmation dialog below; the damaged record is the one thing erased.
     private func eraseAndRestart() {
         do { try LearningStore.eraseStore() }
@@ -31,6 +35,7 @@ import SwiftUI
                 } description: {
                     Text(startupError ?? "The learning record is unavailable.")
                 } actions: {
+                    Button("Retry without deleting data") { retryOpeningStore() }
                     Button("Erase learning data and start fresh", role: .destructive) { confirmingErase = true }
                 }
                 .preferredColorScheme(.light)

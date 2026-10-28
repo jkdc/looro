@@ -10,8 +10,9 @@ import CryptoKit
  * the whole store logic platform-free and testable at the macOS gate.
  */
 public protocol LearningMigrationSource: AnyObject {
-    /// The legacy payload is present and has not been marked migrated yet.
-    var hasPayload: Bool { get }
+    /// Whether a legacy payload is present and not migrated; read errors throw
+    /// so a failed lookup cannot be mistaken for an absent source.
+    var hasPayload: Bool { get throws }
 
     /// The raw payload bytes (checked against `Archive.maximumEncodedBytes`
     /// by `Archive.decode`, like the streamed reads before it).
@@ -29,7 +30,9 @@ public protocol LearningMigrationSource: AnyObject {
  * over LearningStore's RUNTIME role (open the durable store, hand out the
  * working archive, recover sessions the app died inside); LearningStore itself
  * keeps the working in-memory archive and becomes the directed-write facade,
- * with the SwiftData store retained as the JSON-mode fallback path this phase.
+ * with the SwiftData source retained only for one-way migration and recovery.
+ * Production opens carry an active learner identity; an open or migration
+ * failure then throws instead of serving an unattributed shared payload.
  *
  * Startup contract (the sequence the cutover wires into LearningStore.init):
  *
@@ -60,9 +63,8 @@ public protocol LearningMigrationSource: AnyObject {
  *    — it never deletes — so they are CLEARED first, in their own
  *    transaction: the eight learning tables + the mastery meta rows
  *    (preferences and the non-mastery meta rows are not learning data and
- *    stay untouched). This keeps a retry count-stable in ALL cases, including
- *    a payload that legitimately evolved between attempts (the user kept
- *    using the app on the SwiftData fallback path). A committed migration —
+ *    stay untouched). This keeps a retry count-stable after an aborted
+ *    attempt. A committed migration —
  *    hash present — never reaches this and is never cleared;
  *  - the archive lands through `ArchiveMapper.import` (its single
  *    transaction is the migration's only content transaction; the
@@ -81,27 +83,18 @@ public protocol LearningMigrationSource: AnyObject {
  *    simply ignores it on every later launch.
  *
  * Crash windows and aborts are all safe. Before the hash is committed the
- * payload stays the authority: an abort leaves the store in JSON mode, and
- * the residue an aborted attempt leaves in the database is unreachable
- * without migration_hash — and is cleared before the next attempt. That
- * clear is what makes a retry count-stable against an EVOLVED payload: while
- * the app served the SwiftData path the archive could legitimately change,
- * and a plain re-import over the stale rows would mismatch its counts on
- * every later launch — the wedge. A crash after the commit leaves the hash,
+ * source bytes stay intact: an active-identity open throws on failure and
+ * production never serves the unattributed SwiftData payload. A later
+ * explicit retry clears any residue from the aborted attempt before
+ * migrating those unchanged bytes. A crash after the commit leaves the hash,
  * so the next launch is in database mode and never re-migrates — a payload
  * record that survives is IGNORED, not merged again.
  *
- * Fail-safe contract: `open` never throws while the source has a payload.
- * When the database cannot be opened or the migration aborts (corrupt
- * payload, oversized file, verified-count mismatch), the store comes back
- * with `jsonMode` = true and `jsonModeNotice` set: the app must spend that
- * launch on the SwiftData path (which still owns the intact record) and
- * surface the notice. In JSON mode `db` throws, so no code can write to a
- * database the next launch would not read. The migration retries on the next
- * launch because the hash gate only closes after a verified commit. Without
- * a payload to fall back on, `open` RETHROWS (a database that cannot open
- * included): there is no data to serve either way, and a silent jsonMode
- * would strand a session's work with no durable copy.
+ * Fail-safe contract: production calls `open` with an active learner
+ * identity. Database-open or migration failure then throws without exposing
+ * or mutating the legacy payload; AppRoot offers a non-destructive retry.
+ * The identity-less jsonMode path remains only for migration tooling and
+ * historical tests, not the running application.
  *
  * Known fail-safe trigger, accepted by design (shared with the schema): an
  * archive holding two completions that differ only by language at the same
@@ -231,7 +224,7 @@ public final class LearningDbStore {
             let database = try LearningDatabase.open(at: path)
             return try open(database: database, source: source, activeIdentity: activeIdentity, clock: clock)
         } catch {
-            guard let source, source.hasPayload else { throw error }
+            guard activeIdentity == nil, let source, try source.hasPayload else { throw error }
             return jsonMode(failure: error)
         }
     }
@@ -245,20 +238,16 @@ public final class LearningDbStore {
                             clock: @escaping () -> Double = { Date.now.timeIntervalSinceReferenceDate }) throws -> LearningDbStore {
         do {
             if let activeIdentity { try LearnerOwnershipDao.activate(database, identity: activeIdentity) }
-            if let source, source.hasPayload, try MetaDao.get(database, migrationHashKey) == nil {
+            if let source, try source.hasPayload, try MetaDao.get(database, migrationHashKey) == nil {
                 try migrate(database, source, clock)
             }
             try ProgressRecoveryDao.recover(database, nowUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
             return LearningDbStore(database: database, clock: clock, jsonMode: false, jsonModeNotice: nil)
         } catch {
-            // Migration aborted (or the database broke underneath it): the
-            // content writes rolled back, the payload is untouched, and the
-            // hash gate stays open so the next launch retries (the pre-import
-            // clear keeps the retry count-stable — see the class doc).
-            // Without the payload fallback there is nothing to serve:
-            // rethrow instead of a jsonMode that would drop the session's
-            // work.
-            guard let source, source.hasPayload else { throw error }
+            // Migration aborted (or the database/source broke underneath it):
+            // production owners rethrow so the UI can offer a non-destructive
+            // retry. Only identity-less migration tooling retains JSON mode.
+            guard activeIdentity == nil, let source, try source.hasPayload else { throw error }
             return jsonMode(failure: error)
         }
     }

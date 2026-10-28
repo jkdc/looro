@@ -28,8 +28,14 @@ final class LearningDbStoreTests: XCTestCase {
         var payload: Data?
         private(set) var migrated = false
         var markFails = false
+        var availabilityFails = false
         init(_ payload: Data?) { self.payload = payload }
-        var hasPayload: Bool { payload != nil && !migrated }
+        var hasPayload: Bool {
+            get throws {
+                if availabilityFails { throw NSError(domain: "test", code: 2) }
+                return payload != nil && !migrated
+            }
+        }
         func readPayload() throws -> Data {
             guard let payload else { throw ArchiveError.invalid }
             return payload
@@ -154,6 +160,53 @@ final class LearningDbStoreTests: XCTestCase {
         XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
         XCTAssertEqual(Int64(0), try count("sessions"), "the aborted migration's writes rolled back")
         XCTAssertEqual(Int64(0), try count("expressions"))
+    }
+
+    func testActiveLearnerQuarantinesFailedPayloadWithoutChangingSourceAndCanRetry() throws {
+        let corruptPayload = Data("not a valid learning archive".utf8)
+        let source = MockSource(corruptPayload)
+
+        XCTAssertThrowsError(try LearningDbStore.open(database: db, source: source,
+                                                       activeIdentity: "member:account-a", clock: { now }))
+        XCTAssertEqual(source.payload, corruptPayload)
+        XCTAssertFalse(source.migrated)
+        XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
+        XCTAssertEqual(Int64(0), try count("sessions"))
+
+        let recoverablePayload = try encoded(fixtureArchive())
+        source.payload = recoverablePayload
+        let retried = try LearningDbStore.open(database: db, source: source,
+                                               activeIdentity: "member:account-a", clock: { now })
+
+        XCTAssertFalse(retried.jsonMode)
+        XCTAssertTrue(source.migrated)
+        XCTAssertEqual(sha256Hex(recoverablePayload), try meta(LearningDbStore.migrationHashKey))
+        try assertExportEquals(fixtureArchive(), db)
+    }
+
+    func testActiveLearnerDatabaseOpenFailureDoesNotReturnSharedPayloadFallback() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let payload = try encoded(fixtureArchive())
+        let source = MockSource(payload)
+
+        XCTAssertThrowsError(try LearningDbStore.open(at: directory.path, source: source,
+                                                       activeIdentity: "member:account-a", clock: { now }))
+        XCTAssertEqual(source.payload, payload)
+        XCTAssertFalse(source.migrated)
+    }
+
+    func testUnreadableMigrationSourceDoesNotLookLikeMissingPayload() throws {
+        let payload = try encoded(fixtureArchive())
+        let source = MockSource(payload)
+        source.availabilityFails = true
+
+        XCTAssertThrowsError(try LearningDbStore.open(database: db, source: source,
+                                                       activeIdentity: "member:account-a", clock: { now }))
+        XCTAssertEqual(source.payload, payload)
+        XCTAssertFalse(source.migrated)
+        XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
     }
 
     func testOversizePayloadEngagesFailSafeAndLeavesTheSourceUntouched() throws {
