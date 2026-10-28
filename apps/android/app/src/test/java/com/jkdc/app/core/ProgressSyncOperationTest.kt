@@ -86,6 +86,23 @@ class ProgressSyncOperationTest {
         assertEquals(listOf("A:A failed"), errors)
     }
 
+    @Test fun ownerLoadCoordinatorCanRetryAfterCurrentFailureWhenUserRequestsAgain() = runTest {
+        var loads = 0
+        var published: String? = null
+        val coordinator = OwnerLearningLoadCoordinator<String>(
+            currentIdentity = { "A" },
+            load = { if (++loads == 1) throw IllegalStateException("temporary failure") else "state-A" },
+            publish = { _, value -> published = value; true },
+            reportFailure = { _, _ -> true },
+        )
+
+        assertFalse(coordinator.loadAndPublish())
+        assertNull(published)
+        assertTrue(coordinator.loadAndPublish())
+        assertEquals(2, loads)
+        assertEquals("state-A", published)
+    }
+
     @Test fun ownerLoadCoordinatorPropagatesCancellation() = runTest {
         val coordinator = OwnerLearningLoadCoordinator<String>(
             currentIdentity = { "A" },

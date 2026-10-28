@@ -318,8 +318,12 @@ fun AppRoot(
                     onDismissRequest = vm::dismissError,
                     title = { Text(stringResource(R.string.error_dialog_title)) },
                     text = { Text(message) },
-                confirmButton = { AppTextButton(onClick = vm::dismissError) { Text(stringResource(R.string.common_ok)) } },
-                dismissButton = if (vm.errorNeedsKeySetup) ({
+                confirmButton = if (vm.errorCanRetryLocalHistory) ({
+                    AppTextButton(onClick = vm::retryLocalHistory) { Text(stringResource(R.string.common_retry)) }
+                }) else ({ AppTextButton(onClick = vm::dismissError) { Text(stringResource(R.string.common_ok)) } }),
+                dismissButton = if (vm.errorCanRetryLocalHistory) ({
+                    AppTextButton(onClick = vm::dismissError) { Text(stringResource(R.string.common_cancel)) }
+                }) else if (vm.errorNeedsKeySetup) ({
                     AppTextButton(onClick = { vm.dismissError(); showSettings = true }) { Text(stringResource(R.string.error_go_to_settings)) }
                 }) else if (vm.errorNeedsAccountSignIn && account?.configuration != null) ({
                     AppTextButton(onClick = { vm.dismissError(); account.refresh(); showAccount = true }) {

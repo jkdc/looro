@@ -3,6 +3,7 @@
     <!-- Common -->
     <string name="common_ok">Entendido</string>
     <string name="common_cancel">Cancelar</string>
+    <string name="common_retry">Intentar de nuevo</string>
     <string name="common_close">Cerrar</string>
     <string name="common_save">Guardar</string>
     <string name="common_delete">Eliminar</string>
@@ -15,7 +16,7 @@
     <!-- Errors -->
     <string name="error_dialog_title">Una pequeña interrupción</string>
     <string name="error_go_to_settings">Ir a Ajustes</string>
-    <string name="error_local_history_unavailable">No se pudo abrir el historial local. No se sobrescribirá. Conserva los datos de la aplicación y revisa el archivo antes de continuar.</string>
+    <string name="error_local_history_unavailable">No se pudo abrir el historial local. Los datos existentes no se sobrescribieron. Inténtalo de nuevo sin borrarlos o conserva los datos mientras lo investigas.</string>
     <string name="error_save_progress_failed">No se pudo guardar el progreso. Exporta un respaldo antes de cerrar la aplicación.</string>
     <string name="error_resolve_local_history_first">Primero resuelve el error del historial local.</string>
     <string name="error_accept_ai_consent">Acepta el uso de OpenAI en Ajustes antes de empezar.</string>

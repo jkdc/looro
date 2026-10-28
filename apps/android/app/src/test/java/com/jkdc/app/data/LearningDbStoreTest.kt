@@ -10,6 +10,9 @@ import java.io.IOException
 import java.security.MessageDigest
 import java.sql.Connection
 import java.sql.DriverManager
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -142,6 +145,74 @@ class LearningDbStoreTest {
             }
             assertTrue("The legacy backup must remain byte-identical", files.json.readBytes().contentEquals(bytes))
             assertFalse("A failed migration must not rename the backup", files.migrated.exists())
+        }
+    }
+
+    @Test fun concurrentOwnerOpenCannotImportFirstLearnersArchiveUnderSecondOwner() {
+        val aBytes = fixtureBytes("case-basic.json")
+        val bBytes = ArchiveCodec.encode(Archive()).toByteArray()
+        val aFiles = TempJsonFiles(tmp.newFolder(), aBytes)
+        val bFilesDelegate = TempJsonFiles(tmp.newFolder(), bBytes)
+        val aReadStarted = CountDownLatch(1)
+        val continueARead = CountDownLatch(1)
+        val bLookupStarted = CountDownLatch(1)
+        val aFilesBlocking = object : LearningDbStore.Files {
+            override fun learningJsonExists() = aFiles.learningJsonExists()
+            override fun readLearningJson(): ByteArray {
+                val bytes = aFiles.readLearningJson()
+                aReadStarted.countDown()
+                check(continueARead.await(5, TimeUnit.SECONDS))
+                return bytes
+            }
+            override fun renameLearningJsonToMigrated() = aFiles.renameLearningJsonToMigrated()
+        }
+        val bFilesSignaling = object : LearningDbStore.Files {
+            override fun learningJsonExists(): Boolean {
+                bLookupStarted.countDown()
+                return bFilesDelegate.learningJsonExists()
+            }
+            override fun readLearningJson() = bFilesDelegate.readLearningJson()
+            override fun renameLearningJsonToMigrated() = bFilesDelegate.renameLearningJsonToMigrated()
+        }
+        val databasePath = File(tmp.newFolder(), "learning.db").path
+        val aDatabase = openJvmFileBacked(databasePath)
+        val bDatabase = openJvmFileBacked(databasePath)
+        val legacyHash = "d".repeat(64)
+        ExamHistoryDao.start(aDatabase,
+            ExamSnapshotRecord("exam-legacy-owner", "sha256:$legacyHash", legacyHash, 1, 1, 1,
+                "bundled", "en", "B1", 202640, "{}", 10.0),
+            ExamAttemptRecord("attempt-legacy-owner", "exam-legacy-owner", startedAt = 10.0))
+        val executor = Executors.newFixedThreadPool(2)
+        try {
+            val aOpen = executor.submit<LearningDbStore> {
+                LearningDbStore.open(aDatabase, aFilesBlocking, activeIdentity = "member:account-a", clock = { now })
+            }
+            assertTrue("A should pause inside its migration source read", aReadStarted.await(5, TimeUnit.SECONDS))
+            val bOpenStarted = CountDownLatch(1)
+            val bOpen = executor.submit<LearningDbStore> {
+                bOpenStarted.countDown()
+                LearningDbStore.open(bDatabase, bFilesSignaling, activeIdentity = "member:account-b", clock = { now })
+            }
+            assertTrue("B open should be scheduled while A is suspended", bOpenStarted.await(5, TimeUnit.SECONDS))
+            assertFalse("B must not enter its open/migration while A owns the identity boundary",
+                bLookupStarted.await(250, TimeUnit.MILLISECONDS))
+            continueARead.countDown()
+            aOpen.get(5, TimeUnit.SECONDS)
+            bOpen.get(5, TimeUnit.SECONDS)
+
+            assertEquals(sha256(aBytes), MetaDao.get(bDatabase, LearningDbStore.MIGRATION_HASH_KEY))
+            val owners = bDatabase.query("SELECT owner_key FROM sessions").map { it.text("owner_key") }
+            assertTrue(owners.isNotEmpty())
+            assertTrue(owners.all { it == "member:account-a" })
+            assertEquals("account-a", bDatabase.query("SELECT owner_account_id FROM exam_attempts WHERE attempt_id = ?",
+                listOf("attempt-legacy-owner")).single().textOrNull("owner_account_id"))
+            assertEquals("member:account-a", bDatabase.query("SELECT owner_key FROM exam_attempts WHERE attempt_id = ?",
+                listOf("attempt-legacy-owner")).single().text("owner_key"))
+            assertTrue(bFilesDelegate.json.exists())
+            assertFalse(bFilesDelegate.migrated.exists())
+        } finally {
+            continueARead.countDown()
+            executor.shutdownNow()
         }
     }
 

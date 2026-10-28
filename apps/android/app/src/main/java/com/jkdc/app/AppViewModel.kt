@@ -289,6 +289,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var state by mutableStateOf("idle"); private set
     var error by mutableStateOf<String?>(null); private set
     var errorNeedsKeySetup by mutableStateOf(false); private set
+    var errorCanRetryLocalHistory by mutableStateOf(false); private set
     var errorNeedsAccountSignIn by mutableStateOf(false); private set
 
     /** Set when the failing call was the token proxy refusing (402 balance /
@@ -456,6 +457,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val current = examOwnerIdentity.value
         val resolvedIdentity = com.jkdc.app.core.LocalLearnerIdentity.resolve(accountID, localGuestIdentityID)
         if (current.ownerAccountID != resolvedIdentity) {
+            if (errorCanRetryLocalHistory) dismissError()
             val updated = LevelTestAttemptHistoryIdentity(resolvedIdentity, current.generation + 1)
             examOwnerIdentity.value = updated
             ownerScopedLevelTestHistory.setIdentity(updated)
@@ -1384,6 +1386,34 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return Triple(exported, ledger, opened)
     }
 
+    private fun ownerLearningLoadCoordinator() = com.jkdc.app.core.OwnerLearningLoadCoordinator<
+        Triple<Archive, List<FinalAssessmentTicket>, LearningDbStore>>(
+        currentIdentity = { examOwnerIdentity.value.ownerAccountID },
+        load = { identity -> withContext(Dispatchers.IO) { loadLearningState(identity) } },
+        publish = { identity, loaded ->
+            synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                if (examOwnerIdentity.value.ownerAccountID != identity) false else {
+                    store = loaded.third
+                    archive = loaded.first
+                    finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
+                    if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
+                    loadedLearningIdentity = identity
+                    storageReady = true
+                    true
+                }
+            }
+        },
+        reportFailure = { identity, _ ->
+            synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                if (examOwnerIdentity.value.ownerAccountID != identity) false else {
+                    presentError(getApplication<Application>().getString(R.string.error_local_history_unavailable))
+                    errorCanRetryLocalHistory = true
+                    true
+                }
+            }
+        },
+    )
+
     init {
         guests?.let { controller -> viewModelScope.launch { controller.state.collect { guestState = it } } }
         viewModelScope.launch {
@@ -1399,32 +1429,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     onFailure = { presentError(getApplication<Application>().getString(R.string.error_guest_secure_storage_unavailable)) })
                 conversationProvider = providers.selection
                 hasKey = credentials.hasKey
-                val ownerLoad = com.jkdc.app.core.OwnerLearningLoadCoordinator(
-                    currentIdentity = { examOwnerIdentity.value.ownerAccountID },
-                    load = { identity -> withContext(Dispatchers.IO) { loadLearningState(identity) } },
-                    publish = { identity, loaded ->
-                        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
-                            if (examOwnerIdentity.value.ownerAccountID != identity) false else {
-                                store = loaded.third
-                                archive = loaded.first
-                                finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
-                                if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
-                                loadedLearningIdentity = identity
-                                storageReady = true
-                                true
-                            }
-                        }
-                    },
-                    reportFailure = { identity, _ ->
-                        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
-                            if (examOwnerIdentity.value.ownerAccountID != identity) false else {
-                                presentError(getApplication<Application>().getString(R.string.error_local_history_unavailable))
-                                true
-                            }
-                        }
-                    },
-                )
-                if (!ownerLoad.loadAndPublish()) return@launch
+                if (!ownerLearningLoadCoordinator().loadAndPublish()) return@launch
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
@@ -1689,7 +1694,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return requestErrorReference(e)?.let { message + "\n\n" + app.getString(R.string.hosted_error_reference, it) } ?: message
     }
     private fun presentError(message: String, needsKeySetup: Boolean = false) {
-        error = message; errorNeedsKeySetup = needsKeySetup; errorNeedsAccountSignIn = false; errorTokensBlock = null
+        error = message; errorNeedsKeySetup = needsKeySetup; errorNeedsAccountSignIn = false
+        errorCanRetryLocalHistory = false; errorTokensBlock = null
     }
     private fun presentError(e: Throwable, @StringRes fallback: Int) {
         android.util.Log.e("AppLocalEngine", "voice/teaching failure: ${e.javaClass.simpleName}: ${e.message}", e)
@@ -1989,7 +1995,32 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         catch (_: Exception) { false }
     }
 
-    fun dismissError() { error = null; errorNeedsKeySetup = false; errorNeedsAccountSignIn = false; errorTokensBlock = null }
+    fun dismissError() {
+        error = null; errorNeedsKeySetup = false; errorNeedsAccountSignIn = false
+        errorCanRetryLocalHistory = false; errorTokensBlock = null
+    }
+
+    fun retryLocalHistory() {
+        if (loadingHistory) return
+        dismissError()
+        loadingHistory = true
+        viewModelScope.launch {
+            try {
+                if (!ownerLearningLoadCoordinator().loadAndPublish()) return@launch
+                usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
+                loadedLearningIdentity?.let(::requestProgressSyncWhenOwnerReady)
+                recoverFinalAssessments()
+                refreshHostedReadiness()
+            } catch (_: CancellationException) {
+                // The owner transition may cancel this retry; the new owner owns its load.
+            } catch (_: Exception) {
+                presentError(getApplication<Application>().getString(R.string.error_local_history_unavailable))
+                errorCanRetryLocalHistory = true
+            } finally {
+                loadingHistory = false
+            }
+        }
+    }
     fun clearLookup() {
         lookupGeneration++
         lookupJob?.cancel()

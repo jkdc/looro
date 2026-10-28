@@ -3,6 +3,7 @@
     <!-- Common -->
     <string name="common_ok">OK</string>
     <string name="common_cancel">Cancel</string>
+    <string name="common_retry">Try again</string>
     <string name="common_close">Close</string>
     <string name="common_save">Save</string>
     <string name="common_delete">Delete</string>
@@ -15,7 +16,7 @@
     <!-- Errors -->
     <string name="error_dialog_title">A little interruption</string>
     <string name="error_go_to_settings">Go to Settings</string>
-    <string name="error_local_history_unavailable">The local history couldn\'t be opened. It won\'t be overwritten. Keep the app\'s data and check the file before continuing.</string>
+    <string name="error_local_history_unavailable">The local history couldn\'t be opened. Existing data was not overwritten. Retry without deleting it, or keep the app\'s data while you investigate.</string>
     <string name="error_save_progress_failed">Progress couldn\'t be saved. Export a backup before closing the app.</string>
     <string name="error_resolve_local_history_first">Resolve the local history error first.</string>
     <string name="error_accept_ai_consent">Accept OpenAI use in Settings before you begin.</string>

@@ -229,20 +229,20 @@ class LearningDbStore private constructor(
          *  active identity. A later launch can retry without deleting it. */
         fun open(context: Context, clock: () -> Double = ::nowSeconds,
                  activeIdentity: String): LearningDbStore {
-            val files = androidFiles(context)
-            val adopted = adoptPreimportDatabase(context.getDatabasePath(LearningDb.NAME))
-            if (adopted) {
-                println("LearningDbStore: adopted stranded learning.db.preimport " +
-                    "(an import died between the two renames; the previous database is back)")
-            }
-            return try {
-                open(LearningDb.open(context), files, activeIdentity = activeIdentity, clock = clock).also { store ->
-                    ExamHistoryDao.assignOwnerlessToIdentityOnce(store.db, activeIdentity)
+            return synchronized(LearnerOwnershipDao) {
+                val files = androidFiles(context)
+                val adopted = adoptPreimportDatabase(context.getDatabasePath(LearningDb.NAME))
+                if (adopted) {
+                    println("LearningDbStore: adopted stranded learning.db.preimport " +
+                        "(an import died between the two renames; the previous database is back)")
                 }
-            } catch (failure: Exception) {
-                if (!files.learningJsonExists()) throw failure
-                if (failure is QuarantinedLegacyArchive) throw failure
-                throw QuarantinedLegacyArchive(failure)
+                try {
+                    open(LearningDb.open(context), files, activeIdentity = activeIdentity, clock = clock)
+                } catch (failure: Exception) {
+                    if (!files.learningJsonExists()) throw failure
+                    if (failure is QuarantinedLegacyArchive) throw failure
+                    throw QuarantinedLegacyArchive(failure)
+                }
             }
         }
 
@@ -251,24 +251,23 @@ class LearningDbStore private constructor(
          *  JSON-mode behavior for migration tooling and historical tests. */
         fun open(database: SqlDatabase, files: Files, activeIdentity: String? = null,
                  clock: () -> Double = ::nowSeconds): LearningDbStore {
-            return try {
-                activeIdentity?.let { LearnerOwnershipDao.activate(database, it) }
-                if (MetaDao.get(database, MIGRATION_HASH_KEY) == null && files.learningJsonExists()) {
-                    migrate(database, files, clock)
+            return synchronized(LearnerOwnershipDao) {
+                try {
+                    activeIdentity?.let { LearnerOwnershipDao.activate(database, it) }
+                    if (MetaDao.get(database, MIGRATION_HASH_KEY) == null && files.learningJsonExists()) {
+                        migrate(database, files, clock)
+                    }
+                    ProgressRecoveryDao.recover(database, System.currentTimeMillis())
+                    activeIdentity?.let { ExamHistoryDao.assignOwnerlessToIdentityOnce(database, it) }
+                    LearningDbStore(database, clock, jsonMode = false, jsonModeNotice = null)
+                } catch (failure: Exception) {
+                    // Migration aborted (or the database broke underneath it):
+                    // content remains fenced to this identity and production can
+                    // retry without serving the unattributed source.
+                    if (!files.learningJsonExists()) throw failure
+                    if (activeIdentity != null) throw QuarantinedLegacyArchive(failure)
+                    jsonMode(files, failure)
                 }
-                ProgressRecoveryDao.recover(database, System.currentTimeMillis())
-                LearningDbStore(database, clock, jsonMode = false, jsonModeNotice = null)
-            } catch (failure: Exception) {
-                // Migration aborted (or the database broke underneath it):
-                // the content writes rolled back, the JSON is untouched, and
-                // the hash gate stays open so the next launch retries (the
-                // pre-import clear keeps the retry count-stable — see the
-                // KDoc). Without the JSON fallback there is nothing to serve:
-                // rethrow instead of a jsonMode that would drop the session's
-                // work.
-                if (!files.learningJsonExists()) throw failure
-                if (activeIdentity != null) throw QuarantinedLegacyArchive(failure)
-                jsonMode(files, failure)
             }
         }
 
