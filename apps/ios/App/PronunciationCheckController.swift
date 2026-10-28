@@ -117,18 +117,36 @@ enum PronunciationCheckState: Equatable {
 
     static let shared = AudioSessionLeaseOwnership()
     private var activeLease: (id: UUID, owner: Owner)?
+    private var retryCleanup: (@MainActor () -> Bool)?
 
     func acquire(owner: Owner) -> UUID? {
+        if let activeLease, let retryCleanup, retryCleanup() {
+            _ = release(activeLease.id, deactivatedSuccessfully: true)
+        }
         guard activeLease == nil else { return nil }
         let id = UUID()
         activeLease = (id, owner)
         return id
     }
 
+    /// Retains recovery independently of the view-scoped object that first owned the lease.
+    func retainCleanup(for id: UUID, retry: @escaping @MainActor () -> Bool) {
+        guard activeLease?.id == id else { return }
+        retryCleanup = retry
+    }
+
+    func owns(_ id: UUID) -> Bool { activeLease?.id == id }
+
+    func cleanupIfCurrent(_ id: UUID, cleanup: @MainActor () -> Bool) -> Bool {
+        guard owns(id) else { return false }
+        return cleanup()
+    }
+
     @discardableResult
     func release(_ id: UUID, deactivatedSuccessfully: Bool) -> Bool {
         guard deactivatedSuccessfully, activeLease?.id == id else { return false }
         activeLease = nil
+        retryCleanup = nil
         return true
     }
 }
@@ -163,11 +181,24 @@ enum PronunciationCheckState: Equatable {
 
     func release() {
         guard let previousConfiguration, let leaseID else { return }
-        do {
-            try session.setActive(false, options: .notifyOthersOnDeactivation)
-            try session.setCategory(previousConfiguration.0, mode: previousConfiguration.1,
-                                    options: previousConfiguration.2)
-        } catch {
+        guard ownership.owns(leaseID) else {
+            self.previousConfiguration = nil
+            self.leaseID = nil
+            return
+        }
+        let session = self.session
+        let configuration = previousConfiguration
+        let cleanup: @MainActor () -> Bool = {
+            do {
+                try session.setActive(false, options: .notifyOthersOnDeactivation)
+                try session.setCategory(configuration.0, mode: configuration.1, options: configuration.2)
+                return true
+            } catch {
+                return false
+            }
+        }
+        guard ownership.cleanupIfCurrent(leaseID, cleanup: cleanup) else {
+            ownership.retainCleanup(for: leaseID, retry: cleanup)
             return
         }
         guard ownership.release(leaseID, deactivatedSuccessfully: true) else { return }

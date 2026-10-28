@@ -379,6 +379,39 @@ private struct PronunciationFixtureTimeout {
         XCTAssertNotNil(ownership.acquire(owner: .pronunciation))
     }
 
+    func testFailedCleanupCanBeRetriedAfterPronunciationOwnerIsGone() {
+        let ownership = AudioSessionLeaseOwnership()
+        let pronunciation = ownership.acquire(owner: .pronunciation)!
+        var cleanupAttempts = 0
+        ownership.retainCleanup(for: pronunciation) {
+            cleanupAttempts += 1
+            return cleanupAttempts == 2
+        }
+
+        XCTAssertNil(ownership.acquire(owner: .conversation), "A failed cleanup must keep audio exclusive")
+        let conversation = ownership.acquire(owner: .conversation)
+
+        XCTAssertNotNil(conversation, "A later owner should retry cleanup without the old controller")
+        XCTAssertEqual(2, cleanupAttempts)
+    }
+
+    func testRecoveredLeaseCannotRunStaleCleanupAgainstNewOwner() {
+        let ownership = AudioSessionLeaseOwnership()
+        let previous = ownership.acquire(owner: .pronunciation)!
+        ownership.retainCleanup(for: previous) { true }
+        let current = ownership.acquire(owner: .conversation)!
+        var touchedAudioSession = false
+
+        let cleaned = ownership.cleanupIfCurrent(previous) {
+            touchedAudioSession = true
+            return true
+        }
+
+        XCTAssertFalse(cleaned)
+        XCTAssertFalse(touchedAudioSession, "A stale pronunciation object must not deactivate the new owner's audio")
+        XCTAssertTrue(ownership.owns(current))
+    }
+
     func testUnsupportedLocalModelMakesNoRequest() async throws {
         let fixture = PronunciationFixture()
         fixture.supportsOnDeviceRecognition = false
