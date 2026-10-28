@@ -52,6 +52,25 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 
 **Risk:** item 4 — concurrent microphone mute and pending tutor work.
 
+## F14 — iOS pronunciation owner/data-generation fencing
+
+**Outcome:** Implemented in code commit `33066e6`. Each pronunciation attempt snapshots the active learner identity and `LearningStore.dataGeneration`; account switches, full deletion, validated DB import, user-facing backup import and successful per-language deletion advance the generation. The controller observes invalidation, cancels the attempt and verifies the snapshot again before recording completion or invoking the success callback.
+
+**Regression coverage added**
+
+- `testOwnerSwitchFencesStalePronunciationAndAllowsCurrentOwnerRetry` covers stale A→B recognition plus a valid current-owner retry.
+- `testReturningToSameOwnerDoesNotReviveOldPronunciationAttempt` ensures A→B→A cannot revive the original attempt.
+- `testDataDeletionFencesSuspendedPronunciationResult` checks a late result after full deletion and owned resource cleanup.
+- `testBackupImportFencesSuspendedPronunciationResult` checks a late result after backup replacement.
+
+**Observed checks and limitations**
+
+- Test-first regression tests were added before the production edits. `swift test --package-path apps/ios --filter PronunciationCheckControllerTests` exited 127 because `swift` is not installed; no RED/GREEN, XCTest, compile or runtime result is claimed.
+- Independent source review found missing invalidation after user-facing backup import and per-language deletion. One bounded correction added generation advancement at both successful mutation boundaries and a backup-import late-callback regression. The scoped recheck closed the source blocker; direct per-language deletion regression remains advisable.
+- `git diff --check` passed. iOS targets and mounted account/import/deletion lifecycle remain deferred to F16 on macOS/Xcode, as requested.
+
+**Risk:** items 1 and 4 — learner data integrity and asynchronous recognition lifecycle.
+
 ## F12 — iOS typed reply edits and pending state
 
 **Outcome:** Implemented in commit `832add8`. The editor captures the exact submitted text, retains later edits and exposes recoverable status while that provider call is active. Dismissing the sheet no longer pretends to cancel the provider operation; its draft/error survives presentation changes but is cleared at owner, language, or conversation invalidation. A late result cannot dismiss a new editor presentation.
