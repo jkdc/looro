@@ -1232,6 +1232,91 @@ class LocalVoiceTransportTest {
     }
 
     @Test
+    fun `saturating the opening buffer keeps the retained speech for the held end press`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val greetingGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = greetingGate
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { event -> events.add(event) }
+        runBlocking { transport.connect(FakeProvider(), "base instructions", language = "en") }
+
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
+        val greetingDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < greetingDeadline) Thread.sleep(25)
+        assertEquals("the opening greeting is the first request", 1, engine.received.size)
+
+        // 160 speech frames = 20.5 s: the opening buffer saturates at its 20 s
+        // memory bound and only the excess is dropped — the retained prefix
+        // must survive for the drain once the greeting ends.
+        repeat(160) { source.queue.add(speech(amplitude = 0.6f)) }
+        assertTrue(source.awaitFramesRead(160, 5_000))
+        val limitDeadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" } &&
+            System.currentTimeMillis() < limitDeadline) Thread.sleep(10)
+        assertTrue("saturating the opening buffer must surface its limit",
+            events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+        assertEquals("a saturated opening buffer must not submit the turn", 1, engine.received.size)
+
+        // the user presses End while the greeting is still talking: the press
+        // must survive and apply to the WHOLE retained prefix after the drain
+        transport.endTurn()
+        greetingGate.complete(Unit)
+        val turnDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < turnDeadline) Thread.sleep(25)
+        assertEquals("the retained prefix must become exactly one reply request", 2, engine.received.size)
+        assertEquals("the drained prefix is the reply input", "Hello there", engine.received[1].second)
+        val captured = runtime.lastSamples ?: throw AssertionError("STT must receive the retained opening prefix")
+        assertTrue("the retained prefix carries voice, not silence", captured.size >= 15 * 16_000)
+        assertTrue("the STT pass must receive at most its 18 s input cap", captured.size <= 18 * 16_000)
+        transport.close()
+        scope.cancel()
+    }
+
+    @Test
+    fun `a turn cut at the stt cap signals the visible trim instead of dropping the tail silently`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 1,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { event -> events.add(event) }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // 150 speech frames = 19.2 s: under the 20 s capture cap, over the
+        // 18 s STT input cap — the tail beyond 18 s must not vanish silently.
+        repeat(150) { source.queue.add(speech(amplitude = 0.6f)) }
+        assertTrue(source.awaitFramesRead(150, 5_000))
+        Thread.sleep(150)
+        assertEquals("no auto submit in manual mode", 0, engine.received.size)
+
+        transport.endTurn()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+        assertTrue("finalizing past the STT cap must surface the visible trim",
+            events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+        val captured = runtime.lastSamples!!
+        assertTrue("the STT prefix stays within its cap", captured.size <= 18 * 16_000)
+        transport.close()
+        scope.cancel()
+    }
+
+    @Test
     fun `opening greeting waits for initial instructions before processing voice`() {
         val source = FakeFrameSource()
         val engine = FakeTeachingClient()

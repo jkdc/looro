@@ -57,7 +57,7 @@
     <string name="notice_help_simpler">Vamos a hacerlo más sencillo.</string>
     <string name="notice_update_send_failed">No se pudo enviar una actualización. Puedes seguir hablando.</string>
     <string name="notice_voice_update_rejected">OpenAI rechazó una actualización de voz. Si deja de responder, reinicia la conversación.</string>
-    <string name="notice_voice_capture_limit_reached">Se alcanzó el límite de grabación. Se conserva lo que has dicho; pulsa Finalizar para enviarlo.</string>
+    <string name="notice_voice_capture_limit_reached">Se alcanzó el límite de grabación. Solo se conserva el inicio de lo que has dicho; pulsa Finalizar para enviarlo.</string>
     <string name="notice_time_limit_reached">Se alcanzó el límite de tiempo.</string>
     <string name="notice_ended_inactivity">Terminamos la sesión por inactividad.</string>
     <string name="notice_topic_ready">Tema listo. Pulsa Hablar o escribe para comenzar.</string>

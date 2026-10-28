@@ -397,7 +397,11 @@ class LocalVoiceTransport(
                     emit(buildJsonObject { put("type", "session.capture.limit_reached") })
                 }
                 while (coroutineContext.isActive && running) {
-                    val item = if (!openingInProgress && openingFrames.isNotEmpty()) openingFrames.removeFirst()
+                    // A retained opening frame is drained with the flag set so
+                    // press paths cannot close the turn mid-prefix; the last
+                    // drained frame applies the held press to the WHOLE prefix.
+                    val drainingOpening = !openingInProgress && openingFrames.isNotEmpty()
+                    val item = if (drainingOpening) openingFrames.removeFirst()
                     else kotlinx.coroutines.withTimeoutOrNull(25) { handoff.receiveCatching().getOrNull() }
                     val currentEpoch = captureEpoch.get()
                     if (currentEpoch != bufferEpoch) {
@@ -408,7 +412,7 @@ class LocalVoiceTransport(
                         // A manual end press may arrive after the final frame is
                         // already buffered. Wake from the bounded receive wait so
                         // it closes without requiring another microphone frame.
-                        if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
+                        if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd && !drainingOpening) {
                             turnEndRequested = false
                             endOfSpeechAtMs = System.currentTimeMillis()
                             endBufferedTurn("manual end of turn (voice buffered)")
@@ -428,7 +432,11 @@ class LocalVoiceTransport(
                             }
                             if (openingBufferedSamples >= MAX_CAPTURE_SAMPLES || remaining <= 0) {
                                 openingCaptureFull = true
-                                notifyManualCaptureLimit()
+                                // Saturating the opening buffer is only the
+                                // memory bound: the retained prefix is still
+                                // drained once the greeting ends, so this must
+                                // not latch the turn-capture gate.
+                                emit(buildJsonObject { put("type", "session.capture.limit_reached") })
                             }
                         }
                         continue
@@ -462,7 +470,7 @@ class LocalVoiceTransport(
 
                     val frame = item.samples
                     val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
-                    if (manualTurn && speechMs == 0 && voicedInBuffer == 0) {
+                    if (manualTurn && !drainingOpening && speechMs == 0 && voicedInBuffer == 0) {
                         manualWaitMs += frameMs
                         if (manualWaitMs >= MAX_TURN_MS) {
                             if (turnEndRequested) turnEndRequested = false
@@ -479,7 +487,7 @@ class LocalVoiceTransport(
                     // is captured whole (see the armed-phrase logic below) —
                     // within the 20 s window the press is never lost nor
                     // truncates the speech that follows it.
-                    if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
+                    if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd && !drainingOpening) {
                         turnEndRequested = false
                         endOfSpeechAtMs = System.currentTimeMillis()
                         endBufferedTurn("manual end of turn (voice buffered)")
@@ -540,7 +548,7 @@ class LocalVoiceTransport(
                     } else {
                         speechMs += if (voiced) frameMs else 0
                         partialClockMs = turnMs
-                        if (turnEndRequested && voiced && voicedInBuffer == 1 && !armedPhraseEnd) {
+                        if (!drainingOpening && turnEndRequested && voiced && voicedInBuffer == 1 && !armedPhraseEnd) {
                             // An armed press catching the phrase start: hold the
                             // request and close when the phrase trails into
                             // silence, so the whole post-press speech is
@@ -565,6 +573,16 @@ class LocalVoiceTransport(
                     }
                     maybeEmitPartial(speech, partialClockMs)
                     if (System.currentTimeMillis() - lastUsageEmit >= 15_000) {
+                        lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                    }
+                    if (drainingOpening && openingFrames.isEmpty() &&
+                        manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
+                        // the retained opening prefix is fully consumed: the
+                        // press held since the greeting now applies to the
+                        // whole prefix, not just its first voiced frame
+                        turnEndRequested = false
+                        endOfSpeechAtMs = System.currentTimeMillis()
+                        endBufferedTurn("manual end of turn (opening prefix drained)")
                         lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                     }
                 }
@@ -714,6 +732,10 @@ class LocalVoiceTransport(
         val capped = if (trimmed.size > maxSamples) {
             val duration = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
             log("STT input capped to the first $MAX_STT_INPUT_MS ms of $duration ms")
+            // The cut is decided at finalize (capture stayed under its own
+            // cap): surface it through the same persistent notice instead of
+            // silently dropping the tail (one signal per turn).
+            emit(buildJsonObject { put("type", "session.capture.limit_reached") })
             trimmed.copyOfRange(0, maxSamples)
         } else trimmed
         val durationMs = capped.size * 1000L / MicRecorder.SAMPLE_RATE

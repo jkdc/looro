@@ -57,7 +57,7 @@
     <string name="notice_help_simpler">Palique will make that a little simpler.</string>
     <string name="notice_update_send_failed">A conversation update couldn\'t be sent. You can keep speaking.</string>
     <string name="notice_voice_update_rejected">A voice update was rejected. If Palique stops responding, end this conversation and start again.</string>
-    <string name="notice_voice_capture_limit_reached">Recording limit reached. Your captured speech is kept; tap End to send it.</string>
+    <string name="notice_voice_capture_limit_reached">Recording limit reached. Only the beginning of what you said is kept; tap End to send it.</string>
     <string name="notice_time_limit_reached">You\'ve reached your conversation time limit.</string>
     <string name="notice_ended_inactivity">Palique ended this quiet session to avoid running up usage.</string>
     <string name="notice_topic_ready">Topic ready. Tap Talk or start typing to begin.</string>
