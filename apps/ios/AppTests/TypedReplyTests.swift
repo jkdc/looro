@@ -170,18 +170,24 @@ import LearningCore
         fixture.providerStarted = expectation(description: "typed reply reached provider boundary")
         let coordinator = ConversationCoordinator(store: store, typedReplyAdapter: fixture.adapter())
         coordinator.prepareTypedReplyTesting()
+        let closedEditor = TypedReplyEditorState()
+        closedEditor.presentationDidAppear(draft: "first draft")
+        closedEditor.presentationDidDisappear()
 
         let send = Task { await coordinator.sendTyped("first draft") }
         await fulfillment(of: [fixture.providerStarted!], timeout: 2)
         XCTAssertTrue(coordinator.typedReplyInFlight)
         coordinator.updateTypedReplyDraft("second draft")
+        let reopenedEditor = TypedReplyEditorState()
+        reopenedEditor.presentationDidAppear(draft: coordinator.typedReplyDraft)
         XCTAssertTrue(coordinator.typedReplyInFlight)
-        XCTAssertEqual(coordinator.typedReplyDraft, "second draft")
+        XCTAssertEqual(reopenedEditor.draft, "second draft")
 
         fixture.pendingResponse?.resume(returning: APIResult(text: "Late reply.", sources: [], usage: APIUsage()))
         let firstResult = await send.value
         XCTAssertEqual(firstResult, .sent)
         XCTAssertFalse(coordinator.typedReplyInFlight)
+        reopenedEditor.presentationDidDisappear()
         let recovery = await coordinator.sendTyped("second draft")
         XCTAssertEqual(recovery, .sent)
         XCTAssertEqual(fixture.requests, 2)
