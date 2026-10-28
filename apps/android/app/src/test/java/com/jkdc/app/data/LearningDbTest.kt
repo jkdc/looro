@@ -305,7 +305,7 @@ class LearningDbTest {
         }
     }
 
-    @Test fun malformedLaterProgressPageLeavesPersistedRowsAndCursorUnchanged() = runBlocking {
+    @Test fun acceptedPageIsCommittedBeforeLaterFailureAndResume() = runBlocking {
         val file = File.createTempFile("progress-bootstrap-malformed", ".db")
         val server = MockWebServer().apply { start() }
         var target: SqlDatabase? = null
@@ -314,14 +314,40 @@ class LearningDbTest {
             val session = AccountSession("12345678-1234-1234-1234-123456789012", "a".repeat(43), 100_000)
             target = openFileBacked(file)
             val existing = RemoteProgressRollup(session.accountID, "en", "lesson", "existing", 1_792_929_599_000, 1_792_929_600_000, 1, 80, 1)
-            LearningDbWriter.remoteProgressPageApplied(target, session.accountID, listOf(existing), "saved-cursor", 3, 3_000)
+            LearningDbWriter.remoteProgressPageApplied(target, session.accountID, listOf(existing), null, 0, 3_000)
             server.enqueue(MockResponse().setBody(progressPageJson(0, 1000, "cursor-1000", complete = false)))
             server.enqueue(MockResponse().setBody("""{"version":2,"progress":[{"kind":"lesson","itemID":"broken","language":"en","firstAt":1792929600000,"lastAt":1792929599000,"attempts":1,"bestScore":0}],"nextCursor":null,"complete":true}"""))
 
-            val result = client.fetchBootstrap(session, null) { true }
+            val requestsAtAcceptance = mutableListOf<Int>()
+            suspend fun applyPage(body: String, nextCursor: String?, complete: Boolean): Boolean {
+                requestsAtAcceptance += server.requestCount
+                val page = kotlinx.serialization.json.Json.parseToJsonElement(body).jsonObject
+                LearningDbWriter.remoteProgressPageApplied(target!!, session.accountID,
+                    decodeRemoteProgress(page, session.accountID), nextCursor,
+                    if (complete) 1 else 0, 4_000 + server.requestCount.toLong())
+                return true
+            }
+            val result = client.fetchBootstrap(session, null,
+                onPageAccepted = ::applyPage) { true }
             assertTrue(result is ProgressFetchResult.Failure)
-            assertEquals(listOf(existing), RemoteProgressRollupsDao.all(target, session.accountID))
-            assertEquals("saved-cursor", ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor)
+            assertEquals(listOf(1), requestsAtAcceptance)
+            target.close()
+            target = openFileBacked(file)
+            assertEquals(1001, RemoteProgressRollupsDao.all(target, session.accountID).size)
+            assertEquals("cursor-1000", ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor)
+
+            server.enqueue(MockResponse().setBody(progressPageJson(1000, 1, null, complete = true)))
+            val savedCursor = ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor
+            val resumed = client.fetchBootstrap(session, savedCursor,
+                onPageAccepted = ::applyPage) { true }
+            assertTrue(resumed is ProgressFetchResult.Success)
+            assertEquals(listOf(1, 3), requestsAtAcceptance)
+            val identities = RemoteProgressRollupsDao.all(target, session.accountID).map { it.itemID }.toSet()
+            assertEquals(1002, identities.size)
+            assertTrue("existing" in identities)
+            assertEquals((0..1000).map(::progressItemID).toSet() + "existing", identities)
+            assertEquals(null, ProgressSyncStateDao.get(target, session.accountID, "download")!!.cursor)
+            assertEquals(1L, ProgressSyncStateDao.get(target, session.accountID, "download")!!.passGeneration)
         } finally {
             target?.close()
             server.shutdown()

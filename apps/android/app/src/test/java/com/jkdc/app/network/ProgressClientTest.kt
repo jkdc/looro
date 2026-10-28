@@ -61,6 +61,31 @@ class ProgressClientTest {
         assertTrue(client.fetchV2(session) is ProgressFetchResult.Failure)
     }
 
+    @Test fun bootstrapAcceptsAndAppliesEachPageBeforeRequestingTheNext() = runBlocking {
+        server.enqueue(MockResponse().setBody("""{"version":2,"progress":[],"nextCursor":"cursor-1","complete":false}"""))
+        server.enqueue(MockResponse().setBody("""{"version":2,"progress":[{"kind":"lesson","itemID":"broken","firstAt":2000,"lastAt":1000,"attempts":1,"bestScore":0,"language":"en"}],"nextCursor":null,"complete":true}"""))
+        val accepted = mutableListOf<Pair<String?, Int>>()
+
+        val failed = client.fetchBootstrap(session, null, onPageAccepted = { _, nextCursor, _ ->
+            accepted += nextCursor to server.requestCount
+            true
+        }) { true }
+
+        assertTrue(failed is ProgressFetchResult.Failure)
+        assertEquals(listOf("cursor-1" to 1), accepted)
+        assertEquals(null, server.takeRequest().requestUrl?.queryParameter("cursor"))
+        assertEquals("cursor-1", server.takeRequest().requestUrl?.queryParameter("cursor"))
+
+        server.enqueue(MockResponse().setBody("""{"version":2,"progress":[],"nextCursor":null,"complete":true}"""))
+        val resumed = client.fetchBootstrap(session, "cursor-1", onPageAccepted = { _, nextCursor, _ ->
+            accepted += nextCursor to server.requestCount
+            true
+        }) { true }
+        assertTrue(resumed is ProgressFetchResult.Success)
+        assertEquals(listOf("cursor-1" to 1, null to 3), accepted)
+        assertEquals("cursor-1", server.takeRequest().requestUrl?.queryParameter("cursor"))
+    }
+
     @Test fun fractionalUnixMillisecondsAreRejectedBeforePersistence() = runBlocking {
         server.enqueue(MockResponse().setBody("""{"version":2,"progress":[{"kind":"lesson","itemID":"x","firstAt":1792929599000.5,"lastAt":1792929600000,"attempts":1,"bestScore":0,"language":"en"}],"nextCursor":null,"complete":true}"""))
 

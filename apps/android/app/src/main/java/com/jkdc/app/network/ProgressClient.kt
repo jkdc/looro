@@ -106,6 +106,7 @@ class ProgressClient internal constructor(
     suspend fun fetchBootstrap(
         session: AccountSession,
         initialCursor: String?,
+        onPageAccepted: (suspend (String, String?, Boolean) -> Boolean)? = null,
         isCurrent: suspend () -> Boolean,
     ): ProgressFetchResult {
         val pages = mutableListOf<String>()
@@ -115,12 +116,13 @@ class ProgressClient internal constructor(
             when (val result = fetchV2(session, cursor)) {
                 is ProgressFetchResult.Success -> {
                     if (!isCurrent()) return ProgressFetchResult.Failure()
-                    pages += result.body
                     val root = try { json.parseToJsonElement(result.body).jsonObject } catch (_: Exception) { return ProgressFetchResult.Failure() }
                     val complete = (root["complete"] as? JsonPrimitive)?.content?.toBooleanStrictOrNull() ?: return ProgressFetchResult.Failure()
                     val next = if (root["nextCursor"] == kotlinx.serialization.json.JsonNull) null else (root["nextCursor"] as? JsonPrimitive)?.contentOrNull ?: return ProgressFetchResult.Failure()
+                    if (!complete && (index == 9_999 || next == cursor)) return ProgressFetchResult.Failure()
+                    if (onPageAccepted == null) pages += result.body
+                    else if (!onPageAccepted(result.body, next, complete)) return ProgressFetchResult.Failure()
                     if (complete) return ProgressFetchResult.Success("{\"legacy\":false,\"pages\":[${pages.joinToString(",")}]}")
-                    if (index == 9_999 || next == cursor) return ProgressFetchResult.Failure()
                     cursor = next
                 }
                 ProgressFetchResult.VersionUnavailable -> {

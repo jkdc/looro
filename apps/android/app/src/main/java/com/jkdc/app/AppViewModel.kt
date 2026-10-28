@@ -1054,11 +1054,19 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                             } == true))
                         if (!shouldBootstrap) "{\"legacy\":false,\"pages\":[]}" else {
                             val cursor = state?.cursor
-                            val result = client.fetchBootstrap(session, cursor) {
-                                val current = com.jkdc.app.core.MemberProgressSyncPolicy.session(memberSessions?.read(), guests?.availableSession())
-                                current != null && progressSyncOperation.identity(current.accountID, current.accessToken) == identity &&
-                                    progressSyncOperation.isCurrent(operation, identity)
-                            }
+                            val result = client.fetchBootstrap(
+                                session = session,
+                                initialCursor = cursor,
+                                onPageAccepted = { page, _, _ ->
+                                    persistRemoteProgressPages("{\"legacy\":false,\"pages\":[$page]}", operation, identity)
+                                },
+                                isCurrent = {
+                                    val current = com.jkdc.app.core.MemberProgressSyncPolicy.session(
+                                        memberSessions?.read(), guests?.availableSession())
+                                    current != null && progressSyncOperation.identity(current.accountID, current.accessToken) == identity &&
+                                        progressSyncOperation.isCurrent(operation, identity)
+                                },
+                            )
                             (result as? com.jkdc.app.network.ProgressFetchResult.Success)?.body
                         }
                     },
