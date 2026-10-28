@@ -2,6 +2,7 @@ import AVFoundation
 import Combine
 import Foundation
 import Speech
+import LearningCore
 
 enum PronunciationCheckState: Equatable {
     case idle

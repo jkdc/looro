@@ -52,7 +52,7 @@ import LearningCore
             _ = try await coordinator.currentTopic("Aurora borealis")
             XCTFail("Unsupported engines must not start a source-backed request.")
         } catch let error as ConversationCoordinator.TopicError {
-            XCTAssertEqual(error.localizedDescription, ConversationCoordinator.topicSearchLimitation)
+            XCTAssertEqual(error.localizedDescription, coordinator.topicSearchLimitation)
         }
 
         XCTAssertEqual(fixture.requests, 0)

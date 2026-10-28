@@ -14,36 +14,79 @@ private actor ProgressFixtureTransport: ManagedAccountRequestTransport {
         return (responseData, HTTPURLResponse(url: request.url!, statusCode: status,
             httpVersion: "HTTP/1.1", headerFields: ["Content-Type": "application/json"])!)
     }
+
+    func uploadedItemIDs() -> [String] {
+        requests.flatMap { request in
+            guard let body = request.httpBody,
+                  let payload = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
+                  let entries = payload["entries"] as? [[String: Any]] else { return [] }
+            return entries.compactMap { $0["itemID"] as? String }
+        }
+    }
+
+    func requestedCursors() -> [String?] {
+        requests.map { request in
+            URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "cursor" })?.value
+        }
+    }
 }
 
 final class ProgressClientTests: XCTestCase {
+    private func openProgressDatabase(_ url: URL, owner: String) throws -> SqlDatabase {
+        let db = try LearningDatabase.open(at: url.path)
+        _ = try LearningDbStore.open(database: db, activeIdentity: "member:\(owner)")
+        return db
+    }
+
     private func configuration() -> ManagedAccountConfiguration {
         try! ManagedAccountConfiguration(apiURL: "https://account-fixture.invalid", bundleID: "com.example.app",
             registeredURLSchemes: [], appleCapabilityEnabled: false)
     }
 
-    func testAll201UploadsSurviveRestart() async {
+    func testAll201UploadsSurviveRestart() async throws {
         let rows = (0..<201).map { index in ProgressSyncEntry(kind: "lesson", itemID: "lesson-\(index)",
             firstAtMilliseconds: 1_792_929_600_000, lastAtMilliseconds: 1_792_929_600_000,
             attempts: 1, bestScore: 0, language: index.isMultiple(of: 2) ? "en" : "fr") }
             .sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
         let batches = ProgressClient.uploadBatches(rows)
         XCTAssertEqual([200, 1], batches.map(\.count))
-        let first = ProgressSyncState(ownerAccountID: "account-1", direction: "upload",
-            cursor: "\(batches[0].last!.kind)|\(batches[0].last!.itemID)|\(batches[0].last!.language)",
-            passGeneration: 0, updatedAtMilliseconds: 1_792_929_600_000)
-        let resumed = ProgressUploadCursor.pending(rows, after: first.cursor)
-        XCTAssertEqual(["lesson-200"], resumed.map(\.itemID))
+        let owner = "account-1"
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("progress-upload-\(UUID().uuidString).sqlite")
+        defer { try? FileManager.default.removeItem(at: file) }
+        var db = try openProgressDatabase(file, owner: owner)
         let firstTransport = ProgressFixtureTransport(status: 202, body: #"{"merged":200}"#)
         let firstClient = ProgressClient(configuration: configuration(), transport: firstTransport)!
         if case .success(200) = await firstClient.upload(batches[0], bearer: "fixture") {} else {
             XCTFail("First bounded batch must be acknowledged")
         }
+        try LearningDbWriter.remoteProgressUploadAcknowledged(db, ownerAccountID: owner,
+            nextCursor: ProgressUploadCursor(batches[0].last!).encoded, passGeneration: 0,
+            updatedAtMilliseconds: 1_792_929_600_000)
+        db.close()
+
+        db = try openProgressDatabase(file, owner: owner)
+        let persisted = try ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "upload")!
+        let resumed = ProgressUploadCursor.pending(rows, after: persisted.cursor)
+        XCTAssertEqual(Array(rows.dropFirst(200)).map(\.itemID), resumed.map(\.itemID))
         let secondTransport = ProgressFixtureTransport(status: 202, body: #"{"merged":1}"#)
         let secondClient = ProgressClient(configuration: configuration(), transport: secondTransport)!
         if case .success(1) = await secondClient.upload(resumed, bearer: "fixture") {} else {
             XCTFail("Resumed batch must be acknowledged")
         }
+        try LearningDbWriter.remoteProgressUploadAcknowledged(db, ownerAccountID: owner,
+            nextCursor: nil, passGeneration: 1, updatedAtMilliseconds: 1_792_929_600_001)
+        let firstUploaded = await firstTransport.uploadedItemIDs()
+        let resumedUploaded = await secondTransport.uploadedItemIDs()
+        let uploaded = firstUploaded + resumedUploaded
+        XCTAssertEqual(rows.map(\.itemID), uploaded)
+        XCTAssertEqual(rows.count, Set(uploaded).count)
+        db.close()
+        db = try openProgressDatabase(file, owner: owner)
+        let completed = try ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "upload")!
+        XCTAssertNil(completed.cursor)
+        XCTAssertEqual(1, completed.passGeneration)
+        db.close()
     }
 
     func testOnlyExactUnavailableResponseDowngrades() async {
@@ -69,8 +112,12 @@ final class ProgressClientTests: XCTestCase {
         }
     }
 
-    func testAll1001DownloadsCanAdvanceAcrossPages() async {
-        let ids = (0...1000).map { "lesson-\($0)" }.sorted()
+    func testAll1001DownloadsResumeFromPersistedCursorAfterDatabaseRestart() async throws {
+        let owner = "account-1"
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("progress-download-\(UUID().uuidString).sqlite")
+        defer { try? FileManager.default.removeItem(at: file) }
+        var db = try openProgressDatabase(file, owner: owner)
+        let ids = (0...1000).map { String(format: "lesson-%04d", $0) }
         func row(_ id: String) -> String {
             #"{"kind":"lesson","itemID":"\#(id)","firstAt":1792929600000,"lastAt":1792929600000,"attempts":1,"bestScore":0,"language":"en"}"#
         }
@@ -82,14 +129,43 @@ final class ProgressClientTests: XCTestCase {
             return XCTFail("Expected first page")
         }
         XCTAssertEqual(1000, page1.rows.count)
+        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner, rollups: page1.rows,
+            nextCursor: page1.nextCursor, passGeneration: 0, updatedAtMilliseconds: 1_792_929_600_000)
+        db.close()
+
+        db = try openProgressDatabase(file, owner: owner)
+        let persisted = try ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "download")!
+        XCTAssertEqual(page1.nextCursor, persisted.cursor)
+        let malformed = ProgressFixtureTransport(status: 200,
+            body: #"{"version":2,"progress":[{"kind":"lesson","itemID":"bad","firstAt":2,"lastAt":1,"attempts":1,"bestScore":0,"language":"en"}],"nextCursor":null,"complete":true}"#)
+        let malformedClient = ProgressClient(configuration: configuration(), transport: malformed)!
+        if case .failure = await malformedClient.fetchPage(cursor: persisted.cursor, bearer: "fixture") {} else {
+            XCTFail("Invalid continuation page must fail without changing the durable cursor")
+        }
+        let unchanged = try ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "download")
+        XCTAssertEqual(persisted, unchanged)
         let second = ProgressFixtureTransport(status: 200,
             body: "{\"version\":2,\"progress\":[\(row(ids.last!))],\"nextCursor\":null,\"complete\":true}")
         let lastClient = ProgressClient(configuration: configuration(), transport: second)!
-        guard case .success(let page2) = await lastClient.fetchPage(cursor: page1.nextCursor, bearer: "fixture") else {
+        guard case .success(let page2) = await lastClient.fetchPage(cursor: persisted.cursor, bearer: "fixture") else {
             return XCTFail("Expected final page after the saved cursor")
         }
         XCTAssertTrue(page2.complete)
         XCTAssertEqual(1001, page1.rows.count + page2.rows.count)
+        let requestedCursors = await second.requestedCursors()
+        XCTAssertEqual([persisted.cursor], requestedCursors)
+        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner, rollups: page2.rows,
+            nextCursor: nil, passGeneration: 1, updatedAtMilliseconds: 1_792_929_600_001)
+        db.close()
+
+        db = try openProgressDatabase(file, owner: owner)
+        let savedRows = try RemoteProgressRollupsDao.all(db, ownerAccountID: owner)
+        let savedState = try ProgressSyncStateDao.get(db, ownerAccountID: owner, direction: "download")!
+        XCTAssertEqual(Set(ids), Set(savedRows.map(\.itemID)))
+        XCTAssertEqual(1001, savedRows.count)
+        XCTAssertNil(savedState.cursor)
+        XCTAssertEqual(1, savedState.passGeneration)
+        db.close()
     }
 
     func testCompletedLegacyBootstrapMarkerPreventsAnotherFetch() {
