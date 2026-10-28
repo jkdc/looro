@@ -117,6 +117,27 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         closing = true; localTrack?.isEnabled = false; isMuted = true
         _ = send(["type": "session.close", "event_id": UUID().uuidString])
     }
+    /// Synchronous lease cleanup: deactivate the shared audio session and
+    /// restore the captured configuration under RTCAudioSession's lock. The
+    /// lock is released on the exception path too, and success requires BOTH
+    /// phases to finish.
+    private static func deactivateAndRestoreSession(
+        _ configuration: (AVAudioSession.Category, AVAudioSession.Mode, AVAudioSession.CategoryOptions)?) -> Bool {
+        let audio = RTCAudioSession.sharedInstance()
+        audio.lockForConfiguration()
+        defer { audio.unlockForConfiguration() }
+        do {
+            try audio.setActive(false)
+            if let configuration {
+                try audio.setCategory(configuration.0, mode: configuration.1,
+                                      options: configuration.2)
+            }
+            return true
+        } catch {
+            return false
+        }
+    }
+
     func disconnect() {
         attempt = UUID(); meterTask?.cancel(); meterTask = nil
         started = false; closing = true
@@ -124,21 +145,31 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         channel?.delegate = nil; channel?.close(); channel = nil
         peer?.delegate = nil; peer?.close(); peer = nil; factory = nil
         if let audioLeaseID {
-            let audio = RTCAudioSession.sharedInstance(); audio.lockForConfiguration()
-            do {
-                try audio.setActive(false)
-                if let previousAudioConfiguration {
-                    try audio.setCategory(previousAudioConfiguration.0, mode: previousAudioConfiguration.1,
-                                          options: previousAudioConfiguration.2)
-                }
-            } catch {
-                audio.unlockForConfiguration()
+            // A late disconnect after the lease moved on (a recovery handed
+            // the session to pronunciation) must not deactivate the NEW
+            // owner's audio: ownership is checked before touching the shared
+            // session.
+            guard AudioSessionLeaseOwnership.shared.owns(audioLeaseID) else {
+                self.audioLeaseID = nil
+                previousAudioConfiguration = nil
                 return
             }
-            audio.unlockForConfiguration()
-            guard AudioSessionLeaseOwnership.shared.release(audioLeaseID, deactivatedSuccessfully: true) else { return }
-            self.audioLeaseID = nil
-            previousAudioConfiguration = nil
+            let configuration = previousAudioConfiguration
+            if AudioSessionLeaseOwnership.shared.cleanupIfCurrent(audioLeaseID, cleanup: {
+                Self.deactivateAndRestoreSession(configuration)
+            }) {
+                AudioSessionLeaseOwnership.shared.release(audioLeaseID, deactivatedSuccessfully: true)
+                self.audioLeaseID = nil
+                previousAudioConfiguration = nil
+            } else {
+                // The token stays held and the SAME synchronous cleanup is
+                // retained process-wide, so the next acquire — conversation
+                // or pronunciation — retries it even if this transport is
+                // gone; the closure captures only values, never self.
+                AudioSessionLeaseOwnership.shared.retainCleanup(for: audioLeaseID) {
+                    Self.deactivateAndRestoreSession(configuration)
+                }
+            }
         }
         lastInput = 0; lastOutput = 0; onLevels?(0, 0)
     }
