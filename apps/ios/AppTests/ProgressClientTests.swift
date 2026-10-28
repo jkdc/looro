@@ -112,6 +112,72 @@ final class ProgressClientTests: XCTestCase {
         }
     }
 
+    private func pageBody(_ itemIDs: [String], languages: [String?]? = nil) -> String {
+        let rows = itemIDs.indices.map { index -> String in
+            let language = languages?[index]
+            let raw = language.map { #""language":"\#($0)""# } ?? #""language":null"#
+            return #"{"kind":"lesson","itemID":"\#(itemIDs[index])","firstAt":1792929600000,"lastAt":1792929600000,"attempts":1,"bestScore":0,\#(raw)}"#
+        }
+        return "{\"version\":2,\"progress\":[\(rows.joined(separator: ","))],\"nextCursor\":null,\"complete\":true}"
+    }
+
+    func testDownloadOrderingUsesComponentComparisonNotDelimiterKeys() async {
+        // The server orders `a` before `a-1` under the C collation; a
+        // `|`-joined key inverts that pair and used to reject the valid page.
+        let valid = ProgressFixtureTransport(status: 200,
+            body: pageBody(["a", "a-1"]))
+        let client = ProgressClient(configuration: configuration(), transport: valid)!
+        if case .success(let page) = await client.fetchPage(cursor: nil, bearer: "fixture") {
+            XCTAssertEqual(["a", "a-1"], page.rows.map(\.itemID))
+        } else {
+            XCTFail("A tuple-ordered page must be accepted")
+        }
+
+        let reversed = ProgressFixtureTransport(status: 200,
+            body: pageBody(["a-1", "a"]))
+        let reversedClient = ProgressClient(configuration: configuration(), transport: reversed)!
+        if case .failure = await reversedClient.fetchPage(cursor: nil, bearer: "fixture") {} else {
+            XCTFail("A page ordered against the server's keyset must fail validation")
+        }
+
+        let duplicated = ProgressFixtureTransport(status: 200,
+            body: pageBody(["a", "a"]))
+        let duplicatedClient = ProgressClient(configuration: configuration(), transport: duplicated)!
+        if case .failure = await duplicatedClient.fetchPage(cursor: nil, bearer: "fixture") {} else {
+            XCTFail("A duplicated identity must fail validation")
+        }
+    }
+
+    func testDownloadOrderingKeepsNullLanguageFirstAndComponentIdentity() async {
+        // SQLite ASC orders NULL language first, and a NULL language is its
+        // own identity — never fused with an empty or named language.
+        let body = pageBody(["a", "a", "a", "a-1"], languages: [nil, "en", "fr", "en"])
+        let transport = ProgressFixtureTransport(status: 200, body: body)
+        let client = ProgressClient(configuration: configuration(), transport: transport)!
+        if case .success(let page) = await client.fetchPage(cursor: nil, bearer: "fixture") {
+            XCTAssertEqual([nil, "en", "fr", "en"], page.rows.map(\.languageID))
+            XCTAssertEqual(["a", "a", "a", "a-1"], page.rows.map(\.itemID))
+        } else {
+            XCTFail("NULL-first language ordering must be accepted")
+        }
+    }
+
+    func testAssigningOwnerProducesTheAuthenticatedIdentityExactly() {
+        let rollup = RemoteProgressRollup(ownerAccountID: "", languageID: "en", kind: "lesson",
+            itemID: "a", firstAtMilliseconds: 1, lastAtMilliseconds: 2, attempts: 1, bestScore: 3,
+            sourceVersion: 2)
+        let assigned = rollup.assigning(ownerAccountID: "account-1")
+        XCTAssertEqual("account-1", assigned.ownerAccountID)
+        XCTAssertEqual(rollup.languageID, assigned.languageID)
+        XCTAssertEqual(rollup.kind, assigned.kind)
+        XCTAssertEqual(rollup.itemID, assigned.itemID)
+        XCTAssertEqual(rollup.firstAtMilliseconds, assigned.firstAtMilliseconds)
+        XCTAssertEqual(rollup.lastAtMilliseconds, assigned.lastAtMilliseconds)
+        XCTAssertEqual(rollup.attempts, assigned.attempts)
+        XCTAssertEqual(rollup.bestScore, assigned.bestScore)
+        XCTAssertEqual(rollup.sourceVersion, assigned.sourceVersion)
+    }
+
     func testAll1001DownloadsResumeFromPersistedCursorAfterDatabaseRestart() async throws {
         let owner = "account-1"
         let file = FileManager.default.temporaryDirectory.appendingPathComponent("progress-download-\(UUID().uuidString).sqlite")
@@ -129,7 +195,8 @@ final class ProgressClientTests: XCTestCase {
             return XCTFail("Expected first page")
         }
         XCTAssertEqual(1000, page1.rows.count)
-        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner, rollups: page1.rows,
+        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner,
+            rollups: page1.assigning(owner: owner).rows,
             nextCursor: page1.nextCursor, passGeneration: 0, updatedAtMilliseconds: 1_792_929_600_000)
         db.close()
 
@@ -154,7 +221,8 @@ final class ProgressClientTests: XCTestCase {
         XCTAssertEqual(1001, page1.rows.count + page2.rows.count)
         let requestedCursors = await second.requestedCursors()
         XCTAssertEqual([persisted.cursor], requestedCursors)
-        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner, rollups: page2.rows,
+        try LearningDbWriter.remoteProgressPageApplied(db, ownerAccountID: owner,
+            rollups: page2.assigning(owner: owner).rows,
             nextCursor: nil, passGeneration: 1, updatedAtMilliseconds: 1_792_929_600_001)
         db.close()
 

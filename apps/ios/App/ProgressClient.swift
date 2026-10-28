@@ -14,6 +14,27 @@ struct ProgressPage: Sendable {
     let complete: Bool
 }
 
+extension RemoteProgressRollup {
+    /// Production re-assigns decoded rows (built with a placeholder owner) to
+    /// the authenticated identity before persisting — the DB writer rejects
+    /// an owner mismatch — so every consumer applies this explicit transform.
+    func assigning(ownerAccountID: String) -> RemoteProgressRollup {
+        RemoteProgressRollup(ownerAccountID: ownerAccountID, languageID: languageID, kind: kind,
+            itemID: itemID, firstAtMilliseconds: firstAtMilliseconds,
+            lastAtMilliseconds: lastAtMilliseconds, attempts: attempts,
+            bestScore: bestScore, sourceVersion: sourceVersion)
+    }
+}
+
+extension ProgressPage {
+    /// The decoded page re-attributed to the authenticated identity (see the
+    /// rollup transform above).
+    func assigning(owner ownerAccountID: String) -> ProgressPage {
+        ProgressPage(rows: rows.map { $0.assigning(ownerAccountID: ownerAccountID) },
+            nextCursor: nextCursor, complete: complete)
+    }
+}
+
 struct ProgressUploadCursor: Comparable, Equatable {
     let kind: String
     let itemID: String
@@ -156,13 +177,41 @@ struct ProgressClient {
             guard rows.allSatisfy({ !$0.kind.isEmpty && !$0.itemID.isEmpty && $0.firstAtMilliseconds >= 0 &&
                 $0.lastAtMilliseconds >= $0.firstAtMilliseconds && $0.lastAtMilliseconds <= 9_007_199_254_740_991 &&
                 $0.attempts >= 1 && $0.attempts <= 10_000 && $0.bestScore >= 0 && $0.bestScore <= 100 }) else { return .failure }
-            let keys = rows.map { "\($0.kind)|\($0.itemID)|\($0.languageID ?? "")" }
-            guard Set(keys).count == keys.count, keys == keys.sorted() else { return .failure }
+            guard Self.isStrictlyIncreasing(rows) else { return .failure }
             return .success(ProgressPage(rows: rows, nextCursor: wire.nextCursor, complete: wire.complete))
         case .protocolUnavailable: return .protocolUnavailable
         case .cancelled: return .cancelled
         case .failure: return .failure
         }
+    }
+
+    /// The server's page order is the keyset (kind, item_id, language) with
+    /// every column C-collated — lexicographic UTF-8 bytes, NULL language
+    /// first (SQLite ASC). Comparing delimiter-joined strings inverts `a-1`
+    /// against `a` and lets the delimiter forge identities, so the decoder
+    /// validates consecutive pairs component-by-component instead; equal
+    /// consecutive identities (duplicates) fail strict increase.
+    static func isStrictlyIncreasing(_ rows: [RemoteProgressRollup]) -> Bool {
+        func bytePrecedes(_ lhs: String, _ rhs: String) -> Bool {
+            lhs.utf8.lexicographicallyPrecedes(rhs.utf8)
+        }
+        func languagePrecedes(_ lhs: String?, _ rhs: String?) -> Bool {
+            switch (lhs, rhs) {
+            case (nil, nil): return false
+            case (nil, _): return true
+            case (_, nil): return false
+            case (let lhs?, let rhs?): return bytePrecedes(lhs, rhs)
+            }
+        }
+        for index in rows.indices.dropLast() {
+            let lhs = rows[index], rhs = rows[index + 1]
+            let ordered: Bool
+            if lhs.kind != rhs.kind { ordered = bytePrecedes(lhs.kind, rhs.kind) }
+            else if lhs.itemID != rhs.itemID { ordered = bytePrecedes(lhs.itemID, rhs.itemID) }
+            else { ordered = languagePrecedes(lhs.languageID, rhs.languageID) }
+            if !ordered { return false }
+        }
+        return true
     }
 
     /// V1 is retained only as an explicit compatibility path; it never returns a cursor.
