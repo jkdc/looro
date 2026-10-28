@@ -58,6 +58,72 @@ class AppViewModelTest {
         assertTrue(acknowledgements.isEmpty())
     }
 
+    @Test fun uploadResumeUsesTupleOrderingForPrefixIds() = kotlinx.coroutines.runBlocking {
+        val entries = listOf("a", "a-1", "b").map { itemID ->
+            com.jkdc.app.core.ProgressSyncEntry(kind = "lesson", itemID = itemID,
+                atMilliseconds = 1_792_929_600_000, attempts = 1, bestScore = 0, language = "en")
+        }.sortedWith(compareBy<com.jkdc.app.core.ProgressSyncEntry> { it.kind }
+            .thenBy { it.itemID }.thenBy { it.language })
+        val sent = mutableListOf<String>()
+        assertTrue(uploadProgressBatches(entries, "lesson|a|en", 2,
+            isCurrent = { true },
+            sendV2 = { batch -> sent += batch.map { it.itemID }; com.jkdc.app.network.ProgressSendResult.Acknowledged(batch.size) },
+            sendLegacy = { error("Unexpected fallback") },
+            persistAcknowledgement = { _, _ -> true }))
+        assertEquals(listOf("a-1", "b"), sent)
+    }
+
+    @Test fun malformedUploadCursorRestartsFromFirstEntry() = kotlinx.coroutines.runBlocking {
+        val entries = listOf("a", "b").map { itemID ->
+            com.jkdc.app.core.ProgressSyncEntry(kind = "lesson", itemID = itemID,
+                atMilliseconds = 1_792_929_600_000, attempts = 1, bestScore = 0, language = "en")
+        }
+        val sent = mutableListOf<String>()
+        assertTrue(uploadProgressBatches(entries, "zz|not-a-valid-cursor", 2,
+            isCurrent = { true },
+            sendV2 = { batch -> sent += batch.map { it.itemID }; com.jkdc.app.network.ProgressSendResult.Acknowledged(batch.size) },
+            sendLegacy = { error("Unexpected fallback") },
+            persistAcknowledgement = { _, _ -> true }))
+        assertEquals(listOf("a", "b"), sent)
+    }
+
+    @Test fun uploadRestartAfterAcknowledgementConvergesWithPrefixIds() = kotlinx.coroutines.runBlocking {
+        val ids = (0 until 199).map { "%03d".format(it) } + listOf("a", "a-1", "b")
+        val entries = ids.map { itemID -> com.jkdc.app.core.ProgressSyncEntry(
+            kind = "lesson", itemID = itemID, atMilliseconds = 1_792_929_600_000,
+            attempts = 1, bestScore = 0, language = "en")
+        }.sortedWith(compareBy<com.jkdc.app.core.ProgressSyncEntry> { it.kind }
+            .thenBy { it.itemID }.thenBy { it.language })
+        var cursor: String? = null
+        val firstRun = mutableListOf<String>()
+        var currentChecks = 0
+        val interrupted = uploadProgressBatches(entries, cursor, 7,
+            isCurrent = { ++currentChecks < 3 },
+            sendV2 = { batch ->
+                firstRun += batch.map { it.itemID }
+                com.jkdc.app.network.ProgressSendResult.Acknowledged(batch.size)
+            },
+            sendLegacy = { error("Unexpected fallback") },
+            persistAcknowledgement = { next, _ -> cursor = next; true })
+        assertFalse(interrupted)
+        assertEquals(200, firstRun.size)
+        assertEquals("lesson|a|en", cursor)
+
+        val afterRestart = mutableListOf<String>()
+        assertTrue(uploadProgressBatches(entries, cursor, 7,
+            isCurrent = { true },
+            sendV2 = { batch ->
+                afterRestart += batch.map { it.itemID }
+                com.jkdc.app.network.ProgressSendResult.Acknowledged(batch.size)
+            },
+            sendLegacy = { error("Unexpected fallback") },
+            persistAcknowledgement = { next, _ -> cursor = next; true }))
+        assertEquals(listOf("a-1", "b"), afterRestart)
+        assertEquals(entries.map { it.itemID }, firstRun + afterRestart)
+        assertEquals(entries.size, (firstRun + afterRestart).toSet().size)
+        assertEquals(null, cursor)
+    }
+
     @Test fun importedUnfinishedHistoryCannotLookLikeALocalInterruptedSession() {
         val partial = SessionRecord(languageID = "es", startedAt = 800_000_000.0).apply {
             append(Fragment(speaker = Speaker.user, text = "la radio", startMS = 0, endMS = 1_000))

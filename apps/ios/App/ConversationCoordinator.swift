@@ -284,7 +284,7 @@ struct ConversationTopicSearchAdapter {
                 let uploadState = try self.store.remoteProgressSyncState(direction: "upload", ownerAccountID: owner)
                 var cursor = uploadState?.cursor
                 let generation = max(1, uploadState?.passGeneration ?? 1)
-                let pending = entries.filter { "\($0.kind)|\($0.itemID)|\($0.language)" > (cursor ?? "") }
+                let pending = ProgressUploadCursor.pending(entries, after: cursor)
                 var usedLegacyUpload = false
                 for batch in ProgressClient.uploadBatches(pending) {
                     guard isCurrent() else { return }
@@ -302,7 +302,7 @@ struct ConversationTopicSearchAdapter {
                     case .cancelled, .failure: return
                     }
                     guard acknowledged == batch.count, isCurrent() else { return }
-                    cursor = "\(batch.last!.kind)|\(batch.last!.itemID)|\(batch.last!.language)"
+                    cursor = ProgressUploadCursor(batch.last!).encoded
                     guard try self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity, {
                         try self.store.acknowledgeRemoteProgressUpload(ownerAccountID: owner, nextCursor: cursor,
                             passGeneration: generation, updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))

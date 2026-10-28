@@ -14,6 +14,36 @@ struct ProgressPage: Sendable {
     let complete: Bool
 }
 
+struct ProgressUploadCursor: Comparable, Equatable {
+    let kind: String
+    let itemID: String
+    let language: String
+
+    static func < (lhs: Self, rhs: Self) -> Bool {
+        (lhs.kind, lhs.itemID, lhs.language) < (rhs.kind, rhs.itemID, rhs.language)
+    }
+
+    init(_ entry: ProgressSyncEntry) {
+        kind = entry.kind; itemID = entry.itemID; language = entry.language
+    }
+
+    init?(legacyValue: String?) {
+        guard let legacyValue else { return nil }
+        let fields = legacyValue.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+        guard fields.count == 3, fields.allSatisfy({ !$0.isEmpty }),
+              ProgressEngine.kinds.contains(fields[0]),
+              LanguageRegistry.all.contains(where: { $0.id == fields[2] }) else { return nil }
+        kind = fields[0]; itemID = fields[1]; language = fields[2]
+    }
+
+    var encoded: String { "\(kind)|\(itemID)|\(language)" }
+
+    static func pending(_ entries: [ProgressSyncEntry], after encodedCursor: String?) -> [ProgressSyncEntry] {
+        guard let cursor = ProgressUploadCursor(legacyValue: encodedCursor) else { return entries }
+        return entries.filter { cursor < ProgressUploadCursor($0) }
+    }
+}
+
 /// Versioned progress transport. The adapter classifies only the server's exact
 /// disabled-protocol response as a compatibility signal.
 struct ProgressClient {

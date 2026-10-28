@@ -249,7 +249,7 @@ internal suspend fun uploadProgressBatches(
     sendLegacy: suspend (List<ProgressSyncEntry>) -> com.jkdc.app.network.ProgressSendResult,
     persistAcknowledgement: suspend (String?, Long) -> Boolean,
 ): Boolean {
-    val pending = entries.filter { "${it.kind}|${it.itemID}|${it.language}" > (initialCursor ?: "") }
+    val pending = com.jkdc.app.core.ProgressUploadCursor.pending(entries, initialCursor)
     var usedLegacyFallback = false
     for (batch in pending.chunked(ProgressSync.MAXIMUM_ENTRIES)) {
         if (!isCurrent()) return false
@@ -264,7 +264,7 @@ internal suspend fun uploadProgressBatches(
             is com.jkdc.app.network.ProgressSendResult.Acknowledged -> {
                 if (!isCurrent() || result.merged != batch.size) return false
                 val last = batch.last()
-                val cursor = "${last.kind}|${last.itemID}|${last.language}"
+                val cursor = com.jkdc.app.core.ProgressUploadCursor.encode(last)
                 if (!persistAcknowledgement(cursor, passGeneration)) return false
             }
             com.jkdc.app.network.ProgressSendResult.VersionUnavailable -> {

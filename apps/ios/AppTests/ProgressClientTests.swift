@@ -32,7 +32,7 @@ final class ProgressClientTests: XCTestCase {
         let first = ProgressSyncState(ownerAccountID: "account-1", direction: "upload",
             cursor: "\(batches[0].last!.kind)|\(batches[0].last!.itemID)|\(batches[0].last!.language)",
             passGeneration: 0, updatedAtMilliseconds: 1_792_929_600_000)
-        let resumed = Array(rows.filter { "\($0.kind)|\($0.itemID)|\($0.language)" > (first.cursor ?? "") })
+        let resumed = ProgressUploadCursor.pending(rows, after: first.cursor)
         XCTAssertEqual(["lesson-200"], resumed.map(\.itemID))
         let firstTransport = ProgressFixtureTransport(status: 202, body: #"{"merged":200}"#)
         let firstClient = ProgressClient(configuration: configuration(), transport: firstTransport)!
@@ -99,6 +99,24 @@ final class ProgressClientTests: XCTestCase {
         XCTAssertEqual("opaque-cursor", state.cursor, "Compatibility completion must not advance the v2 cursor")
         XCTAssertTrue(ProgressClient.shouldBootstrap(localProgressExists: false, state: nil))
         XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: true, state: nil))
+    }
+
+    func testUploadResumeUsesTupleOrderingForPrefixIds() {
+        let entries = ["a", "a-1", "b"].map { id in
+            ProgressSyncEntry(kind: "lesson", itemID: id, firstAtMilliseconds: 1_792_929_600_000,
+                lastAtMilliseconds: 1_792_929_600_000, attempts: 1, bestScore: 0, language: "en")
+        }.sorted { ($0.kind, $0.itemID, $0.language) < ($1.kind, $1.itemID, $1.language) }
+        let pending = ProgressUploadCursor.pending(entries, after: "lesson|a|en")
+        XCTAssertEqual(["a-1", "b"], pending.map(\.itemID))
+    }
+
+    func testMalformedUploadCursorRestartsFromFirstEntry() {
+        let entries = ["a", "b"].map { id in
+            ProgressSyncEntry(kind: "lesson", itemID: id, firstAtMilliseconds: 1_792_929_600_000,
+                lastAtMilliseconds: 1_792_929_600_000, attempts: 1, bestScore: 0, language: "en")
+        }
+        XCTAssertEqual(["a", "b"], ProgressUploadCursor.pending(entries, after: "z|bad")
+            .map(\.itemID))
     }
 
     func testBootstrapEligibilityCountsEveryLocalProgressCategoryButNotDefaultPreferences() {
