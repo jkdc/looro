@@ -73,7 +73,11 @@ class LearningDbTest {
         assertTrue(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerA))
 
         LearningDbWriter.learningDataDeleted(db, com.jkdc.app.core.Preferences())
-        assertFalse(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+        assertTrue("Resetting owner B must not revoke owner A's in-progress decision",
+            OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerA))
+        assertFalse(OwnerBootstrapEligibilityDao.isBootstrapInProgress(db, ownerB))
+        assertTrue(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerA))
+        assertFalse(OwnerBootstrapEligibilityDao.beginBootstrapIfEligible(db, ownerB))
     }
 
     @Test fun completedDownloadPageClearsBootstrapIntentAndStaleCursor() {
