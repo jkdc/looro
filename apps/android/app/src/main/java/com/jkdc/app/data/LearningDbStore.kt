@@ -39,46 +39,52 @@ import kotlinx.serialization.json.jsonObject
  *  - read the JSON bytes → [ArchiveCodec.decode] → decode the
  *    `androidFinalAssessments` retry ledger with LearningRepository.load's
  *    exact validation — all before any write;
- *  - retry hygiene: with the gate open, any learning rows already in the
- *    database are residue of an earlier ABORTED attempt (import commits
- *    before the bookkeeping does), and [ArchiveMapper.import] is insert-only
- *    — it never deletes — so they are CLEARED first, in their own
- *    transaction: the eight learning tables + the mastery meta rows
- *    (preferences and the non-mastery meta rows are not learning data and
- *    stay untouched). This keeps a retry count-stable in ALL cases, including
- *    a JSON that legitimately evolved between attempts (the user deleted
- *    expressions, pruned skill errors while the app served the JSON path). A
- *    committed migration — hash present — never reaches this and is never
- *    cleared;
- *  - the archive itself lands through [ArchiveMapper.import] (atomic by
- *    construction — never [ArchiveMerger], which is restore-only; its single
- *    transaction is the migration's only content transaction, and the
- *    transaction wrapper does not nest, so the pre-import clear and the
- *    bookkeeping each get their own);
- *  - one bookkeeping transaction: the retry-ledger rows + COUNT VERIFICATION
- *    against the decoded source (sessions, fragments, lessons, expressions,
- *    completions, skill errors, mastery meta rows, schema flags, tickets,
- *    outbox) + meta 'migrated_at' (Apple-epoch seconds) + meta
- *    'migration_hash' (SHA-256 of the raw JSON bytes) written LAST — the
- *    hash's presence is the commit point the gate reads. Any count mismatch
- *    or any failure rolls the bookkeeping back;
+ *  - the pending claim: meta 'migration_pending_owner' (+ the source
+ *    bytes' hash) names the FIRST identity that attempts the one-way
+ *    migration, written in its own transaction before any content move.
+ *    A DIFFERENT active identity finding the claim open must not adopt -
+ *    or clear - another account's backup: it opens in database mode with
+ *    none of it and the JSON stays for its owner's retry (the legacy
+ *    null-identity path writes no claim);
+ *  - retry hygiene: with the gate open, learning rows that belong to the
+ *    claiming owner are residue of an earlier ABORTED attempt, and the
+ *    import is insert-only - it never deletes - so they are CLEARED first
+ *    (inside the content transaction): the eight learning tables + the
+ *    owner's mastery meta rows (preferences and the non-mastery meta rows
+ *    are not learning data and stay untouched, and another account's rows
+ *    are never cleared). This keeps a retry count-stable in ALL cases,
+ *    including a JSON that legitimately evolved between attempts (the user
+ *    deleted expressions, pruned skill errors while the app served the
+ *    JSON path). A committed migration - hash present - never reaches this
+ *    and is never cleared;
+ *  - ONE content transaction: the clear + the archive import through
+ *    [ArchiveMapper.importInTransaction] (never [ArchiveMerger], which is
+ *    restore-only) + the retry-ledger rows + COUNT VERIFICATION against
+ *    the decoded source, scoped to the importing owner (the tables are
+ *    shared across accounts: another identity's legitimate rows must
+ *    neither break the counts nor authorize clearing them) + meta
+ *    'migrated_at' (Apple-epoch seconds) + meta 'migration_hash' (SHA-256
+ *    of the raw JSON bytes) written LAST - the hash's presence is the
+ *    commit point the gate reads - and the pending claim removed. Any
+ *    count mismatch or any failure rolls the whole transaction back:
+ *    nothing but the pending claim outlives an aborted attempt;
  *  - only after that commit: rename learning.json → learning.json.migrated.
  *    The JSON is never deleted; the rename is post-commit cleanup, so a
  *    failure there (or a crash in the window) leaves the file in place where
  *    the hash gate simply ignores it on every later launch.
  *
  * Crash windows and aborts are all safe. Before the hash is committed the
- * JSON stays the authority: an abort leaves the store in JSON mode, and the
- * residue an aborted attempt leaves in the database (its import commits
- * before the bookkeeping) is unreachable without migration_hash — and is
- * cleared before the next attempt. That clear is what makes a retry
+ * JSON stays the authority: an abort rolls the single content transaction
+ * back - no rows are ever committed without the marker - and the pending
+ * claim is what survives, naming the one identity that may resume. Its
+ * retry clears that owner's stale rows first, which is what makes a retry
  * count-stable against an EVOLVED JSON: while the app served the JSON path
  * the archive could legitimately change (expressions deleted, skill errors
  * pruned), and a plain re-import over the stale rows would mismatch its
- * counts on every later launch — the wedge. Clearing first lets the retry
+ * counts on every later launch - the wedge. Clearing first lets the retry
  * succeed with the evolved counts (pinned by LearningDbStoreTest's retry
  * regression). A crash after the commit leaves the hash, so the next launch
- * is in database mode and never re-migrates — a learning.json that
+ * is in database mode and never re-migrates - a learning.json that
  * reappears later is IGNORED, not merged again.
  *
  * Runtime fail-safe: when opening the database or migrating learning.json
@@ -186,6 +192,14 @@ class LearningDbStore private constructor(
     companion object {
         const val MIGRATION_HASH_KEY = "migration_hash"
         const val MIGRATED_AT_KEY = "migrated_at"
+
+        /** The one-way migration's pending claim: the FIRST identity that
+         *  started it, plus the source bytes' hash, written before any content
+         *  move and removed in the same transaction as the commit hash. A
+         *  different identity finding it open must not adopt (or clear) the
+         *  backup — see [migrate]. */
+        const val MIGRATION_PENDING_OWNER_KEY = "migration_pending_owner"
+        const val MIGRATION_PENDING_HASH_KEY = "migration_pending_hash"
 
         /** The exact reason string LearningRepository.load writes today. */
         const val RECOVERY_END_REASON = "App closed before finalization"
@@ -317,15 +331,31 @@ class LearningDbStore private constructor(
             val encoded = bytes.toString(Charsets.UTF_8)
             val archive = ArchiveCodec.decode(encoded)
             val tickets = decodeTickets(encoded)
-            // retry hygiene (see the KDoc): the gate is open, so any learning
-            // rows in the database are an earlier ABORTED attempt's residue —
-            // import is insert-only, so without this clear a JSON that evolved
-            // between attempts could never satisfy count verification again
-            clearLearningTables(database)
-            // the archive in import's own single transaction (the transaction
-            // wrapper does not nest — see the KDoc for the three-step split)
-            ArchiveMapper.import(archive, database)
+            val sourceHash = sha256Hex(bytes)
+            val ownerKey = activeOwnerKey(database)
+            if (ownerKey != null) {
+                // The one-way migration belongs to the FIRST identity that
+                // claimed it. A different active identity finding the claim
+                // open must not adopt - or clear - another account's backup:
+                // it opens in database mode with none of it, and the JSON
+                // stays here for its owner's retry.
+                if (MetaDao.get(database, MIGRATION_PENDING_OWNER_KEY)
+                        ?.takeIf { it != ownerKey } != null) return
+                database.transaction { tx ->
+                    MetaDao.put(tx, MIGRATION_PENDING_OWNER_KEY, ownerKey)
+                    MetaDao.put(tx, MIGRATION_PENDING_HASH_KEY, sourceHash)
+                }
+            }
+            // ONE transaction for clear + import + tickets + verification +
+            // bookkeeping (the transaction wrapper does not nest): the old
+            // import-commits-first split left rows on disk without the
+            // marker whenever the bookkeeping failed, and the next attempt -
+            // any identity - found residue it could neither attribute nor
+            // verify. Any failure now rolls back to the pre-migration state;
+            // the pending claim is what survives, naming the owner.
             database.transaction { tx ->
+                clearLearningTablesInTransaction(tx)
+                ArchiveMapper.importInTransaction(tx, archive)
                 tickets.forEach { ticket ->
                     AssessmentTicketsDao.upsert(tx, AssessmentTicketRow(
                         ticket.sessionID, ticket.attempts, ticket.lastAttemptAt))
@@ -333,7 +363,9 @@ class LearningDbStore private constructor(
                 verifyCounts(tx, archive, tickets)
                 MetaDao.put(tx, MIGRATED_AT_KEY, clock().toString())
                 // the commit point: written last, read first by the gate above
-                MetaDao.put(tx, MIGRATION_HASH_KEY, sha256Hex(bytes))
+                MetaDao.put(tx, MIGRATION_HASH_KEY, sourceHash)
+                tx.update("DELETE FROM meta WHERE key IN (?, ?)",
+                    listOf(MIGRATION_PENDING_OWNER_KEY, MIGRATION_PENDING_HASH_KEY))
             }
             try {
                 files.renameLearningJsonToMigrated()
@@ -341,33 +373,32 @@ class LearningDbStore private constructor(
                 // Post-commit cleanup only: the hash is already written, so a
                 // stranded learning.json is ignored on every later launch.
                 // Failing the migration here would discard a verified commit.
-                println("LearningDbStore: committed migration but could not rename learning.json — $cleanup")
+                println("LearningDbStore: committed migration but could not rename learning.json - $cleanup")
             }
         }
 
-        /** Deletes every learning row — everything [ArchiveMapper.import] can
-         *  write, plus the mastery meta rows it replaces — so a retry starts
-         *  from the same empty state as a fresh install and count verification
-         *  sees only the current JSON's content. preferences and the
-         *  non-mastery meta rows are not learning data and stay untouched.
-         *  Only ever called with the gate open (no migration_hash): a
-         *  committed migration's rows are never cleared. Fragments get their
-         *  own DELETE although sessions would cascade — explicit over
+        /** Deletes every learning row of the CLAIMING owner - everything
+         *  [ArchiveMapper.importInTransaction] can write, plus the owner's
+         *  mastery meta rows it replaces - so a retry starts from the same
+         *  empty state as a fresh install and count verification sees only
+         *  the current JSON's content. preferences and the non-mastery meta
+         *  rows are not learning data and stay untouched, and another
+         *  account's rows are never cleared: the delete runs inside the
+         *  caller's migration transaction (transactions do not nest) and is
+         *  owner-scoped like every read it must stay consistent with. Only
+         *  ever called with the gate open (no migration_hash): a committed
+         *  migration's rows are never cleared. Fragments get their own
+         *  DELETE although sessions would cascade - explicit over
          *  FK-dependent. */
-        private fun clearLearningTables(db: SqlDatabase) {
-            db.transaction { tx ->
-                for (table in listOf("fragments", "sessions", "expressions", "lesson_state",
-                        "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
-                    tx.update("DELETE FROM $table WHERE ${ownerClause(tx)}", ownerArguments(tx))
-                }
-                val prefix = activeOwnerKey(tx)?.let { "${MetaDao.MASTERY_PREFIX}$it:" } ?: MetaDao.MASTERY_PREFIX
-                tx.update("DELETE FROM meta WHERE key LIKE ?", listOf("$prefix%"))
+        private fun clearLearningTablesInTransaction(tx: SqlDatabase) {
+            for (table in listOf("fragments", "sessions", "expressions", "lesson_state",
+                    "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
+                tx.update("DELETE FROM $table WHERE ${ownerClause(tx)}", ownerArguments(tx))
             }
+            val prefix = activeOwnerKey(tx)?.let { "${MetaDao.MASTERY_PREFIX}$it:" } ?: MetaDao.MASTERY_PREFIX
+            tx.update("DELETE FROM meta WHERE key LIKE ?", listOf("$prefix%"))
         }
 
-        /** LearningRepository.load's retry-ledger decode, verbatim (same Json
-         *  configuration, same require guards): any violation aborts the
-         *  migration into fail-safe mode. */
         private fun decodeTickets(encoded: String): List<FinalAssessmentTicket> {
             val metadata = metadataJson.parseToJsonElement(encoded).jsonObject["androidFinalAssessments"]
             val tickets = metadata
@@ -379,35 +410,49 @@ class LearningDbStore private constructor(
             return tickets
         }
 
-        /** ANY mismatch aborts the migration (the throw rolls the transaction
-         *  back). The source of truth for every expectation is the decoded
-         *  archive itself — tickets come from its androidFinalAssessments
-         *  ledger and the outbox has no archive-side source (it starts empty;
-         *  usage events were never persisted in the JSON). */
+        /** ANY mismatch aborts the migration (the throw rolls the content
+         *  transaction back). Every count is scoped to the importing owner:
+         *  the tables are shared across accounts, so another identity's
+         *  legitimate rows must neither break the verification nor authorize
+         *  clearing them (the old whole-table counts wedged every later
+         *  attempt once any foreign rows existed). The source of truth for
+         *  every expectation is the decoded archive itself - tickets come
+         *  from its androidFinalAssessments ledger and the outbox has no
+         *  archive-side source (it starts empty; usage events were never
+         *  persisted in the JSON). */
         private fun verifyCounts(db: SqlDatabase, archive: Archive, tickets: List<FinalAssessmentTicket>) {
-            fun requireCount(label: String, sql: String, expected: Long) {
-                val actual = db.query(sql).single().long("n")
+            val clause = ownerClause(db)
+            val args = ownerArguments(db)
+            fun requireCount(label: String, sql: String, expected: Long,
+                             bind: List<Any?> = args) {
+                val actual = db.query(sql, bind).single().long("n")
                 if (actual != expected) {
                     throw IllegalStateException("migration aborted: $label count $actual != $expected")
                 }
             }
-            requireCount("sessions", "SELECT COUNT(*) AS n FROM sessions", archive.sessions.size.toLong())
-            requireCount("fragments", "SELECT COUNT(*) AS n FROM fragments",
+            requireCount("sessions", "SELECT COUNT(*) AS n FROM sessions WHERE $clause",
+                archive.sessions.size.toLong())
+            requireCount("fragments", "SELECT COUNT(*) AS n FROM fragments WHERE $clause",
                 archive.sessions.sumOf { it.fragments.size }.toLong())
-            requireCount("lessons", "SELECT COUNT(*) AS n FROM lesson_state", archive.lessons.size.toLong())
-            requireCount("expressions", "SELECT COUNT(*) AS n FROM expressions", archive.expressions.size.toLong())
-            requireCount("completions", "SELECT COUNT(*) AS n FROM completions",
+            requireCount("lessons", "SELECT COUNT(*) AS n FROM lesson_state WHERE $clause",
+                archive.lessons.size.toLong())
+            requireCount("expressions", "SELECT COUNT(*) AS n FROM expressions WHERE $clause",
+                archive.expressions.size.toLong())
+            requireCount("completions", "SELECT COUNT(*) AS n FROM completions WHERE $clause",
                 archive.completions.orEmpty().size.toLong())
-            requireCount("skill errors", "SELECT COUNT(*) AS n FROM skill_errors",
+            requireCount("skill errors", "SELECT COUNT(*) AS n FROM skill_errors WHERE $clause",
                 archive.errors.orEmpty().size.toLong())
+            val masteryPrefix = activeOwnerKey(db)?.let { "${MetaDao.MASTERY_PREFIX}$it:" } ?: MetaDao.MASTERY_PREFIX
             requireCount("mastery meta rows",
-                "SELECT COUNT(*) AS n FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%'",
-                archive.masteryCache.orEmpty().size.toLong())
+                "SELECT COUNT(*) AS n FROM meta WHERE key LIKE ?",
+                archive.masteryCache.orEmpty().size.toLong(),
+                bind = listOf("$masteryPrefix%"))
             if (MetaDao.get(db, MetaDao.SCHEMA_FLAGS_KEY) == null) {
                 throw IllegalStateException("migration aborted: schema_flags row missing after import")
             }
-            requireCount("assessment tickets", "SELECT COUNT(*) AS n FROM assessment_tickets", tickets.size.toLong())
-            requireCount("usage outbox", "SELECT COUNT(*) AS n FROM usage_outbox", 0)
+            requireCount("assessment tickets",
+                "SELECT COUNT(*) AS n FROM assessment_tickets WHERE $clause", tickets.size.toLong())
+            requireCount("usage outbox", "SELECT COUNT(*) AS n FROM usage_outbox WHERE $clause", 0)
         }
 
         private fun sha256Hex(bytes: ByteArray): String =

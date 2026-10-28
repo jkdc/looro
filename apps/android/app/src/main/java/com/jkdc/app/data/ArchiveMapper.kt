@@ -39,22 +39,28 @@ val ArchiveJson: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true; 
  */
 object ArchiveMapper {
     fun import(archive: Archive, db: SqlDatabase) {
-        db.transaction { tx ->
-            PreferencesDao.put(tx, archive.preferences)
-            archive.sessions.forEach { session ->
-                SessionsDao.upsert(tx, session)
-                FragmentsDao.replaceInTx(tx, session.id, session.fragments)
-            }
-            archive.lessons.forEach { LessonStateDao.upsert(tx, it) }
-            // adoptLegacy = false: an import preserves the archive verbatim, so a
-            // legacy null-language expression and a language expression with the
-            // same norm_key coexist as two rows instead of one adopted row.
-            archive.expressions.forEach { ExpressionsDao.upsert(tx, it, adoptLegacy = false) }
-            archive.completions?.forEach { CompletionsDao.add(tx, it) }
-            archive.errors?.forEach { SkillErrorsDao.upsert(tx, it) }
-            MetaDao.replaceMastery(tx, archive.masteryCache ?: emptyMap())
-            MetaDao.ensureSchemaFlags(tx)
+        db.transaction { tx -> importInTransaction(tx, archive) }
+    }
+
+    /** [import]'s write set for a caller that already runs inside its own
+     *  transaction (the learning.json migration's single clear + import +
+     *  verify + bookkeeping transaction) - the transaction wrapper does not
+     *  nest, so the migration cannot wrap [import] itself. */
+    internal fun importInTransaction(tx: SqlDatabase, archive: Archive) {
+        PreferencesDao.put(tx, archive.preferences)
+        archive.sessions.forEach { session ->
+            SessionsDao.upsert(tx, session)
+            FragmentsDao.replaceInTx(tx, session.id, session.fragments)
         }
+        archive.lessons.forEach { LessonStateDao.upsert(tx, it) }
+        // adoptLegacy = false: an import preserves the archive verbatim, so a
+        // legacy null-language expression and a language expression with the
+        // same norm_key coexist as two rows instead of one adopted row.
+        archive.expressions.forEach { ExpressionsDao.upsert(tx, it, adoptLegacy = false) }
+        archive.completions?.forEach { CompletionsDao.add(tx, it) }
+        archive.errors?.forEach { SkillErrorsDao.upsert(tx, it) }
+        MetaDao.replaceMastery(tx, archive.masteryCache ?: emptyMap())
+        MetaDao.ensureSchemaFlags(tx)
     }
 
     fun export(db: SqlDatabase): Archive {

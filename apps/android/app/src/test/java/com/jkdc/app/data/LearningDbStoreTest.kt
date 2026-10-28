@@ -216,6 +216,152 @@ class LearningDbStoreTest {
         }
     }
 
+    @Test fun failedMetadataCommitStaysPendingForItsOwnerWithoutWedgingOtherAccounts() {
+        val bytes = fixtureBytes("case-basic.json")
+        val archive = ArchiveCodec.decode(fixture("case-basic.json"))
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+        val databasePath = File(tmp.newFolder(), "learning.db").path
+
+        // Launch 1, account A: the clock throws while the bookkeeping
+        // transaction is still open. The whole migration (clear + import +
+        // tickets + verification + marker) must roll back together — only the
+        // pending marker survives, naming A as the migration's one owner.
+        val broken = openJvmFileBacked(databasePath)
+        assertThrows("the metadata failure must abort the open",
+            LearningDbStore.QuarantinedLegacyArchive::class.java) {
+            LearningDbStore.open(broken, files, activeIdentity = "member:account-a",
+                clock = { error("injected metadata commit failure") })
+        }
+        assertEquals("the rollback leaves no imported rows behind", 0L, count(broken, "sessions"))
+        assertEquals("the pending marker names A the migration's owner",
+            "member:account-a", MetaDao.get(broken, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertEquals("the pending hash is the original source's", sha256(bytes),
+            MetaDao.get(broken, LearningDbStore.MIGRATION_PENDING_HASH_KEY))
+        assertNull(MetaDao.get(broken, LearningDbStore.MIGRATION_HASH_KEY))
+        assertTrue("the JSON must survive its owner's failed attempt", files.json.exists())
+        assertFalse(files.migrated.exists())
+
+        // Launch 2, account B: the gate is open and the JSON exists, but the
+        // pending marker names A — B must not claim (or clear) another
+        // identity's one-way migration. B opens in database mode with none of
+        // A's data instead of being wedged by foreign rows.
+        val second = openJvmFileBacked(databasePath)
+        val bStore = LearningDbStore.open(second, files,
+            activeIdentity = "member:account-b", clock = { now })
+        assertFalse("B's open must succeed without the wedged counts", bStore.jsonMode)
+        assertEquals(0L, count(second, "sessions"))
+        assertEquals("the backup still belongs to A", "member:account-a",
+            MetaDao.get(second, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertNull("B's open must not commit the migration",
+            MetaDao.get(second, LearningDbStore.MIGRATION_HASH_KEY))
+        assertTrue("the JSON stays available for A's retry", files.json.exists())
+
+        // Launch 3, account A: the pending owner resumes and completes the
+        // migration with the original bytes' hash.
+        val aStore = LearningDbStore.open(second, files,
+            activeIdentity = "member:account-a", clock = { now })
+        assertFalse(aStore.jsonMode)
+        assertEquals("the commit point hashes the original bytes", sha256(bytes),
+            MetaDao.get(second, LearningDbStore.MIGRATION_HASH_KEY))
+        assertEquals(now.toString(), MetaDao.get(second, LearningDbStore.MIGRATED_AT_KEY))
+        assertNull(MetaDao.get(second, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertEquals(archive.sessions.size.toLong(),
+            countOwner(second, "member:account-a", "sessions"))
+        assertEquals(0L, countOwner(second, "member:account-b", "sessions"))
+        assertTrue(files.migrated.exists())
+        assertFalse("the committed JSON is archived, not kept", files.json.exists())
+        val projection = archive.copy(
+            lessons = archive.lessons.map { it.copy(bars = 0, dueAt = 0.0) }.toMutableList())
+        assertEquals("the database holds exactly the original archive", projection,
+            aStore.loadInitialArchive())
+
+        // Launch 4, reopen: A's verified rows survive and B still has none —
+        // no cross-account clearing, no reattribution.
+        val reopened = openJvmFileBacked(databasePath)
+        val again = LearningDbStore.open(reopened, files,
+            activeIdentity = "member:account-b", clock = { now })
+        assertFalse(again.jsonMode)
+        assertEquals(archive.sessions.size.toLong(),
+            countOwner(reopened, "member:account-a", "sessions"))
+        assertEquals(0L, countOwner(reopened, "member:account-b", "sessions"))
+        assertTrue(files.migrated.exists())
+    }
+
+    @Test fun verificationIsScopedToTheMigratingOwnerAndNeverClearsOtherAccounts() {
+        val bytes = fixtureBytes("case-basic.json")
+        val archive = ArchiveCodec.decode(fixture("case-basic.json"))
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+        val databasePath = File(tmp.newFolder(), "learning.db").path
+        val target = openJvmFileBacked(databasePath)
+
+        // Residue from the pre-atomic world: two identities each hold their
+        // own committed-but-unmarked rows (the old flow imported before the
+        // bookkeeping), so the shared tables hold two copies of the archive.
+        LearnerOwnershipDao.activate(target, "member:account-a")
+        ArchiveMapper.import(archive, target)
+        LearnerOwnershipDao.activate(target, "member:account-b")
+        ArchiveMapper.import(archive, target)
+        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
+        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-b", "sessions"))
+
+        // A's retry must be scoped to A: B's rows neither break the counts
+        // (the old whole-table verification wedged BOTH identities forever)
+        // nor get cleared.
+        val store = LearningDbStore.open(target, files,
+            activeIdentity = "member:account-a", clock = { now })
+        assertFalse("A's retry must recover instead of wedging", store.jsonMode)
+        assertEquals(sha256(bytes), MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
+        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
+        assertEquals("the other account's rows are preserved, not cleared",
+            archive.sessions.size.toLong(), countOwner(target, "member:account-b", "sessions"))
+        assertEquals("the other account's mastery rows are preserved, not cleared", 2L,
+            target.query("SELECT COUNT(*) AS n FROM meta WHERE key LIKE 'mastery:member:account-b:%'")
+                .single().long("n"))
+        assertTrue(files.migrated.exists())
+    }
+
+    @Test fun contentFailureRollsBackTheWholeMigrationAndSparesOtherOwnersRows() {
+        val archive = ArchiveCodec.decode(fixture("case-basic.json"))
+        val completions = archive.completions ?: mutableListOf()
+        val first = completions.first()
+        completions.add(CompletionMark(first.kind, first.itemID, first.at, 5, "fr"))
+        archive.completions = completions
+        val collidingBytes = ArchiveCodec.encode(archive).toByteArray()
+        val files = TempJsonFiles(tmp.newFolder(), collidingBytes)
+        val databasePath = File(tmp.newFolder(), "learning.db").path
+        val target = openJvmFileBacked(databasePath)
+
+        // B used the database first (fresh install, no JSON): its session is
+        // legitimate data the migration must never touch.
+        val bFiles = TempJsonFiles(tmp.newFolder(), null)
+        val bStore = LearningDbStore.open(target, bFiles,
+            activeIdentity = "member:account-b", clock = { now })
+        assertFalse(bStore.jsonMode)
+        val bSession = archive.sessions.first().copy(id = "b-owned-session")
+        SessionsDao.upsert(bStore.db, bSession)
+        FragmentsDao.replaceBySession(bStore.db, bSession.id, bSession.fragments)
+        assertEquals(1L, countOwner(target, "member:account-b", "sessions"))
+
+        // A's attempt: count verification fails INSIDE the content
+        // transaction (the colliding completion is swallowed by the primary
+        // key). The rollback must restore the pre-migration state — the
+        // pre-import clear included — leaving B's row and no A residue, with
+        // only the pending marker left for A's later retry.
+        assertThrows("the colliding completion must abort the migration",
+            IllegalStateException::class.java) {
+            LearningDbStore.open(target, files,
+                activeIdentity = "member:account-a", clock = { now })
+        }
+        assertEquals("the rollback restores the pre-migration state", 1L,
+            countOwner(target, "member:account-b", "sessions"))
+        assertEquals("no A residue survives the rollback", 0L,
+            countOwner(target, "member:account-a", "sessions"))
+        assertEquals("the pending marker names A for its later retry",
+            "member:account-a", MetaDao.get(target, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertNull(MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
+        assertTrue("the colliding JSON stays untouched", files.json.exists())
+    }
+
     @Test fun legacyReadPreservesAtomicBaseBackupAndNewFilesWithoutRecoveryMutation() {
         val dir = tmp.newFolder()
         val base = File(dir, "learning.json")
@@ -338,15 +484,17 @@ class LearningDbStoreTest {
         assertNotNull(store.jsonModeNotice)
         assertTrue(files.json.readBytes().contentEquals(poisoned))
         assertFalse(files.migrated.exists())
-        // the bookkeeping rolled back: no hash means the (already imported)
-        // content is unreachable and the next launch retries into fail-safe
+        // the single content transaction rolled back completely: no hash, no
+        // migrated_at, no rows — the old import-commits-first split used to
+        // leave schema_flags, mastery and the archive's rows on disk without
+        // the marker (the residue that wedged later attempts), and atomicity
+        // means the next launch retries from the same clean state instead
         assertNull(MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
         assertNull(MetaDao.get(db, LearningDbStore.MIGRATED_AT_KEY))
         assertEquals(0L, count("assessment_tickets"))
-        // the import's own rows (schema_flags + mastery) are committed content
-        assertEquals(3L, count("meta"))
-        assertEquals(3L, count("sessions"))
-        assertEquals(5L, count("completions"))
+        assertEquals("the rollback is total: no schema_flags, no mastery", 0L, count("meta"))
+        assertEquals(0L, count("sessions"))
+        assertEquals(0L, count("completions"))
     }
 
     @Test fun retryAfterAnAbortedMigrationClearsResidueAndMigratesAnEvolvedJson() {
@@ -528,6 +676,10 @@ class LearningDbStoreTest {
 
     private fun count(target: SqlDatabase, table: String): Long =
         target.query("SELECT COUNT(*) AS n FROM $table").single().long("n")
+
+    private fun countOwner(target: SqlDatabase, owner: String, table: String): Long =
+        target.query("SELECT COUNT(*) AS n FROM $table WHERE owner_key = ?",
+            listOf(owner)).single().long("n")
 
     /** The restart twin of LearningDb.openJvm for a file-backed path: applies
      *  the canonical schema when the database file is brand new and the
