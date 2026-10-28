@@ -59,5 +59,33 @@ completed proof.
 - 2026-10-28: `make check` exit 0 (148 Python tests; schema current,
   user_version 7). Focused suites: LearningDbStoreTest 23/23,
   LocalVoiceTransportTest 50/50. App compile after S07 clean.
-- Android full app + engine-local suites and the emulator end-to-end pass are
-  recorded in the round's verify-report section as they complete.
+- Android full app + engine-local suites: BUILD SUCCESSFUL, 0 failures
+  (app XML reports ≈832 tests; engine-local 11 up-to-date from its prior
+  green run).
+- 2026-10-28 emulator end-to-end pass (Medium_Phone_API_36, headless):
+  APK assembled with `-Papp.conversationEngine=glm
+  -Papp.apiOrigin=http://10.0.2.2:8091` against the Docker stack
+  (`make up`, healthz/readyz ok) through a loopback HTTP relay to the api
+  container (the app's debug origin policy only accepts plain http; Caddy
+  TLS could not be trusted — the AVD image is non-rootable). Screenshots in
+  `/tmp/looro-e2e-s0928/`. Covered: launch, guest provisioning (encrypted
+  guest installation pref), Talk start flow incl. the minutes-check error
+  sheet against the accounts-disabled API and the personal-key/provider
+  settings, mic permission grant, Learn (course, CEFR bar, level check full
+  flow: content → answers → confirm dialog → on-device deterministic grading
+  → scorecard → refreshed history "Saved on this device"), Words empty
+  state, Listen (player + question + correct feedback), Themes, Settings
+  (learning-language switch EN↔ES with per-language partition and Spanish
+  foundations content, provider section, backup section, account sheet
+  rendering `google:false` providers from the real API with the
+  guest-continuation path). Zero `FATAL EXCEPTION`s; no app ANRs (one
+  SystemUI ANR at emulator first boot, before launch).
+- Observations (not reproduced as defects): the engine radio rows in the
+  provider section did not register taps through adb input in this
+  environment, so the compiled engine (glm) could not be explicitly
+  re-selected on-device and the live GLM voice turn was not exercised (the
+  voice engine itself is covered by LocalVoiceTransportTest 50/50); the
+  account sheet's "We couldn't reach Palique" line persists next to the correct providers state and "Refresh" did not re-issue the providers call.
+- Not exercised on-device: member sign-in/progress sync (the local stack
+  intentionally runs with accounts disabled — `auth/providers` reports no
+  providers), live LLM voice conversation, physical microphone audio.

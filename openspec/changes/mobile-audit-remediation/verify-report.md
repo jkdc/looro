@@ -18,8 +18,16 @@ Fresh in this round: `make check` exit 0 (148 Python tests; schema current,
 user_version 7); full Android `:app:testDebugUnitTest` +
 `:core:engine-local:testDebugUnitTest` BUILD SUCCESSFUL with 0 failures
 (≈832 app tests; engine-local 11 up-to-date from its prior green run).
-The emulator end-to-end pass (API in Docker + app + logcat) is recorded at
-the end of this session's report and in the round's tasks file.
+Emulator end-to-end pass completed against the Docker stack.
+Covered: guest flows, the level check full cycle, listening,
+language switching, and the account sheet over the real API.
+Zero fatal exceptions in logcat across the whole session.
+Not exercisable on this stack: member sign-in-sync
+(accounts disabled by design here) and the live LLM
+voice turn (the engine radio rows did not
+register adb taps). Details in the round verification
+log (tasks.md).
+
 
 ## Corrections
 
