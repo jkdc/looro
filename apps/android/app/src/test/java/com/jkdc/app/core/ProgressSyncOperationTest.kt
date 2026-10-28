@@ -13,6 +13,84 @@ class ProgressSyncOperationTest {
     private fun identity(operation: ProgressSyncOperation, account: String = "A", credential: String = "bearer-A") =
         operation.identity(account, credential)
 
+    @Test fun ownerLoadCoordinatorRetriesStaleSuccessAndPublishesOnlyCurrentOwner() = runTest {
+        var activeOwner = "A"
+        val startedA = CompletableDeferred<Unit>()
+        val resultA = CompletableDeferred<String>()
+        val published = mutableListOf<Pair<String, String>>()
+        val errors = mutableListOf<String>()
+        val coordinator = OwnerLearningLoadCoordinator<String>(
+            currentIdentity = { activeOwner },
+            load = { owner -> if (owner == "A") { startedA.complete(Unit); resultA.await() } else "state-$owner" },
+            publish = { owner, value -> if (activeOwner != owner) false else { published += owner to value; true } },
+            reportFailure = { owner, _ -> if (activeOwner != owner) false else { errors += owner; true } },
+        )
+
+        val task = async { coordinator.loadAndPublish() }
+        startedA.await()
+        activeOwner = "B"
+        resultA.complete("state-A")
+
+        assertTrue(task.await())
+        assertEquals(listOf("B" to "state-B"), published)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test fun ownerLoadCoordinatorRetriesStaleFailureWithoutReportingItToNewOwner() = runTest {
+        var activeOwner = "A"
+        val startedA = CompletableDeferred<Unit>()
+        val failA = CompletableDeferred<String>()
+        val published = mutableListOf<Pair<String, String>>()
+        val errors = mutableListOf<String>()
+        val coordinator = OwnerLearningLoadCoordinator<String>(
+            currentIdentity = { activeOwner },
+            load = { owner -> if (owner == "A") { startedA.complete(Unit); failA.await() } else "state-$owner" },
+            publish = { owner, value -> if (activeOwner != owner) false else { published += owner to value; true } },
+            reportFailure = { owner, _ -> if (activeOwner != owner) false else { errors += owner; true } },
+        )
+
+        val task = async { coordinator.loadAndPublish() }
+        startedA.await()
+        activeOwner = "B"
+        failA.completeExceptionally(IllegalStateException("A failed"))
+
+        assertTrue(task.await())
+        assertEquals(listOf("B" to "state-B"), published)
+        assertTrue(errors.isEmpty())
+    }
+
+    @Test fun ownerLoadCoordinatorReportsCurrentOwnerFailureAndStops() = runTest {
+        val errors = mutableListOf<String>()
+        var loads = 0
+        val coordinator = OwnerLearningLoadCoordinator<String>(
+            currentIdentity = { "A" },
+            load = { loads++; throw IllegalStateException("A failed") },
+            publish = { _, _ -> fail("failed load must not publish"); false },
+            reportFailure = { owner, failure -> errors += "$owner:${failure.message}"; true },
+        )
+
+        assertFalse(coordinator.loadAndPublish())
+        assertEquals(1, loads)
+        assertEquals(listOf("A:A failed"), errors)
+    }
+
+    @Test fun ownerLoadCoordinatorPropagatesCancellation() = runTest {
+        val coordinator = OwnerLearningLoadCoordinator<String>(
+            currentIdentity = { "A" },
+            load = { throw kotlinx.coroutines.CancellationException("cancelled") },
+            publish = { _, _ -> fail("cancelled load must not publish"); false },
+            reportFailure = { _, _ -> fail("cancellation must not be reported as a load failure"); false },
+        )
+
+        var propagated = false
+        try {
+            coordinator.loadAndPublish()
+        } catch (_: kotlinx.coroutines.CancellationException) {
+            propagated = true
+        }
+        assertTrue(propagated)
+    }
+
     @Test fun staleFetchAfterImportDoesNotWrite() {
         val operation = ProgressSyncOperation()
         val oldIdentity = identity(operation)

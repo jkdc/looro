@@ -1345,21 +1345,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val memberSession = withContext(Dispatchers.IO) { memberSessions?.read() }
                 setExamOwner(memberSession?.accountID)
-                var resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
-                var loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
-                while (true) {
-                    val published = synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
-                        if (examOwnerIdentity.value.ownerAccountID != resolvedIdentity) false else {
-                            store = loaded.third
-                            archive = loaded.first
-                            true
-                        }
-                    }
-                    if (published) break
-                    resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
-                    loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
-                }
-                if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
                 val providers = providerStore.read(if (credentials.hasKey) ConversationProvider.PERSONAL_KEY else ConversationProvider.HOSTED_MINUTES)
                 hostedSessionIDs = providers.hostedIDs
                 pendingHostedOwnerID = providers.pendingOwnerID
@@ -1369,22 +1354,32 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     onFailure = { presentError(getApplication<Application>().getString(R.string.error_guest_secure_storage_unavailable)) })
                 conversationProvider = providers.selection
                 hasKey = credentials.hasKey
-                while (true) {
-                    val ready = synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
-                        if (examOwnerIdentity.value.ownerAccountID != resolvedIdentity) false else {
-                            store = loaded.third
-                            archive = loaded.first
-                            finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
-                            if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
-                            loadedLearningIdentity = resolvedIdentity
-                            storageReady = true
-                            true
+                val ownerLoad = com.jkdc.app.core.OwnerLearningLoadCoordinator(
+                    currentIdentity = { examOwnerIdentity.value.ownerAccountID },
+                    load = { identity -> withContext(Dispatchers.IO) { loadLearningState(identity) } },
+                    publish = { identity, loaded ->
+                        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                            if (examOwnerIdentity.value.ownerAccountID != identity) false else {
+                                store = loaded.third
+                                archive = loaded.first
+                                finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
+                                if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
+                                loadedLearningIdentity = identity
+                                storageReady = true
+                                true
+                            }
                         }
-                    }
-                    if (ready) break
-                    resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
-                    loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
-                }
+                    },
+                    reportFailure = { identity, _ ->
+                        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                            if (examOwnerIdentity.value.ownerAccountID != identity) false else {
+                                presentError(getApplication<Application>().getString(R.string.error_local_history_unavailable))
+                                true
+                            }
+                        }
+                    },
+                )
+                if (!ownerLoad.loadAndPublish()) return@launch
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
@@ -1420,7 +1415,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-                requestProgressSyncWhenOwnerReady(resolvedIdentity)
+                loadedLearningIdentity?.let(::requestProgressSyncWhenOwnerReady)
                 recoverFinalAssessments()
                 refreshHostedReadiness()
                 if (accountChangeBlocked) reconcileHostedSessions()

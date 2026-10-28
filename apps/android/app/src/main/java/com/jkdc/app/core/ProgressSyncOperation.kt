@@ -2,6 +2,7 @@ package com.jkdc.app.core
 
 import java.security.MessageDigest
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
 
 /** Pure account-transition rules for owner-scoped progress synchronization. */
 internal object ProgressSyncActivationPolicy {
@@ -10,6 +11,34 @@ internal object ProgressSyncActivationPolicy {
 
     fun canStart(activeOwner: String?, loadedOwner: String?, accountBusy: Boolean, storageReady: Boolean): Boolean =
         storageReady && !accountBusy && activeOwner != null && activeOwner == loadedOwner
+}
+
+/** Retries a load when ownership changes and only delegates side effects for the still-current identity. */
+internal class OwnerLearningLoadCoordinator<T>(
+    private val currentIdentity: () -> String?,
+    private val load: suspend (String) -> T,
+    private val publish: (String, T) -> Boolean,
+    private val reportFailure: (String, Exception) -> Boolean,
+) {
+    suspend fun loadAndPublish(): Boolean {
+        while (true) {
+            val identity = currentIdentity() ?: return false
+            val value = try {
+                load(identity)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                if (currentIdentity() != identity) continue
+                if (reportFailure(identity, failure)) return false
+                if (currentIdentity() != identity) continue
+                throw failure
+            }
+            if (currentIdentity() != identity) continue
+            if (publish(identity, value)) return true
+            if (currentIdentity() != identity) continue
+            return false
+        }
+    }
 }
 
 /** A short-lived identity for one remote progress pass; the bearer itself is never retained here. */
