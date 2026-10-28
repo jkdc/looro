@@ -341,6 +341,44 @@ private struct PronunciationFixtureTimeout {
         XCTAssertEqual(fixture.audioReleases, 1)
     }
 
+    func testSharedAudioSessionLeaseIsExclusiveAndRequiresExactReleaseToken() {
+        let ownership = AudioSessionLeaseOwnership()
+        let conversation = ownership.acquire(owner: .conversation)
+
+        XCTAssertNotNil(conversation)
+        XCTAssertNil(ownership.acquire(owner: .pronunciation))
+        XCTAssertFalse(ownership.release(UUID(), deactivatedSuccessfully: true))
+        XCTAssertNil(ownership.acquire(owner: .pronunciation))
+
+        XCTAssertTrue(ownership.release(conversation!, deactivatedSuccessfully: true))
+        let pronunciation = ownership.acquire(owner: .pronunciation)
+        XCTAssertNotNil(pronunciation)
+        XCTAssertNil(ownership.acquire(owner: .conversation))
+        XCTAssertTrue(ownership.release(pronunciation!, deactivatedSuccessfully: true))
+        XCTAssertNotNil(ownership.acquire(owner: .conversation))
+    }
+
+    func testStaleAudioSessionReleaseCannotReleaseNewOwner() {
+        let ownership = AudioSessionLeaseOwnership()
+        let previous = ownership.acquire(owner: .conversation)!
+        XCTAssertTrue(ownership.release(previous, deactivatedSuccessfully: true))
+        let current = ownership.acquire(owner: .pronunciation)!
+
+        XCTAssertFalse(ownership.release(previous, deactivatedSuccessfully: true))
+        XCTAssertNil(ownership.acquire(owner: .conversation))
+        XCTAssertTrue(ownership.release(current, deactivatedSuccessfully: true))
+    }
+
+    func testFailedAudioDeactivationKeepsLeaseUntilCleanupSucceeds() {
+        let ownership = AudioSessionLeaseOwnership()
+        let conversation = ownership.acquire(owner: .conversation)!
+
+        XCTAssertFalse(ownership.release(conversation, deactivatedSuccessfully: false))
+        XCTAssertNil(ownership.acquire(owner: .pronunciation))
+        XCTAssertTrue(ownership.release(conversation, deactivatedSuccessfully: true))
+        XCTAssertNotNil(ownership.acquire(owner: .pronunciation))
+    }
+
     func testUnsupportedLocalModelMakesNoRequest() async throws {
         let fixture = PronunciationFixture()
         fixture.supportsOnDeviceRecognition = false

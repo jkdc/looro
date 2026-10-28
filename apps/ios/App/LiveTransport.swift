@@ -17,7 +17,8 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
     private(set) var started = false
     private(set) var isMuted = false
     private var closing = false
-    private var ownsAudioActivation = false
+    private var audioLeaseID: UUID?
+    private var previousAudioConfiguration: (AVAudioSession.Category, AVAudioSession.Mode, AVAudioSession.CategoryOptions)?
     private var lastInput = 0.0, lastOutput = 0.0
 
     /// The caller owns how the realtime session is created: personal OpenAI key
@@ -31,6 +32,11 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         guard granted else { throw TransportError.microphone }
         try Task.checkCancellation()
         guard attempt == token else { throw CancellationError() }
+        guard let audioLeaseID = AudioSessionLeaseOwnership.shared.acquire(owner: .conversation) else {
+            throw TransportError.audioBusy
+        }
+        self.audioLeaseID = audioLeaseID
+        do {
         // WebRTC reapplies this configuration when its audio unit starts.
         // Setting AVAudioSession alone loses the speaker preference at that point.
         let audioConfiguration = RTCAudioSessionConfiguration()
@@ -39,11 +45,12 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         audioConfiguration.categoryOptions = [.defaultToSpeaker, .allowBluetoothHFP]
         RTCAudioSessionConfiguration.setWebRTC(audioConfiguration)
         let audio = RTCAudioSession.sharedInstance()
+        let session = AVAudioSession.sharedInstance()
+        previousAudioConfiguration = (session.category, session.mode, session.categoryOptions)
         audio.lockForConfiguration()
         do {
             try audio.setCategory(.playAndRecord, mode: .voiceChat, options: audioConfiguration.categoryOptions)
             try audio.setActive(true)
-            ownsAudioActivation = true
             audio.unlockForConfiguration()
         } catch { audio.unlockForConfiguration(); throw error }
         RTCInitializeSSL()
@@ -92,6 +99,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
             guard Date() < readyDeadline else { throw TransportError.timeout }
         }
         startMetering()
+        } catch {
+            if attempt == token { disconnect() }
+            throw error
+        }
     }
 
     @discardableResult func send(_ event: [String: Any]) -> Bool {
@@ -112,10 +123,22 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         localTrack?.isEnabled = false; localTrack = nil
         channel?.delegate = nil; channel?.close(); channel = nil
         peer?.delegate = nil; peer?.close(); peer = nil; factory = nil
-        if ownsAudioActivation {
+        if let audioLeaseID {
             let audio = RTCAudioSession.sharedInstance(); audio.lockForConfiguration()
-            try? audio.setActive(false); audio.unlockForConfiguration()
-            ownsAudioActivation = false
+            do {
+                try audio.setActive(false)
+                if let previousAudioConfiguration {
+                    try audio.setCategory(previousAudioConfiguration.0, mode: previousAudioConfiguration.1,
+                                          options: previousAudioConfiguration.2)
+                }
+            } catch {
+                audio.unlockForConfiguration()
+                return
+            }
+            audio.unlockForConfiguration()
+            guard AudioSessionLeaseOwnership.shared.release(audioLeaseID, deactivatedSuccessfully: true) else { return }
+            self.audioLeaseID = nil
+            previousAudioConfiguration = nil
         }
         lastInput = 0; lastOutput = 0; onLevels?(0, 0)
     }
@@ -143,12 +166,13 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         }
     }
     enum TransportError: LocalizedError {
-        case microphone, connection, timeout
+        case microphone, connection, timeout, audioBusy
         var errorDescription: String? {
             switch self {
             case .microphone: "Allow microphone access in iPhone Settings → Palique to start a conversation."
             case .connection: "The voice connection couldn’t be established. Check your connection and try again."
             case .timeout: "The voice connection took too long. Please try again."
+            case .audioBusy: "Audio is already in use. Finish the current audio activity and try again."
             }
         }
     }

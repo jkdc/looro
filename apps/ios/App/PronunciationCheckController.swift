@@ -112,30 +112,73 @@ enum PronunciationCheckState: Equatable {
 #endif
 }
 
+@MainActor final class AudioSessionLeaseOwnership {
+    enum Owner: Equatable { case conversation, pronunciation }
+
+    static let shared = AudioSessionLeaseOwnership()
+    private var activeLease: (id: UUID, owner: Owner)?
+
+    func acquire(owner: Owner) -> UUID? {
+        guard activeLease == nil else { return nil }
+        let id = UUID()
+        activeLease = (id, owner)
+        return id
+    }
+
+    @discardableResult
+    func release(_ id: UUID, deactivatedSuccessfully: Bool) -> Bool {
+        guard deactivatedSuccessfully, activeLease?.id == id else { return false }
+        activeLease = nil
+        return true
+    }
+}
+
 @MainActor private final class AVAudioSessionPronunciationLease {
     private let session: AVAudioSession
+    private let ownership: AudioSessionLeaseOwnership
     private var previousConfiguration: (AVAudioSession.Category, AVAudioSession.Mode, AVAudioSession.CategoryOptions)?
+    private var leaseID: UUID?
 
-    init(_ session: AVAudioSession) { self.session = session }
+    init(_ session: AVAudioSession, ownership: AudioSessionLeaseOwnership = .shared) {
+        self.session = session
+        self.ownership = ownership
+    }
 
     func activate() throws {
+        if leaseID != nil { release() }
+        guard let leaseID = ownership.acquire(owner: .pronunciation) else {
+            throw AudioSessionLeaseError.busy
+        }
         let previous = (session.category, session.mode, session.categoryOptions)
+        previousConfiguration = previous
+        self.leaseID = leaseID
         do {
             try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers])
             try session.setActive(true)
-            previousConfiguration = previous
         } catch {
-            try? session.setCategory(previous.0, mode: previous.1, options: previous.2)
+            release()
             throw error
         }
     }
 
     func release() {
-        guard let previousConfiguration else { return }
+        guard let previousConfiguration, let leaseID else { return }
+        do {
+            try session.setActive(false, options: .notifyOthersOnDeactivation)
+            try session.setCategory(previousConfiguration.0, mode: previousConfiguration.1,
+                                    options: previousConfiguration.2)
+        } catch {
+            return
+        }
+        guard ownership.release(leaseID, deactivatedSuccessfully: true) else { return }
         self.previousConfiguration = nil
-        try? session.setCategory(previousConfiguration.0, mode: previousConfiguration.1,
-                                 options: previousConfiguration.2)
+        self.leaseID = nil
     }
+}
+
+enum AudioSessionLeaseError: LocalizedError {
+    case busy
+    var errorDescription: String? { "Audio is already in use. Please finish the current audio activity and try again." }
 }
 
 /// Captures speech to a request-unique temporary file and scores only when the
@@ -276,7 +319,9 @@ final class PronunciationCheckController: ObservableObject {
             attempt.timeout = dependencies.schedule(4) { [weak self] in self?.beginRecognition(attemptID: attemptID) }
             activeAttempt = attempt
         } catch {
-            terminate(.failed("Pronunciation recording could not start. Please try again."))
+            let message = (error as? LocalizedError)?.errorDescription
+                ?? "Pronunciation recording could not start. Please try again."
+            terminate(.failed(message))
         }
     }
 
