@@ -2730,6 +2730,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private fun handle(event: JsonObject) {
         if (session == null || !isRunning) return
         when (event["type"]?.jsonPrimitive?.content) {
+            "session.capture.limit_reached" -> {
+                notice = getApplication<Application>().getString(R.string.notice_voice_capture_limit_reached)
+            }
             "app.session.created" -> updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content; it.voiceSeconds = 15.0 }
             "session.started" -> if (state == "connecting") {
                 state = "active"; lastActivity = nowSeconds()

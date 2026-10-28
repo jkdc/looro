@@ -6,6 +6,7 @@ import com.jkdc.app.core.SessionRecord
 import com.jkdc.app.core.Speaker
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.engines.local.AudioFrameSource
+import com.jkdc.app.engines.local.MicRecorder
 import com.jkdc.app.engines.local.SpeechSink
 import com.jkdc.app.engines.local.TtsStats
 import com.jkdc.app.engines.local.WhisperRuntime
@@ -33,6 +34,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -52,35 +54,74 @@ class LocalVoiceTransportTest {
         // IO loop drains them — an unsynchronized ArrayDeque corrupts here.
         val queue = java.util.concurrent.ConcurrentLinkedQueue<FloatArray>()
         var started = false
-        var stopped = false
+        @Volatile var stopped = false
         var paused = false
         var resumeCount = 0
         var drainedFrames = 0
+        val framesRead = java.util.concurrent.atomic.AtomicInteger()
+        private val readWaiters = java.util.concurrent.ConcurrentLinkedQueue<Pair<Int, CountDownLatch>>()
         override fun start(): Boolean { started = true; return true }
-        override fun readFrame(): FloatArray? { if (paused) return null; return queue.poll() }
+        override fun readFrame(): FloatArray? {
+            if (paused) return null
+            val frame = queue.poll() ?: return null
+            val count = framesRead.incrementAndGet()
+            readWaiters.forEach { waiter ->
+                if (count >= waiter.first && readWaiters.remove(waiter)) waiter.second.countDown()
+            }
+            return frame
+        }
+        fun awaitFramesRead(target: Int, timeoutMs: Long): Boolean {
+            if (framesRead.get() >= target) return true
+            val latch = CountDownLatch(1)
+            val waiter = target to latch
+            readWaiters.add(waiter)
+            if (framesRead.get() >= target && readWaiters.remove(waiter)) latch.countDown()
+            return latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+        }
         override fun stop() { stopped = true }
         override fun pause() { paused = true }
         override fun drainStale() { drainedFrames += queue.size; queue.clear() }
         override fun resume(): Boolean { paused = false; resumeCount++; return true }
     }
 
+    private class ThrowingFrameSource : AudioFrameSource {
+        @Volatile var stopped = false
+        @Volatile var failed = false
+        override fun start(): Boolean = true
+        override fun readFrame(): FloatArray? {
+            failed = true
+            throw IllegalStateException("synthetic capture failure")
+        }
+        override fun stop() { stopped = true }
+        override fun pause() {}
+        override fun drainStale() {}
+        override fun resume(): Boolean = true
+    }
+
     private class FakeWhisperRuntime : WhisperRuntime {
         var transcription = "Hello there"
+        @Volatile var lastSamples: FloatArray? = null
+        val transcribeCalls = java.util.concurrent.atomic.AtomicInteger()
         override fun init(modelPath: String): Long = 7L
-        override fun transcribe(handle: Long, samples: FloatArray, numSamples: Int, threads: Int, language: String): String = transcription
+        override fun transcribe(handle: Long, samples: FloatArray, numSamples: Int, threads: Int, language: String): String {
+            transcribeCalls.incrementAndGet()
+            lastSamples = samples.copyOf(numSamples)
+            return transcription
+        }
         override fun free(handle: Long) {}
     }
 
     private class FakeTeachingClient : TeachingClient {
         val received = mutableListOf<Pair<String, String>>() // system to user
         val reply = "Nice! Tell me more about it."
+        val replies = java.util.concurrent.ConcurrentLinkedQueue<String>()
         var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
         var cancelCalls = 0
         override fun cancelInFlight() { cancelCalls++ }
         override suspend fun respond(instructions: String, input: String, schema: kotlinx.serialization.json.JsonObject?, search: Boolean, purpose: com.jkdc.app.network.HelperPurpose?): com.jkdc.app.network.APIResult {
             received.add(instructions to input)
             gate?.await()
-            return com.jkdc.app.network.APIResult(text = reply, sources = emptyList(), usage = com.jkdc.app.network.APIUsage(10, 5))
+            return com.jkdc.app.network.APIResult(text = replies.poll() ?: reply, sources = emptyList(), usage = com.jkdc.app.network.APIUsage(10, 5))
         }
     }
 
@@ -106,7 +147,7 @@ class LocalVoiceTransportTest {
     }
 
     private fun silence(): FloatArray = FloatArray(2048)
-    private fun speech(): FloatArray = FloatArray(2048) { i -> (0.5 * sin(2.0 * Math.PI * 220 * i / 16000.0)).toFloat() }
+    private fun speech(amplitude: Float = 0.5f): FloatArray = FloatArray(2048) { i -> (amplitude * sin(2.0 * Math.PI * 220 * i / 16000.0)).toFloat() }
 
     private fun events(runs: (LocalVoiceTransport) -> Unit): Pair<MutableList<JsonObject>, FakeTts> {
         val events = mutableListOf<JsonObject>()
@@ -220,6 +261,252 @@ class LocalVoiceTransportTest {
     }
 
     @Test
+    fun `initialSilenceRetainsBoundedSamples`() {
+        val source = FakeFrameSource()
+        val runtime = FakeWhisperRuntime()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 1,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // Three minutes of silence must not be retained as a giant turn buffer.
+        repeat(1_406) { source.queue.add(silence()) }
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 10_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+
+        assertEquals(1, engine.received.size)
+        assertTrue("the retained audio must include the whole post-silence utterance",
+            (runtime.lastSamples?.size ?: 0) >= 4 * 2_048)
+        assertTrue("the retained audio must fit the 20 s capture bound", (runtime.lastSamples?.size ?: 0) <= 320_000)
+        transport.close()
+    }
+
+    @Test
+    fun `speechAfterSilenceRetainsFirstSyllable`() {
+        val source = FakeFrameSource()
+        val runtime = FakeWhisperRuntime()
+        val events = mutableListOf<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), runtime), FakeTeachingClient(), FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        repeat(100) { source.queue.add(silence()) }
+        source.queue.add(FloatArray(2_048) { if (it < 256) 0.4f else 0.1f })
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 10_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.delta" } &&
+            System.currentTimeMillis() < deadline) Thread.sleep(25)
+
+        val captured = runtime.lastSamples ?: error("STT did not receive audio")
+        assertTrue("the first high-energy onset must survive silence trimming", captured.any { it == 0.4f })
+        transport.close()
+    }
+
+    @Test
+    fun `voiceReplyCanBeInterruptedWhileTtsBlocked`() {
+        val source = FakeFrameSource()
+        val tts = FakeTts()
+        val engine = FakeTeachingClient()
+        val runtime = FakeWhisperRuntime()
+        val playback = CountDownLatch(1)
+        tts.onSpeak = { playback.await() }
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), runtime), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.bargeIn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals("the voice turn must reach TTS", 1, tts.spoken.size)
+
+        val sttCallsBeforeInterruptionDrain = runtime.transcribeCalls.get()
+        val llmCallsBeforeInterruptionDrain = engine.received.size
+        val interruptionFrameStart = source.framesRead.get()
+        repeat(8) { source.queue.add(speech(0.7f)) }
+        val stopDeadline = System.currentTimeMillis() + 5_000
+        while (tts.stopCalls == 0 && System.currentTimeMillis() < stopDeadline) Thread.sleep(25)
+        assertTrue("capture must detect barge-in while voice TTS is blocked", tts.stopCalls > 0)
+        assertTrue("capture producer acknowledges reading all interruption frames",
+            source.awaitFramesRead(interruptionFrameStart + 8, 5_000))
+        assertEquals("discarded interruption frames do not invoke STT", sttCallsBeforeInterruptionDrain, runtime.transcribeCalls.get())
+        assertEquals("discarded interruption frames do not invoke LLM", llmCallsBeforeInterruptionDrain, engine.received.size)
+
+        playback.countDown()
+        val idleDeadline = System.currentTimeMillis() + 5_000
+        while (transport.turnInFlight && System.currentTimeMillis() < idleDeadline) Thread.sleep(25)
+
+        repeat(4) { source.queue.add(speech(0.25f)) }
+        repeat(10) { source.queue.add(silence()) }
+        val nextTurnDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < llmCallsBeforeInterruptionDrain + 1 && System.currentTimeMillis() < nextTurnDeadline) Thread.sleep(25)
+        assertEquals("a later valid utterance still reaches the tutor", llmCallsBeforeInterruptionDrain + 1, engine.received.size)
+        assertEquals("only the later valid utterance invokes STT", sttCallsBeforeInterruptionDrain + 1, runtime.transcribeCalls.get())
+        val freshUtteranceWithTrailingSilence = FloatArray(14 * 2_048) { i ->
+            if (i < 4 * 2_048) speech(0.25f)[i % 2_048] else 0f
+        }
+        assertArrayEquals("only the later valid utterance reaches STT", MicRecorder.trimSilence(freshUtteranceWithTrailingSilence), runtime.lastSamples!!, 0f)
+        transport.close()
+    }
+
+    @Test
+    fun `mute with an empty queue invalidates buffered prefix before the next turn`() {
+        val source = FakeFrameSource()
+        val runtime = FakeWhisperRuntime()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        repeat(4) { source.queue.add(speech()) }
+        Thread.sleep(200)
+        assertTrue("the prefix must already be consumed before mute", source.queue.isEmpty())
+
+        transport.mute(true)
+        Thread.sleep(100)
+        transport.mute(false)
+        repeat(4) { source.queue.add(speech()) }
+        Thread.sleep(200)
+        transport.endTurn()
+        assertTrue("new post-mute utterance is processed", awaitTurns(engine, 1))
+
+        val expected = MicRecorder.trimSilence(FloatArray(4 * 2_048) { i -> speech()[i % 2_048] })
+        assertArrayEquals("STT receives exactly the fresh post-mute samples", expected, runtime.lastSamples!!, 0f)
+        transport.close()
+    }
+
+    @Test
+    fun `capture failure still stops and releases its frame source`() {
+        val source = ThrowingFrameSource()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO + kotlinx.coroutines.CoroutineExceptionHandler { _, _ -> }),
+            stt(createTempDir(), FakeWhisperRuntime()), FakeTeachingClient(), FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        val deadline = System.currentTimeMillis() + 5_000
+        while (!source.stopped && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertTrue("synthetic frame-source failure was exercised", source.failed)
+        assertTrue("source.stop must run when the capture child throws", source.stopped)
+    }
+
+    @Test
+    fun `restored multiline history keeps role messages intact at the cap`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        val history = JsonArray((0 until LocalVoiceTransport.MAX_ROLLING_TURNS).map { index ->
+            buildJsonObject {
+                put("role", if (index % 2 == 0) "user" else "assistant")
+                put("content", "message-$index line one\nmessage-$index line two")
+            }
+        })
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", history, language = "en") }
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        assertTrue("restored history reaches the next request", awaitTurns(engine, 1))
+
+        val context = engine.received.single().first
+        assertEquals("each restored record keeps exactly one role header", LocalVoiceTransport.MAX_ROLLING_TURNS,
+            Regex("(?:User|Assistant):").findAll(context).count())
+        assertTrue("oldest in-cap message and its continuation remain associated", context.contains("User: message-0 line one\nmessage-0 line two"))
+        assertTrue("newest role remains in order", context.indexOf("Assistant: message-15") > context.indexOf("User: message-14"))
+        transport.close()
+    }
+
+    @Test
+    fun `openingAppearsExactlyOnceInNextRequest`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient().apply {
+            replies.add("Opening unique question?")
+            replies.add("A useful answer.")
+        }
+        val events = mutableListOf<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+        )
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
+        val openingDeadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["delta"]?.jsonPrimitive?.content == "Opening unique question?" } &&
+            System.currentTimeMillis() < openingDeadline) Thread.sleep(25)
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val requestDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < requestDeadline) Thread.sleep(25)
+
+        assertEquals(2, engine.received.size)
+        assertEquals(1, Regex("Assistant: Opening unique question\\?").findAll(engine.received[1].first).count())
+        transport.close()
+    }
+
+    @Test
+    fun `typedAndVoiceTurnsShareRoleOrderedContext`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        transport.send(buildAppend("session.user_message.append", "Typed question"))
+        transport.send(buildAppend("session.commentary.append", "Typed answer"))
+        val ttsDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < ttsDeadline) Thread.sleep(25)
+
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val firstDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 1 && System.currentTimeMillis() < firstDeadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+        assertTrue(engine.received[0].first.indexOf("User: Typed question") <
+            engine.received[0].first.indexOf("Assistant: Typed answer"))
+
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val secondDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < secondDeadline) Thread.sleep(25)
+        assertEquals(2, engine.received.size)
+        val secondContext = engine.received[1].first
+        assertTrue(secondContext.indexOf("User: Typed question") < secondContext.indexOf("Assistant: Typed answer"))
+        assertTrue(secondContext.indexOf("Assistant: Typed answer") < secondContext.indexOf("User: Hello there"))
+        assertTrue(secondContext.indexOf("User: Hello there") < secondContext.indexOf("Assistant: Nice! Tell me more about it."))
+        transport.close()
+    }
+
+    @Test
     fun `silence produces no turns and no llm calls`() {
         val source = FakeFrameSource()
         val engine = FakeTeachingClient()
@@ -278,6 +565,7 @@ class LocalVoiceTransportTest {
         Thread.sleep(900)
         assertEquals(0, engine.received.size)
     }
+
 
     @Test
     fun `rolling context carries previous turns into the next prompt`() {
@@ -796,6 +1084,7 @@ class LocalVoiceTransportTest {
         )
         transport.onEvent = { events.add(it) }
         runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
 
         // The greeting is parked inside engine.respond when the user ends the
         // session; the cancellation must land while it is still suspended.
@@ -808,6 +1097,7 @@ class LocalVoiceTransportTest {
         // emit and speak — a ghost of the cancelled one must not leak through.
         events.clear()
         runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
         val deadline = System.currentTimeMillis() + 5_000
         while (tts.spoken.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
         Thread.sleep(300) // give a hypothetical ghost greeting time to leak
@@ -827,17 +1117,17 @@ class LocalVoiceTransportTest {
         val transport = LocalVoiceTransport(
             null as android.content.Context?, scope,
             stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
-            frameSourceProvider = { source }, frameDelayMs = 0,
+            frameSourceProvider = { source }, frameDelayMs = 5,
         )
         transport.manualTurn = true
         transport.onEvent = { }
         runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
 
-        // 250 loud frames = 32 s of speech: below the 60 s manual safety cap the
+        // 150 loud frames = 19.2 s of speech: below the 20 s manual safety cap the
         // turn must NOT auto-process — previously ambient noise rode the cap and
         // re-processed the app's own voice in a loop.
-        repeat(250) { source.queue.add(speech()) }
-        Thread.sleep(500)
+        repeat(150) { source.queue.add(speech()) }
+        Thread.sleep(1_000)
         assertEquals("manual mode must not auto-process below the safety cap", 0, engine.received.size)
 
         // Only the end-turn button (the beginner-mode contract) closes the turn.
@@ -853,6 +1143,132 @@ class LocalVoiceTransportTest {
         repeat(170) { source.queue.add(silence()) }
         Thread.sleep(1_500)
         assertEquals("an idle manual window must reset without processing", 1, engine.received.size)
+        scope.cancel()
+    }
+
+    @Test
+    fun `manual capture excludes wait silence preserves onset at limit and notifies without auto submit`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 1,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { event -> events.add(event) }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        var frameTarget = 0
+        fun feed(frame: FloatArray) {
+            source.queue.add(frame)
+            frameTarget++
+            assertTrue("capture frame $frameTarget", source.awaitFramesRead(frameTarget, 2_000))
+            Thread.sleep(2)
+        }
+
+        repeat(170) { feed(silence()) }
+        repeat(16) { feed(speech(amplitude = 0.1f)) }
+        repeat(160) { feed(speech(amplitude = 0.8f)) }
+        Thread.sleep(100)
+
+        assertTrue(events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+        assertEquals("manual capture must wait for explicit end-turn", 0, engine.received.size)
+
+        transport.endTurn()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+        val captured = runtime.lastSamples ?: throw AssertionError("STT must receive the bounded captured prefix")
+        assertTrue(captured.size <= 18 * 16_000)
+        val onsetPeak = captured.take(8_000).maxOf { kotlin.math.abs(it) }
+        assertTrue("the low-amplitude utterance onset must survive the STT cap, peak=$onsetPeak", onsetPeak < 0.2f)
+        scope.cancel()
+    }
+
+    @Test
+    fun `manual frame overflow keeps queued speech until explicit end and signals limit`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val consumerEntered = CountDownLatch(1)
+        val releaseConsumer = CountDownLatch(1)
+        val blockedOnce = java.util.concurrent.atomic.AtomicBoolean(false)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { event -> events.add(event) }
+        transport.onLevels = { input, _ ->
+            if (input > 0.01 && blockedOnce.compareAndSet(false, true)) {
+                consumerEntered.countDown()
+                releaseConsumer.await(2, TimeUnit.SECONDS)
+            }
+        }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        source.queue.add(speech(amplitude = 0.5f))
+        assertTrue(consumerEntered.await(2, TimeUnit.SECONDS))
+        repeat(50) { source.queue.add(speech(amplitude = 0.5f)) }
+        assertTrue(source.awaitFramesRead(51, 2_000))
+        releaseConsumer.countDown()
+
+        val limitDeadline = System.currentTimeMillis() + 2_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" } && System.currentTimeMillis() < limitDeadline) Thread.sleep(10)
+        assertTrue("overflow must produce a nonterminal capture-limit event", events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+        assertEquals("manual overflow must not submit speech automatically", 0, engine.received.size)
+
+        transport.endTurn()
+        val submitDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < submitDeadline) Thread.sleep(25)
+        assertEquals("the retained queued prefix is submitted only after explicit end", 1, engine.received.size)
+        scope.cancel()
+    }
+
+    @Test
+    fun `opening greeting waits for initial instructions before processing voice`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val greetingGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = greetingGate
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "base instructions", language = "en") }
+
+        Thread.sleep(300)
+        assertTrue("no voice request or greeting may run before initial instructions arrive", engine.received.isEmpty())
+
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
+        val greetingDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < greetingDeadline) Thread.sleep(25)
+        assertEquals("the first provider request must be the opening greeting", 1, engine.received.size)
+        assertEquals("(Begin the conversation now as instructed: greet the learner and open the theme.)", engine.received.single().second)
+        assertTrue(engine.received.single().first.contains("greet the learner"))
+
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        assertTrue(source.awaitFramesRead(14, 2_000))
+        Thread.sleep(250)
+        assertEquals("the first voice turn waits behind a blocked greeting", 1, engine.received.size)
+        greetingGate.complete(Unit)
+        val firstTurnDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < firstTurnDeadline) Thread.sleep(25)
+        assertEquals("voice captured during the greeting must be processed afterward", 2, engine.received.size)
+        assertEquals("Hello there", engine.received[1].second)
+        assertTrue("the first turn context includes the completed greeting", engine.received[1].first.contains("Assistant: Nice! Tell me more about it."))
+        transport.close()
         scope.cancel()
     }
 
@@ -1130,6 +1546,7 @@ class LocalVoiceTransportTest {
         transport.onEvent = { events.add(it) }
         transport.onFailure = { failures.add(it) }
         runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
         val deadline = System.currentTimeMillis() + 5_000
         while (failures.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
         assertTrue(failures.single().contains("opening greeting failed"))

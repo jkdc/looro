@@ -14,11 +14,14 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -37,14 +40,22 @@ import kotlinx.serialization.json.put
  * Turn-taking: continuous listening with a noise-floor-tracked energy VAD
  * ([AdaptiveVad]) — a turn ends after [silenceEndMs] of trailing silence
  * once [SPEECH_START_MS] of speech accumulated, capped at [MAX_TURN_MS].
- * While TTS speaks the microphone is paused entirely ([AudioFrameSource.pause])
- * and restarted afterwards with the stale buffered audio discarded, so speaker
- * output is never re-captured as a phantom turn; with barge-in enabled (AEC
- * devices) the mic stays live instead, the loop drops playback-period frames,
- * and sustained voice energy stops the playback. Levels may go quiet during
- * playback for the same reason.
+ * A bounded frame producer remains independent of the serial STT/LLM/TTS turn
+ * consumer. Without usable AEC, TTS pauses capture and drains stale frames
+ * before resuming. With supported barge-in, capture stays live, playback frames
+ * are discarded, and sustained voice energy stops TTS without becoming a turn.
  */
 private const val LOG_TAG = "AppLocalEngine"
+
+private data class ConversationMessage(val role: String, val content: String) {
+    fun render(): String = "$role: $content"
+}
+
+private sealed interface FrameHandoff {
+    class Audio(val samples: FloatArray, val epoch: Int) : FrameHandoff
+    data object Overflow : FrameHandoff
+    data object Flush : FrameHandoff
+}
 
 class LocalVoiceTransport(
     @Suppress("UNUSED_PARAMETER") context: Context?,
@@ -82,6 +93,9 @@ class LocalVoiceTransport(
 
     @Volatile private var running = false
     @Volatile private var muted = false
+    @Volatile private var openingInProgress = false
+    private var openingReady = CompletableDeferred<Unit>()
+    private val captureEpoch = AtomicInteger(0)
     @Volatile private var speaking = false
     /**
      * Depth of concurrent [speakSuppressed] callers (turn reply, opening
@@ -157,8 +171,7 @@ class LocalVoiceTransport(
     }
 
     private var baseInstructions = ""
-    private var historyContext = ""
-    private val rollingTurns = ArrayDeque<String>()
+    private val rollingTurns = ArrayDeque<ConversationMessage>()
     private val appendedContext = ArrayDeque<String>()
     private var sessionLanguage = "en"
 
@@ -184,9 +197,13 @@ class LocalVoiceTransport(
         // A "He terminado" armed by a previous session must not close the first
         // turn of this one.
         turnEndRequested = false
-        historyContext = renderHistory(history)
+        synchronized(rollingTurns) {
+            parseHistoryMessages(history).forEach(rollingTurns::addLast)
+        }
         sessionLanguage = language?.take(2)?.lowercase() ?: "en"
         sessionStartedAtMs = System.currentTimeMillis()
+        openingReady = CompletableDeferred()
+        openingInProgress = openOnStart
 
         // Fail the session loudly before announcing it: without TTS the pipeline
         // would silently degrade to text-only turns.
@@ -212,13 +229,10 @@ class LocalVoiceTransport(
         startListening()
         if (openOnStart) {
             launchSessionJob(Dispatchers.Default) {
-                // The ViewModel appends the greeting instruction when it handles
-                // the session.started event (transport callbacks are funneled
-                // through a channel, so that happens asynchronously after
-                // connect returns); this delay lets that handling land before
-                // the greeting prompt is built.
-                delay(200)
                 try {
+                    // Wait for AppViewModel's session.started handler to append
+                    // the initial instructions before building the greeting.
+                    openingReady.await()
                     val system = buildString {
                         append(baseInstructions)
                         synchronized(appendedContext) {
@@ -231,6 +245,8 @@ class LocalVoiceTransport(
                         null, false, null,
                     )
                     if (result.text.isNotBlank()) {
+                        if (!running) return@launchSessionJob
+                        appendConversationMessage("Assistant", result.text)
                         val start = relativeMs()
                         emit(transcriptEvent(isInput = false, text = result.text, startMs = start, endMs = start + 500))
                         runCatching { speakSuppressed(result.text) }
@@ -243,11 +259,14 @@ class LocalVoiceTransport(
                     // a failed session: surface the greeting failure loudly.
                     log("opening failed: ${e.message}")
                     onFailure?.invoke("The opening greeting failed: ${e.message ?: "unknown error"}")
+                } finally {
+                    openingInProgress = false
                 }
             }
         }
     }
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private fun startListening() {
         listenJob = scope.launch(Dispatchers.IO) {
             val source = frameSourceProvider()
@@ -256,15 +275,78 @@ class LocalVoiceTransport(
                 return@launch
             }
             recorder = source
+            val handoff = Channel<FrameHandoff>(FRAME_QUEUE_CAPACITY)
+            val captureJob = launch(Dispatchers.IO) {
+                var bargeMs = 0
+                var overflowPending = false
+                var wasTurnInFlight = false
+                while (isActive && running) {
+                    if (frameDelayMs > 0) delay(frameDelayMs)
+                    if (overflowPending && handoff.isEmpty && handoff.trySend(FrameHandoff.Overflow).isSuccess) {
+                        overflowPending = false
+                        continue
+                    }
+                    val frame = source.readFrame()
+                    if (frame == null) {
+                        delay(10)
+                        continue
+                    }
+                    if (muted) {
+                        bargeMs = 0
+                        continue
+                    }
+                    if (speaking) {
+                        if (bargeIn && MicRecorder.rms(frame) >= BARGE_RMS) {
+                            bargeMs += frame.size * 1000 / MicRecorder.SAMPLE_RATE
+                            if (bargeMs >= BARGE_TRIGGER_MS) {
+                                log("barge-in detected ($bargeMs ms over $BARGE_RMS): stopping playback")
+                                bargeMs = 0
+                                tts.stop()
+                            }
+                        } else bargeMs = 0
+                        continue
+                    }
+                    bargeMs = 0
+                    if (turnInFlight) {
+                        if (!wasTurnInFlight) {
+                            while (handoff.tryReceive().isSuccess) { }
+                            overflowPending = handoff.trySend(FrameHandoff.Flush).isFailure
+                            wasTurnInFlight = true
+                        }
+                        continue
+                    }
+                    if (wasTurnInFlight) wasTurnInFlight = false
+                    if (overflowPending) continue
+                    if (handoff.trySend(FrameHandoff.Audio(frame, captureEpoch.get())).isFailure) {
+                        // Keep the queue's oldest frames (including utterance onset) and
+                        // drop newest frames until it drains, then insert a barrier before
+                        // admitting fresh audio. Never replay source backlog from the gap.
+                        overflowPending = true
+                    } else if (frameDelayMs == 0L) {
+                        // Test sources may supply frames faster than the real 16 kHz
+                        // recorder cadence. Briefly suspend so the bounded consumer can observe
+                        // each frame instead of manufacturing overflow from scheduling.
+                        delay(1)
+                    }
+                }
+            }
             val vad = AdaptiveVad()
             try {
                 var speech: MutableList<FloatArray> = ArrayList()
                 var speechMs = 0
                 var trailingSilenceMs = 0
                 var turnMs = 0
+                var turnSamples = 0
+                var captureLimitNotified = false
+                var manualWaitMs = 0
                 var partialClockMs = 0
-                var bargeMs = 0
                 var lastUsageEmit = System.currentTimeMillis()
+                val preroll = ArrayDeque<FloatArray>()
+                val openingFrames = ArrayDeque<FrameHandoff>()
+                var openingBufferedSamples = 0
+                var openingCaptureFull = false
+                var bufferEpoch = captureEpoch.get()
+                var discardUntilSilenceMs = 0
                 // Manual-mode armed-press state: a press that lands while the
                 // buffer holds no voice stays armed and captures the NEXT
                 // spoken phrase whole, closing when the phrase trails into
@@ -275,9 +357,12 @@ class LocalVoiceTransport(
                 // Close and process whatever the current turn buffered (the
                 // manual end request: immediate close and armed-phrase close).
                 suspend fun endBufferedTurn(reason: String) {
-                    val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                    val samples = flattenFrames(speech)
+                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; turnSamples = 0; partialClockMs = 0
+                    captureLimitNotified = false
+                    manualWaitMs = 0
                     voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
+                    preroll.clear()
                     lastPartialClockMs = 0
                     log(reason)
                     if (samples.isNotEmpty()) {
@@ -289,8 +374,103 @@ class LocalVoiceTransport(
                         }
                     }
                 }
+                fun resetCapture() {
+                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0
+                    turnMs = 0; turnSamples = 0; partialClockMs = 0; voicedInBuffer = 0
+                    captureLimitNotified = false
+                    manualWaitMs = 0
+                    armedPhraseEnd = false; armedTrailingMs = 0; preroll.clear()
+                    lastPartialClockMs = 0
+                }
+                fun appendBounded(frame: FloatArray): Int {
+                    val remaining = MAX_CAPTURE_SAMPLES - turnSamples
+                    if (remaining <= 0) return 0
+                    val accepted = minOf(frame.size, remaining)
+                    speech.add(if (accepted == frame.size) frame else frame.copyOf(accepted))
+                    turnSamples += accepted
+                    turnMs = turnSamples * 1000 / MicRecorder.SAMPLE_RATE
+                    return accepted
+                }
+                fun notifyManualCaptureLimit() {
+                    if (captureLimitNotified) return
+                    captureLimitNotified = true
+                    emit(buildJsonObject { put("type", "session.capture.limit_reached") })
+                }
                 while (coroutineContext.isActive && running) {
-                    if (frameDelayMs > 0) delay(frameDelayMs)
+                    val item = if (!openingInProgress && openingFrames.isNotEmpty()) openingFrames.removeFirst()
+                    else kotlinx.coroutines.withTimeoutOrNull(25) { handoff.receiveCatching().getOrNull() }
+                    val currentEpoch = captureEpoch.get()
+                    if (currentEpoch != bufferEpoch) {
+                        resetCapture()
+                        bufferEpoch = currentEpoch
+                    }
+                    if (item == null) {
+                        // A manual end press may arrive after the final frame is
+                        // already buffered. Wake from the bounded receive wait so
+                        // it closes without requiring another microphone frame.
+                        if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
+                            turnEndRequested = false
+                            endOfSpeechAtMs = System.currentTimeMillis()
+                            endBufferedTurn("manual end of turn (voice buffered)")
+                            lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                        }
+                        continue
+                    }
+                    if (!coroutineContext.isActive || !running) break
+                    if (openingInProgress && item is FrameHandoff.Audio) {
+                        if (item.epoch == captureEpoch.get() && !muted && !speaking && !openingCaptureFull) {
+                            val remaining = MAX_CAPTURE_SAMPLES - openingBufferedSamples
+                            if (remaining > 0) {
+                                val accepted = minOf(item.samples.size, remaining)
+                                val retained = if (accepted == item.samples.size) item.samples else item.samples.copyOf(accepted)
+                                openingFrames.addLast(FrameHandoff.Audio(retained, item.epoch))
+                                openingBufferedSamples += accepted
+                            }
+                            if (openingBufferedSamples >= MAX_CAPTURE_SAMPLES || remaining <= 0) {
+                                openingCaptureFull = true
+                                notifyManualCaptureLimit()
+                            }
+                        }
+                        continue
+                    }
+                    if (openingInProgress && item === FrameHandoff.Overflow) {
+                        openingFrames.addLast(item)
+                        continue
+                    }
+                    if (item === FrameHandoff.Flush) {
+                        openingFrames.clear()
+                        openingBufferedSamples = 0
+                        openingCaptureFull = false
+                        resetCapture()
+                        continue
+                    }
+                    if (item === FrameHandoff.Overflow) {
+                        if (manualTurn && voicedInBuffer > 0) {
+                            notifyManualCaptureLimit()
+                        } else if (!manualTurn && speechMs >= SPEECH_START_MS) {
+                            endOfSpeechAtMs = System.currentTimeMillis()
+                            endBufferedTurn("frame handoff overflow: preserving queued utterance prefix")
+                        } else resetCapture()
+                        discardUntilSilenceMs = OVERFLOW_SILENCE_BARRIER_MS
+                        continue
+                    }
+                    item as FrameHandoff.Audio
+                    if (item.epoch != captureEpoch.get() || muted || speaking) {
+                        resetCapture()
+                        continue
+                    }
+
+                    val frame = item.samples
+                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
+                    if (manualTurn && speechMs == 0 && voicedInBuffer == 0) {
+                        manualWaitMs += frameMs
+                        if (manualWaitMs >= MAX_TURN_MS) {
+                            if (turnEndRequested) turnEndRequested = false
+                            resetCapture()
+                            log("manual silent wait window reset — press the button to end a turn")
+                            continue
+                        }
+                    }
 
                     // Manual mode: "He terminado" closes the turn immediately —
                     // but only when the buffer already carries VOICE (the user
@@ -306,77 +486,59 @@ class LocalVoiceTransport(
                         lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                         continue
                     }
+                    if (manualTurn && captureLimitNotified) continue
 
-                    val frame = source.readFrame()
-                    if (frame == null) {
-                        delay(10)
-                        continue
-                    }
                     val rms = MicRecorder.rms(frame)
                     onLevels?.invoke(rms.toDouble(), 0.0)
-                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
-
-                    if (muted) { // suppressed: drop audio, keep levels alive
-                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
-                        voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
+                    if (discardUntilSilenceMs > 0) {
+                        if (rms < END_TURN_RMS) discardUntilSilenceMs -= frameMs
+                        else discardUntilSilenceMs = OVERFLOW_SILENCE_BARRIER_MS
+                        if (discardUntilSilenceMs <= 0) {
+                            discardUntilSilenceMs = 0
+                            resetCapture()
+                        }
                         continue
                     }
-                    if (speaking) {
-                        // Barge-in: detect sustained voice energy over the
-                        // playback, but never buffer this audio (echo guard).
-                        if (bargeIn && rms >= BARGE_RMS) {
-                            bargeMs += frameMs
-                            if (bargeMs >= BARGE_TRIGGER_MS) {
-                                log("barge-in detected ($bargeMs ms over $BARGE_RMS): stopping playback")
-                                bargeMs = 0
-                                tts.stop()
-                            }
-                        } else bargeMs = 0
-                        continue
-                    }
-                    bargeMs = 0
-
                     val voiced = rms >= END_TURN_RMS
-                    speech.add(frame)
-                    turnMs += frameMs
                     if (voiced) voicedInBuffer += 1
 
-                    if (!manualTurn) {
-                        // Auto VAD: noise-floor-tracked with hysteresis.
-                        val isSpeech = vad.observe(rms, speechMs > 0)
-                        if (isSpeech) {
-                            if (speechMs == 0) log("speech detected (rms=$rms, floor=${vad.floor})")
-                            speechMs += frameMs
-                            trailingSilenceMs = 0
-                        } else if (speechMs > 0) {
-                            trailingSilenceMs += frameMs
+                    val isSpeech = if (manualTurn) voiced else vad.observe(rms, speechMs > 0)
+                    if (speechMs == 0 && !isSpeech) {
+                        preroll.addLast(frame)
+                        while (preroll.size > PRE_SPEECH_PREROLL_FRAMES) preroll.removeFirst()
+                        if (manualTurn && turnEndRequested) {
+                            // A press during silence remains armed for the next phrase.
                         }
+                        continue
+                    }
+                    if (speechMs == 0) {
+                        log("speech detected (rms=$rms, floor=${vad.floor})")
+                        while (preroll.isNotEmpty()) appendBounded(preroll.removeFirst())
+                    }
+                    if (appendBounded(frame) == 0) {
+                        if (manualTurn) notifyManualCaptureLimit() else {
+                            endOfSpeechAtMs = System.currentTimeMillis()
+                            endBufferedTurn("turn cap reached (${MAX_TURN_MS} ms)")
+                        }
+                        discardUntilSilenceMs = OVERFLOW_SILENCE_BARRIER_MS
+                        continue
+                    }
+                    if (!manualTurn) {
+                        speechMs += if (isSpeech) frameMs else 0
+                        if (isSpeech) trailingSilenceMs = 0 else trailingSilenceMs += frameMs
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
-                        // Manual mode never auto-closes: ambient noise kept riding the
-                        // cap and re-processing the app's own voice in a loop.
-                        val capReached = speechMs > 0 && turnMs >= MAX_TURN_MS
+                        val capReached = turnMs >= MAX_TURN_MS
                         if (turnComplete || capReached) {
                             endOfSpeechAtMs = System.currentTimeMillis()
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                             else log("turn cap reached (${turnMs} ms): closing the turn")
-                            val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
-                            // Reset the armed state too: stale voiced count from an
-                            // auto-mode turn must not let a later manual press close
-                            // a silence-only buffer (the beginner toggle is live).
-                            voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
-                            lastPartialClockMs = 0
-                            setTurnInFlight(true)
-                            try {
-                                processTurn(samples)
-                            } finally {
-                                setTurnInFlight(false)
-                            }
+                            endBufferedTurn("turn complete")
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                             continue
                         }
                         partialClockMs = speechMs
                     } else {
+                        speechMs += if (voiced) frameMs else 0
                         partialClockMs = turnMs
                         if (turnEndRequested && voiced && voicedInBuffer == 1 && !armedPhraseEnd) {
                             // An armed press catching the phrase start: hold the
@@ -397,18 +559,8 @@ class LocalVoiceTransport(
                             }
                         }
                         if (turnMs >= MAX_TURN_MS) {
-                            // A stale armed press expires here too: 20 s of
-                            // silence after a press means the intent is dead.
-                            if (turnEndRequested) turnEndRequested = false
                             armedPhraseEnd = false; armedTrailingMs = 0
-                            // Manual mode never auto-processes (real speech
-                            // included): idle noise rode the cap and looped
-                            // the conversation. Reset the window — the
-                            // end-turn button is what closes a manual turn.
-                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
-                            voicedInBuffer = 0
-                            lastPartialClockMs = 0
-                            log("manual turn window reset (idle) — press the button to end a turn")
+                            notifyManualCaptureLimit()
                         }
                     }
                     maybeEmitPartial(speech, partialClockMs)
@@ -417,8 +569,15 @@ class LocalVoiceTransport(
                     }
                 }
             } finally {
-                recorder = null
-                source.stop()
+                try {
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
+                        captureJob.cancelAndJoin()
+                    }
+                } finally {
+                    handoff.close()
+                    recorder = null
+                    source.stop()
+                }
             }
         }
     }
@@ -458,6 +617,16 @@ class LocalVoiceTransport(
                 log("partial STT failed: ${e.message}")
             }
         }
+    }
+
+    private fun flattenFrames(frames: List<FloatArray>): FloatArray {
+        val samples = FloatArray(frames.sumOf { it.size })
+        var offset = 0
+        for (frame in frames) {
+            frame.copyInto(samples, destinationOffset = offset)
+            offset += frame.size
+        }
+        return samples
     }
 
     /**
@@ -544,8 +713,8 @@ class LocalVoiceTransport(
         val maxSamples = MAX_STT_INPUT_MS * MicRecorder.SAMPLE_RATE / 1000
         val capped = if (trimmed.size > maxSamples) {
             val duration = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
-            log("STT input capped to the last $MAX_STT_INPUT_MS ms of $duration ms")
-            trimmed.copyOfRange(trimmed.size - maxSamples, trimmed.size)
+            log("STT input capped to the first $MAX_STT_INPUT_MS ms of $duration ms")
+            trimmed.copyOfRange(0, maxSamples)
         } else trimmed
         val durationMs = capped.size * 1000L / MicRecorder.SAMPLE_RATE
         if (durationMs < 250) {
@@ -577,18 +746,18 @@ class LocalVoiceTransport(
         val turnStart = relativeMs()
         emit(transcriptEvent(isInput = true, text = stt.text, startMs = turnStart, endMs = turnStart + durationMs))
 
-        val conversationSoFar = synchronized(rollingTurns) { rollingTurns.joinToString("\n") }
+        val conversationSoFar = synchronized(rollingTurns) { rollingTurns.joinToString("\n") { it.render() } }
         val system = buildString {
             append(baseInstructions)
             synchronized(appendedContext) {
                 while (appendedContext.isNotEmpty()) append("\n").append(appendedContext.removeFirst())
             }
-            if (historyContext.isNotBlank() || conversationSoFar.isNotBlank()) {
+            if (conversationSoFar.isNotBlank()) {
                 append("\n\nConversation so far (most recent last):")
-                if (historyContext.isNotBlank()) append("\n").append(historyContext)
-                if (conversationSoFar.isNotBlank()) append("\n").append(conversationSoFar)
+                append("\n").append(conversationSoFar)
             }
         }
+        appendConversationMessage("User", stt.text)
         log("LLM start")
         val llmT0 = System.currentTimeMillis()
         val result = try {
@@ -599,13 +768,10 @@ class LocalVoiceTransport(
             log("LLM failed after ${System.currentTimeMillis() - llmT0} ms: ${e.message}")
             onFailure?.invoke(e.message ?: "generation failed"); return
         }
+        if (!running) return
         logContent("LLM done in ${System.currentTimeMillis() - llmT0} ms (${result.usage.input}+${result.usage.output} tok): \"${result.text.take(120)}\"")
         if (result.text.isBlank()) return
-        synchronized(rollingTurns) {
-            rollingTurns.addLast("User: ${stt.text}")
-            rollingTurns.addLast("Assistant: ${result.text}")
-            while (rollingTurns.size > MAX_ROLLING_TURNS) rollingTurns.removeFirst()
-        }
+        appendConversationMessage("Assistant", result.text)
 
         val replyStart = relativeMs()
         emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
@@ -636,11 +802,20 @@ class LocalVoiceTransport(
         val type = event["type"]?.jsonPrimitive?.contentOrNull ?: return false
         val content = event["content"]?.jsonPrimitive?.contentOrNull ?: return false
         when {
+            type.startsWith("session.user_message.append") -> {
+                appendConversationMessage("User", content)
+                return true
+            }
             type.startsWith("session.instructions.append") || type.startsWith("session.thinking.append") -> {
-                synchronized(appendedContext) { appendedContext.addLast(content) }
+                synchronized(appendedContext) {
+                    appendedContext.addLast(content.take(MAX_CONTEXT_MESSAGE_CHARS))
+                    while (appendedContext.size > MAX_ROLLING_TURNS) appendedContext.removeFirst()
+                }
+                if (type.startsWith("session.instructions.append") && openOnStart) openingReady.complete(Unit)
                 return true
             }
             type.startsWith("session.commentary.append") -> {
+                appendConversationMessage("Assistant", content)
                 val start = relativeMs()
                 emit(transcriptEvent(isInput = false, text = content, startMs = start, endMs = start + 500))
                 launchSessionJob(Dispatchers.IO) {
@@ -719,7 +894,12 @@ class LocalVoiceTransport(
      * non-text parts carry no `text` and are skipped. A plain string `content`
      * is tolerated for hand-built or legacy payloads.
      */
-    internal fun renderHistory(history: JsonArray): String = buildString {
+    internal fun renderHistory(history: JsonArray): String {
+        return parseHistoryMessages(history).joinToString("\n") { it.render() }
+    }
+
+    private fun parseHistoryMessages(history: JsonArray): List<ConversationMessage> {
+        val messages = ArrayDeque<ConversationMessage>()
         for (element in history) {
             val obj = runCatching { element.jsonObject }.getOrNull() ?: continue
             val role = obj["role"]?.jsonPrimitive?.contentOrNull ?: continue
@@ -731,13 +911,23 @@ class LocalVoiceTransport(
                 else -> null
             } ?: continue
             if (text.isBlank()) continue
-            append(role.replaceFirstChar { it.uppercase() }).append(": ").append(text).append("\n")
+            messages.addLast(ConversationMessage(role.replaceFirstChar { it.uppercase() }, text.take(MAX_CONTEXT_MESSAGE_CHARS)))
+            while (messages.size > MAX_ROLLING_TURNS) messages.removeFirst()
         }
-    }.trim()
+        return messages.toList()
+    }
+
+    private fun appendConversationMessage(role: String, text: String) {
+        synchronized(rollingTurns) {
+            rollingTurns.addLast(ConversationMessage(role, text.take(MAX_CONTEXT_MESSAGE_CHARS)))
+            while (rollingTurns.size > MAX_ROLLING_TURNS) rollingTurns.removeFirst()
+        }
+    }
 
 
 
     override fun mute(muted: Boolean) {
+        if (this.muted != muted) captureEpoch.incrementAndGet()
         this.muted = muted
     }
 
@@ -781,6 +971,11 @@ class LocalVoiceTransport(
     companion object {
         const val SPEECH_START_MS = 300
         const val MAX_TURN_MS = 20_000
+        private const val MAX_CONTEXT_MESSAGE_CHARS = 2_000
+        private const val PRE_SPEECH_PREROLL_FRAMES = 3
+        private const val MAX_CAPTURE_SAMPLES = MAX_TURN_MS * MicRecorder.SAMPLE_RATE / 1000
+        private const val FRAME_QUEUE_CAPACITY = 8
+        private const val OVERFLOW_SILENCE_BARRIER_MS = 384
         /** Voice energy an armed "He terminado" press waits for before closing. */
         const val END_TURN_RMS = 0.02f
         /** Whisper's cost scales with input length; a capped turn is mostly
