@@ -111,6 +111,44 @@ object LearnerOwnershipDao {
     }
 }
 
+/** Durable owner-scoped evidence that local activity has consumed the first-device bootstrap opportunity. */
+object OwnerBootstrapEligibilityDao {
+    private const val PREFIX = "progress_bootstrap_has_local_data:"
+
+    fun markLocalData(db: SqlDatabase, ownerIdentity: String) {
+        require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
+        MetaDao.put(db, PREFIX + ownerIdentity, "1")
+    }
+
+    fun canBootstrap(db: SqlDatabase, ownerIdentity: String): Boolean {
+        require(ownerIdentity.startsWith("member:") || ownerIdentity.startsWith("guest:"))
+        if (MetaDao.get(db, PREFIX + ownerIdentity) == "1") return false
+        val defaultPreferences = Preferences()
+        val owner = ownerIdentity
+        val memberID = ownerIdentity.removePrefix("member:").takeIf { ownerIdentity.startsWith("member:") } ?: ""
+        val userDataExists = db.query(
+            "SELECT (EXISTS(SELECT 1 FROM sessions WHERE owner_key = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM expressions WHERE owner_key = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM lesson_state WHERE owner_key = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM completions WHERE owner_key = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM skill_errors WHERE owner_key = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM exam_attempts WHERE owner_key = ? OR owner_account_id = ? LIMIT 1) OR " +
+                "EXISTS(SELECT 1 FROM preferences WHERE owner_key = ? AND id = 1 AND (" +
+                "learning_language_id != ? OR meaning_visible != ? OR meaning_language != ? OR " +
+                "session_minutes != ? OR hidden_words != ? OR interests != ? OR has_onboarded != ? OR " +
+                "ai_consent_version IS NOT NULL OR slow_speech IS NOT NULL OR listening_practice IS NOT NULL OR " +
+                "speech_rate IS NOT NULL OR usage_metrics_enabled IS NOT NULL OR stt_engine IS NOT NULL OR " +
+                "pronunciation_enabled IS NOT NULL) LIMIT 1)) AS has_data",
+            listOf(owner, owner, owner, owner, owner, owner, memberID, owner,
+                defaultPreferences.learningLanguageID, defaultPreferences.meaningVisible,
+                defaultPreferences.meaningLanguage, defaultPreferences.sessionMinutes,
+                encodeStringList(defaultPreferences.hiddenWords), defaultPreferences.interests,
+                defaultPreferences.hasOnboarded),
+        ).single().bool("has_data")
+        return !userDataExists
+    }
+}
+
 internal fun activeOwnerKey(db: SqlDatabase): String? = LearnerOwnershipDao.activeIdentity(db)
 internal fun ownerClause(db: SqlDatabase, alias: String = ""): String {
     val prefix = if (alias.isEmpty()) "" else "$alias."

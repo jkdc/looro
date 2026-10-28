@@ -60,6 +60,7 @@ object ArchiveMerger {
     fun apply(db: SqlDatabase, incoming: Archive): Archive = db.transaction { tx ->
         val merged = ArchiveCodec.merge(ArchiveMapper.export(tx), incoming)
         rewriteInTx(tx, merged)
+        LearnerOwnershipDao.activeIdentity(tx)?.let { OwnerBootstrapEligibilityDao.markLocalData(tx, it) }
         ArchiveMapper.export(tx)
     }
 

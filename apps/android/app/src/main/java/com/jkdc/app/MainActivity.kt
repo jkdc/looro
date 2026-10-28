@@ -57,9 +57,6 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT),
         )
         purchases.bindAccountState(account.state, account.transitionBusy)
-        lifecycleScope.launch {
-            account.state.collect { state -> vm.setExamOwner(state.accountID) }
-        }
         // Test harness only (DEBUG builds): adopt a bearer seeded directly into
         // the local API database, skipping OAuth. Release ignores the extras.
         if (BuildConfig.DEBUG) {

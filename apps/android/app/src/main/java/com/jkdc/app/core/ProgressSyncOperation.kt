@@ -3,6 +3,15 @@ package com.jkdc.app.core
 import java.security.MessageDigest
 import kotlinx.coroutines.CompletableDeferred
 
+/** Pure account-transition rules for owner-scoped progress synchronization. */
+internal object ProgressSyncActivationPolicy {
+    fun shouldInvalidate(previousOwner: String?, currentOwner: String?, accountBusy: Boolean): Boolean =
+        accountBusy || previousOwner != currentOwner
+
+    fun canStart(activeOwner: String?, loadedOwner: String?, accountBusy: Boolean, storageReady: Boolean): Boolean =
+        storageReady && !accountBusy && activeOwner != null && activeOwner == loadedOwner
+}
+
 /** A short-lived identity for one remote progress pass; the bearer itself is never retained here. */
 internal data class ProgressSyncIdentity(
     val accountID: String,

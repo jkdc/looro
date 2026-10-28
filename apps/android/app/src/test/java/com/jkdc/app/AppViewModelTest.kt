@@ -16,6 +16,17 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppViewModelTest {
+    @Test fun progressSyncActivationIgnoresSameOwnerProfileRefreshButFencesTransitions() {
+        val policy = com.jkdc.app.core.ProgressSyncActivationPolicy
+        assertFalse(policy.shouldInvalidate("member:a", "member:a", accountBusy = false))
+        assertTrue(policy.shouldInvalidate("member:a", "member:b", accountBusy = false))
+        assertTrue(policy.shouldInvalidate("member:a", "member:a", accountBusy = true))
+        assertFalse(policy.canStart("member:a", null, accountBusy = false, storageReady = true))
+        assertFalse(policy.canStart("member:a", "member:b", accountBusy = false, storageReady = true))
+        assertFalse(policy.canStart("member:a", "member:a", accountBusy = true, storageReady = true))
+        assertTrue(policy.canStart("member:a", "member:a", accountBusy = false, storageReady = true))
+    }
+
     @Test fun exactUnavailableUploadFallbackDoesNotAdvanceV2ResumeCursor() = kotlinx.coroutines.runBlocking {
         val entries = (0 until 201).map { index -> com.jkdc.app.core.ProgressSyncEntry(
             kind = "lesson", itemID = "item-%03d".format(index), atMilliseconds = 1_792_929_600_000,

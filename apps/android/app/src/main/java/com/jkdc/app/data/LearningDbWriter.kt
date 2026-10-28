@@ -35,6 +35,10 @@ import com.jkdc.app.core.SkillError
  */
 object LearningDbWriter {
 
+    private fun markActiveOwnerHasLocalData(db: SqlDatabase) {
+        LearnerOwnershipDao.activeIdentity(db)?.let { OwnerBootstrapEligibilityDao.markLocalData(db, it) }
+    }
+
     /**
      * save()/updateSession()/newSession(): one session's durable form.
      *
@@ -63,20 +67,27 @@ object LearningDbWriter {
                 if (ticket == null) AssessmentTicketsDao.delete(tx, record.id)
                 else AssessmentTicketsDao.upsert(tx, ticket)
             }
+            markActiveOwnerHasLocalData(tx)
         }
     }
 
     /** recordCompletion() and the completions side of lesson attempts: the
         archive's whole (re-sorted, truncated) ledger, in list order. */
     fun completions(db: SqlDatabase, marks: List<CompletionMark>) {
-        db.transaction { tx -> CompletionsDao.replaceAllInTx(tx, marks,
-            TimestampEvidence("android.recordCompletion", 2, "apple_reference_seconds")) }
+        db.transaction { tx ->
+            CompletionsDao.replaceAllInTx(tx, marks,
+                TimestampEvidence("android.recordCompletion", 2, "apple_reference_seconds"))
+            markActiveOwnerHasLocalData(tx)
+        }
     }
 
     /** recordExerciseMistake(): the archive's whole (re-sorted, truncated)
         error memory, in list order. */
     fun skillErrors(db: SqlDatabase, errors: List<SkillError>) {
-        db.transaction { tx -> SkillErrorsDao.replaceAllInTx(tx, errors) }
+        db.transaction { tx ->
+            SkillErrorsDao.replaceAllInTx(tx, errors)
+            markActiveOwnerHasLocalData(tx)
+        }
     }
 
     /** recordLessonAttempt(): the lesson's counters, the ledger mark (passed
@@ -92,6 +103,7 @@ object LearningDbWriter {
             CompletionsDao.replaceAllInTx(tx, marks,
                 TimestampEvidence("android.recordLessonAttempt", 2, "apple_reference_seconds"))
             seeds.forEach { ExpressionsDao.upsert(tx, it) }
+            markActiveOwnerHasLocalData(tx)
         }
     }
 
@@ -102,7 +114,10 @@ object LearningDbWriter {
         legacy values the engine kept, and its meaning fill falls back to the
         incoming meaning, which is the engine's own post-state). */
     fun expressionUpserted(db: SqlDatabase, state: ExpressionState) {
-        ExpressionsDao.upsert(db, state)
+        db.transaction { tx ->
+            ExpressionsDao.upsert(tx, state)
+            markActiveOwnerHasLocalData(tx)
+        }
     }
 
     /** removeExpression(): RecallEngine.remove drops the language row AND the
@@ -114,7 +129,10 @@ object LearningDbWriter {
     /** updatePreferences()/toggleMeaning()/hideWord(): the whole Preferences
         (one row). */
     fun preferences(db: SqlDatabase, preferences: Preferences) {
-        PreferencesDao.put(db, preferences)
+        db.transaction { tx ->
+            PreferencesDao.put(tx, preferences)
+            markActiveOwnerHasLocalData(tx)
+        }
     }
 
     /** deleteSession(): the DELETE (fragments follow by FK cascade) plus the
@@ -136,6 +154,8 @@ object LearningDbWriter {
             tx.update("DELETE FROM sessions WHERE ${ownerClause(tx)}", ownerArguments(tx))
             AssessmentTicketsDao.clear(tx)
             PreferencesDao.put(tx, preferences)
+            // A reset is an explicit local-data decision, not permission to bootstrap over the account.
+            markActiveOwnerHasLocalData(tx)
         }
     }
 
@@ -186,8 +206,7 @@ object LearningDbWriter {
 
     /** importData() (DB restore path): ArchiveMerger.apply IS the write; kept
         here so the site mapping table names one place per flow. */
-    fun archiveRestored(db: SqlDatabase, incoming: Archive): Archive =
-        ArchiveMerger.apply(db, incoming)
+    fun archiveRestored(db: SqlDatabase, incoming: Archive): Archive = ArchiveMerger.apply(db, incoming)
 
     /** Starts only after the immutable snapshot, attempt, and create outbox
         record have committed; callers must await this before showing a question. */

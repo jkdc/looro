@@ -484,6 +484,9 @@ object ExamHistoryDao {
                     put("examId", JsonPrimitive(attempt.examID))
                     put("snapshot", snapshotContent)
                 }.toString(), attempt.startedAt)
+            if (inserted != -1L) LearnerOwnershipDao.activeIdentity(tx)?.let {
+                OwnerBootstrapEligibilityDao.markLocalData(tx, it)
+            }
         }
         return load(db, attempt.attemptID, attempt.ownerAccountID)
             ?: error("Started exam attempt could not be reloaded")
@@ -493,7 +496,11 @@ object ExamHistoryDao {
     fun saveAnswer(db: SqlDatabase, attemptID: String, questionID: String, responseJSON: String,
                    position: Int, savedAt: Double): Long {
         require(questionID.isNotBlank() && position >= 0)
-        return db.transaction { tx -> saveAnswerInTransaction(tx, attemptID, questionID, responseJSON, position, savedAt) }
+        return db.transaction { tx ->
+            val revision = saveAnswerInTransaction(tx, attemptID, questionID, responseJSON, position, savedAt)
+            LearnerOwnershipDao.activeIdentity(tx)?.let { OwnerBootstrapEligibilityDao.markLocalData(tx, it) }
+            revision
+        }
     }
 
     /** Completion is immutable and safely repeatable only for the same result. */
@@ -544,6 +551,7 @@ object ExamHistoryDao {
                 put("attemptId", JsonPrimitive(attemptID))
                 put("result", resultContent)
             }.toString(), effectiveAt)
+            LearnerOwnershipDao.activeIdentity(tx)?.let { OwnerBootstrapEligibilityDao.markLocalData(tx, it) }
             true
         }
     }

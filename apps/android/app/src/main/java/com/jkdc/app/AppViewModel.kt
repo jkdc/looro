@@ -460,6 +460,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ownerScopedLevelTestHistory.setIdentity(updated)
             // Remove the previous owner's projection before asynchronous reload begins.
             archive = Archive()
+            loadedLearningIdentity = null
             session = null
             finalAssessmentTickets = emptyList()
             recoveredAssessmentIDs.clear()
@@ -485,6 +486,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         ?.let(FinalAssessmentRecovery::passage) ?: return@mapNotNull null
                     FinalAssessmentTicket(row.sessionID, passage.id, passage.revisionKey, row.attempts, row.lastAttemptAt)
                 }
+                loadedLearningIdentity = resolvedIdentity
+                requestProgressSyncWhenOwnerReady(resolvedIdentity)
             }
         }
         }
@@ -655,6 +658,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var guestState by mutableStateOf(GuestMinuteState()); private set
     var showMinuteAccess by mutableStateOf(false); private set
     private var selectedAccount = AccountState(busy = true)
+    private var loadedLearningIdentity: String? = null
     private var accessJob: Job? = null
     private val hostedBindings = HostedConversationBindings(viewModelScope)
     private var hostedSessionIDs = emptySet<String>()
@@ -1041,8 +1045,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     fetch = { session, operation, identity ->
                         val owner = session.accountID
                         val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "download") }
-                        val shouldBootstrap = archive.lessons.none { it.attempts > 0 } && archive.completions.orEmpty().isEmpty() &&
-                            (state == null || state.passGeneration == 0L)
+                        val ownerIdentity = "member:$owner"
+                        val bootstrapInProgress = state?.cursor != null
+                        val bootstrapComplete = state?.passGeneration?.let { it > 0L && state.cursor == null } == true
+                        val shouldBootstrap = !bootstrapComplete && (bootstrapInProgress ||
+                            (state == null && store?.db?.let {
+                                com.jkdc.app.data.OwnerBootstrapEligibilityDao.canBootstrap(it, ownerIdentity)
+                            } == true))
                         if (!shouldBootstrap) "{\"legacy\":false,\"pages\":[]}" else {
                             val cursor = state?.cursor
                             val result = client.fetchBootstrap(session, cursor) {
@@ -1081,6 +1090,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         progressSyncOperation.invalidate()
         progressSyncJob?.cancel()
         progressSyncJob = null
+    }
+
+    private fun requestProgressSyncWhenOwnerReady(ownerIdentity: String) {
+        if (!com.jkdc.app.core.ProgressSyncActivationPolicy.canStart(
+                examOwnerIdentity.value.ownerAccountID, loadedLearningIdentity,
+                selectedAccount.busy, storageReady) || examOwnerIdentity.value.ownerAccountID != ownerIdentity) return
+        syncProgress()
     }
 
     private fun beginProgressReplacement() {
@@ -1329,10 +1345,20 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val memberSession = withContext(Dispatchers.IO) { memberSessions?.read() }
                 setExamOwner(memberSession?.accountID)
-                val resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
-                val loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
-                store = loaded.third
-                archive = loaded.first
+                var resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
+                var loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
+                while (true) {
+                    val published = synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                        if (examOwnerIdentity.value.ownerAccountID != resolvedIdentity) false else {
+                            store = loaded.third
+                            archive = loaded.first
+                            true
+                        }
+                    }
+                    if (published) break
+                    resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
+                    loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
+                }
                 if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
                 val providers = providerStore.read(if (credentials.hasKey) ConversationProvider.PERSONAL_KEY else ConversationProvider.HOSTED_MINUTES)
                 hostedSessionIDs = providers.hostedIDs
@@ -1342,9 +1368,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     clear = { owner -> clearAcknowledgedGuestMarker(owner) },
                     onFailure = { presentError(getApplication<Application>().getString(R.string.error_guest_secure_storage_unavailable)) })
                 conversationProvider = providers.selection
-                finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
                 hasKey = credentials.hasKey
-                storageReady = true
+                while (true) {
+                    val ready = synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                        if (examOwnerIdentity.value.ownerAccountID != resolvedIdentity) false else {
+                            store = loaded.third
+                            archive = loaded.first
+                            finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
+                            if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
+                            loadedLearningIdentity = resolvedIdentity
+                            storageReady = true
+                            true
+                        }
+                    }
+                    if (ready) break
+                    resolvedIdentity = checkNotNull(examOwnerIdentity.value.ownerAccountID)
+                    loaded = withContext(Dispatchers.IO) { loadLearningState(resolvedIdentity) }
+                }
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
@@ -1380,7 +1420,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-                syncProgress()
+                requestProgressSyncWhenOwnerReady(resolvedIdentity)
                 recoverFinalAssessments()
                 refreshHostedReadiness()
                 if (accountChangeBlocked) reconcileHostedSessions()
@@ -1691,8 +1731,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun onAccountChanged(account: AccountState) {
         accountRevision++
         topicTransition.invalidate()
-        invalidateProgressSync()
+        val previousOwnerIdentity = examOwnerIdentity.value.ownerAccountID
+        setExamOwner(account.accountID)
+        val currentOwnerIdentity = examOwnerIdentity.value.ownerAccountID
+        if (com.jkdc.app.core.ProgressSyncActivationPolicy.shouldInvalidate(
+                previousOwnerIdentity, currentOwnerIdentity, account.busy)) invalidateProgressSync()
         selectedAccount = account
+        if (!account.busy) currentOwnerIdentity?.let(::requestProgressSyncWhenOwnerReady)
         // Invalidate immediately. Slow guest or member reads may not restore access during a transition.
         readiness.selectAccount(null, true)
         accessJob?.cancel()

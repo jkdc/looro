@@ -36,6 +36,32 @@ class LearningDbTest {
 
     @After fun closeConnection() { connection.close() }
 
+    @Test fun bootstrapEligibilityIsDurableAndIsolatedByLearnerIdentity() {
+        LearnerOwnershipDao.activate(db, "guest:11111111-1111-4111-8111-111111111111")
+        assertTrue(OwnerBootstrapEligibilityDao.canBootstrap(db, "guest:11111111-1111-4111-8111-111111111111"))
+        assertTrue(OwnerBootstrapEligibilityDao.canBootstrap(db, "guest:22222222-2222-4222-8222-222222222222"))
+
+        OwnerBootstrapEligibilityDao.markLocalData(db, "guest:11111111-1111-4111-8111-111111111111")
+        assertFalse(OwnerBootstrapEligibilityDao.canBootstrap(db, "guest:11111111-1111-4111-8111-111111111111"))
+        assertTrue(OwnerBootstrapEligibilityDao.canBootstrap(db, "guest:22222222-2222-4222-8222-222222222222"))
+    }
+
+    @Test fun defaultPreferencesDoNotBlockBootstrapButExplicitPreferenceChangeDoes() {
+        LearnerOwnershipDao.activate(db, "member:bootstrap-preferences")
+        PreferencesDao.put(db, com.jkdc.app.core.Preferences())
+        assertTrue(OwnerBootstrapEligibilityDao.canBootstrap(db, "member:bootstrap-preferences"))
+
+        LearningDbWriter.preferences(db, com.jkdc.app.core.Preferences(sessionMinutes = 30))
+        assertFalse(OwnerBootstrapEligibilityDao.canBootstrap(db, "member:bootstrap-preferences"))
+    }
+
+    @Test fun persistedOwnerLearningRowsWithoutEligibilityMarkerBlockBootstrap() {
+        val owner = "member:bootstrap-existing-progress"
+        db.insert("lesson_state", mapOf("lesson_id" to "lesson-1", "attempts" to 1,
+            "last_seen" to 1_000.0, "owner_key" to owner))
+        assertFalse(OwnerBootstrapEligibilityDao.canBootstrap(db, owner))
+    }
+
     @Test fun legacyBootstrapPersistsFirstAndLastForOwnerAndUploadsLastTimestamp() = runBlocking {
         val server = MockWebServer().apply { start() }
         try {
