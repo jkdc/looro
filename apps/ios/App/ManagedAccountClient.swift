@@ -579,6 +579,19 @@ struct ManagedAccountClient {
 struct ManagedAccountKeychain {
     private let scope: String
     init(scope: String) { self.scope = scope }
+    private var rejectionMarkerKey: String {
+        let digest = SHA256.hash(data: Data(scope.utf8))
+        return "com.jkdc.app.managed-account.rejected.\(Data(digest).base64EncodedString())"
+    }
+    var hasRejectedCredential: Bool {
+        UserDefaults.standard.bool(forKey: rejectionMarkerKey)
+    }
+    func markCredentialRejected() {
+        UserDefaults.standard.set(true, forKey: rejectionMarkerKey)
+    }
+    func clearCredentialRejection() {
+        UserDefaults.standard.removeObject(forKey: rejectionMarkerKey)
+    }
     private var query: [String: Any] {
         [kSecClass as String: kSecClassGenericPassword,
          kSecAttrService as String: "com.jkdc.app.managed-account",
@@ -586,6 +599,10 @@ struct ManagedAccountKeychain {
          kSecAttrSynchronizable as String: false]
     }
     func load() throws -> ManagedAccountSession? {
+        guard !hasRejectedCredential else {
+            try? remove()
+            return nil
+        }
         var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne
         var item: CFTypeRef?
         let status = SecItemCopyMatching(q as CFDictionary, &item)
@@ -604,6 +621,7 @@ struct ManagedAccountKeychain {
             guard SecItemAdd(query.merging(attributes) { _, new in new } as CFDictionary, nil) == errSecSuccess
             else { throw ManagedAccountError.secureStorage }
         } else if status != errSecSuccess { throw ManagedAccountError.secureStorage }
+        clearCredentialRejection()
     }
     func remove() throws {
         let status = SecItemDelete(query as CFDictionary)

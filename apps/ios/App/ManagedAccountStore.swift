@@ -23,6 +23,9 @@ extension Notification.Name {
     func load() throws -> ManagedAccountSession?
     func save(_ session: ManagedAccountSession) throws
     func remove() throws
+    var hasRejectedCredential: Bool { get }
+    func markCredentialRejected()
+    func clearCredentialRejection()
 }
 
 extension ManagedAccountKeychain: ManagedAccountSessionPersistence {}
@@ -102,8 +105,13 @@ final class ManagedAccountStore {
         }
         // Screenshot and preview UI tests never read a real account or create a server session.
         if !isPreview {
-            do { session = try keychain?.load() }
-            catch { message = Self.message(for: error) }
+            if keychain?.hasRejectedCredential == true {
+                try? keychain?.remove()
+                message = Self.message(for: ManagedAccountError.server("sign_in_required"))
+            } else {
+                do { session = try keychain?.load() }
+                catch { message = Self.message(for: error) }
+            }
         }
     }
     func signIn(_ provider: ManagedIdentityProvider) {
@@ -132,6 +140,7 @@ final class ManagedAccountStore {
                 try? await client.signOut(session: newSession)
                 throw error
             }
+            keychain.clearCredentialRejection()
             session = newSession
             announceSessionChange()
             let result = try await client.profile(session: newSession)
@@ -387,7 +396,12 @@ final class ManagedAccountStore {
                 guard gate.accepts(token) else { return }
                 if Self.invalidatesSession(for: error) {
                     session = nil; profile = nil
-                    do { try keychain?.remove() } catch { message = Self.message(for: error); return }
+                    keychain?.markCredentialRejected()
+                    do { try keychain?.remove() } catch {
+                        message = Self.message(for: error)
+                        announceSessionChange()
+                        return
+                    }
                     announceSessionChange()
                 }
                 if error as? ManagedAccountError != .cancelled, !(error is CancellationError) {

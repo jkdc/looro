@@ -6,10 +6,13 @@ import LearningCore
 @MainActor private final class MemorySessionPersistence: ManagedAccountSessionPersistence {
     private(set) var session: ManagedAccountSession?
     var failSave = false
+    var failRemove = false
+    private(set) var credentialRejected = false
+    var hasRejectedCredential: Bool { credentialRejected }
     private(set) var saveCount = 0
     private(set) var removeCount = 0
 
-    func load() throws -> ManagedAccountSession? { session }
+    func load() throws -> ManagedAccountSession? { credentialRejected ? nil : session }
 
     func save(_ session: ManagedAccountSession) throws {
         saveCount += 1
@@ -19,8 +22,12 @@ import LearningCore
 
     func remove() throws {
         removeCount += 1
+        if failRemove { throw ManagedAccountError.secureStorage }
         session = nil
     }
+
+    func markCredentialRejected() { credentialRejected = true }
+    func clearCredentialRejection() { credentialRejected = false }
 }
 
 private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
@@ -258,6 +265,73 @@ private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
         XCTAssertNil(fixture.persistence.session)
         XCTAssertEqual(fixture.persistence.saveCount, 0)
         XCTAssertTrue(recorder.snapshots.isEmpty)
+    }
+
+    func testRejectedCredentialRemainsBlockedAfterKeychainRemovalFailureAndRestart() async throws {
+        let fixture = try makeFixture(profileStatuses: [500, 401])
+        fixture.persistence.failRemove = true
+        let recorder = fixture.observeSessionChanges()
+        defer { recorder.stopObserving() }
+
+        fixture.store.signIn(.google)
+        await fixture.store.waitForCurrentOperation()
+        fixture.store.refresh()
+        await fixture.store.waitForCurrentOperation()
+
+        XCTAssertNil(fixture.store.session)
+        XCTAssertTrue(fixture.persistence.credentialRejected)
+        XCTAssertNotNil(fixture.persistence.session, "the fake secure store retained the rejected bytes")
+        XCTAssertEqual(recorder.snapshots.count, 2)
+        XCTAssertNil(recorder.snapshots[1].inMemory)
+        XCTAssertNil(recorder.snapshots[1].persisted)
+        XCTAssertTrue(fixture.helperRouter.supportsSourceBackedSearch)
+
+        let restarted = ManagedAccountStore(configuration: fixture.configuration,
+                                            sessionPersistence: fixture.persistence)
+        XCTAssertNil(restarted.session)
+        XCTAssertNotNil(restarted.message)
+        XCTAssertNil(try fixture.persistence.load())
+    }
+
+    func testSuccessfulSignInClearsRejectedCredentialMarker() async throws {
+        let fixture = try makeFixture(profileStatuses: [500, 401])
+        fixture.persistence.failRemove = true
+        fixture.store.signIn(.google)
+        await fixture.store.waitForCurrentOperation()
+        fixture.store.refresh()
+        await fixture.store.waitForCurrentOperation()
+        XCTAssertTrue(fixture.persistence.credentialRejected)
+
+        fixture.persistence.failSave = true
+        fixture.store.signIn(.google)
+        await fixture.store.waitForCurrentOperation()
+        XCTAssertTrue(fixture.persistence.credentialRejected)
+        XCTAssertNil(fixture.store.session)
+
+        fixture.persistence.failSave = false
+        fixture.persistence.failRemove = false
+        fixture.store.signIn(.google)
+        await fixture.store.waitForCurrentOperation()
+
+        XCTAssertFalse(fixture.persistence.credentialRejected)
+        XCTAssertEqual(fixture.store.session, fixture.persistence.session)
+        XCTAssertEqual(fixture.store.profile?.accountID, fixture.store.session?.accountID)
+    }
+
+    func testRejectedCredentialMarkerPersistsAcrossInstancesAndIsScopeSpecific() {
+        let scope = "test-scope-\(UUID().uuidString)"
+        let marker = ManagedAccountKeychain(scope: scope)
+        let restartedMarker = ManagedAccountKeychain(scope: scope)
+        let otherScopeMarker = ManagedAccountKeychain(scope: "other-\(UUID().uuidString)")
+        defer { marker.clearCredentialRejection() }
+
+        XCTAssertFalse(marker.hasRejectedCredential)
+        marker.markCredentialRejected()
+
+        XCTAssertTrue(restartedMarker.hasRejectedCredential)
+        XCTAssertFalse(otherScopeMarker.hasRejectedCredential)
+        marker.clearCredentialRejection()
+        XCTAssertFalse(restartedMarker.hasRejectedCredential)
     }
 
     private struct Fixture {
