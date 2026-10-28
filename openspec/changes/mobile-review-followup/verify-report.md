@@ -145,6 +145,16 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 - Swift/Xcode AppTests, real Keychain removal-failure behavior, process-restart, and mounted account-consumer proof are deferred to F16 on macOS. The memory-backed test reconstructs a new store and the marker test reconstructs its wrapper; neither is a process-restart test.
 
 **Risk:** item 2 — rejected bearer credentials and authentication consumers.
+
+## F02/F04 — Owner-bound bootstrap continuation and revocation
+
+- Commit: `9314aeb`.
+- Android persists the one-time member bootstrap decision before the first GET; transient failure or normal local activity no longer loses eligibility. Each accepted page updates rows/cursor atomically, terminal completion clears intent, and a successful v1 fallback clears stale v2 cursor state so it cannot repeat.
+- iOS persists pass-generation-0 before the initial GET and fences results by active owner and `LearningStore.dataGeneration`, allowing ordinary local activity while rejecting reset/import/account replacement. Explicit reset, archive import, and file-backed database import write a terminal state with a null cursor for the active member only.
+- RED/GREEN: Android test-first changes cover durable owner isolation, v1 fallback completion, and page completion; the original 110 focused tests passed. Full Android suite passed 829/829 (95 suites) before the bounded reset/import correction.
+- Independent review found reset/import cleared the intent but left the old partial cursor. A fresh-scratch temporary RED probe confirmed that behavior; the one bounded correction made reset and archive import revoke both cursor and eligibility. The affected Android regressions passed in the workspace and a fresh `/var/tmp` scratch recheck; the latter also verified another owner's cursor is unchanged. `git diff --check` passed.
+- iOS tests now cover reset and archive import, but Swift/Xcode is unavailable on Linux (`swift: command not found`); no iOS compile or test result is claimed. Source review confirmed file-backed database import revocation. Mounted guest→A→B lifecycle proof remains deferred to F16.
+- Risk: items 1 and 4 (owner-bound persisted progress, reset/import invalidation, and asynchronous bootstrap ordering).
 ## F01 — Android local-history retry and owner serialization
 
 - Commit: `ea3c2f8`.
