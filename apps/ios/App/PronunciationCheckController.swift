@@ -159,6 +159,8 @@ final class PronunciationCheckController: ObservableObject {
         let target: String
         let lessonID: String
         let language: String
+        let learnerIdentity: String
+        let dataGeneration: UInt64
         let store: LearningStore
         let onPass: (Int) -> Void
         let recognizer: PronunciationRecognizing
@@ -177,6 +179,7 @@ final class PronunciationCheckController: ObservableObject {
 
     private let dependencies: PronunciationCheckDependencies
     private var activeAttempt: Attempt?
+    private var dataGenerationObserver: NSObjectProtocol?
 
     init(dependencies: PronunciationCheckDependencies? = nil) {
 #if DEBUG
@@ -203,8 +206,15 @@ final class PronunciationCheckController: ObservableObject {
         }
 
         let attempt = Attempt(id: UUID(), target: target, lessonID: lessonID, language: language,
+                              learnerIdentity: store.activeLearnerIdentity, dataGeneration: store.dataGeneration,
                               store: store, onPass: onPass, recognizer: recognizer)
+        let attemptID = attempt.id
         activeAttempt = attempt
+        dataGenerationObserver = NotificationCenter.default.addObserver(
+            forName: LearningStore.dataGenerationDidChange, object: store, queue: nil
+        ) { [weak self, attemptID] _ in
+            Task { @MainActor in self?.dataGenerationDidChange(attemptID: attemptID) }
+        }
         state = .requestingPermissions
         dependencies.requestSpeechAuthorization { [weak self] status in
             Task { @MainActor in self?.speechPermissionResolved(status, attemptID: attempt.id) }
@@ -221,7 +231,8 @@ final class PronunciationCheckController: ObservableObject {
     }
 
     private func speechPermissionResolved(_ status: SFSpeechRecognizerAuthorizationStatus, attemptID: UUID) {
-        guard activeAttempt?.id == attemptID else { return }
+        guard let attempt = activeAttempt, attempt.id == attemptID else { return }
+        guard isCurrent(attempt) else { terminate(.cancelled); return }
         guard status == .authorized else {
             terminate(.failed("Speech recognition permission was denied."))
             return
@@ -232,7 +243,8 @@ final class PronunciationCheckController: ObservableObject {
     }
 
     private func recordPermissionResolved(_ granted: Bool, attemptID: UUID) {
-        guard activeAttempt?.id == attemptID else { return }
+        guard let attempt = activeAttempt, attempt.id == attemptID else { return }
+        guard isCurrent(attempt) else { terminate(.cancelled); return }
         guard granted else {
             terminate(.failed("Microphone permission was denied."))
             return
@@ -242,6 +254,7 @@ final class PronunciationCheckController: ObservableObject {
 
     private func beginRecording(attemptID: UUID) {
         guard var attempt = activeAttempt, attempt.id == attemptID else { return }
+        guard isCurrent(attempt) else { terminate(.cancelled); return }
         let url = dependencies.temporaryDirectory.appendingPathComponent("pronunciation-\(attemptID.uuidString).m4a")
         attempt.fileURL = url
         activeAttempt = attempt
@@ -270,6 +283,7 @@ final class PronunciationCheckController: ObservableObject {
     private func beginRecognition(attemptID: UUID) {
         guard var attempt = activeAttempt, attempt.id == attemptID, state == .recording,
               let fileURL = attempt.fileURL else { return }
+        guard isCurrent(attempt) else { terminate(.cancelled); return }
         attempt.timeout?.cancel()
         attempt.timeout = nil
         attempt.recorder?.stop()
@@ -282,7 +296,9 @@ final class PronunciationCheckController: ObservableObject {
         activeAttempt = attempt
         let recognitionTask = attempt.recognizer.recognize(url: fileURL, requiresOnDevice: true) { [weak self] transcript, isFinal, error in
             Task { @MainActor in
-                guard let self, self.activeAttempt?.id == attemptID, self.state == .recognizing else { return }
+                guard let self, let current = self.activeAttempt, current.id == attemptID,
+                      self.state == .recognizing else { return }
+                guard self.isCurrent(current) else { self.terminate(.cancelled); return }
                 if error != nil || transcript == nil {
                     self.terminate(.failed("Pronunciation could not be checked. Please try again."))
                     return
@@ -303,6 +319,10 @@ final class PronunciationCheckController: ObservableObject {
     private func terminate(_ terminal: Terminal) {
         guard var attempt = activeAttempt else { return }
         activeAttempt = nil
+        if let dataGenerationObserver {
+            NotificationCenter.default.removeObserver(dataGenerationObserver)
+            self.dataGenerationObserver = nil
+        }
 
         attempt.timeout?.cancel()
         attempt.recognitionTask?.cancel()
@@ -318,6 +338,11 @@ final class PronunciationCheckController: ObservableObject {
             result = nil
             state = .failed(message)
         case .result(let score):
+            guard isCurrent(attempt) else {
+                result = nil
+                state = .idle
+                return
+            }
             result = (attempt.target, score)
             state = .result
             if PronunciationEngine.passed(score) {
@@ -326,6 +351,16 @@ final class PronunciationCheckController: ObservableObject {
                 attempt.onPass(score)
             }
         }
+    }
+
+    private func isCurrent(_ attempt: Attempt) -> Bool {
+        attempt.store.activeLearnerIdentity == attempt.learnerIdentity
+            && attempt.store.dataGeneration == attempt.dataGeneration
+    }
+
+    private func dataGenerationDidChange(attemptID: UUID) {
+        guard let attempt = activeAttempt, attempt.id == attemptID, !isCurrent(attempt) else { return }
+        terminate(.cancelled)
     }
 }
 

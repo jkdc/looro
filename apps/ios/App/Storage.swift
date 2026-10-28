@@ -54,8 +54,10 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 }
 
 @MainActor @Observable final class LearningStore {
+    static let dataGenerationDidChange = Notification.Name("com.jkdc.app.learningStoreDataGenerationDidChange")
     private(set) var archive = Archive()
     private(set) var progressRevision: UInt64 = 0
+    private(set) var dataGeneration: UInt64 = 0
     var error: String?
     @ObservationIgnored var onSessionInvalidation: ((UUID) -> Void)?
     let container: ModelContainer
@@ -179,6 +181,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         let identity = accountID.map { "member:\($0)" } ?? Self.stableGuestIdentity()
         guard identity != activeLearnerIdentity else { return }
         activeLearnerIdentity = identity
+        advanceDataGeneration()
         archive = Archive()
         guard !dbStore.jsonMode else { return }
         do {
@@ -197,6 +200,11 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         let created = "guest:\(UUID().uuidString.lowercased())"
         defaults.set(created, forKey: guestIdentityKey)
         return created
+    }
+
+    private func advanceDataGeneration() {
+        dataGeneration &+= 1
+        NotificationCenter.default.post(name: Self.dataGenerationDidChange, object: self)
     }
 
     /// Starts a frozen exam snapshot and its initial outbox record atomically.
@@ -692,6 +700,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
                 return
             }
         }
+        advanceDataGeneration()
         archive.sessions.forEach { onSessionInvalidation?($0.id) }
         archive.sessions = []
         var stored = archive.preferences
@@ -729,6 +738,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // projection — export(DB) == archive holds through the swap.
             archive = try LearningDbWriter.archiveRestored(dbStore.db, imported)
         }
+        advanceDataGeneration()
     }
 
     // MARK: phase F — learning.db backup/restore + per-language delete
@@ -835,6 +845,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             let bytes = try BackupManager.readValidatedBackup(
                 from: url, workDirectory: databaseURL.deletingLastPathComponent(),
                 openForVerify: BackupManager.openForVerification)
+            advanceDataGeneration()
             // Validation passed — now quiesce the platform queues exactly
             // like deleteAll's first step (and Android's order: validate,
             // then drain): firing onSessionInvalidation per current session
@@ -956,6 +967,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         archive.lessons = (archive.lessons ?? []).filter { !$0.lessonID.hasPrefix("\(id)-") }
         do {
             _ = try BackupManager.deleteLearningDataForLanguage(try dbStore.db, languageID: id)
+            advanceDataGeneration()
             error = nil
             return true
         } catch {

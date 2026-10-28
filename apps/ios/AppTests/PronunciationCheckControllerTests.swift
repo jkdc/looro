@@ -248,6 +248,99 @@ private struct PronunciationFixtureTimeout {
         XCTAssertEqual(fixture.recognitionTasks.map(\.cancelCount), [1, 1])
     }
 
+    func testOwnerSwitchFencesStalePronunciationAndAllowsCurrentOwnerRetry() async throws {
+        let fixture = PronunciationFixture()
+        let store = try LearningStore(inMemory: true)
+        store.activateLearnerIdentity("account-a")
+        let controller = PronunciationCheckController(dependencies: fixture.dependencies)
+        var passed: [Int] = []
+
+        controller.check(target: "hello there", lessonID: "lesson-fixture", language: "en", store: store) { passed.append($0) }
+        await settle()
+        fixture.fireRecordingTimeout(attempt: 1)
+        store.activateLearnerIdentity("account-b")
+        await settle()
+        fixture.completeRecognition(0)
+        await settle()
+
+        XCTAssertEqual(controller.state, .idle)
+        XCTAssertTrue(passed.isEmpty)
+        XCTAssertTrue((store.archive.completions ?? []).isEmpty)
+
+        controller.check(target: "hello there", lessonID: "lesson-fixture", language: "en", store: store) { passed.append($0) }
+        await settle()
+        fixture.fireRecordingTimeout(attempt: 2)
+        fixture.completeRecognition(1)
+        await settle()
+
+        XCTAssertEqual(controller.state, .result)
+        XCTAssertEqual(passed.count, 1)
+        XCTAssertEqual(store.archive.completions?.filter { $0.kind == ProgressEngine.pronunciation }.count, 1)
+    }
+
+    func testReturningToSameOwnerDoesNotReviveOldPronunciationAttempt() async throws {
+        let fixture = PronunciationFixture()
+        let store = try LearningStore(inMemory: true)
+        store.activateLearnerIdentity("account-a")
+        let controller = PronunciationCheckController(dependencies: fixture.dependencies)
+        var passed: [Int] = []
+
+        controller.check(target: "hello there", lessonID: "lesson-fixture", language: "en", store: store) { passed.append($0) }
+        await settle()
+        fixture.fireRecordingTimeout(attempt: 1)
+        store.activateLearnerIdentity("account-b")
+        store.activateLearnerIdentity("account-a")
+        await settle()
+        fixture.completeRecognition(0)
+        await settle()
+
+        XCTAssertEqual(controller.state, .idle)
+        XCTAssertTrue(passed.isEmpty)
+        XCTAssertTrue((store.archive.completions ?? []).isEmpty)
+    }
+
+    func testDataDeletionFencesSuspendedPronunciationResult() async throws {
+        let fixture = PronunciationFixture()
+        let store = try LearningStore(inMemory: true)
+        let controller = PronunciationCheckController(dependencies: fixture.dependencies)
+        var passed: [Int] = []
+
+        controller.check(target: "hello there", lessonID: "lesson-fixture", language: "en", store: store) { passed.append($0) }
+        await settle()
+        fixture.fireRecordingTimeout(attempt: 1)
+        store.deleteAll()
+        await settle()
+        fixture.completeRecognition(0)
+        await settle()
+
+        XCTAssertEqual(controller.state, .idle)
+        XCTAssertTrue(passed.isEmpty)
+        XCTAssertTrue((store.archive.completions ?? []).isEmpty)
+        XCTAssertEqual(fixture.recorderStops, 1)
+        XCTAssertEqual(fixture.audioReleases, 1)
+    }
+
+    func testBackupImportFencesSuspendedPronunciationResult() async throws {
+        let fixture = PronunciationFixture()
+        let store = try LearningStore(inMemory: true)
+        let controller = PronunciationCheckController(dependencies: fixture.dependencies)
+        var passed: [Int] = []
+
+        controller.check(target: "hello there", lessonID: "lesson-fixture", language: "en", store: store) { passed.append($0) }
+        await settle()
+        fixture.fireRecordingTimeout(attempt: 1)
+        try store.importData(Archive().encoded())
+        await settle()
+        fixture.completeRecognition(0)
+        await settle()
+
+        XCTAssertEqual(controller.state, .idle)
+        XCTAssertTrue(passed.isEmpty)
+        XCTAssertTrue((store.archive.completions ?? []).isEmpty)
+        XCTAssertEqual(fixture.recorderStops, 1)
+        XCTAssertEqual(fixture.audioReleases, 1)
+    }
+
     func testUnsupportedLocalModelMakesNoRequest() async throws {
         let fixture = PronunciationFixture()
         fixture.supportsOnDeviceRecognition = false
