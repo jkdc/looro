@@ -307,6 +307,10 @@
     <string name="usage_metrics_title">Compartir métricas de uso anónimas</string>
     <string name="usage_metrics_hint">El contenido de las conversaciones, los transcritos y las palabras buscadas nunca salen de tu dispositivo. Solo llegan contadores anónimos para ayudarnos a mejorar la app.</string>
     <string name="progress_section_title">Tu progreso</string>
+    <string name="progress_sync_pending">Sincronizando tu progreso de aprendizaje…</string>
+    <string name="progress_sync_failed">No se pudo completar la sincronización. Tus datos siguen en este dispositivo.</string>
+    <string name="progress_sync_complete">Tu progreso está actualizado.</string>
+    <string name="progress_sync_retry">Reintentar</string>
     <string name="progress_empty">Empieza una conversación para ver tu progreso.</string>
     <string name="progress_conversations">Conversaciones</string>
     <string name="progress_practice_time">Tiempo de práctica</string>

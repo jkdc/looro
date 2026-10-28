@@ -13,6 +13,20 @@ internal object ProgressSyncActivationPolicy {
         storageReady && !accountBusy && activeOwner != null && activeOwner == loadedOwner
 }
 
+/** A UI-safe progress-sync state; it deliberately carries no credential or payload. */
+data class ProgressSyncStatus(val ownerAccountID: String, val phase: Phase) {
+    enum class Phase { PENDING, FAILED, SYNCED }
+
+    companion object {
+        fun forOwner(status: ProgressSyncStatus?, ownerAccountID: String?): ProgressSyncStatus? =
+            status?.takeIf { ownerAccountID != null && it.ownerAccountID == ownerAccountID }
+
+        fun finished(capturedOwner: String, currentOwner: String?, succeeded: Boolean): ProgressSyncStatus? =
+            if (capturedOwner != currentOwner) null
+            else ProgressSyncStatus(capturedOwner, if (succeeded) Phase.SYNCED else Phase.FAILED)
+    }
+}
+
 /** Retries a load when ownership changes and only delegates side effects for the still-current identity. */
 internal class OwnerLearningLoadCoordinator<T>(
     private val currentIdentity: () -> String?,

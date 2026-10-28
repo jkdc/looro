@@ -13,6 +13,18 @@ class ProgressSyncOperationTest {
     private fun identity(operation: ProgressSyncOperation, account: String = "A", credential: String = "bearer-A") =
         operation.identity(account, credential)
 
+    @Test fun progressSyncStatusIsOwnerScopedAndDropsStaleCompletion() {
+        val pending = ProgressSyncStatus("account-A", ProgressSyncStatus.Phase.PENDING)
+
+        assertEquals(pending, ProgressSyncStatus.forOwner(pending, "account-A"))
+        assertNull(ProgressSyncStatus.forOwner(pending, "account-B"))
+        assertNull(ProgressSyncStatus.finished("account-A", "account-B", succeeded = false))
+        assertEquals(ProgressSyncStatus("account-A", ProgressSyncStatus.Phase.FAILED),
+            ProgressSyncStatus.finished("account-A", "account-A", succeeded = false))
+        assertEquals(ProgressSyncStatus("account-A", ProgressSyncStatus.Phase.SYNCED),
+            ProgressSyncStatus.finished("account-A", "account-A", succeeded = true))
+    }
+
     @Test fun ownerLoadCoordinatorRetriesStaleSuccessAndPublishesOnlyCurrentOwner() = runTest {
         var activeOwner = "A"
         val startedA = CompletableDeferred<Unit>()

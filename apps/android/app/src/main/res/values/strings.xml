@@ -307,6 +307,10 @@
     <string name="usage_metrics_title">Share anonymous usage metrics</string>
     <string name="usage_metrics_hint">Conversation content, transcripts and searched words never leave your device. Only anonymous counters reach us, to help improve the app.</string>
     <string name="progress_section_title">Your progress</string>
+    <string name="progress_sync_pending">Syncing your learning progress…</string>
+    <string name="progress_sync_failed">Sync couldn’t complete. Your learning data remains on this device.</string>
+    <string name="progress_sync_complete">Your learning progress is up to date.</string>
+    <string name="progress_sync_retry">Try again</string>
     <string name="progress_empty">Start a conversation to see your progress.</string>
     <string name="progress_conversations">Conversations</string>
     <string name="progress_practice_time">Practice time</string>

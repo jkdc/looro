@@ -26,6 +26,22 @@ struct ProgressSyncSession: Equatable {
     let accessToken: String
 }
 
+struct ProgressSyncStatus: Equatable {
+    enum Phase: Equatable { case pending, failed, synced }
+    let ownerAccountID: String
+    let phase: Phase
+
+    static func forOwner(_ status: ProgressSyncStatus?, ownerAccountID: String?) -> ProgressSyncStatus? {
+        guard let status, status.ownerAccountID == ownerAccountID else { return nil }
+        return status
+    }
+
+    static func finished(capturedOwner: String, currentOwner: String?, succeeded: Bool) -> ProgressSyncStatus? {
+        guard capturedOwner == currentOwner else { return nil }
+        return ProgressSyncStatus(ownerAccountID: capturedOwner, phase: succeeded ? .synced : .failed)
+    }
+}
+
 /// Injectable edges for the coordinator's real progress-sync lifecycle.
 struct ConversationProgressSyncAdapter {
     let loadSession: () -> ProgressSyncSession?
@@ -153,6 +169,7 @@ struct ConversationTopicSearchAdapter {
     @ObservationIgnored private let progressSyncOperation = ProgressSyncOperation()
     @ObservationIgnored private var progressSyncTask: Task<Void, Never>?
     @ObservationIgnored private let injectedProgressSyncAdapter: ConversationProgressSyncAdapter?
+    private(set) var progressSyncStatus: ProgressSyncStatus?
 
     /// Push/pull the progress ledger against the account (guests included). Failures
     /// are silent: sync must never nag, the local ledger stays the source of truth.
@@ -166,21 +183,29 @@ struct ConversationTopicSearchAdapter {
         let identity = progressSyncOperation.identity(accountID: capturedSession.accountID,
                                                      accessToken: capturedSession.accessToken)
         guard let operation = progressSyncOperation.begin(identity) else { return }
+        progressSyncStatus = ProgressSyncStatus(ownerAccountID: capturedSession.accountID, phase: .pending)
         let capturedArchive = try? adapter.archiveSnapshot()
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
+            var succeeded = false
             defer {
+                if let liveSession = adapter.loadSession(),
+                   self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
+                    accountID: liveSession.accountID, accessToken: liveSession.accessToken)) {
+                    self.progressSyncStatus = ProgressSyncStatus.finished(capturedOwner: capturedSession.accountID,
+                        currentOwner: liveSession.accountID, succeeded: succeeded)
+                }
                 self.progressSyncOperation.finish(operation)
                 adapter.onFinish()
             }
             do {
                 let rows = await adapter.fetch(capturedSession.accessToken)
-                guard !Task.isCancelled,
+                guard !Task.isCancelled, let rows,
                       let liveSession = adapter.loadSession(),
                       self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
                         accountID: liveSession.accountID, accessToken: liveSession.accessToken)),
                       let capturedArchive, (try? adapter.archiveSnapshot()) == capturedArchive else { return }
-                if let rows, !rows.isEmpty {
+                if !rows.isEmpty {
                     self.progressSyncOperation.writeIfCurrent(operation, liveIdentity: identity) {
                         adapter.applyRemote(rows)
                     }
@@ -190,7 +215,8 @@ struct ConversationTopicSearchAdapter {
                                                                            accessToken: currentSession.accessToken)
                 guard !Task.isCancelled,
                       self.progressSyncOperation.owns(operation, liveIdentity: currentIdentity) else { return }
-                _ = await adapter.send(self.store.language.id, currentSession.accessToken)
+                guard await adapter.send(self.store.language.id, currentSession.accessToken) else { return }
+                succeeded = true
             } catch is CancellationError {
                 return
             }
@@ -209,9 +235,22 @@ struct ConversationTopicSearchAdapter {
                                                        accessToken: session.accessToken)
         guard let capturedArchive = try? store.exportData() else { return }
         guard let operation = progressSyncOperation.begin(identity) else { return }
+        progressSyncStatus = ProgressSyncStatus(ownerAccountID: session.accountID.uuidString, phase: .pending)
         progressSyncTask = Task { [weak self] in
             guard let self else { return }
-            defer { self.progressSyncOperation.finish(operation) }
+            var succeeded = false
+            defer {
+                if !Task.isCancelled, let live = try? keychain.load(),
+                   self.store.activeLearnerIdentity == "member:\(live.accountID.uuidString)" {
+                    let liveIdentity = self.progressSyncOperation.identity(accountID: live.accountID.uuidString,
+                                                                           accessToken: live.accessToken)
+                    if self.progressSyncOperation.owns(operation, liveIdentity: liveIdentity) {
+                        self.progressSyncStatus = ProgressSyncStatus.finished(capturedOwner: session.accountID.uuidString,
+                            currentOwner: live.accountID.uuidString, succeeded: succeeded)
+                    }
+                }
+                self.progressSyncOperation.finish(operation)
+            }
             func isCurrent() -> Bool {
                 guard !Task.isCancelled, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
                       (try? self.store.exportData()) == capturedArchive,
@@ -315,9 +354,25 @@ struct ConversationTopicSearchAdapter {
                             passGeneration: generation + 1, updatedAtMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
                     })
                 }
+                succeeded = true
             } catch { return }
         }
     }
+
+    var visibleProgressSyncStatus: ProgressSyncStatus? {
+        let owner: String?
+        if let adapter = injectedProgressSyncAdapter {
+            owner = adapter.loadSession()?.accountID
+        } else if let configuration = managed?.configuration,
+                  let session = try? ManagedAccountKeychain(scope: configuration.storageScope).load() {
+            owner = session.accountID.uuidString
+        } else {
+            owner = nil
+        }
+        return ProgressSyncStatus.forOwner(progressSyncStatus, ownerAccountID: owner)
+    }
+
+    func retryProgressSync() { syncProgress() }
 
     private func productionProgressSyncAdapter() -> ConversationProgressSyncAdapter? {
         guard let configuration = managed?.configuration,
@@ -623,11 +678,16 @@ struct ConversationTopicSearchAdapter {
     /// conversation is running (the notification only arrives between sessions).
     private func accountSessionChanged() {
         invalidateTypedReplyContinuation()
+        invalidateProgressSync()
+        guard prefersHostedProxy else { return }
+        attachHostedProxy()
+    }
+
+    private func invalidateProgressSync() {
         progressSyncOperation.invalidate()
         progressSyncTask?.cancel()
         progressSyncTask = nil
-        guard prefersHostedProxy else { return }
-        attachHostedProxy()
+        progressSyncStatus = nil
     }
 
     /// The view supplies the authenticated account identity; adopt its local
@@ -866,9 +926,7 @@ struct ConversationTopicSearchAdapter {
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         scenarioReviewTask?.cancel(); scenarioReviewState = nil
         dataGeneration = UUID()
-        progressSyncOperation.invalidate()
-        progressSyncTask?.cancel()
-        progressSyncTask = nil
+        invalidateProgressSync()
         return store.importDb(from: url)
     }
     func toggleMeaning() {

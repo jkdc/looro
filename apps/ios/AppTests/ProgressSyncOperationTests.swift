@@ -6,6 +6,7 @@ import LearningCore
     var session: ProgressSyncSession? = .init(accountID: "account-A", accessToken: "credential-A")
     var pendingFetch: CheckedContinuation<[RemoteProgress]?, Never>?
     var suspendFetch = false
+    var failedFetches = 0
     var fetchCount = 0
     var sent = 0
     var fetchStarted: XCTestExpectation?
@@ -19,6 +20,7 @@ import LearningCore
             loadSession: { self.session },
             fetch: { _ in
                 self.fetchCount += 1
+                if self.failedFetches > 0 { self.failedFetches -= 1; return nil }
                 if self.suspendFetch && self.fetchCount == 1 {
                     return await withCheckedContinuation { continuation in
                         self.pendingFetch = continuation
@@ -46,6 +48,18 @@ import LearningCore
 }
 
 @MainActor final class ProgressSyncOperationAppTests: XCTestCase {
+    func testProgressSyncStatusIsOwnerScopedAndDropsStaleCompletion() {
+        let pending = ProgressSyncStatus(ownerAccountID: "account-A", phase: .pending)
+
+        XCTAssertEqual(ProgressSyncStatus.forOwner(pending, ownerAccountID: "account-A"), pending)
+        XCTAssertNil(ProgressSyncStatus.forOwner(pending, ownerAccountID: "account-B"))
+        XCTAssertNil(ProgressSyncStatus.finished(capturedOwner: "account-A", currentOwner: "account-B", succeeded: false))
+        XCTAssertEqual(ProgressSyncStatus.finished(capturedOwner: "account-A", currentOwner: "account-A", succeeded: false),
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .failed))
+        XCTAssertEqual(ProgressSyncStatus.finished(capturedOwner: "account-A", currentOwner: "account-A", succeeded: true),
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .synced))
+    }
+
     private func identity(_ operation: ProgressSyncOperation, account: String = "account-A", credential: String = "credential-A") -> ProgressSyncIdentity {
         operation.identity(accountID: account, accessToken: credential)
     }
@@ -131,6 +145,30 @@ import LearningCore
         XCTAssertEqual(store.archive.lessons?.first(where: { $0.lessonID == "lesson-fixture" })?.attempts, 3)
     }
 
+    func testCoordinatorExposesFailureAndExplicitRetryCanRecover() async throws {
+        let store = try LearningStore(inMemory: true)
+        let fixture = ProgressSyncFixture()
+        fixture.failedFetches = 1
+        let failed = expectation(description: "failed sync becomes observable")
+        fixture.finished = failed
+        let coordinator = ConversationCoordinator(store: store, progressSyncAdapter: fixture.adapter(store: store))
+
+        coordinator.syncProgress()
+        XCTAssertEqual(coordinator.progressSyncStatus,
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .pending))
+        await fulfillment(of: [failed], timeout: 2)
+        XCTAssertEqual(coordinator.progressSyncStatus,
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .failed))
+
+        let recovered = expectation(description: "retry completes successfully")
+        fixture.finished = recovered
+        coordinator.retryProgressSync()
+        await fulfillment(of: [recovered], timeout: 2)
+        XCTAssertEqual(coordinator.progressSyncStatus,
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .synced))
+        XCTAssertEqual(fixture.sent, 1)
+    }
+
     func testCoordinatorDiscardsSuspendedFetchAfterCredentialReplacement() async throws {
         let store = try LearningStore(inMemory: true)
         let fixture = ProgressSyncFixture()
@@ -144,6 +182,8 @@ import LearningCore
 
         coordinator.syncProgress()
         await fulfillment(of: [fetchStarted], timeout: 2)
+        XCTAssertEqual(coordinator.progressSyncStatus,
+                       ProgressSyncStatus(ownerAccountID: "account-A", phase: .pending))
 
         fixture.session = .init(accountID: "account-A", accessToken: "credential-rotated")
         fixture.suspendFetch = false
@@ -156,6 +196,7 @@ import LearningCore
         XCTAssertEqual(store.archive.lessons?.first(where: { $0.lessonID == "lesson-fixture" })?.attempts, 3)
         XCTAssertNil(store.archive.lessons?.first(where: { $0.lessonID == "stale" }))
         XCTAssertEqual(fixture.sent, 1)
+        XCTAssertNil(coordinator.progressSyncStatus)
     }
 
     func testCoordinatorAwaitsSuspendedSendBoundaryBeforeFinishingOperation() async throws {

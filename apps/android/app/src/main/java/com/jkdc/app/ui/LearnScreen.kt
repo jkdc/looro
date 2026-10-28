@@ -87,6 +87,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
     } else if (courses.isEmpty()) {
         Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), verticalArrangement = Arrangement.Center) {
             LanguageSwitcher(vm)
+            ProgressSyncStatusBanner(vm)
             Text(stringResource(R.string.learn_empty_title), style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 16.dp))
             Text(stringResource(R.string.learn_empty_body), color = AppColors.Secondary,
@@ -144,6 +145,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
                 stringResource(R.string.learn_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
+            if (vm.progressSyncStatusForActiveOwner() != null) item { ProgressSyncStatusBanner(vm) }
             if (vm.dueRecallCount() > 0) item {
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { recallOpen = true }.testTag("recall-card"),
                     shape = RoundedCornerShape(26.dp), color = AppColors.Sage) {
@@ -275,6 +277,29 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                                 onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProgressSyncStatusBanner(vm: AppViewModel) {
+    val status = vm.progressSyncStatusForActiveOwner() ?: return
+    val label = when (status.phase) {
+        com.jkdc.app.core.ProgressSyncStatus.Phase.PENDING -> R.string.progress_sync_pending
+        com.jkdc.app.core.ProgressSyncStatus.Phase.FAILED -> R.string.progress_sync_failed
+        com.jkdc.app.core.ProgressSyncStatus.Phase.SYNCED -> R.string.progress_sync_complete
+    }
+    Surface(Modifier.fillMaxWidth().testTag("progress-sync-status"),
+        shape = RoundedCornerShape(18.dp),
+        color = if (status.phase == com.jkdc.app.core.ProgressSyncStatus.Phase.FAILED)
+            MaterialTheme.colorScheme.errorContainer else AppColors.Sage) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(label), style = MaterialTheme.typography.bodyMedium)
+            if (status.phase == com.jkdc.app.core.ProgressSyncStatus.Phase.FAILED) {
+                Button(onClick = vm::retryProgressSync, modifier = Modifier.testTag("progress-sync-retry")) {
+                    Text(stringResource(R.string.progress_sync_retry))
                 }
             }
         }

@@ -69,6 +69,9 @@ struct CoursesView: View {
             } else if courses.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     LanguageSwitcher(coordinator: coordinator)
+                    if let syncStatus = coordinator.visibleProgressSyncStatus {
+                        ProgressSyncStatusCard(status: syncStatus, onRetry: coordinator.retryProgressSync)
+                    }
                     Text("No courses yet").font(.headline).padding(.top, 8)
                     Text("Courses for this language are on the way. Meanwhile, Themes is the place to practise.")
                         .font(.subheadline).foregroundStyle(AppColor.secondary)
@@ -79,6 +82,9 @@ struct CoursesView: View {
                         PageHeading(eyebrow: "Your course", title: "Learn it step by step",
                                     subtitle: "Read a short lesson, then practise it in a real conversation.")
                         LanguageSwitcher(coordinator: coordinator)
+                        if let syncStatus = coordinator.visibleProgressSyncStatus {
+                            ProgressSyncStatusCard(status: syncStatus, onRetry: coordinator.retryProgressSync)
+                        }
                         Button { weeklyExamsOpen = true } label: {
                             Label("Weekly exams and results", systemImage: "checkmark.seal")
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -125,6 +131,38 @@ struct CoursesView: View {
             }
         }
 #endif
+    }
+}
+
+private struct ProgressSyncStatusCard: View {
+    let status: ProgressSyncStatus
+    let onRetry: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(message)
+                .font(.subheadline)
+                .accessibilityIdentifier("progress-sync-status-message")
+            if status.phase == .failed {
+                Button("Try again", action: onRetry)
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier("progress-sync-retry")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(status.phase == .failed ? Color.red.opacity(0.12) : AppColor.sage.opacity(0.45),
+                    in: RoundedRectangle(cornerRadius: 18))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("progress-sync-status")
+    }
+
+    private var message: String {
+        switch status.phase {
+        case .pending: "Syncing your learning progress…"
+        case .failed: "Sync couldn’t complete. Your learning data remains on this device."
+        case .synced: "Your learning progress is up to date."
+        }
     }
 }
 

@@ -295,6 +295,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         403 unlock): the UI offers the matching purchase surface. */
     var errorTokensBlock by mutableStateOf<TokenProxyBlock?>(null); private set
     var notice by mutableStateOf<String?>(null); private set
+    var progressSyncStatus by mutableStateOf<com.jkdc.app.core.ProgressSyncStatus?>(null); private set
     var meaning by mutableStateOf(""); private set
     var pendingLookupOpen by mutableStateOf(false)
     var translating by mutableStateOf(false); private set
@@ -1035,12 +1036,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun syncProgress() {
         val client = progressClient ?: return
         if (progressSyncJob?.isActive == true) return
+        var requestedOwner: String? = null
+        var requestedIdentity: com.jkdc.app.core.ProgressSyncIdentity? = null
+        var syncSucceeded = false
         val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
             try {
                 progressSyncRunner.run(
                     resolveSession = {
-                        com.jkdc.app.core.MemberProgressSyncPolicy.session(
-                            memberSessions?.read(), guests?.availableSession())
+                        val live = com.jkdc.app.core.MemberProgressSyncPolicy.session(
+                            memberSessions?.read(), guests?.availableSession()) ?: return@run null
+                        val identity = progressSyncOperation.identity(live.accountID, live.accessToken)
+                        if (requestedIdentity == null) {
+                            requestedOwner = live.accountID
+                            requestedIdentity = identity
+                            progressSyncStatus = com.jkdc.app.core.ProgressSyncStatus(live.accountID,
+                                com.jkdc.app.core.ProgressSyncStatus.Phase.PENDING)
+                        }
+                        live.takeIf { identity == requestedIdentity }
                     },
                     fetch = { session, operation, identity ->
                         val owner = session.accountID
@@ -1079,13 +1091,19 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     },
                     outboundSnapshot = ::progressBatchJson,
                     send = { session, payload, operation, identity ->
-                        uploadProgress(session, payload, operation, identity, client)
+                        syncSucceeded = uploadProgress(session, payload, operation, identity, client)
                     },
                 )
+                val owner = requestedOwner
+                val identity = requestedIdentity
+                if (owner != null && identity != null) publishProgressSyncResult(owner, identity, syncSucceeded)
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: Exception) {
                 android.util.Log.w("LooroSync", "syncProgress failed", e)
+                val owner = requestedOwner
+                val identity = requestedIdentity
+                if (owner != null && identity != null) publishProgressSyncResult(owner, identity, false)
             } finally {
                 if (progressSyncJob === coroutineContext[Job]) progressSyncJob = null
             }
@@ -1098,6 +1116,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         progressSyncOperation.invalidate()
         progressSyncJob?.cancel()
         progressSyncJob = null
+        progressSyncStatus = null
+    }
+
+    fun progressSyncStatusForActiveOwner(): com.jkdc.app.core.ProgressSyncStatus? {
+        val activeOwner = loadedLearningIdentity?.removePrefix("member:")
+        return com.jkdc.app.core.ProgressSyncStatus.forOwner(progressSyncStatus, activeOwner)
+    }
+
+    fun retryProgressSync() = syncProgress()
+
+    private suspend fun publishProgressSyncResult(
+        owner: String,
+        identity: com.jkdc.app.core.ProgressSyncIdentity,
+        succeeded: Boolean,
+    ) {
+        val live = com.jkdc.app.core.MemberProgressSyncPolicy.session(memberSessions?.read(), guests?.availableSession())
+        val liveIdentity = live?.let { progressSyncOperation.identity(it.accountID, it.accessToken) }
+        if (liveIdentity != identity) return
+        progressSyncStatus = com.jkdc.app.core.ProgressSyncStatus.finished(owner, live?.accountID, succeeded)
     }
 
     private fun requestProgressSyncWhenOwnerReady(ownerIdentity: String) {
@@ -1198,7 +1235,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun uploadProgress(
         session: AccountSession, ignoredPayload: String, operation: com.jkdc.app.core.ProgressSyncOperation.Token,
         identity: com.jkdc.app.core.ProgressSyncIdentity, client: com.jkdc.app.network.ProgressClient,
-    ) {
+    ): Boolean {
         val owner = session.accountID
         val state = store?.db?.let { com.jkdc.app.data.ProgressSyncStateDao.get(it, owner, "upload") }
         val entries = LanguageRegistry.all.flatMap { module ->
@@ -1219,7 +1256,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 put("firstAt", entry.firstAtMilliseconds); put("lastAt", entry.atMilliseconds)
                 put("attempts", entry.attempts); put("bestScore", entry.bestScore)
             } } } }.toString()
-        uploadProgressBatches(
+        return uploadProgressBatches(
             entries = entries,
             initialCursor = state?.cursor,
             passGeneration = generation,
@@ -2982,6 +3019,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val id = session!!.id; val token = generation
         val offset = ((nowSeconds() - session!!.startedAt) * 1000).toInt().coerceAtLeast(0)
         updateSession { it.append(Fragment(speaker = Speaker.user, text = clean, startMS = offset, endMS = offset + 1, meaningVisible = archive.preferences.meaningVisible, typed = true)) }
+        if (voiceSession && BuildConfig.CONVERSATION_ENGINE != "openai") command("user_message", clean)
         lastActivity = nowSeconds(); working = true
         actionJob = viewModelScope.launch {
             try {
@@ -2997,7 +3035,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 val result = teaching(id, HelperPurpose.TYPED_REPLY, UUID.randomUUID().toString(), instructions, helperContext(session!!))
                 if (token != generation || session?.id != id || state != "active") return@launch
                 updateSession { addUsage(it, result.usage) }
-                if (voiceSession) { command("thinking", "The learner typed (data): ${clean.take(650)}"); command("commentary", result.text) }
+                if (voiceSession) {
+                    if (BuildConfig.CONVERSATION_ENGINE == "openai") command("thinking", "The learner typed (data): ${clean.take(650)}")
+                    command("commentary", result.text)
+                }
                 else {
                     val end = ((nowSeconds() - session!!.startedAt) * 1000).toInt().coerceAtLeast(offset + 2)
                     updateSession { it.append(Fragment(speaker = Speaker.assistant, text = result.text, startMS = end, endMS = end + 1)) }
