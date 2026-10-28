@@ -155,6 +155,17 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 - Independent review found reset/import cleared the intent but left the old partial cursor. A fresh-scratch temporary RED probe confirmed that behavior; the one bounded correction made reset and archive import revoke both cursor and eligibility. The affected Android regressions passed in the workspace and a fresh `/var/tmp` scratch recheck; the latter also verified another owner's cursor is unchanged. `git diff --check` passed.
 - iOS tests now cover reset and archive import, but Swift/Xcode is unavailable on Linux (`swift: command not found`); no iOS compile or test result is claimed. Source review confirmed file-backed database import revocation. Mounted guest→A→B lifecycle proof remains deferred to F16.
 - Risk: items 1 and 4 (owner-bound persisted progress, reset/import invalidation, and asynchronous bootstrap ordering).
+
+## F15/F16 — Final review and available platform gates
+
+- Independent whole-feature review of `7528e44..678f7a1` found no confirmed blocker in R01–R18 and one R19 lifecycle advisory: failed pronunciation cleanup could leave a process-wide lease busy after its view-scoped owner was destroyed.
+- Correction commit: `c30c7dd`. `AudioSessionLeaseOwnership` retains the AVAudioSession cleanup closure after a failed deactivation/restoration and retries it before granting another lease. The prior lease object checks current token ownership before touching AVAudioSession; stale local state is discarded without deactivating a newer owner's session.
+- Regressions cover cleanup retry after the original owner is gone and stale cleanup after a new owner has acquired the lease. Independent bounded source recheck found the reported blocker closed. `git diff --check` passed.
+- `make check`: passed, 148 Python tests plus DB schema, exporters and cross-platform checks.
+- `make test-api`: passed, 756/756 tests in isolated Docker/PostgreSQL stack; cleanup removed the stack and volume.
+- `JAVA_TOOL_OPTIONS='-Djava.io.tmpdir=/var/tmp' make android-build`: passed; app 830/830 across 95 suites, engine 11/11 across 2 suites, `lintDebug` passed and debug APK assembled (74 MB). A non-fatal Gradle file-watcher warning did not affect exit 0.
+- Unavailable, not passed: `swift test` (no `swift`), `make ios-build` and `make ios-test` (no `xcodebuild`); `adb devices` returned no device, so connected UI, iOS UI, hardware audio/interruption/routing and accessibility runs remain unverified. The independent recheck also could not execute XCTest for the same environment reason.
+- Risk: item 4 — shared audio-session cleanup and stale asynchronous ownership.
 ## F01 — Android local-history retry and owner serialization
 
 - Commit: `ea3c2f8`.
