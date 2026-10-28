@@ -51,3 +51,24 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 **Remaining proof:** no live blocked-provider scenario or tutor-audio playback continuation was exercised. Re-run connected UI and actual voice interaction in F16 when the Android device/test environment is available.
 
 **Risk:** item 4 — concurrent microphone mute and pending tutor work.
+
+## F12 — iOS typed reply edits and pending state
+
+**Outcome:** Implemented in commit `832add8`. The editor captures the exact submitted text, retains later edits and exposes recoverable status while that provider call is active. Dismissing the sheet no longer pretends to cancel the provider operation; its draft/error survives presentation changes but is cleared at owner, language, or conversation invalidation. A late result cannot dismiss a new editor presentation.
+
+**Regression coverage added**
+
+- `testSuccessfulSendPreservesDraftEditedWhileProviderIsPending` verifies A remains the sent message while draft B remains editable and is not dismissed after A succeeds.
+- `testFailedSendPreservesDraftEditedWhileProviderIsPending` verifies B and the recoverable provider error remain after A fails.
+- `testInFlightReplyStateRemainsVisibleUntilProviderReturns` closes/reopens editor state while the provider is suspended, verifies draft rehydration and the in-flight gate, then releases the gate and allows a subsequent send. This is model-level, not a mounted SwiftUI test.
+- `testInFlightSubmitShowsRecoverableMessage` pins feedback for a raced `.inFlight` result.
+- `testInvalidatingReplyContinuationClearsDraftAndError` ensures invalidation does not leak retained text or errors to a new owner/context.
+- `testLateReplyCannotCloseNewSheet` verifies the disappeared editor is no longer current when the old completion arrives.
+
+**Observed checks and limitations**
+
+- Test-first was followed in order, but `swift test --package-path apps/ios --filter TypedReplyTests` could not start: `swift: command not found` (exit 127). Therefore no Swift compilation, XCTest RED/GREEN, or mounted SwiftUI result is claimed.
+- Independent source verification in fresh scratch `/var/tmp/ios-r15-final.ne9qnZ` found and prompted correction of retained draft/error across account invalidation; the final bounded recheck reported no blockers and confirmed the three scoped files matched the candidate.
+- Parent `git diff --check` passed before commit. The full `AppTests` target, keyboard/focus/accessibility, actual close/reopen sheet lifecycle, and provider late-completion interaction are deferred to F16 on macOS/Xcode.
+
+**Risk:** item 4 — asynchronous provider completion, presentation lifecycle, retry and owner/context invalidation.
