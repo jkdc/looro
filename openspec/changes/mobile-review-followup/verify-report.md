@@ -71,6 +71,23 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 
 **Risk:** items 1 and 4 — learner data integrity and asynchronous recognition lifecycle.
 
+## F15 — iOS audio-session ownership
+
+**Outcome:** Implemented in code commit `73f6630`. Conversation and pronunciation now share a main-actor exclusive UUID lease. A component cannot replace the audio category while the other owns it, stale tokens cannot release a newer owner's lease, and prior category/mode/options are restored before lease release. A failed deactivation or restoration retains ownership; the next cleanup/acquisition can retry rather than allowing an overlapping owner. LiveTransport's async connect failure cleanup is bound to its attempt token.
+
+**Regression coverage added**
+
+- `testSharedAudioSessionLeaseIsExclusiveAndRequiresExactReleaseToken` covers cross-owner exclusion and exact-token handoff.
+- `testStaleAudioSessionReleaseCannotReleaseNewOwner` prevents an obsolete release from ending a later lease.
+- `testFailedAudioDeactivationKeepsLeaseUntilCleanupSucceeds` verifies failed deactivation cannot admit a competing owner before successful cleanup.
+
+**Observed checks and limitations**
+
+- `git diff --check` passed. `swift test --package-path apps/ios --filter PronunciationCheckControllerTests.testSharedAudioSessionLeaseIsExclusiveAndRequiresExactReleaseToken` exited 127 because `swift` is unavailable; no XCTest or compilation result is claimed.
+- Independent scratch review found the deactivation-failure release bug; the one bounded correction and scoped recheck closed it. Conversation/pronunciation hardware routing, TTS, backgrounding and system-interruption behavior remain deferred to F16 on iOS hardware/macOS.
+
+**Risk:** item 4 — shared asynchronous audio ownership and cleanup.
+
 ## F12 — iOS typed reply edits and pending state
 
 **Outcome:** Implemented in commit `832add8`. The editor captures the exact submitted text, retains later edits and exposes recoverable status while that provider call is active. Dismissing the sheet no longer pretends to cancel the provider operation; its draft/error survives presentation changes but is cleared at owner, language, or conversation invalidation. A late result cannot dismiss a new editor presentation.
