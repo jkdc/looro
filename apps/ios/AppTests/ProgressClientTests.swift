@@ -100,4 +100,20 @@ final class ProgressClientTests: XCTestCase {
         XCTAssertTrue(ProgressClient.shouldBootstrap(localProgressExists: false, state: nil))
         XCTAssertFalse(ProgressClient.shouldBootstrap(localProgressExists: true, state: nil))
     }
+
+    func testBootstrapEligibilityCountsEveryLocalProgressCategoryButNotDefaultPreferences() {
+        let defaults = Preferences()
+        XCTAssertFalse(ProgressClient.hasUserGeneratedProgress(sessions: 0, lessons: 0,
+            completions: 0, expressions: 0, examAttempts: 0, preferences: defaults))
+        for counts in [(1, 0, 0, 0, 0), (0, 1, 0, 0, 0), (0, 0, 1, 0, 0),
+                       (0, 0, 0, 1, 0), (0, 0, 0, 0, 1)] {
+            XCTAssertTrue(ProgressClient.hasUserGeneratedProgress(sessions: counts.0,
+                lessons: counts.1, completions: counts.2, expressions: counts.3,
+                examAttempts: counts.4, preferences: defaults))
+        }
+        var changedPreferences = defaults
+        changedPreferences.meaningVisible = false
+        XCTAssertTrue(ProgressClient.hasUserGeneratedProgress(sessions: 0, lessons: 0,
+            completions: 0, expressions: 0, examAttempts: 0, preferences: changedPreferences))
+    }
 }

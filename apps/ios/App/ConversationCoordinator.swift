@@ -626,9 +626,15 @@ struct ConversationTopicSearchAdapter {
         progressSyncOperation.invalidate()
         progressSyncTask?.cancel()
         progressSyncTask = nil
-        syncProgress()
         guard prefersHostedProxy else { return }
         attachHostedProxy()
+    }
+
+    /// The view supplies the authenticated account identity; adopt its local
+    /// partition before allowing progress synchronization to inspect eligibility.
+    func activateAccountAndSync(_ accountID: String?) {
+        store.activateLearnerIdentity(accountID)
+        syncProgress()
     }
     /// The error alert's "Get tokens" action: opens the paywall sheet with the
     /// exhausted banner still set when the block was a 402.

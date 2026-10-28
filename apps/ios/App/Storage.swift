@@ -143,7 +143,13 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
     func hasLocalProgress(ownerAccountID: String) -> Bool {
         guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return false }
-        return !(archive.lessons ?? []).isEmpty || !(archive.completions ?? []).isEmpty
+        let examAttempts: Int
+        do { examAttempts = try examHistory(ownerAccountID: ownerAccountID).count }
+        catch { return true } // Unknown local state must never authorize a bootstrap.
+        return ProgressClient.hasUserGeneratedProgress(sessions: archive.sessions.count,
+            lessons: archive.lessons?.count ?? 0, completions: archive.completions?.count ?? 0,
+            expressions: archive.expressions?.count ?? 0, examAttempts: examAttempts,
+            preferences: archive.preferences)
     }
 
     /// Persists one remote page and its cursor atomically without creating local history.

@@ -37,7 +37,10 @@ struct RootView: View {
         }
         .tint(AppColor.ink)
         .onChange(of: accountStore.session?.accountID) { _, accountID in
-            coordinator.store.activateLearnerIdentity(accountID?.uuidString)
+            coordinator.activateAccountAndSync(accountID?.uuidString)
+        }
+        .onAppear {
+            coordinator.activateAccountAndSync(accountStore.session?.accountID.uuidString)
         }
         .sheet(isPresented: $coordinator.showSettings) {
             SettingsView(coordinator: coordinator, accountStore: accountStore)

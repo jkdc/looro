@@ -43,6 +43,21 @@ struct ProgressClient {
         !localProgressExists && (state == nil || state?.passGeneration == 0)
     }
 
+    static func hasUserGeneratedProgress(sessions: Int, lessons: Int, completions: Int,
+                                         expressions: Int, examAttempts: Int,
+                                         preferences: Preferences) -> Bool {
+        sessions > 0 || lessons > 0 || completions > 0 || expressions > 0 || examAttempts > 0 ||
+            preferences.learningLanguageID != Preferences().learningLanguageID ||
+            preferences.meaningVisible != Preferences().meaningVisible ||
+            preferences.meaningLanguage != Preferences().meaningLanguage ||
+            preferences.sessionMinutes != Preferences().sessionMinutes ||
+            !preferences.hiddenWords.isEmpty || !preferences.interests.isEmpty ||
+            preferences.hasOnboarded || preferences.aiConsentVersion != nil ||
+            preferences.slowSpeech != nil || preferences.speechRate != nil ||
+            preferences.listeningPractice != nil || preferences.usageMetricsEnabled != nil ||
+            preferences.sttEngine != nil || preferences.pronunciationEnabled != nil
+    }
+
     static func uploadBatches(_ entries: [ProgressSyncEntry]) -> [[ProgressSyncEntry]] {
         stride(from: 0, to: entries.count, by: 200).map { start in
             Array(entries[start..<min(start + 200, entries.count)])
