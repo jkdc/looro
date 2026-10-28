@@ -661,7 +661,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var guestState by mutableStateOf(GuestMinuteState()); private set
     var showMinuteAccess by mutableStateOf(false); private set
     private var selectedAccount = AccountState(busy = true)
-    private var loadedLearningIdentity: String? = null
+    /** The identity whose data is ACTUALLY loaded into [archive] — null while
+        a switch or load is in flight. Observable so screens can key cached
+        projections on the loaded identity, not the requested one. */
+    var loadedLearningIdentity by mutableStateOf<String?>(null); private set
     private var accessJob: Job? = null
     private val hostedBindings = HostedConversationBindings(viewModelScope)
     private var hostedSessionIDs = emptySet<String>()
@@ -887,8 +890,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun foundationsCourse(): Course? = CourseRegistry.forLanguage(language.id)
         .firstOrNull { it.id.endsWith("-foundations") }
 
-    /** Monotonic counter — every ledger mutation increments it (§7). */
-    private var ledgerRevision: Long = 0
+    /** Monotonic counter — every ledger mutation increments it (§7).
+        Observable so mounted screens can key cached projections (Learn's
+        remember) on it instead of freezing their first read. */
+    var ledgerRevision by mutableStateOf(0L); private set
     private fun bumpLedgerRevision() { ledgerRevision++ }
 
     /** Skill catalog index, keyed by language so a language switch rebuilds it (§5). */

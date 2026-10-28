@@ -64,7 +64,13 @@ import com.jkdc.app.core.LevelStats
 @Composable
 fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: () -> Unit) {
     val courses = CourseRegistry.forLanguage(vm.language.id)
-    val progress = remember { vm.progressStats() to vm.completedLessonIDs() }
+    // Keyed on the observable ledger revision, the LOADED identity and the
+    // language: a deferred bootstrap page (or an account/language switch)
+    // must refresh the marks while the screen stays mounted, and A's marks
+    // must never survive B in a retained instance.
+    val progress = remember(vm.ledgerRevision, vm.loadedLearningIdentity, vm.language.id) {
+        vm.progressStats() to vm.completedLessonIDs()
+    }
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
     var exercisesOpen by rememberSaveable { mutableStateOf(false) }
     var recallOpen by rememberSaveable { mutableStateOf(false) }
