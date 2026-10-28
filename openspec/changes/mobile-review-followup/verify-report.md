@@ -72,3 +72,22 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 - Parent `git diff --check` passed before commit. The full `AppTests` target, keyboard/focus/accessibility, actual close/reopen sheet lifecycle, and provider late-completion interaction are deferred to F16 on macOS/Xcode.
 
 **Risk:** item 4 — asynchronous provider completion, presentation lifecycle, retry and owner/context invalidation.
+
+## F13 — iOS rejected credential after Keychain deletion failure
+
+**Outcome:** Implemented in commit `9bc45dd`. The rejected session is fenced at the shared credential-read boundary with a non-secret, storage-scope-specific UserDefaults marker. On exact `sign_in_required`, the store clears in-memory session/profile, marks rejection before attempting Keychain deletion, and posts session invalidation regardless of deletion success. A successfully persisted replacement session clears the marker; failed replacement persistence does not.
+
+**Regression coverage added**
+
+- `testRejectedCredentialRemainsBlockedAfterKeychainRemovalFailureAndRestart` simulates Keychain deletion failure, confirms the old raw session remains but is masked from consumers, checks invalidation notification/helper reset, and reconstructs a store that refuses the stale session with a recoverable message.
+- `testSuccessfulSignInClearsRejectedCredentialMarker` verifies failed replacement persistence keeps the marker and a later successful sign-in clears it.
+- `testRejectedCredentialMarkerPersistsAcrossInstancesAndIsScopeSpecific` checks the production UserDefaults marker across separate keychain wrapper instances and ensures a distinct scope is not blocked.
+- Existing `testActualCredentialRejectionClearsSessionAndNotifiesInvalidation` retains coverage for successful Keychain removal and notification.
+
+**Observed checks and limitations**
+
+- Test-first regression files were authored before production edits, but `swift test --package-path apps/ios --filter SessionAdoptionTests` exited 127 (`swift: command not found`); no RED/GREEN, compile, or XCTest pass is claimed.
+- Independent source verification in `/var/tmp/ios-r16-review.2jtfeW` initially caught a missing fake persistence protocol member; the correction added that witness and additional scope/failure coverage. The one bounded recheck in `/var/tmp/ios-r16-recheck.BCwvXZ` found the blocker closed. Parent `git diff --check` passed before commit.
+- Swift/Xcode AppTests, real Keychain removal-failure behavior, process-restart, and mounted account-consumer proof are deferred to F16 on macOS. The memory-backed test reconstructs a new store and the marker test reconstructs its wrapper; neither is a process-restart test.
+
+**Risk:** item 2 — rejected bearer credentials and authentication consumers.
