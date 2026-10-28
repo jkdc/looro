@@ -1,6 +1,25 @@
 # Mobile remediation document review
 
-**Scope:** User-requested review/correction of design, OpenSpec requirements, task list and execution plan on 2026-10-25. **Application implementation: T1–T4, T6, T9, T12–T15, and T17 have implementation commits; T5 remains partial; T7 Android work is in review/commit preparation; remaining gates are tracked per task, with iOS execution deferred to T16.**
+**Scope:** User-requested mobile audit remediation and final verification. Earlier sections preserve the 2026-10-25 document review and per-task evidence. Current implementation commits include T1–T9 (T5 partial), T11–T15, and T17; T10 remains Needs decision. T8/T11 implementation commits are present but their platform proof is incomplete. See the T16 result at the end; no S# is declared complete solely from a passing unit suite.
+
+## Follow-up round 2 (S01–S08) — 2026-10-28
+
+Implemented `openspec/changes/mobile-review-seguimiento-2026-10-28/` per
+`informe-revision-seguimiento-app-movil-2026-10-28.md`.
+
+| Item | Fix | Fresh evidence (Linux) |
+|---|---|---|
+| S01 | Atomic owner-scoped migration + pending claim | 3 new regressions RED then GREEN; LearningDbStoreTest 23/23; legacy count-mismatch regression re-pinned to total rollback |
+| S03/S04 | Opening-buffer drain keeps retained speech; visible STT-trim signal; EN/ES notice wording | 2 new regressions RED then GREEN; LocalVoiceTransportTest 50/50 |
+| S07 | Observable ledgerRevision/loadedLearningIdentity keys for LearnScreen | App compile clean; mounted behavior verified by this session's emulator pass |
+| S02/S05/S06/S08 | iOS source fixes (component-ordered download validation + `assigning(owner:)`; lock-balanced cleanup with retained recovery; late-notification fence) | Source + byte-level review only; NO Swift/Xcode execution (Linux lacks the toolchain). New ProgressClientTests regressions are written, not run; macOS/XCTest execution remains deferred |
+
+Fresh in this round: `make check` exit 0 (148 Python tests; schema current,
+user_version 7); full Android `:app:testDebugUnitTest` +
+`:core:engine-local:testDebugUnitTest` BUILD SUCCESSFUL with 0 failures
+(≈832 app tests; engine-local 11 up-to-date from its prior green run).
+The emulator end-to-end pass (API in Docker + app + logcat) is recorded at
+the end of this session's report and in the round's tasks file.
 
 ## Corrections
 
@@ -21,7 +40,7 @@
 - Read source report, all current remediation documents and existing progress-sync contract.
 - Independent read-only source mapping confirmed persistence ordering, actual schema/exporter files, missing App test target, real Android UI variant and database-test skip behavior.
 - Parent spot-check confirmed existing-route negotiation, current schema version 5 and actual exporter ownership.
-- Structural consistency check executed successfully: 16 normative requirements with GIVEN/WHEN/THEN scenarios, 16 matching plan/task/design entries, task file surfaces present or created by a prerequisite, six explicit gates per task, matching route/timestamp/error contract, and no application/source-tree modifications. This checks document consistency, not application behavior.
+- Structural consistency check executed successfully at the time of the original document revision: 16 normative requirements with GIVEN/WHEN/THEN scenarios, 16 matching plan/task/design entries, task file surfaces present or created by a prerequisite, six explicit gates per task, matching route/timestamp/error contract, and no application/source-tree modifications. S17 was added later; this historical check does not validate S17 or application behavior.
 
 ## Limitations and implementation gates
 
@@ -45,3 +64,45 @@
 - **T4 / S4:** Existing `/v1/progress` now negotiates v2 with an exact default-off gate, strict authenticated selector handling, C-collated keyset pages bounded to 1,000 rows, version-tagged validated cursors, a 200-entry versioned upload preserving both timestamps, and atomic server merge acknowledgement. Added `services/api/migrations/054_progress_allow_historical_first_at.sql` to remove only the legacy arbitrary 2025 cutoff; migration 030 remains immutable. Independent review found and verified fixes for selector fallthrough, historical timestamp persistence, and cursor versioning. T4 tests: RED 4 original-contract failures and correction RED 3 findings; final progress PostgreSQL suite 17/17, parent focused rerun 17/17, `make check` 146, API type-check passed, and fresh full API integration `make test-api` 756/756 passed. A separate parent full-suite run failed 582/757 with an admin-auth 401 and later PostgreSQL connection timeouts; this was recorded, not represented as green. Risk: items 1 and 3 (additive migration plus shared HTTP contract). Work-unit commit: `98ae12d`.
 - **T10 / S7,S8,S9 — Needs decision:** Implementation and two correction rounds updated the bounded producer/consumer, consumer-epoch invalidation, cancellation-safe recorder cleanup, structured history truncation, and no-phantom-turn test. Focused `LocalVoiceTransportTest` passed 44/44 in parent with `--rerun-tasks`; required aggregate Android test/UI-APK and lint/debug build commands passed in the implementer run. Independent scratch verifier passed 44/44 plus three probes. However, task re-review after the second correction still finds the final producer-read latch acknowledges a frame before producer classification; playback release can race before the last interruption frame is discarded. No device/emulator is connected for physical audio/AEC testing. Per the bounded correction limit, no third correction was made; no T10 commit is claimed. Risk: item 4 (concurrent capture/turn-processing order).
 - **T12 / S11,S12,S13 — Implemented/reviewed; platform verification pending T16:** Initial review found four Important issues and one Minor; two bounded correction rounds addressed test-target membership, timer selection, recognition-timeout/retry coverage, mounted UI cleanup evidence and exact permission-copy assertions. A later scoped correction adds `ObservableObject` conformance to `PronunciationUITestProbe`; fresh scoped re-review and independent verification accepted it without new breakage. Parent static conformance assertion and `git diff --check` pass. No SwiftPM/Xcode/iOS tests or compile were run, as the user deferred them to T16. Implementation commit: `c8c2d48` (`fix(ios): enforce local pronunciation lifecycle`).
+
+## T16 Final Verification Status — 2026-10-27
+
+T16 ran on Linux. The checks below are fresh for this final pass unless explicitly labeled as prior task evidence.
+
+| Scope | Command | Observed outcome |
+|---|---|---|
+| Shared contracts/schema | `make check` | Exit 0; 148 Python tests, 0 failures; DB schema exports up to date (152 statements, `user_version` 7); progress-sync, Android-content and cross-platform checkers ran. Repeated Python SQLite `ResourceWarning: unclosed database` warnings were emitted. |
+| API/PostgreSQL | `make test-api` | Exit 0; 756/756 tests passed, 0 failed/cancelled/skipped/todo. Ran against the isolated smoke stack, which was removed after completion. |
+| Android unit | `cd apps/android && ./gradlew --offline --no-parallel --max-workers=1 :app:testDebugUnitTest :core:engine-local:testDebugUnitTest` | Exit 0; 804/804 tests (793 app + 11 engine-local), 0 failures/errors/skips. A prior parent rerun had one T10 manual-turn assertion fail (`endTurn must process the open turn`, expected 1, got 0); the final run passed, so T10 remains a scheduling-sensitive open concern rather than a stable green. |
+| Android lint/build/UI-test APK | `cd apps/android && ./gradlew --offline --no-parallel --max-workers=1 :app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest` | Exit 0; lint, debug APK and UI-test APK assembly passed (138 actionable tasks; 5 executed, 133 up-to-date in final run). |
+| Android connected UI | `adb devices -l`; `cd apps/android && ./gradlew --offline --no-parallel --max-workers=1 :app:connectedUiTestAndroidTest` | No attached devices; connected task failed with `DeviceException: No connected devices!`. UI APK compilation is not runtime proof. `emulator` CLI is unavailable. |
+| Swift Core | `swift test --package-path apps/ios` | Not runnable: Linux host has no `swift` executable (exit 127). |
+| iOS App | `make ios-test` | Not runnable: `xcodebuild` is unavailable (Make target exits 2 after command exit 127). No iOS App, Xcode, or SwiftPM behavior is claimed as verified. |
+| Physical audio/AEC/VoiceOver | Device gates from the plan | Not run: no Android device/emulator and no macOS/iOS device. |
+
+### Requirement-to-proof status
+
+| Requirement | Current status and evidence |
+|---|---|
+| S1 | Partial. T1/T17 owner-isolation and history tests passed in Android suites; required mounted/connected UI and iOS runtime proof remain unavailable. |
+| S2 | Incomplete. T2/T6/T7 time and transport evidence exists, but T5 evidence-backed repair of historical values remains unresolved; iOS execution is unavailable. Untagged legacy values remain unchanged by design. |
+| S3 | Partial. Android sync-generation and account fencing tests passed; iOS coordinator/App runtime path remains unverified. |
+| S4 | Partial. API v2 integration (756/756) and shared contract checks passed; full client/device v2-on/off and mounted behavior remain pending. |
+| S5 | Partial. T8 Android projection tests passed 9/9 and independent scratch probes covered monotonic merge, owner/language boundaries, uploads and no invented activity. T8 is committed as `64275bb`; iOS projection/UI tests were not executable, and T5 provenance remains unresolved. |
+| S6 | Partial. T9 focused transition tests passed 7/7 and UI-test APK compiled; connected UI/AppViewModel proof remains unavailable. |
+| S7 | Partial. T10 bounded-capture tests have passing runs, but the final T10 task remains uncommitted and later full-suite rerun exposed a manual-turn failure. Device/audio proof is absent. |
+| S8 | **Needs decision.** After two bounded correction rounds, the final frame-read latch still does not acknowledge producer classification; the scheduling race remains, and the user asked to defer this concern. No third correction or T10 commit was made. |
+| S9 | Partial. Context-order and truncation tests were added, but T10 remains open and its final task-level verification is not stable. |
+| S10 | Partial. T11 separate 52dp manual mute committed as `f57e3ee`; isolated T11 unit test passed 1/1, UI-test APK compiled, reviewer approved. No valid behavioral RED or connected accessibility/runtime proof was observed; no device is available. |
+| S11–S13 | Partial. T12 implementation/review and AppTests source are committed (`c8c2d48`); SwiftPM/Xcode/App runtime checks were unavailable. |
+| S14 | Partial. T13 implementation/review is committed (`185b152`); AppTests were not executed because Swift/Xcode are unavailable. |
+| S15 | Partial. T14 implementation/review is committed (`e4a5375`); AppTests were not executed; a direct configured-hosted-route test remains a documented minor follow-up. |
+| S16 | Partial. T15 source/review is committed (`e545c79`); runtime AppTests were unavailable. |
+| S17 | Partial. T17 Android ownership migration, account partitioning and independent scratch checks passed; iOS runtime proof remains unavailable. Whole-install backup remains a full-install snapshot per the user's decision. |
+
+### Remaining gates / delivery status
+
+- T5/S2 historical repair has no supported persisted source/version/unit evidence for the affected legacy rows. Do not infer provenance or mutate those rows; the task remains partial pending authentic evidence or a user-approved requirement revision.
+- T10/S8 remains **Needs decision** after its correction budget. Preserve the user's instruction to document and defer it; the final Android suite passed once and had an earlier parent-run failure in the related manual-turn test.
+- T8/S5 still needs iOS execution; T11/S10 needs a valid RED/runtime UI result. T1/T3/T6/T9/T12–T15/T17 also retain platform/device proof described above.
+- This report documents the checks and gaps; it does not authorize production v2 activation, provider calls, deployment, or physical-device testing. No S1–S17 task is closed by T16 while required proof is missing.
