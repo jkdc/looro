@@ -88,6 +88,24 @@ The focused tests, complete `LocalVoiceTransportTest` class, and full Android ap
 
 **Risk:** item 4 — shared asynchronous audio ownership and cleanup.
 
+## F01 iOS subunit — Quarantine unattributed migration fallback
+
+**Outcome:** Implemented in commit `4b754b9`. Production opens carry the current member/guest identity and now rethrow database-open or migration failures rather than serving the shared SwiftData JSON archive. The migration payload remains untouched until a verified migration commit; AppRoot offers a non-destructive retry, while destructive erase stays separately confirmation-gated. The `hasPayload` source lookup now throws on read failure, so unreadable data cannot be mistaken for an absent payload.
+
+**Regression coverage added**
+
+- `testActiveLearnerQuarantinesFailedPayloadWithoutChangingSourceAndCanRetry` checks migration failure preserves bytes, writes no hash, and a repaired retry migrates successfully.
+- `testActiveLearnerDatabaseOpenFailureDoesNotReturnSharedPayloadFallback` checks failed DB open does not expose payload.
+- `testUnreadableMigrationSourceDoesNotLookLikeMissingPayload` verifies source lookup failure propagates without migration or source mutation.
+
+**Observed checks and limitations**
+
+- Independent source review in a fresh `/var/tmp` scratch found no blockers across active-owner fail-closed paths, source-read errors, backup preservation and retry UI.
+- `git diff --check` passed. `swift test --package-path apps/ios --filter LearningDbStoreTests` could not start because `swift` is not installed; no compile or XCTest result is claimed.
+- Android retry UI and the stale-owner pre-migration side-effect fence remain open parts of F01; F16 must run cross-platform and multi-account verification.
+
+**Risk:** items 1 and 4 — learner-data isolation and startup/retry lifecycle.
+
 ## F12 — iOS typed reply edits and pending state
 
 **Outcome:** Implemented in commit `832add8`. The editor captures the exact submitted text, retains later edits and exposes recoverable status while that provider call is active. Dismissing the sheet no longer pretends to cancel the provider operation; its draft/error survives presentation changes but is cleared at owner, language, or conversation invalidation. A late result cannot dismiss a new editor presentation.
