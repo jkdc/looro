@@ -269,7 +269,7 @@ fun TalkScreen(
                     animationSpec = infiniteRepeatable(tween(650), RepeatMode.Reverse), label = "end-turn-alpha",
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    ManualMuteControl(isMuted = vm.isMuted, enabled = !vm.working, onClick = vm::toggleMute)
+                    ManualMuteControl(isMuted = vm.isMuted, enabled = vm.state == "active", onClick = vm::toggleMute)
                     RoundAction(AppSymbol.Check,
                         stringResource(if (turnPending) R.string.talk_end_turn_pending else R.string.talk_end_turn_button),
                         selected = turnPending, pending = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,

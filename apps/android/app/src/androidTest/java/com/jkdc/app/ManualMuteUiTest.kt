@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -26,6 +27,8 @@ class ManualMuteUiTest {
     private var originalMuted = false
     private var originalState = "idle"
     private var originalVoiceSession = false
+    private var originalWorking = false
+    private var originalTurnInFlight = false
 
     @Suppress("UNCHECKED_CAST")
     private fun setState(name: String, value: Any?) {
@@ -41,14 +44,19 @@ class ManualMuteUiTest {
             originalManualTurn = vm.voiceManualTurn
             originalMuted = vm.isMuted
             originalState = vm.state
+            originalWorking = vm.working
+            originalTurnInFlight = vm.turnInFlightUi
             originalVoiceSession = AppViewModel::class.java.getDeclaredField("voiceSession").apply { isAccessible = true }.getBoolean(vm)
             setState("state", "active")
             AppViewModel::class.java.getDeclaredField("voiceSession").apply { isAccessible = true }.setBoolean(vm, true)
             vm.updateVoiceManualTurn(true)
+            setState("working", true)
+            setState("turnInFlightUi", true)
         }
 
         val control = compose.onNodeWithTag("manual-mute-control")
         control.assertIsDisplayed()
+        control.assertIsEnabled()
         val node = control.fetchSemanticsNode()
         assertTrue("manual mute control has an accessible action label", node.config.contains(SemanticsProperties.ContentDescription))
         assertTrue("manual mute control exposes its current state", node.config.contains(SemanticsProperties.StateDescription))
@@ -67,13 +75,15 @@ class ManualMuteUiTest {
             mutedNode.config[SemanticsProperties.ContentDescription])
         compose.runOnIdle {
             assertTrue("mute is observable in the active manual voice session", vm.isMuted)
+            assertTrue("mute does not clear unrelated pending work", vm.working)
             assertEquals("active", vm.state)
             assertTrue(vm.isVoiceSession)
-            assertFalse("tutor turn is not cancelled by microphone mute", vm.turnInFlightUi)
+            assertTrue("pending tutor turn remains pending after microphone mute", vm.turnInFlightUi)
         }
         control.performClick()
         compose.runOnIdle {
             assertFalse(vm.isMuted)
+            assertTrue(vm.working)
             assertEquals("active", vm.state)
             assertTrue(vm.isVoiceSession)
         }
@@ -85,6 +95,8 @@ class ManualMuteUiTest {
             if (vm.isMuted != originalMuted) vm.toggleMute()
             vm.updateVoiceManualTurn(originalManualTurn)
             setState("state", originalState)
+            setState("working", originalWorking)
+            setState("turnInFlightUi", originalTurnInFlight)
             AppViewModel::class.java.getDeclaredField("voiceSession").apply { isAccessible = true }
                 .setBoolean(vm, originalVoiceSession)
         }
