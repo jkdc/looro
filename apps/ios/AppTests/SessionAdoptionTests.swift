@@ -39,6 +39,7 @@ private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
     private var signOutContinuations: [CheckedContinuation<Void, Never>] = []
     private(set) var signOutCount = 0
     private(set) var profileRequestCount = 0
+    private(set) var deleteCount = 0
     var holdExchange = false
 
     init(profileStatuses: [Int]) { self.profileStatuses = profileStatuses }
@@ -58,6 +59,10 @@ private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
             }
             return exchangeResponse()
         case "/v1/account":
+            if request.httpMethod == "DELETE" {
+                deleteCount += 1
+                return response(status: 200, json: #"{"deleted":true}"#)
+            }
             profileRequestCount += 1
             let status = profileStatuses.isEmpty ? 200 : profileStatuses.removeFirst()
             if status == 401 { return response(status: 401, json: "{}") }
@@ -231,6 +236,40 @@ private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
         XCTAssertNil(fixture.persistence.session)
         XCTAssertEqual(fixture.persistence.removeCount, 1)
         XCTAssertTrue(fixture.helperRouter.supportsSourceBackedSearch)
+    }
+
+    func testAccountDeleteMarksCredentialRejectedEvenWhenKeychainRemovalFails() async throws {
+        // N06: after the remote DELETE succeeds, the stored credential can
+        // never be valid again - it must be marked durably unusable even when
+        // the Keychain removal itself fails, so neither an independent
+        // consumer nor the next process can re-adopt the deleted account.
+        let fixture = try makeFixture(profileStatuses: [])
+        fixture.persistence.failRemove = true
+        let recorder = fixture.observeSessionChanges()
+        defer { recorder.stopObserving() }
+
+        fixture.store.signIn(.google)
+        await fixture.store.waitForCurrentOperation()
+        XCTAssertNotNil(fixture.store.session)
+
+        fixture.store.deleteAccount()
+        await fixture.store.waitForCurrentOperation()
+
+        XCTAssertEqual(await fixture.transport.deleteCount, 1)
+        XCTAssertEqual(recorder.snapshots.count, 2)
+        XCTAssertNotNil(recorder.snapshots[0].inMemory)
+        XCTAssertNil(recorder.snapshots[1].inMemory)
+        // The removal failed, so the record itself stays on disk - but the
+        // durable marker blocks every load of it.
+        XCTAssertNotNil(recorder.snapshots[1].persisted)
+        XCTAssertNil(fixture.store.session)
+        XCTAssertTrue(fixture.persistence.credentialRejected,
+                      "a deleted account's credential must be durably unusable")
+        XCTAssertEqual(fixture.persistence.removeCount, 1, "the removal was attempted once")
+        XCTAssertNil(try fixture.persistence.load(),
+                     "an independent load must not re-adopt the deleted account")
+        XCTAssertNotNil(fixture.store.message,
+                        "the pending local cleanup is communicated, not silent")
     }
 
     func testPersistenceFailureDoesNotAdoptOrNotify() async throws {

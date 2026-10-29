@@ -362,6 +362,14 @@ final class ManagedAccountStore {
             guard gate.accepts(token) else { return }
             try await client.delete(session: session, appleCode: code)
             guard gate.accepts(token) else { return }
+            // N06: the remote account is GONE - the stored credential can
+            // never be valid again, so mark it durably unusable BEFORE
+            // announcing the transition (the 401 path's same fail-closed
+            // mechanism). A Keychain removal failure must not leave a record
+            // an independent consumer or the next process can re-adopt: the
+            // marker blocks every load until a NEW successful sign-in saves
+            // a credential and clears it.
+            keychain.markCredentialRejected()
             self.session = nil; profile = nil
             announceSessionChange()
             do { try keychain.remove() }
