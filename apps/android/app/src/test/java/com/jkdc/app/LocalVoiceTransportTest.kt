@@ -1282,6 +1282,104 @@ class LocalVoiceTransportTest {
     }
 
     @Test
+    fun `mute toggles during a full opening buffer clear it for the post unmute phrase`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val greetingGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = greetingGate
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { event -> events.add(event) }
+        runBlocking { transport.connect(FakeProvider(), "base instructions", language = "en") }
+
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
+        val greetingDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < greetingDeadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+
+        // Saturate the retained opening prefix, then toggle mute twice: the
+        // epoch change must invalidate the stale prefix instead of leaving it
+        // parked at full capacity over the new epoch.
+        repeat(160) { source.queue.add(speech(amplitude = 0.6f)) }
+        assertTrue(source.awaitFramesRead(160, 5_000))
+        val limitDeadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" } &&
+            System.currentTimeMillis() < limitDeadline) Thread.sleep(10)
+        assertTrue(events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+
+        transport.mute(true)
+        transport.mute(false)
+        transport.mute(true)
+        transport.mute(false)
+
+        // The post-unmute phrase is the only voice that may survive.
+        repeat(8) { source.queue.add(speech(amplitude = 0.8f)) }
+        assertTrue(source.awaitFramesRead(168, 5_000))
+        Thread.sleep(150)
+        transport.endTurn()
+        greetingGate.complete(Unit)
+        val turnDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < turnDeadline) Thread.sleep(25)
+        assertEquals("the post-unmute phrase becomes exactly one reply request", 2, engine.received.size)
+        val captured = runtime.lastSamples ?: throw AssertionError("STT must receive the post-unmute phrase")
+        assertTrue("the stale prefix must not reach STT", captured.size <= 10 * 16_000)
+        assertTrue("the post-unmute phrase must reach STT", captured.size >= 12_000)
+        transport.close()
+        scope.cancel()
+    }
+
+    @Test
+    fun `mute before the opening saturates keeps the buffer usable after unmute`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val greetingGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = greetingGate
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "base instructions", language = "en") }
+
+        assertTrue(transport.send(buildAppend("session.instructions.append", "greet the learner")))
+        val greetingDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < greetingDeadline) Thread.sleep(25)
+
+        // Muted frames are ignored; repeated toggles before saturation must
+        // leave the buffer usable for the phrase that follows the unmute.
+        transport.mute(true)
+        repeat(20) { source.queue.add(speech()) }
+        assertTrue(source.awaitFramesRead(20, 5_000))
+        transport.mute(false)
+        transport.mute(true)
+        transport.mute(false)
+        repeat(10) { source.queue.add(speech(amplitude = 0.8f)) }
+        assertTrue(source.awaitFramesRead(30, 5_000))
+        Thread.sleep(150)
+        transport.endTurn()
+        greetingGate.complete(Unit)
+        val turnDeadline = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < turnDeadline) Thread.sleep(25)
+        assertEquals(2, engine.received.size)
+        val captured = runtime.lastSamples ?: throw AssertionError("STT must receive the post-unmute phrase")
+        assertTrue(captured.size <= 12 * 16_000)
+        assertTrue(captured.size >= 12_000)
+        transport.close()
+        scope.cancel()
+    }
+
+    @Test
     fun `a turn cut at the stt cap signals the visible trim instead of dropping the tail silently`() {
         val source = FakeFrameSource()
         val engine = FakeTeachingClient()

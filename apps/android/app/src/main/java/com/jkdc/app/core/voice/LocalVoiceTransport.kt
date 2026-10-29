@@ -406,6 +406,14 @@ class LocalVoiceTransport(
                     val currentEpoch = captureEpoch.get()
                     if (currentEpoch != bufferEpoch) {
                         resetCapture()
+                        // N05: a new capture epoch (mute toggles, session
+                        // restart) invalidates the retained opening prefix
+                        // too - stale frames must neither consume the new
+                        // epoch's buffer capacity nor block the phrase that
+                        // follows the unmute.
+                        openingFrames.clear()
+                        openingBufferedSamples = 0
+                        openingCaptureFull = false
                         bufferEpoch = currentEpoch
                     }
                     if (item == null) {
