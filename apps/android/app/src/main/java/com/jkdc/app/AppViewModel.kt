@@ -851,8 +851,19 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun remoteProgressForLanguage(languageID: String): Pair<String?, List<com.jkdc.app.core.ProgressAggregate>> {
         val db = store?.db ?: return null to emptyList()
-        val ownerKey = com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) ?: return null to emptyList()
-        val accountID = ownerKey.takeIf { it.startsWith("member:") }?.removePrefix("member:") ?: return null to emptyList()
+        val requested = com.jkdc.app.core.LocalLearnerIdentity.resolve(
+            examOwnerIdentity.value.ownerAccountID, localGuestIdentityID)
+        val ownerKey = com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db)
+        // N03 fence: during an account switch the database's active owner can
+        // still be the PREVIOUS identity - consult remote rollups only when
+        // requested, loaded and active all agree; otherwise the projection is
+        // the empty/loading one.
+        if (!com.jkdc.app.core.ProgressProjection.identityConsistent(
+                loaded = loadedLearningIdentity, requested = requested, consulted = ownerKey)
+        ) {
+            return null to emptyList()
+        }
+        val accountID = ownerKey!!.takeIf { it.startsWith("member:") }?.removePrefix("member:") ?: return null to emptyList()
         val rows = com.jkdc.app.data.RemoteProgressRollupsDao.forLanguage(db, accountID, languageID)
         return accountID to rows.map { row -> com.jkdc.app.core.ProgressAggregate(
             row.ownerAccountID, row.languageID, row.kind, row.itemID, row.firstAtMilliseconds,

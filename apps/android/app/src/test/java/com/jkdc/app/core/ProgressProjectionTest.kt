@@ -1,11 +1,25 @@
 package com.jkdc.app.core
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.ZoneId
 
 class ProgressProjectionTest {
     private val fixedNowMilliseconds = 1_750_000_000_000L
+
+    @Test fun identityConsistencyGateFailsDuringSwitches() {
+        assertTrue(ProgressProjection.identityConsistent("member:a", "member:a", "member:a"))
+        assertFalse("a switch in flight must not consult the previous owner",
+            ProgressProjection.identityConsistent(loaded = null, requested = "member:b", consulted = "member:a"))
+        assertFalse("a stale load must not pass as current",
+            ProgressProjection.identityConsistent(loaded = "member:a", requested = "member:b", consulted = "member:b"))
+        assertFalse("a mismatched database owner must not be consulted",
+            ProgressProjection.identityConsistent(loaded = "member:b", requested = "member:b", consulted = "member:a"))
+        assertFalse("guest continuity still requires the loaded identity",
+            ProgressProjection.identityConsistent(loaded = null, requested = "guest:g", consulted = "guest:g"))
+    }
 
     @Test fun remote90ImprovesLocal40InEitherOrder() {
         val local = ProgressAggregate("account-a", "es", ProgressEngine.EXERCISE_SET, "unit-1", 10, 20, 2, 40)

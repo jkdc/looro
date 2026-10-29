@@ -14,6 +14,14 @@ data class ProgressAggregate(
 
 /** Pure projection of local and remote rollups; it never writes activity history. */
 object ProgressProjection {
+    /** N03 fence: remote rollups may be consulted only while the requested
+     *  identity, the LOADED identity and the database's active owner all
+     *  agree. During an account switch (loaded null or still the previous
+     *  identity) the database's active owner can lag behind, so callers must
+     *  serve an empty/loading projection instead of querying. */
+    fun identityConsistent(loaded: String?, requested: String?, consulted: String?): Boolean =
+        loaded != null && loaded == requested && consulted == requested
+
     fun merge(ownerAccountID: String, languageID: String,
               local: List<ProgressAggregate>, remote: List<ProgressAggregate>): List<ProgressAggregate> {
         val merged = linkedMapOf<Identity, ProgressAggregate>()
