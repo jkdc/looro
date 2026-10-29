@@ -14,6 +14,14 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 
+/** Provenance scope of pre-existing learning content when the migration
+ *  gate is open without a pending claim - see [LearningDbStore.legacyResidueScope]. */
+private sealed interface LegacyResidue {
+    data object FRESH : LegacyResidue
+    data object OWN : LegacyResidue
+    data class AMBIGUOUS(val where: String) : LegacyResidue
+}
+
 /**
  * LearningDbStore — the learner's runtime persistence facade over the learning
  * database (phase C). It takes over LearningRepository's RUNTIME role (open the
@@ -339,8 +347,24 @@ class LearningDbStore private constructor(
                 // open must not adopt - or clear - another account's backup:
                 // it opens in database mode with none of it, and the JSON
                 // stays here for its owner's retry.
-                if (MetaDao.get(database, MIGRATION_PENDING_OWNER_KEY)
-                        ?.takeIf { it != ownerKey } != null) return
+                val pendingOwner = MetaDao.get(database, MIGRATION_PENDING_OWNER_KEY)
+                if (pendingOwner != null && pendingOwner != ownerKey) return
+                if (pendingOwner == null) {
+                    // No claim yet: either a fresh install or a database the
+                    // PRE-atomic version left with committed-but-unmarked
+                    // content. Only unambiguous provenance may claim now -
+                    // a fresh install, or residue that belongs exclusively
+                    // to THIS identity (its own earlier attempt). Content of
+                    // another owner, or unattributed rows, can neither be
+                    // cleared nor reattributed (N01): the migration aborts
+                    // and the open quarantines with the database and the
+                    // source untouched.
+                    val residue = legacyResidueScope(database, ownerKey)
+                    if (residue is LegacyResidue.AMBIGUOUS) {
+                        throw IllegalStateException(
+                            "migration aborted: unattributed legacy content without a pending claim (${residue.where})")
+                    }
+                }
                 database.transaction { tx ->
                     MetaDao.put(tx, MIGRATION_PENDING_OWNER_KEY, ownerKey)
                     MetaDao.put(tx, MIGRATION_PENDING_HASH_KEY, sourceHash)
@@ -375,6 +399,50 @@ class LearningDbStore private constructor(
                 // Failing the migration here would discard a verified commit.
                 println("LearningDbStore: committed migration but could not rename learning.json - $cleanup")
             }
+        }
+
+        /** Provenance of the learning content already in the database while
+         *  the gate is open WITHOUT a pending claim (a pre-atomic version
+         *  could commit content without the marker). FRESH: no learning rows
+         *  at all - safe to claim. OWN: every learning row is this owner's -
+         *  a demonstrated earlier attempt of the same identity, safe to
+         *  clear and re-import. AMBIGUOUS: any other-owner or unattributed
+         *  row exists - clearing or reattributing is not authorized, and the
+         *  migration must be refused (the ambiguous state is preserved and
+         *  communicated, never reported as recovered). */
+        private fun legacyResidueScope(db: SqlDatabase, ownerKey: String): LegacyResidue {
+            var anyContent = false
+            for (table in listOf("fragments", "sessions", "expressions", "lesson_state",
+                    "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
+                val foreign = db.query(
+                    "SELECT EXISTS(SELECT 1 FROM $table WHERE owner_key IS NULL OR owner_key = '' " +
+                        "OR owner_key != ?) AS any_row", listOf(ownerKey)).single().bool("any_row")
+                if (foreign) return LegacyResidue.AMBIGUOUS(table)
+                if (!anyContent) {
+                    anyContent = db.query("SELECT EXISTS(SELECT 1 FROM $table) AS any_row",
+                        emptyList()).single().bool("any_row")
+                }
+            }
+            val foreignMastery = db.query(
+                "SELECT EXISTS(SELECT 1 FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%' " +
+                    "AND key NOT LIKE 'mastery:member:%' AND key NOT LIKE 'mastery:guest:%') AS any_row",
+                emptyList()).single().bool("any_row")
+            if (foreignMastery) return LegacyResidue.AMBIGUOUS("mastery-unattributed")
+            val scopedPrefix = "${MetaDao.MASTERY_PREFIX}$ownerKey%"
+            val otherOwnerMastery = db.query(
+                "SELECT EXISTS(SELECT 1 FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%' " +
+                    "AND key NOT LIKE ?) AS any_row", listOf(scopedPrefix)).single().bool("any_row")
+            if (otherOwnerMastery) {
+                val sample = db.query(
+                    "SELECT key FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%' " +
+                        "AND key NOT LIKE ? ORDER BY key LIMIT 3",
+                    listOf(scopedPrefix)).map { it.text("key") }
+                return LegacyResidue.AMBIGUOUS("mastery-other-owner:$sample")
+            }
+            val ownMastery = db.query(
+                "SELECT EXISTS(SELECT 1 FROM meta WHERE key LIKE ?) AS any_row",
+                listOf(scopedPrefix)).single().bool("any_row")
+            return if (anyContent || ownMastery) LegacyResidue.OWN else LegacyResidue.FRESH
         }
 
         /** Deletes every learning row of the CLAIMING owner - everything

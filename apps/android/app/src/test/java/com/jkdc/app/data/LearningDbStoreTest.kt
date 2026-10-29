@@ -287,7 +287,7 @@ class LearningDbStoreTest {
         assertTrue(files.migrated.exists())
     }
 
-    @Test fun verificationIsScopedToTheMigratingOwnerAndNeverClearsOtherAccounts() {
+    @Test fun mixedLegacyResidueWithoutClaimIsQuarantinedNotClaimed() {
         val bytes = fixtureBytes("case-basic.json")
         val archive = ArchiveCodec.decode(fixture("case-basic.json"))
         val files = TempJsonFiles(tmp.newFolder(), bytes)
@@ -297,6 +297,7 @@ class LearningDbStoreTest {
         // Residue from the pre-atomic world: two identities each hold their
         // own committed-but-unmarked rows (the old flow imported before the
         // bookkeeping), so the shared tables hold two copies of the archive.
+        // No pending claim exists to prove whose attempt it was.
         LearnerOwnershipDao.activate(target, "member:account-a")
         ArchiveMapper.import(archive, target)
         LearnerOwnershipDao.activate(target, "member:account-b")
@@ -304,23 +305,71 @@ class LearningDbStoreTest {
         assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
         assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-b", "sessions"))
 
-        // A's retry must be scoped to A: B's rows neither break the counts
-        // (the old whole-table verification wedged BOTH identities forever)
-        // nor get cleared.
-        val store = LearningDbStore.open(target, files,
-            activeIdentity = "member:account-a", clock = { now })
-        assertFalse("A's retry must recover instead of wedging", store.jsonMode)
-        assertEquals(sha256(bytes), MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
-        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
-        assertEquals("the other account's rows are preserved, not cleared",
+        // Opening as B must REFUSE the migration: with content of another
+        // identity present and no claim, provenance is undemonstrated —
+        // clearing B's rows and reattributing the source to B (the N01
+        // probe's data loss) is not authorized. The open quarantines and
+        // leaves both sides byte-identical.
+        assertThrows("mixed legacy residue must refuse the migration",
+            LearningDbStore.QuarantinedLegacyArchive::class.java) {
+            LearningDbStore.open(target, files,
+                activeIdentity = "member:account-b", clock = { now })
+        }
+        assertEquals("B's rows are preserved, not cleared",
             archive.sessions.size.toLong(), countOwner(target, "member:account-b", "sessions"))
-        assertEquals("the other account's mastery rows are preserved, not cleared", 2L,
+        assertEquals("A's rows are preserved for its own retry",
+            archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
+        assertEquals("B's mastery rows are preserved, not cleared", 2L,
             target.query("SELECT COUNT(*) AS n FROM meta WHERE key LIKE 'mastery:member:account-b:%'")
                 .single().long("n"))
-        assertTrue(files.migrated.exists())
+        assertNull("nothing was committed", MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
+        assertNull("no claim was fabricated", MetaDao.get(target, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertTrue("the source stays available", files.json.exists())
+        assertFalse(files.migrated.exists())
+        assertTrue("the source bytes are unmodified", files.json.readBytes().contentEquals(bytes))
+
+        // Restart, then the other identity: the same refusal — the mixed
+        // state is ambiguous for EVERY identity until recovered explicitly.
+        val reopened = openJvmFileBacked(databasePath)
+        assertThrows("the refusal must survive a restart",
+            LearningDbStore.QuarantinedLegacyArchive::class.java) {
+            LearningDbStore.open(reopened, files,
+                activeIdentity = "member:account-a", clock = { now })
+        }
+        assertEquals(archive.sessions.size.toLong(), countOwner(reopened, "member:account-a", "sessions"))
+        assertEquals(archive.sessions.size.toLong(), countOwner(reopened, "member:account-b", "sessions"))
+        assertNull(MetaDao.get(reopened, LearningDbStore.MIGRATION_HASH_KEY))
+        assertNull(MetaDao.get(reopened, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+        assertTrue(files.json.exists())
+        assertFalse(files.migrated.exists())
     }
 
-    @Test fun contentFailureRollsBackTheWholeMigrationAndSparesOtherOwnersRows() {
+    @Test fun legacyResidueOfTheOpeningOwnerAloneCanResume() {
+        val bytes = fixtureBytes("case-basic.json")
+        val archive = ArchiveCodec.decode(fixture("case-basic.json"))
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+        val databasePath = File(tmp.newFolder(), "learning.db").path
+        val target = openJvmFileBacked(databasePath)
+
+        // Pre-atomic residue that belongs EXCLUSIVELY to the opening
+        // identity: ownership is demonstrated by the persisted rows, so the
+        // retry claims the migration and recovers (no other account's rows
+        // exist to be cleared or reattributed).
+        LearnerOwnershipDao.activate(target, "member:account-a")
+        ArchiveMapper.import(archive, target)
+        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
+
+        val store = LearningDbStore.open(target, files,
+            activeIdentity = "member:account-a", clock = { now })
+        assertFalse("the demonstrated owner resumes instead of wedging", store.jsonMode)
+        assertEquals(sha256(bytes), MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
+        assertEquals(archive.sessions.size.toLong(), countOwner(target, "member:account-a", "sessions"))
+        assertEquals(0L, countOwner(target, "member:account-b", "sessions"))
+        assertTrue(files.migrated.exists())
+        assertFalse(files.json.exists())
+    }
+
+    @Test fun contentFailureRollsBackTheWholeMigrationAndKeepsThePendingClaim() {
         val archive = ArchiveCodec.decode(fixture("case-basic.json"))
         val completions = archive.completions ?: mutableListOf()
         val first = completions.first()
@@ -331,35 +380,24 @@ class LearningDbStoreTest {
         val databasePath = File(tmp.newFolder(), "learning.db").path
         val target = openJvmFileBacked(databasePath)
 
-        // B used the database first (fresh install, no JSON): its session is
-        // legitimate data the migration must never touch.
-        val bFiles = TempJsonFiles(tmp.newFolder(), null)
-        val bStore = LearningDbStore.open(target, bFiles,
-            activeIdentity = "member:account-b", clock = { now })
-        assertFalse(bStore.jsonMode)
-        val bSession = archive.sessions.first().copy(id = "b-owned-session")
-        SessionsDao.upsert(bStore.db, bSession)
-        FragmentsDao.replaceBySession(bStore.db, bSession.id, bSession.fragments)
-        assertEquals(1L, countOwner(target, "member:account-b", "sessions"))
-
-        // A's attempt: count verification fails INSIDE the content
-        // transaction (the colliding completion is swallowed by the primary
-        // key). The rollback must restore the pre-migration state — the
-        // pre-import clear included — leaving B's row and no A residue, with
-        // only the pending marker left for A's later retry.
+        // A claims on a fresh install; count verification then fails INSIDE
+        // the content transaction (the colliding completion is swallowed by
+        // the primary key). The rollback must restore the pre-migration
+        // state — the pre-import clear included — leaving no residue and no
+        // content, with only the pending claim left for A's later retry.
         assertThrows("the colliding completion must abort the migration",
-            IllegalStateException::class.java) {
+            LearningDbStore.QuarantinedLegacyArchive::class.java) {
             LearningDbStore.open(target, files,
                 activeIdentity = "member:account-a", clock = { now })
         }
-        assertEquals("the rollback restores the pre-migration state", 1L,
-            countOwner(target, "member:account-b", "sessions"))
         assertEquals("no A residue survives the rollback", 0L,
             countOwner(target, "member:account-a", "sessions"))
+        assertEquals(0L, countOwner(target, "member:account-b", "sessions"))
         assertEquals("the pending marker names A for its later retry",
             "member:account-a", MetaDao.get(target, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
         assertNull(MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
         assertTrue("the colliding JSON stays untouched", files.json.exists())
+        assertFalse(files.migrated.exists())
     }
 
     @Test fun legacyReadPreservesAtomicBaseBackupAndNewFilesWithoutRecoveryMutation() {
