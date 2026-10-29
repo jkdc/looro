@@ -75,4 +75,20 @@ Swift/iOS execution remains a declared Linux limitation, not a completed proof.
   consecutive focused runs and the full suite. A temporary internal
   `captureWindowState` snapshot was added to the transport for the triage
   and kept as a one-line diagnostic.
-- The emulator end-to-end re-pass is recorded below as it completes.
+- 2026-10-29 emulator end-to-end re-pass (Medium_Phone_API_36, Docker stack
+  + loopback relay, rebuilt APK with engine=glm and the local debug origin):
+  launch with existing local data (no quarantine — the committed migration
+  is recognized), Learn renders the loaded identity's marks through the N03
+  fence, learning-language switch EN↔ES (per-language partition: ES shows
+  Level 0 with 0 points), level check full cycle (fresh attempt → answers →
+  unanswered-questions confirm dialog → on-device deterministic grading →
+  scorecard → history refreshed to "Score: 8% · Oct 29"), and the relay log
+  recorded the app's live `/v1/auth/providers` traffic. Zero `FATAL
+  EXCEPTION`s across the whole pass. Observation for a future round (not
+  one of N01–N06, pre-existing): the ES level-check catalog card surfaces
+  the EN Oct 28 attempt as "score summary only", so that catalog's attempt
+  summary does not appear language-scoped.
+- Not exercisable on-device (unchanged from 335f030's pass): member
+  sign-in/sync (accounts disabled on the local stack by design), live LLM
+  voice conversation (engine radio rows unresponsive to adb input), and the
+  iOS runtime gates (no macOS).
