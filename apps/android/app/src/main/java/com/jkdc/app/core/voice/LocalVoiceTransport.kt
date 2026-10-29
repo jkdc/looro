@@ -97,11 +97,12 @@ class LocalVoiceTransport(
     private var openingReady = CompletableDeferred<Unit>()
     private val captureEpoch = AtomicInteger(0)
     @Volatile private var speaking = false
+    @Volatile private var openingRetainedSamples = 0
 
     /** Test/diagnostic snapshot of the capture-window flags (N05 flake triage). */
     internal val captureWindowState: String
         get() = "running=$running opening=$openingInProgress speaking=$speaking " +
-            "muted=$muted epoch=$captureEpoch"
+            "muted=$muted epoch=$captureEpoch retained=$openingRetainedSamples"
     /**
      * Depth of concurrent [speakSuppressed] callers (turn reply, opening
      * greeting, typed commentary run on different coroutines). The mic only
@@ -348,6 +349,7 @@ class LocalVoiceTransport(
                 var lastUsageEmit = System.currentTimeMillis()
                 val preroll = ArrayDeque<FloatArray>()
                 val openingFrames = ArrayDeque<FrameHandoff>()
+                openingRetainedSamples = 0
                 var openingBufferedSamples = 0
                 var openingCaptureFull = false
                 var bufferEpoch = captureEpoch.get()
@@ -405,8 +407,14 @@ class LocalVoiceTransport(
                     // A retained opening frame is drained with the flag set so
                     // press paths cannot close the turn mid-prefix; the last
                     // drained frame applies the held press to the WHOLE prefix.
-                    val drainingOpening = !openingInProgress && openingFrames.isNotEmpty()
-                    val item = if (drainingOpening) openingFrames.removeFirst()
+                    // QUEUE_FLUSH may finish the greeting while commentary
+                    // still suppresses capture. Keep the admitted prefix and
+                    // held End intent until all playback releases the window;
+                    // the bounded handoff receive below suspends while closed.
+                    val drainingOpening = !openingInProgress && !speaking && openingFrames.isNotEmpty()
+                    val item = if (drainingOpening) openingFrames.removeFirst().also {
+                        if (it is FrameHandoff.Audio) openingRetainedSamples -= it.samples.size
+                    }
                     else kotlinx.coroutines.withTimeoutOrNull(25) { handoff.receiveCatching().getOrNull() }
                     val currentEpoch = captureEpoch.get()
                     if (currentEpoch != bufferEpoch) {
@@ -417,6 +425,7 @@ class LocalVoiceTransport(
                         // epoch's buffer capacity nor block the phrase that
                         // follows the unmute.
                         openingFrames.clear()
+                        openingRetainedSamples = 0
                         openingBufferedSamples = 0
                         openingCaptureFull = false
                         bufferEpoch = currentEpoch
@@ -442,6 +451,7 @@ class LocalVoiceTransport(
                                 val retained = if (accepted == item.samples.size) item.samples else item.samples.copyOf(accepted)
                                 openingFrames.addLast(FrameHandoff.Audio(retained, item.epoch))
                                 openingBufferedSamples += accepted
+                                openingRetainedSamples += accepted
                             }
                             if (openingBufferedSamples >= MAX_CAPTURE_SAMPLES || remaining <= 0) {
                                 openingCaptureFull = true
@@ -460,6 +470,7 @@ class LocalVoiceTransport(
                     }
                     if (item === FrameHandoff.Flush) {
                         openingFrames.clear()
+                        openingRetainedSamples = 0
                         openingBufferedSamples = 0
                         openingCaptureFull = false
                         resetCapture()
@@ -606,6 +617,7 @@ class LocalVoiceTransport(
                     }
                 } finally {
                     handoff.close()
+                    openingRetainedSamples = 0
                     recorder = null
                     source.stop()
                 }

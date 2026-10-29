@@ -1782,4 +1782,139 @@ class LocalVoiceTransportTest {
         assertEquals(listOf("Tutor output continues"), tts.spoken)
         transport.close()
     }
+    @Test
+    fun `commentary flushing the greeting preserves retained manual speech`() {
+        overlappingOpeningSpeech(greetingFinishesFirst = true)
+    }
+
+    @Test
+    fun `commentary finishing before the greeting preserves retained manual speech`() {
+        overlappingOpeningSpeech(greetingFinishesFirst = false)
+    }
+
+    @Test
+    fun `mute invalidates the retained prefix while commentary outlives the greeting`() {
+        overlappingOpeningSpeech(greetingFinishesFirst = true, invalidate = "mute")
+    }
+
+    @Test
+    fun `disconnect cancels the retained prefix while commentary outlives the greeting`() {
+        overlappingOpeningSpeech(greetingFinishesFirst = true, invalidate = "disconnect")
+    }
+
+    private fun overlappingOpeningSpeech(greetingFinishesFirst: Boolean, invalidate: String? = null) {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val generationGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = generationGate
+        val greetingSpeechGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val commentaryGate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val greetingStarted = CountDownLatch(1)
+        val commentaryStarted = CountDownLatch(1)
+        val commentaryReturned = CountDownLatch(1)
+        val answerSpoken = CountDownLatch(1)
+        val speechCalls = java.util.concurrent.atomic.AtomicInteger()
+        val sink = object : SpeechSink {
+            override suspend fun initialize() = true
+            override suspend fun speak(text: String): TtsStats? {
+                if (text == "typed commentary") {
+                    commentaryStarted.countDown()
+                    // Model QUEUE_FLUSH: the interrupted greeting completes,
+                    // but the replacement utterance still owns suppression.
+                    if (greetingFinishesFirst) greetingSpeechGate.complete(Unit)
+                    commentaryGate.await()
+                    commentaryReturned.countDown()
+                } else if (speechCalls.incrementAndGet() == 1) {
+                    greetingStarted.countDown()
+                    greetingSpeechGate.await()
+                } else answerSpoken.countDown()
+                return TtsStats(1, 1)
+            }
+            override fun stop() { commentaryGate.complete(Unit); greetingSpeechGate.complete(Unit) }
+            override fun setSpeechRate(rate: Float) {}
+            override fun setLanguage(languageTag: String) = true
+        }
+        val runtime = FakeWhisperRuntime()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(null as android.content.Context?, scope,
+            stt(createTempDir(), runtime), engine, sink,
+            frameSourceProvider = { source }, frameDelayMs = 1, openOnStart = true)
+        transport.bargeIn = false
+        transport.manualTurn = true
+        fun awaitState(description: String, predicate: () -> Boolean) {
+            val deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5)
+            while (!predicate() && System.nanoTime() < deadline) Thread.sleep(5)
+            assertTrue(description, predicate())
+        }
+        // Distinct amplitudes prove prefix order and exclude commentary echo.
+        val retained = List(10) { speech(0.2f + it * 0.02f) }
+        val expected = retained.flatMap { it.asIterable() }.toFloatArray()
+        try {
+            runBlocking { transport.connect(FakeProvider(), "base instructions", language = "en") }
+            transport.send(buildAppend("session.instructions.append", "greet the learner"))
+            awaitState("the greeting generation has started") { engine.received.size == 1 }
+            retained.forEach { source.queue.add(it) }
+            assertTrue(source.awaitFramesRead(10, 5_000))
+            awaitState("the serial consumer has admitted the complete prefix") {
+                transport.captureWindowState.contains("retained=20480")
+            }
+            transport.endTurn()
+            generationGate.complete(Unit)
+            assertTrue(greetingStarted.await(5, TimeUnit.SECONDS))
+            transport.send(buildAppend("session.commentary.append", "typed commentary"))
+            assertTrue(commentaryStarted.await(5, TimeUnit.SECONDS))
+            if (greetingFinishesFirst) {
+                awaitState("commentary keeps capture suppressed after the greeting") {
+                    transport.captureWindowState.contains("opening=false speaking=true")
+                }
+            } else {
+                commentaryGate.complete(Unit)
+                assertTrue(commentaryReturned.await(5, TimeUnit.SECONDS))
+                awaitState("the greeting keeps capture suppressed after commentary") { source.paused }
+                assertTrue(transport.captureWindowState.contains("opening=true speaking=true"))
+            }
+            // This audio was captured during playback, unlike the retained prefix.
+            repeat(4) { source.queue.add(speech(0.9f)) }
+            assertEquals("no transcription before all speech finishes", 0, runtime.transcribeCalls.get())
+            assertEquals(1, engine.received.size)
+            when (invalidate) {
+                "mute" -> {
+                    transport.mute(true)
+                    awaitState("mute invalidates the admitted prefix") {
+                        transport.captureWindowState.contains("retained=0")
+                    }
+                    transport.mute(false)
+                }
+                "disconnect" -> transport.disconnect()
+            }
+            commentaryGate.complete(Unit)
+            greetingSpeechGate.complete(Unit)
+            if (invalidate == null) {
+                awaitTurns(engine, 2)
+                assertEquals("retained speech produces exactly one answer", 2, engine.received.size)
+                assertTrue(answerSpoken.await(5, TimeUnit.SECONDS))
+                assertArrayEquals("STT receives the complete ordered prefix without echo", expected, runtime.lastSamples!!, 0f)
+                assertEquals(1, runtime.transcribeCalls.get())
+            } else {
+                awaitState("speech suppression and the retained prefix are released") {
+                    !transport.captureWindowState.contains("speaking=true") &&
+                        transport.captureWindowState.contains("retained=0")
+                }
+            }
+            awaitState("playback has drained echo and the pipeline is idle") {
+                (if (invalidate == "disconnect") source.stopped else source.drainedFrames >= 4) &&
+                    !transport.turnInFlight &&
+                    !transport.captureWindowState.contains("speaking=true")
+            }
+            assertEquals("neither echo nor a retained prefix is resent", if (invalidate == null) 2 else 1, engine.received.size)
+            assertEquals(if (invalidate == null) 1 else 0, runtime.transcribeCalls.get())
+        } finally {
+            generationGate.complete(Unit)
+            greetingSpeechGate.complete(Unit)
+            commentaryGate.complete(Unit)
+            transport.close()
+            scope.cancel()
+        }
+    }
+
 }
