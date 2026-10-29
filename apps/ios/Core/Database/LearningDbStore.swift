@@ -256,6 +256,16 @@ public final class LearningDbStore {
                             activeIdentity: String? = nil,
                             clock: @escaping () -> Double = { Date.now.timeIntervalSinceReferenceDate }) throws -> LearningDbStore {
         do {
+            // Inspect original provenance before activation backfills ownership or moves
+            // mastery. Attribution performed now cannot prove an earlier migration's lineage.
+            if let activeIdentity, try MetaDao.get(database, migrationHashKey) == nil,
+               let source, try source.hasPayload,
+               try MetaDao.get(database, migrationPendingOwnerKey) == nil {
+                if case .ambiguous(let where_) = try legacyResidueScope(database, ownerKey: activeIdentity) {
+                    throw LearningDbStoreError.migrationAborted(
+                        "migration aborted: unattributed legacy content without a pending claim (\(where_))")
+                }
+            }
             if let activeIdentity { try LearnerOwnershipDao.activate(database, identity: activeIdentity) }
             if let source, try source.hasPayload, try MetaDao.get(database, migrationHashKey) == nil {
                 try migrate(database, source, clock)
@@ -355,7 +365,7 @@ public final class LearningDbStore {
     /// Provenance scope of the learning content already in the database
     /// while the gate is open WITHOUT a pending claim - see the
     /// `LegacyResidue` documentation.
-    static func legacyResidueScope(_ db: SqlDatabase,
+    private static func legacyResidueScope(_ db: SqlDatabase,
                                    ownerKey: String) throws -> LegacyResidue {
         var anyContent = false
         for table in ["fragments", "sessions", "expressions", "lesson_state",

@@ -287,6 +287,41 @@ class LearningDbStoreTest {
         assertTrue(files.migrated.exists())
     }
 
+    @Test fun preOwnerRowsAreQuarantinedBeforeBackfillAndRemainUnchangedAfterRestart() {
+        val bytes = fixtureBytes("case-basic.json")
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+        val path = File(tmp.newFolder(), "learning.db").path
+        var target = openJvmFileBacked(path)
+        target.insert("completions", mapOf("owner_key" to "", "kind" to "lesson",
+            "item_id" to "legitimate-not-in-backup", "at" to 123.0, "best_score" to 97,
+            "language_id" to "es"))
+        MetaDao.put(target, "mastery:historical-not-in-backup", "0.75")
+        fun metadata(database: SqlDatabase) = database.query("SELECT key, value FROM meta ORDER BY key")
+            .map { it.text("key") to it.text("value") }
+        val originalMeta = metadata(target)
+        repeat(2) {
+            assertThrows(LearningDbStore.QuarantinedLegacyArchive::class.java) {
+                LearningDbStore.open(target, files, activeIdentity = "member:account-b", clock = { now })
+            }
+            val row = target.query("SELECT * FROM completions").single()
+            assertEquals("", row.text("owner_key"))
+            assertEquals("legitimate-not-in-backup", row.text("item_id"))
+            assertEquals(123.0, row.real("at"), 0.0)
+            assertEquals(97, row.int("best_score"))
+            assertEquals("es", row.text("language_id"))
+            assertEquals(originalMeta, metadata(target))
+            assertNull(MetaDao.get(target, LearnerOwnershipDao.BACKFILL_KEY))
+            assertNull(MetaDao.get(target, LearnerOwnershipDao.ACTIVE_IDENTITY_KEY))
+            assertNull(MetaDao.get(target, LearningDbStore.MIGRATION_HASH_KEY))
+            assertNull(MetaDao.get(target, LearningDbStore.MIGRATION_PENDING_OWNER_KEY))
+            assertNull(MetaDao.get(target, LearningDbStore.MIGRATION_PENDING_HASH_KEY))
+            assertTrue(files.json.readBytes().contentEquals(bytes))
+            assertFalse(files.migrated.exists())
+            target.close()
+            target = openJvmFileBacked(path)
+        }
+    }
+
     @Test fun mixedLegacyResidueWithoutClaimIsQuarantinedNotClaimed() {
         val bytes = fixtureBytes("case-basic.json")
         val archive = ArchiveCodec.decode(fixture("case-basic.json"))

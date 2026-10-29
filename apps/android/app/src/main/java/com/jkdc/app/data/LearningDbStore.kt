@@ -275,6 +275,17 @@ class LearningDbStore private constructor(
                  clock: () -> Double = ::nowSeconds): LearningDbStore {
             return synchronized(LearnerOwnershipDao) {
                 try {
+                    // Inspect original provenance BEFORE activation can backfill ownerless
+                    // rows or namespace mastery. Synthetic attribution is not migration lineage.
+                    if (activeIdentity != null && MetaDao.get(database, MIGRATION_HASH_KEY) == null
+                        && files.learningJsonExists()
+                        && MetaDao.get(database, MIGRATION_PENDING_OWNER_KEY) == null) {
+                        val residue = legacyResidueScope(database, activeIdentity)
+                        if (residue is LegacyResidue.AMBIGUOUS) {
+                            throw IllegalStateException(
+                                "migration aborted: unattributed legacy content without a pending claim (${residue.where})")
+                        }
+                    }
                     activeIdentity?.let { LearnerOwnershipDao.activate(database, it) }
                     if (MetaDao.get(database, MIGRATION_HASH_KEY) == null && files.learningJsonExists()) {
                         migrate(database, files, clock)

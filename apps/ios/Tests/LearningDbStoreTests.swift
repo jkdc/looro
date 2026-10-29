@@ -240,6 +240,59 @@ final class LearningDbStoreTests: XCTestCase {
                        "the primary key kept only the first same-instant mark, and the rollback removed it")
     }
 
+    func testPreOwnerCompletionIsPreservedBeforeBackfillAcrossRestart() throws {
+        try assertPreOwnerResiduePreserved(includeMastery: false)
+    }
+
+    func testPreOwnerCompletionAndMasteryArePreservedBeforeBackfillAcrossRestart() throws {
+        try assertPreOwnerResiduePreserved(includeMastery: true)
+    }
+
+    private func assertPreOwnerResiduePreserved(includeMastery: Bool) throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let path = directory.appendingPathComponent("learning.db").path
+        var target = try LearningDatabase.open(at: path)
+        defer { target.close() }
+        _ = try target.insert("completions", ["owner_key": "", "kind": "lesson",
+            "item_id": "legitimate-not-in-backup", "at": 123.0, "best_score": 97,
+            "language_id": "es"])
+        if includeMastery {
+            try MetaDao.put(target, "mastery:historical-not-in-backup", "0.75")
+        }
+        func metadata(_ database: SqlDatabase) throws -> [String] {
+            try database.query("SELECT key, value FROM meta ORDER BY key")
+                .map { $0.text("key") + "=" + $0.text("value") }
+        }
+        let originalMeta = try metadata(target)
+        let payload = try encoded(fixtureArchive())
+        let source = MockSource(payload)
+        for _ in 0..<2 {
+            XCTAssertThrowsError(try LearningDbStore.open(database: target, source: source,
+                activeIdentity: "member:account-b", clock: { self.now }))
+            let rows = try target.query("SELECT * FROM completions")
+            XCTAssertEqual(rows.count, 1)
+            if let row = rows.first {
+                XCTAssertEqual(row.text("owner_key"), "")
+                XCTAssertEqual(row.text("item_id"), "legitimate-not-in-backup")
+                XCTAssertEqual(row.real("at"), 123.0)
+                XCTAssertEqual(row.int("best_score"), 97)
+                XCTAssertEqual(row.text("language_id"), "es")
+            }
+            XCTAssertEqual(try metadata(target), originalMeta)
+            for key in [LearnerOwnershipDao.activeIdentityKey, LearnerOwnershipDao.backfillKey,
+                        LearningDbStore.migrationHashKey, LearningDbStore.migrationPendingOwnerKey,
+                        LearningDbStore.migrationPendingHashKey] {
+                XCTAssertNil(try MetaDao.get(target, key))
+            }
+            XCTAssertEqual(source.payload, payload)
+            XCTAssertFalse(source.migrated)
+            target.close()
+            target = try LearningDatabase.open(at: path)
+        }
+    }
+
     func testMixedLegacyResidueWithoutClaimIsQuarantinedNotClaimed() throws {
         // Pre-atomic residue: two identities each hold their own
         // committed-but-unmarked rows, with no pending claim to prove whose
