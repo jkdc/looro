@@ -71,7 +71,14 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// `LearningDbStore.open` adopted `learning.db.preimport` back into.
     private let databaseURL: URL?
     private static let guestIdentityKey = "com.palique.localLearnerIdentity"
+    /// Requested identity; it is not permission to read or mutate its partition.
     private(set) var activeLearnerIdentity: String
+    private(set) var loadedLearnerIdentity: String?
+    private(set) var learnerLoadError: String?
+    private let activateIdentity: (SqlDatabase, String) throws -> Void
+    private let loadArchive: (LearningDbStore) throws -> Archive
+    private static let learnerLoadNotice =
+        "Your learning data couldn’t be loaded. Progress is paused. Try loading it again."
     /// The learning database (phase E). Opened at init with the one-way
     /// SwiftData-payload migration and RE-opened by a successful
     /// `importDb` — the store is always the one source of the working copy;
@@ -79,7 +86,15 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// `db` throws, so DB-mode-only code can never write to a database the
     /// next launch would not read.
     private var dbStore: LearningDbStore
-    init(inMemory: Bool = false) throws {
+    init(inMemory: Bool = false,
+         activateIdentity: @escaping (SqlDatabase, String) throws -> Void = {
+             try LearnerOwnershipDao.activate($0, identity: $1)
+         },
+         loadArchive: @escaping (LearningDbStore) throws -> Archive = {
+             try $0.recoverUnfinishedSessions($0.loadInitialArchive())
+         }) throws {
+        self.activateIdentity = activateIdentity
+        self.loadArchive = loadArchive
         let memberIdentity = ManagedAccountStore().session?.accountID
         activeLearnerIdentity = memberIdentity.map { "member:\($0)" } ?? Self.stableGuestIdentity()
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
@@ -129,6 +144,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             for i in archive.sessions.indices where archive.sessions[i].endedAt == nil {
                 archive.sessions[i].endedAt = .now; archive.sessions[i].endReason = "App closed before finalization"
             }
+            loadedLearnerIdentity = activeLearnerIdentity
             persist()
             error = dbStore.jsonModeNotice
         } else {
@@ -136,18 +152,20 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // legacy load performed (sessions the app died inside get their
             // endedAt/endReason and their retry ticket, persisted).
             archive = try dbStore.recoverUnfinishedSessions(try dbStore.loadInitialArchive())
+            loadedLearnerIdentity = activeLearnerIdentity
         }
     }
     var jsonMode: Bool { dbStore.jsonMode }
 
     /// Reads only the active member's durable remote-sync cursor.
     func remoteProgressSyncState(direction: String, ownerAccountID: String) throws -> ProgressSyncState? {
-        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return nil }
+        guard isLearnerReady, !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return nil }
         return try ProgressSyncStateDao.get(dbStore.db, ownerAccountID: ownerAccountID, direction: direction)
     }
 
     func hasLocalProgress(ownerAccountID: String) -> Bool {
-        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return false }
+        guard isLearnerReady else { return true } // Unknown state must never authorize bootstrap.
+        guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else { return true }
         let examAttempts: Int
         do { examAttempts = try examHistory(ownerAccountID: ownerAccountID).count }
         catch { return true } // Unknown local state must never authorize a bootstrap.
@@ -161,6 +179,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     func applyRemoteProgressPage(_ rows: [RemoteProgressRollup], ownerAccountID: String,
                                  nextCursor: String?, passGeneration: Int64,
                                  updatedAtMilliseconds: Int64) throws {
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
         guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else {
             throw SqlDatabaseError.unsupportedValue("progress owner changed")
         }
@@ -172,6 +191,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
     func acknowledgeRemoteProgressUpload(ownerAccountID: String, nextCursor: String?,
                                         passGeneration: Int64, updatedAtMilliseconds: Int64) throws {
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
         guard !dbStore.jsonMode, activeLearnerIdentity == "member:\(ownerAccountID)" else {
             throw SqlDatabaseError.unsupportedValue("progress owner changed")
         }
@@ -180,19 +200,76 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             updatedAtMilliseconds: updatedAtMilliseconds)
     }
 
+    /// Main-actor calls have no suspension between this check and their write.
+    /// Recheck the persisted owner as well: activation may have succeeded while
+    /// the following load failed, or a replaced database may have another owner.
+    var isLearnerReady: Bool {
+        guard loadedLearnerIdentity == activeLearnerIdentity, learnerLoadError == nil else { return false }
+        if dbStore.jsonMode { return true }
+        return (try? LearnerOwnershipDao.activeIdentity(dbStore.db)) == activeLearnerIdentity
+    }
+
+    private func requireLoadedLearner(ownerAccountID: String? = nil) throws {
+        guard isLearnerReady else {
+            invalidateLoadedLearner()
+            throw SqlDatabaseError.unsupportedValue("learner partition is not loaded")
+        }
+        if let ownerAccountID, activeLearnerIdentity != "member:\(ownerAccountID)" {
+            throw SqlDatabaseError.unsupportedValue("learner owner changed")
+        }
+    }
+
+    private func invalidateLoadedLearner() {
+        let hadLoadedPartition = loadedLearnerIdentity != nil
+        loadedLearnerIdentity = nil
+        learnerLoadError = Self.learnerLoadNotice
+        archive = Archive()
+        if hadLoadedPartition { advanceDataGeneration() }
+    }
+
+    private func reloadWorkingArchiveAfterWriteFailure() {
+        do {
+            try requireLoadedLearner()
+            archive = try dbStore.loadInitialArchive()
+        } catch {
+            invalidateLoadedLearner()
+        }
+    }
+
+    private func admitLocalMutation() -> Bool {
+        do { try requireLoadedLearner(); return true }
+        catch { self.error = Self.learnerLoadNotice; return false }
+    }
+
     func activateLearnerIdentity(_ accountID: String?) {
         let identity = accountID.map { "member:\($0)" } ?? Self.stableGuestIdentity()
-        guard identity != activeLearnerIdentity else { return }
+        guard identity != activeLearnerIdentity || !isLearnerReady else { return }
         activeLearnerIdentity = identity
-        advanceDataGeneration()
+        loadedLearnerIdentity = nil
+        learnerLoadError = nil
         archive = Archive()
-        guard !dbStore.jsonMode else { return }
+        advanceDataGeneration()
         do {
-            try LearnerOwnershipDao.activate(dbStore.db, identity: identity)
+            // The fallback payload has no identity-isolated partition. It cannot
+            // safely serve a different account without a successful DB load.
+            guard !dbStore.jsonMode else {
+                throw SqlDatabaseError.unsupportedValue("legacy partition cannot switch learners")
+            }
+            try activateIdentity(dbStore.db, identity)
+            guard try LearnerOwnershipDao.activeIdentity(dbStore.db) == identity else {
+                throw SqlDatabaseError.unsupportedValue("learner activation did not persist")
+            }
             try ProgressRecoveryDao.recover(dbStore.db, nowUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
-            archive = try dbStore.recoverUnfinishedSessions(dbStore.loadInitialArchive())
+            let loaded = try loadArchive(dbStore)
+            guard try LearnerOwnershipDao.activeIdentity(dbStore.db) == identity else {
+                throw SqlDatabaseError.unsupportedValue("learner changed during load")
+            }
+            archive = loaded
+            loadedLearnerIdentity = identity
+            error = nil
         } catch {
-            self.error = error.localizedDescription
+            learnerLoadError = Self.learnerLoadNotice
+            self.error = Self.learnerLoadNotice
         }
     }
 
@@ -212,8 +289,10 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
     /// Starts a frozen exam snapshot and its initial outbox record atomically.
     func startExam(snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord) throws -> ExamHistory {
+        try requireLoadedLearner()
         let accountOwner = activeLearnerIdentity.hasPrefix("member:")
             ? String(activeLearnerIdentity.dropFirst("member:".count)) : nil
+        try requireLoadedLearner(ownerAccountID: attempt.ownerAccountID)
         let ownedAttempt = ExamAttemptRecord(attemptID: attempt.attemptID, examID: attempt.examID,
             ownerAccountID: attempt.ownerAccountID ?? accountOwner, startedAt: attempt.startedAt)
         return try ExamHistoryDao.start(dbStore.db, snapshot: snapshot, attempt: ownedAttempt)
@@ -222,25 +301,29 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// Persists the latest answer and position in the same transaction as its sync event.
     func saveExamAnswer(attemptID: String, questionID: String, responseJSON: String,
                         position: Int, savedAt: Double = Date.now.timeIntervalSince1970) throws -> Int64 {
-        try ExamHistoryDao.saveAnswer(dbStore.db, attemptID: attemptID, questionID: questionID,
+        try requireLoadedLearner()
+        return try ExamHistoryDao.saveAnswer(dbStore.db, attemptID: attemptID, questionID: questionID,
                                       responseJSON: responseJSON, position: position, savedAt: savedAt)
     }
 
     /// Persists the original grading result once; later identical completion is idempotent.
     func completeExam(attemptID: String, resultJSON: String,
                       completedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
-        try ExamHistoryDao.complete(dbStore.db, attemptID: attemptID, resultJSON: resultJSON,
+        try requireLoadedLearner()
+        return try ExamHistoryDao.complete(dbStore.db, attemptID: attemptID, resultJSON: resultJSON,
                                     completedAt: completedAt)
     }
 
     /// Local history is isolated to the active account; nil selects anonymous attempts only.
     func examHistory(ownerAccountID: String? = nil) throws -> [ExamHistory] {
-        try ExamHistoryDao.history(dbStore.db, ownerAccountID: ownerAccountID ?? currentExamAccountID)
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.history(dbStore.db, ownerAccountID: ownerAccountID ?? currentExamAccountID)
     }
 
     /// Loads an attempt only inside the requested local/account ownership boundary.
     func examAttempt(attemptID: String, ownerAccountID: String? = nil) throws -> ExamHistory? {
-        try ExamHistoryDao.load(dbStore.db, attemptID: attemptID, ownerAccountID: ownerAccountID ?? currentExamAccountID)
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.load(dbStore.db, attemptID: attemptID, ownerAccountID: ownerAccountID ?? currentExamAccountID)
     }
 
     private var currentExamAccountID: String? {
@@ -248,36 +331,42 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
 
     func pendingExamOutbox(ownerAccountID: String) throws -> [SqlRow] {
-        try ExamHistoryDao.pendingOutbox(dbStore.db, ownerAccountID: ownerAccountID)
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.pendingOutbox(dbStore.db, ownerAccountID: ownerAccountID)
     }
 
     func acknowledgeExamOutbox(ownerAccountID: String, attemptID: String, eventID: String,
                                revision: Int64, acknowledgedAt: Double) throws -> Bool {
-        try ExamHistoryDao.acknowledgeOutbox(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.acknowledgeOutbox(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
             eventID: eventID, revision: revision, acknowledgedAt: acknowledgedAt)
     }
 
     func persistExamConflict(ownerAccountID: String, attemptID: String, serverAttemptJSON: String,
                              receivedAt: Double) throws -> Bool {
-        try ExamHistoryDao.persistConflict(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.persistConflict(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
             serverAttemptJSON: serverAttemptJSON, receivedAt: receivedAt)
     }
 
     func restoreExamAttempts(records: [ExamRestoreRecord], ownerAccountID: String,
                              restoredAt: Double = Date.now.timeIntervalSince1970) throws -> [Bool] {
-        try ExamHistoryDao.restorePage(dbStore.db, records: records,
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.restorePage(dbStore.db, records: records,
                                        ownerAccountID: ownerAccountID, restoredAt: restoredAt)
     }
 
     func forkExamConflict(ownerAccountID: String, attemptID: String, forkAttemptID: String,
                           forkedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
-        try ExamHistoryDao.resolveConflictFork(dbStore.db, ownerAccountID: ownerAccountID,
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.resolveConflictFork(dbStore.db, ownerAccountID: ownerAccountID,
             attemptID: attemptID, forkAttemptID: forkAttemptID, forkedAt: forkedAt)
     }
 
     func takeOverExamConflict(ownerAccountID: String, attemptID: String,
                               resolvedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
-        try ExamHistoryDao.resolveConflictTakeover(dbStore.db, ownerAccountID: ownerAccountID,
+        try requireLoadedLearner(ownerAccountID: ownerAccountID)
+        return try ExamHistoryDao.resolveConflictTakeover(dbStore.db, ownerAccountID: ownerAccountID,
             attemptID: attemptID, resolvedAt: resolvedAt)
     }
 
@@ -304,6 +393,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     func claimArchiveHealth(
         nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)
     ) -> [String: UsageProp]? {
+        guard isLearnerReady else { return nil }
         guard !dbStore.jsonMode else { return nil }
         do {
             // GRDB opens the learning database in rollback-journal mode, so
@@ -323,6 +413,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// has no database. Never throws: a failed write just skips a heartbeat.
     func enqueueDurableUsageEvent(_ name: String, atUnixMilliseconds: Int64,
                                   props: [String: UsageProp] = [:]) {
+        guard admitLocalMutation() else { return }
         guard !dbStore.jsonMode else { return }
         do { try UsageOutboxDao.enqueue(dbStore.db, name, atUnixMilliseconds, props) }
         catch { print("LearningStore: usage_outbox enqueue failed — \(error)") }
@@ -332,6 +423,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// up to `cap` undispatched rows, oldest first. Empty in JSON fail-safe
     /// mode. Never throws: a drain failure must not break the telemetry flush.
     func pendingDurableUsageEvents(cap: Int) -> [DurableUsageEvent] {
+        guard isLearnerReady else { return [] }
         guard !dbStore.jsonMode else { return [] }
         do {
             return try UsageOutboxDao.pending(dbStore.db).prefix(cap)
@@ -346,6 +438,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// just re-sends the same rows on the next flush (their stable
     /// rowid-derived ids dedupe server-side). Never throws.
     func markDurableUsageEventsDispatched(_ rowIds: [Int64]) {
+        guard admitLocalMutation() else { return }
         guard !dbStore.jsonMode else { return }
         do { try UsageOutboxDao.markDispatched(dbStore.db, rowIds) }
         catch { print("LearningStore: usage_outbox dispatch mark failed — \(error)") }
@@ -367,6 +460,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// fail-safe mode (no index serves this run) or when the query fails —
     /// the history view keeps showing the plain list rather than erroring.
     func searchConversations(_ query: String) -> [SearchHit] {
+        guard isLearnerReady else { return [] }
         guard !dbStore.jsonMode else { return [] }
         do {
             return try SearchDao.search(dbStore.db, query, languageID: language.id)
@@ -377,15 +471,18 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
 
     func selectLanguage(_ id: String) {
+        guard admitLocalMutation() else { return }
         guard LanguageRegistry.module(for: id) != nil else { return }
         archive.preferences.learningLanguageID = id
         write { try LearningDbWriter.preferences($0, archive.preferences) }
     }
     func updatePreferences(_ change: (inout Preferences) -> Void) {
+        guard admitLocalMutation() else { return }
         change(&archive.preferences)
         write { try LearningDbWriter.preferences($0, archive.preferences) }
     }
     func save(_ session: SessionRecord) {
+        guard admitLocalMutation() else { return }
         if let i = archive.sessions.firstIndex(where: { $0.id == session.id }) { archive.sessions[i] = session }
         else { archive.sessions.append(session) }
         // The site replaces the session in place (or appends a new one at
@@ -395,6 +492,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         write { try LearningDbWriter.session($0, session, moveToEnd: false) }
     }
     func deleteSession(_ id: UUID) {
+        guard admitLocalMutation() else { return }
         onSessionInvalidation?(id)
         archive.sessions.removeAll { $0.id == id }
         // ticketRemoved is always true: deleting an absent ticket row is the
@@ -404,6 +502,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     /// One attempt per finished practice session; mastery is never claimed here.
     func recordLessonAttempt(_ lessonID: String) {
+        guard admitLocalMutation() else { return }
         var lessons = archive.lessons ?? []
         let updated: LessonState
         if let index = lessons.firstIndex(where: { $0.lessonID == lessonID }) {
@@ -437,6 +536,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// One completed learning event in the ledger; keeps only the newest marks.
     /// Marks carry the learning language.
     func recordCompletion(kind: String, itemID: String, bestScore: Int = 0) {
+        guard admitLocalMutation() else { return }
         let marks = appendedLedger(CompletionMark(kind: kind, itemID: ProgressEngine.completionKey(itemID),
                                                   at: Date.now.timeIntervalSinceReferenceDate, bestScore: bestScore,
                                                   languageID: archive.preferences.learningLanguageID))
@@ -487,7 +587,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
 
     func remoteProgressAggregates(languageID: String) -> (String?, [ProgressAggregate]) {
         _ = progressRevision
-        guard !dbStore.jsonMode, activeLearnerIdentity.hasPrefix("member:") else { return (nil, []) }
+        guard isLearnerReady, !dbStore.jsonMode, activeLearnerIdentity.hasPrefix("member:") else { return (nil, []) }
         let owner = String(activeLearnerIdentity.dropFirst("member:".count))
         guard let rows = try? RemoteProgressRollupsDao.forLanguage(dbStore.db, ownerAccountID: owner, languageID: languageID) else { return (owner, []) }
         return (owner, rows.map { ProgressAggregate(ownerAccountID: $0.ownerAccountID, languageID: $0.languageID,
@@ -498,6 +598,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// Error memory: one wrong answer attributes a hit to every skill its lesson
     /// teaches. Local evidence — not synced in v1.
     func recordExerciseMistake(lessonID: String, prompt: String) {
+        guard admitLocalMutation() else { return }
         guard let lesson = CourseRegistry.lesson(id: lessonID) else { return }
         var errorsByKey: [String: SkillError] = Dictionary(uniqueKeysWithValues: (archive.errors ?? []).map { ($0.skillID, $0) })
         let now = Date.now.timeIntervalSinceReferenceDate
@@ -541,6 +642,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         return Set(lessons.filter { $0.attempts > 0 }.map(\.lessonID))
     }
     func applyRemoteProgress(_ rows: [RemoteProgress]) {
+        guard admitLocalMutation() else { return }
         guard activeLearnerIdentity.hasPrefix("member:") else { return }
         let owner = String(activeLearnerIdentity.dropFirst("member:".count))
         let language = archive.preferences.learningLanguageID
@@ -555,6 +657,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         progressRevision &+= 1
     }
     func hideWord(_ id: String) {
+        guard admitLocalMutation() else { return }
         archive.preferences.hiddenWords.append(id)
         write { try LearningDbWriter.preferences($0, archive.preferences) }
     }
@@ -573,6 +676,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// expression store (RecallEngine upsert on the (language, text) key, then
     /// persist). Returns false when a new entry cannot fit.
     func saveLookupExpression(text: String, meaning: String) -> Bool {
+        guard admitLocalMutation() else { return false }
         let languageID = archive.preferences.learningLanguageID
         let key = RecallEngine.normalizeKey(text)
         let index = (archive.expressions ?? []).firstIndex {
@@ -593,6 +697,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     /// Grades a typed recall attempt on the RecallEngine ladder, then persists.
     func gradeRecall(text: String, correct: Bool) {
+        guard admitLocalMutation() else { return }
         let languageID = archive.preferences.learningLanguageID
         let key = RecallEngine.normalizeKey(text)
         let index = (archive.expressions ?? []).firstIndex {
@@ -608,6 +713,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     /// Removes an expression from the notebook (mirrors Android's removeExpression).
     func removeExpression(text: String) {
+        guard admitLocalMutation() else { return }
         let languageID = archive.preferences.learningLanguageID
         RecallEngine.remove(&archive, text: text)
         // The engine drops the language row AND the legacy NULL row for the
@@ -648,6 +754,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// failure — the notice is on `error`.
     @discardableResult
     func removeExpressionLanguages(_ selected: [String?]) -> Bool {
+        guard admitLocalMutation() else { return false }
         guard !dbStore.jsonMode else {
             error = Self.databaseUnavailableDeleteNotice
             return false
@@ -675,13 +782,14 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // The working copy was purged but a transaction kept its rows:
             // reload the persisted projection so export(DB) == archive holds
             // again, then surface.
-            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: expression-language removal failed — \(error)")
             self.error = "Palique couldn’t remove the selected expressions. Please try again."
             return false
         }
     }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
+        guard admitLocalMutation() else { return }
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),
               let passage = archive.sessions[index].passages.first(where: { $0.id == passageID && $0.speaker == .user }) else { return }
         for (offset, fragment) in passage.fragments.enumerated() {
@@ -695,6 +803,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         write { try LearningDbWriter.session($0, updated, moveToEnd: false) }
     }
     func deleteAll() {
+        guard admitLocalMutation() else { return }
         if let migrationBackupURL {
             do { try FileManager.default.removeItem(at: migrationBackupURL) }
             catch CocoaError.fileNoSuchFile { /* Most installations have no migration backup. */ }
@@ -729,8 +838,12 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
         }
     }
-    func exportData() throws -> Data { try archive.encoded() }
+    func exportData() throws -> Data {
+        try requireLoadedLearner()
+        return try archive.encoded()
+    }
     func importData(_ data: Data) throws {
+        try requireLoadedLearner()
         let imported = try Archive.decode(data)
         if dbStore.jsonMode {
             archive = try archive.merging(imported)
@@ -786,6 +899,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// after a refusal or failure — the notice is on `error`. The legacy
     /// SwiftData fail-safe has no database to back up.
     func exportDb() -> Data? {
+        guard admitLocalMutation() else { return nil }
         guard !dbStore.jsonMode else {
             error = Self.databaseUnavailableExportNotice
             return nil
@@ -836,6 +950,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
      */
     @discardableResult
     func importDb(from url: URL) -> Bool {
+        guard admitLocalMutation() else { return false }
         guard !dbStore.jsonMode else {
             error = Self.databaseUnavailableRestoreNotice
             return false
@@ -963,6 +1078,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
      */
     @discardableResult
     func deleteLearningDataForLanguage(_ id: String) -> Bool {
+        guard admitLocalMutation() else { return false }
         guard !dbStore.jsonMode else {
             error = Self.databaseUnavailableDeleteNotice
             return false
@@ -983,7 +1099,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // The working copy was purged but the transaction kept the
             // database's rows: reload the persisted projection so
             // export(DB) == archive holds again, then surface.
-            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: per-language delete failed — \(error)")
             self.error = "Palique couldn’t delete the language’s learning data. Please try again."
             return false
@@ -997,6 +1113,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// mode the site's write is replaced by the legacy full-payload SwiftData
     /// save — exactly the pre-cutover behavior.
     private func write(_ work: (SqlDatabase) throws -> Void) {
+        guard admitLocalMutation() else { return }
         if dbStore.jsonMode { persist(); return }
         do {
             try work(dbStore.db)
@@ -1007,12 +1124,13 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // projection so export(DB) == archive holds again, then surface —
             // the same recovery as removeExpressionLanguages and the
             // per-language delete.
-            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: directed write failed — \(error)")
             self.error = "Palique couldn’t save your progress. Please export a backup and try again."
         }
     }
     private func persist() {
+        guard admitLocalMutation() else { return }
         guard let document else { return }
         do {
             var payload = try archive.encoded()

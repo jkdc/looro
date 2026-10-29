@@ -207,6 +207,7 @@ struct ConversationTopicSearchAdapter {
     /// Push/pull the progress ledger against the account (guests included). Failures
     /// are silent: sync must never nag, the local ledger stays the source of truth.
     func syncProgress() {
+        guard store.isLearnerReady else { return }
         if injectedProgressSyncAdapter == nil {
             syncVersionedProgress()
             return
@@ -242,7 +243,7 @@ struct ConversationTopicSearchAdapter {
             }
             do {
                 let rows = await adapter.fetch(capturedSession.accessToken)
-                guard !Task.isCancelled, let rows,
+                guard !Task.isCancelled, self.store.isLearnerReady, let rows,
                       let liveSession = adapter.loadSession(),
                       self.progressSyncOperation.owns(operation, liveIdentity: self.progressSyncOperation.identity(
                         accountID: liveSession.accountID, accessToken: liveSession.accessToken)),
@@ -255,7 +256,7 @@ struct ConversationTopicSearchAdapter {
                 guard let currentSession = adapter.loadSession() else { return }
                 let currentIdentity = self.progressSyncOperation.identity(accountID: currentSession.accountID,
                                                                            accessToken: currentSession.accessToken)
-                guard !Task.isCancelled,
+                guard !Task.isCancelled, self.store.isLearnerReady,
                       self.progressSyncOperation.owns(operation, liveIdentity: currentIdentity) else { return }
                 guard await adapter.send(self.store.language.id, currentSession.accessToken) else { return }
                 succeeded = true
@@ -268,7 +269,7 @@ struct ConversationTopicSearchAdapter {
     /// Authenticated accounts bootstrap once only when this device has no local
     /// progress. Pulled rows remain in the owner-scoped remote ledger until T8.
     private func syncVersionedProgress() {
-        guard !store.jsonMode, let configuration = managed?.configuration,
+        guard store.isLearnerReady, !store.jsonMode, let configuration = managed?.configuration,
               let client = ProgressClient(configuration: configuration) else { return }
         let keychain = ManagedAccountKeychain(scope: configuration.storageScope)
         guard let session = try? keychain.load(),
@@ -303,7 +304,7 @@ struct ConversationTopicSearchAdapter {
                 self.schedulePendingSyncSubstitute()
             }
             func isCurrent() -> Bool {
-                guard !Task.isCancelled, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
+                guard !Task.isCancelled, self.store.isLearnerReady, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
                       self.store.dataGeneration == capturedDataGeneration,
                       let live = try? keychain.load(),
                       live.accountID == session.accountID, live.accessToken == session.accessToken else { return false }
@@ -632,7 +633,7 @@ struct ConversationTopicSearchAdapter {
         }
     }
     func start() {
-        guard !isRunning else { return }
+        guard store.isLearnerReady, !isRunning else { return }
         guard hasAIConsent else { startAfterConsent = true; showAIConsent = true; return }
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--preview") { showSettings = true; return }
@@ -781,6 +782,24 @@ struct ConversationTopicSearchAdapter {
     /// The view supplies the authenticated account identity; adopt its local
     /// partition before allowing progress synchronization to inspect eligibility.
     func activateAccountAndSync(_ accountID: String?) {
+        let isSameRequestedMember = accountID.map { "member:\($0)" } == store.activeLearnerIdentity
+        let isSameRequestedGuest = accountID == nil && store.activeLearnerIdentity.hasPrefix("guest:")
+        if !(isSameRequestedMember || isSameRequestedGuest) || !store.isLearnerReady {
+            // Quiesce every deferred writer while the previous partition is
+            // still loaded. Cancellation alone cannot fence completed callbacks.
+            if isRunning { finish(final: false) }
+            dataGeneration = UUID()
+            invalidateTypedReplyContinuation()
+            languageGeneration = UUID()
+            connectionTask?.cancel(); closeTask?.cancel(); durationTask?.cancel()
+            assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+            scenarioReviewTask?.cancel(); scenarioReviewState = nil
+            delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
+            store.sessions.forEach { finalAssessments.cancel($0.id) }
+            meanings.reset()
+            transport.disconnect()
+            resetConversation()
+        }
         store.activateLearnerIdentity(accountID)
         // N04: the adoption transition OWNS the invalidation - a superseded
         // account's operation must be torn down before the new identity can
@@ -794,7 +813,7 @@ struct ConversationTopicSearchAdapter {
         progressSyncTask = nil
         progressSyncTaskAccountID = nil
         progressSyncStatus = nil
-        syncProgress()
+        if store.isLearnerReady { syncProgress() }
     }
     /// The error alert's "Get tokens" action: opens the paywall sheet with the
     /// exhausted banner still set when the block was a 402.

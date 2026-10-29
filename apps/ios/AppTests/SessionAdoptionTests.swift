@@ -414,3 +414,168 @@ private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
                        configuration: configuration, helperRouter: helperRouter, proxy: proxy)
     }
 }
+
+/// Regressions for a requested account whose local activation or load fails.
+@MainActor final class LearningStoreIdentityTests: XCTestCase {
+    private enum InjectedFailure: Error { case activation, load }
+
+    func testFailedActivationCannotMutateEitherAccountAndSameAccountRetryLoads() throws {
+        try assertFailedTransitionPreservesPartitions(failAfterActivation: false)
+    }
+
+    func testSuccessfulActivationWithFailedLoadCannotReplaceExistingAccountData() throws {
+        try assertFailedTransitionPreservesPartitions(failAfterActivation: true)
+    }
+
+    private func assertFailedTransitionPreservesPartitions(failAfterActivation: Bool) throws {
+        var fail = false
+        var database: (any SqlDatabase)?
+        let store = try LearningStore(inMemory: true, activateIdentity: { db, identity in
+            database = db
+            if fail && !failAfterActivation { throw InjectedFailure.activation }
+            try LearnerOwnershipDao.activate(db, identity: identity)
+        }, loadArchive: { dbStore in
+            if fail && failAfterActivation { throw InjectedFailure.load }
+            return try dbStore.recoverUnfinishedSessions(dbStore.loadInitialArchive())
+        })
+        store.activateLearnerIdentity("account-B")
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "b-original", bestScore: 80)
+        store.activateLearnerIdentity("account-A")
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "a-original", bestScore: 90)
+        let generation = store.dataGeneration
+
+        fail = true
+        store.activateLearnerIdentity("account-B")
+        XCTAssertEqual(store.activeLearnerIdentity, "member:account-B")
+        XCTAssertNil(store.loadedLearnerIdentity)
+        XCTAssertFalse(store.isLearnerReady)
+        XCTAssertGreaterThan(store.dataGeneration, generation)
+        XCTAssertNotNil(store.learnerLoadError)
+        XCTAssertTrue(store.archive.sessions.isEmpty)
+        XCTAssertTrue(store.archive.completions?.isEmpty ?? true)
+        XCTAssertEqual(try LearnerOwnershipDao.activeIdentity(XCTUnwrap(database)),
+                       failAfterActivation ? "member:account-B" : "member:account-A")
+
+        let db = try XCTUnwrap(database)
+        let changesBefore = try db.query("SELECT total_changes() AS changes").first?["changes"] as? Int64
+        // Dismissing the ordinary alert cannot dismiss the persistent recovery state.
+        store.error = nil
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "cross-account", bestScore: 100)
+        store.recordLessonAttempt("en-a1-lesson")
+        store.updatePreferences { $0.hasOnboarded = true }
+        store.selectLanguage("es")
+        store.save(SessionRecord(languageID: "en", title: "must not save"))
+        store.deleteSession(UUID())
+        store.hideWord("must-not-hide")
+        store.gradeRecall(text: "hello", correct: true)
+        store.removeExpression(text: "hello")
+        store.recordExerciseMistake(lessonID: "en-a1-lesson", prompt: "must-not-record")
+        store.correctPassage(sessionID: UUID(), passageID: "missing", text: "must-not-correct")
+        store.applyRemoteProgress([])
+        store.deleteAll()
+        XCTAssertFalse(store.saveLookupExpression(text: "hello", meaning: "greeting"))
+        XCTAssertFalse(store.removeExpressionLanguages(["en"]))
+        XCTAssertFalse(store.deleteLearningDataForLanguage("en"))
+        XCTAssertFalse(store.importDb(from: URL(fileURLWithPath: "/not-a-backup")))
+        XCTAssertNil(store.exportDb())
+        XCTAssertThrowsError(try store.exportData())
+        XCTAssertThrowsError(try store.importData(Archive().encoded()))
+        let snapshot = ExamSnapshotRecord(examID: "blocked", contentID: "blocked", contentHash: "hash",
+            schemaVersion: 1, contentRevision: 1, gradingVersion: 1, source: "bundled",
+            languageID: "en", level: "A1", weekID: 202641, contentJSON: "{}", createdAt: 1)
+        XCTAssertThrowsError(try store.startExam(snapshot: snapshot,
+            attempt: ExamAttemptRecord(attemptID: "blocked", examID: "blocked", startedAt: 1)))
+        XCTAssertThrowsError(try store.saveExamAnswer(attemptID: "missing", questionID: "q",
+            responseJSON: "{}", position: 0))
+        XCTAssertThrowsError(try store.completeExam(attemptID: "missing", resultJSON: "{}"))
+        XCTAssertThrowsError(try store.acknowledgeExamOutbox(ownerAccountID: "account-B", attemptID: "missing",
+            eventID: "missing", revision: 1, acknowledgedAt: 1))
+        XCTAssertThrowsError(try store.persistExamConflict(ownerAccountID: "account-B", attemptID: "missing",
+            serverAttemptJSON: "{}", receivedAt: 1))
+        XCTAssertThrowsError(try store.forkExamConflict(ownerAccountID: "account-B", attemptID: "missing",
+            forkAttemptID: "fork", forkedAt: 1))
+        XCTAssertThrowsError(try store.takeOverExamConflict(ownerAccountID: "account-B", attemptID: "missing",
+            resolvedAt: 1))
+        XCTAssertThrowsError(try store.restoreExamAttempts(records: [], ownerAccountID: "account-B"))
+        XCTAssertThrowsError(try store.applyRemoteProgressPage([], ownerAccountID: "account-B",
+            nextCursor: "blocked", passGeneration: 1, updatedAtMilliseconds: 1))
+        XCTAssertThrowsError(try store.acknowledgeRemoteProgressUpload(ownerAccountID: "account-B",
+            nextCursor: "blocked", passGeneration: 1, updatedAtMilliseconds: 1))
+        XCTAssertNil(try store.remoteProgressSyncState(direction: "download", ownerAccountID: "account-B"))
+        XCTAssertTrue(store.hasLocalProgress(ownerAccountID: "account-B"), "unknown state must forbid bootstrap")
+        XCTAssertNil(store.claimArchiveHealth())
+        store.enqueueDurableUsageEvent("must-not-enqueue", atUnixMilliseconds: 1)
+        store.markDurableUsageEventsDispatched([1])
+        XCTAssertTrue(store.pendingDurableUsageEvents(cap: 10).isEmpty)
+        XCTAssertTrue(try db.query("SELECT * FROM usage_outbox").isEmpty)
+        XCTAssertEqual(try db.query("SELECT total_changes() AS changes").first?["changes"] as? Int64,
+                       changesBefore, "rejected writes must not mutate any durable table")
+        XCTAssertNotNil(store.learnerLoadError)
+        XCTAssertTrue(store.archive.completions?.isEmpty ?? true)
+        XCTAssertFalse(store.preferences.hasOnboarded)
+
+        // An identical request must actually retry; an equality-only shortcut loses B.
+        fail = false
+        store.activateLearnerIdentity("account-B")
+        XCTAssertTrue(store.isLearnerReady)
+        XCTAssertNil(store.learnerLoadError)
+        XCTAssertEqual(store.loadedLearnerIdentity, "member:account-B")
+        XCTAssertEqual(store.archive.completions?.map(\.itemID), ["b-original"])
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "b-after-retry", bestScore: 100)
+        store.activateLearnerIdentity("account-A")
+        XCTAssertEqual(store.archive.completions?.map(\.itemID), ["a-original"])
+        store.activateLearnerIdentity("account-B")
+        XCTAssertEqual(store.archive.completions?.map(\.itemID), ["b-original", "b-after-retry"])
+    }
+
+    func testCoordinatorFailedLoadDoesNotStartSyncAndRetryUsesLoadedPartition() async throws {
+        var fail = false
+        let store = try LearningStore(inMemory: true, loadArchive: { dbStore in
+            if fail { throw InjectedFailure.load }
+            return try dbStore.recoverUnfinishedSessions(dbStore.loadInitialArchive())
+        })
+        store.activateLearnerIdentity("account-A")
+        fail = true
+        store.activateLearnerIdentity("account-B")
+        let finished = expectation(description: "retry sync completes")
+        let adapter = ConversationProgressSyncAdapter(
+            loadSession: { ProgressSyncSession(accountID: "account-B", accessToken: "token") },
+            fetch: { _ in [] }, generationSnapshot: { store.dataGeneration },
+            applyRemote: { store.applyRemoteProgress($0) }, send: { _, _ in true },
+            onFinish: { finished.fulfill() })
+        let coordinator = ConversationCoordinator(store: store, progressSyncAdapter: adapter)
+        coordinator.prepareTypedReplyTesting()
+        coordinator.activateAccountAndSync("account-B")
+        XCTAssertNil(coordinator.session, "a failed transition must not retain another learner's conversation")
+        XCTAssertNil(coordinator.progressSyncStatus, "unloaded state is not sync-eligible")
+        XCTAssertNotNil(store.learnerLoadError)
+
+        fail = false
+        coordinator.activateAccountAndSync("account-B")
+        XCTAssertTrue(store.isLearnerReady)
+        XCTAssertEqual(coordinator.progressSyncStatus?.phase, .pending)
+        await fulfillment(of: [finished], timeout: 2)
+        XCTAssertEqual(coordinator.progressSyncStatus?.phase, .synced)
+    }
+
+    func testPersistedOwnerMismatchClosesAlreadyLoadedStoreBeforeArchiveMutation() throws {
+        var database: (any SqlDatabase)?
+        let store = try LearningStore(inMemory: true, activateIdentity: { db, identity in
+            database = db
+            try LearnerOwnershipDao.activate(db, identity: identity)
+        })
+        store.activateLearnerIdentity("account-A")
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "a-original")
+        try LearnerOwnershipDao.activate(XCTUnwrap(database), identity: "member:account-B")
+
+        store.recordCompletion(kind: ProgressEngine.reading, itemID: "must-not-write")
+        store.updatePreferences { $0.hasOnboarded = true }
+        XCTAssertFalse(store.isLearnerReady)
+        XCTAssertNotNil(store.learnerLoadError)
+        XCTAssertFalse(store.preferences.hasOnboarded)
+        store.activateLearnerIdentity("account-A")
+        XCTAssertEqual(store.archive.completions?.map(\.itemID), ["a-original"])
+        store.activateLearnerIdentity("account-B")
+        XCTAssertTrue(store.archive.completions?.isEmpty ?? true)
+    }
+}

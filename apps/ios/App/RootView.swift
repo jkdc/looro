@@ -35,6 +35,19 @@ struct RootView: View {
             }
             Tab("Listen", systemImage: "headphones", value: 4) { shell { ListeningView(coordinator: coordinator) } }
         }
+        .disabled(!coordinator.store.isLearnerReady)
+        .safeAreaInset(edge: .top) {
+            if let message = coordinator.store.learnerLoadError {
+                VStack(spacing: 8) {
+                    Text(message).font(.footnote).multilineTextAlignment(.center)
+                        .accessibilityIdentifier("learner-load-error")
+                    Button("Try loading again") {
+                        coordinator.activateAccountAndSync(accountStore.session?.accountID.uuidString)
+                        onboarding = coordinator.store.isLearnerReady && !coordinator.store.preferences.hasOnboarded
+                    }.accessibilityIdentifier("learner-load-retry")
+                }.padding().frame(maxWidth: .infinity).background(AppColor.cream)
+            }
+        }
         .tint(AppColor.ink)
         .onChange(of: accountStore.session?.accountID) { _, accountID in
             coordinator.activateAccountAndSync(accountID?.uuidString)
@@ -55,7 +68,8 @@ struct RootView: View {
         .sheet(isPresented: $coordinator.showAIConsent, onDismiss: { coordinator.resumeAfterAIConsent() }) {
             AIConsentView(agree: { coordinator.acceptAIConsent() }, decline: { coordinator.declineAIConsent() })
         }
-        .fullScreenCover(isPresented: $onboarding) { OnboardingView(coordinator: coordinator) { coordinator.store.updatePreferences { $0.hasOnboarded = true }; onboarding = false } }
+        .fullScreenCover(isPresented: Binding(get: { onboarding && coordinator.store.isLearnerReady },
+                                             set: { onboarding = $0 })) { OnboardingView(coordinator: coordinator) { coordinator.store.updatePreferences { $0.hasOnboarded = true }; onboarding = false } }
         // Situation review (mirrors Android AppRoot: the review sheet sits above
         // the error dialog); swipe-down dismisses through dismissScenarioReview().
         .sheet(item: Binding(get: { coordinator.scenarioReviewState },
@@ -71,6 +85,7 @@ struct RootView: View {
             }
         } message: { Text(coordinator.error ?? coordinator.store.error ?? "") }
         .onAppear {
+            guard coordinator.store.isLearnerReady else { onboarding = false; return }
             let arguments = ProcessInfo.processInfo.arguments
             #if DEBUG && targetEnvironment(simulator)
             if arguments.contains("--preview") && arguments.contains("--preview-onboarding") {
