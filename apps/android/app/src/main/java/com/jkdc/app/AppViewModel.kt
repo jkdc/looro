@@ -398,14 +398,18 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val languageID = language.id
         viewModelScope.launch { levelTestCatalogRepository.refresh(languageID, level) }
     }
-    private var ownerScopedLegacyLevelTestHistory: Pair<LevelTestAttemptHistoryIdentity, com.jkdc.app.core.LevelTestResult>? = null
-    fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? = ownerScopedLegacyLevelTestHistory
-        ?.takeIf { it.first == examOwnerIdentity.value }
-        ?.second
-        ?.takeIf { it.level == level && it.languageID == language.id }
+    // Legacy summaries are trusted only in the session/owner that produced them.
+    // Persisted attempt history remains the preferred source for the card.
+    private val ownerScopedLegacyLevelTestHistory = androidx.compose.runtime.mutableStateMapOf<
+        Pair<String, String>, Pair<LevelTestAttemptHistoryIdentity, com.jkdc.app.core.LevelTestResult>>()
+    fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? =
+        ownerScopedLevelTestHistory.visible.value.mapNotNull { it.result }
+            .filter { it.level == level && it.languageID == language.id }.maxByOrNull { it.at }
+            ?: ownerScopedLegacyLevelTestHistory[language.id to level]
+                ?.takeIf { it.first == examOwnerIdentity.value }?.second
     fun saveLevelTestResult(result: com.jkdc.app.core.LevelTestResult) {
         levelTestHistoryStore.save(result)
-        ownerScopedLegacyLevelTestHistory = examOwnerIdentity.value to result
+        ownerScopedLegacyLevelTestHistory[result.languageID to result.level] = examOwnerIdentity.value to result
         // One synced `assessment` completion per attempt (slug-safe: lowercase level).
         recordCompletion(ProgressEngine.ASSESSMENT,
             "levelcheck-${result.languageID}-${result.level.lowercase()}", result.overall)
@@ -460,6 +464,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             if (errorCanRetryLocalHistory) dismissError()
             val updated = LevelTestAttemptHistoryIdentity(resolvedIdentity, current.generation + 1)
             examOwnerIdentity.value = updated
+            cancelPronunciation()
+            ownerScopedLegacyLevelTestHistory.clear()
             ownerScopedLevelTestHistory.setIdentity(updated)
             // Remove the previous owner's projection before asynchronous reload begins.
             archive = Archive()
@@ -813,46 +819,99 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var pronunciationResult by androidx.compose.runtime.mutableStateOf<Pair<String, Int>?>(null)
         private set
 
+    internal var pronunciationRecorder: () -> com.jkdc.app.engines.local.AudioFrameSource = {
+        com.jkdc.app.engines.local.MicRecorder()
+    }
+    internal var pronunciationCapture: suspend (com.jkdc.app.engines.local.AudioFrameSource) -> FloatArray = { recorder ->
+        val frames = ArrayList<FloatArray>()
+        val deadline = System.currentTimeMillis() + 4_000
+        while (System.currentTimeMillis() < deadline) {
+            recorder.readFrame()?.let { frames.add(it) }
+            delay(20)
+        }
+        val samples = frames.fold(FloatArray(0)) { acc, frame -> acc + frame }
+        val clean = com.jkdc.app.engines.local.MicRecorder.trimSilence(samples)
+        check(clean.size >= com.jkdc.app.engines.local.MicRecorder.SAMPLE_RATE / 2) { "too short" }
+        clean
+    }
+    internal var pronunciationTranscribe: suspend (FloatArray, String) -> String = { samples, languageID ->
+        pronunciationStt.transcribe(samples, languageID).text
+    }
+
     /** Records ~4 s of microphone audio, transcribes it with the same on-device
         STT Talk uses, and scores it against the target. A pass records
         `pronunciation` ledger evidence for the lesson's pron skills; any
         failure degrades to the plain listen-and-repeat with a notice. */
-    fun checkPronunciation(target: String, lessonID: String) {
-        if (pronunciationListening != null || isRunning) return
-        pronunciationListening = target
-        viewModelScope.launch {
-            val outcome = runCatching {
-                val recorder = com.jkdc.app.engines.local.MicRecorder()
-                check(recorder.start()) { "micro unavailable" }
-                val frames = ArrayList<FloatArray>()
-                val deadline = System.currentTimeMillis() + 4_000
-                while (System.currentTimeMillis() < deadline) {
-                    recorder.readFrame()?.let { frames.add(it) }
-                    kotlinx.coroutines.delay(20)
-                }
-                recorder.stop()
-                val samples = frames.reduce { acc, frame -> acc + frame }
-                val clean = com.jkdc.app.engines.local.MicRecorder.trimSilence(samples)
-                check(clean.size >= com.jkdc.app.engines.local.MicRecorder.SAMPLE_RATE / 2) { "too short" }
-                PronunciationEngine.score(target, pronunciationStt.transcribe(clean, language.id).text)
-            }
+    private var pronunciationJob: Job? = null
+    @Volatile private var pronunciationGeneration = 0L
+    internal var pronunciationNowSeconds: () -> Double = { nowSeconds() }
+
+    fun cancelPronunciation() {
+        synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+            pronunciationGeneration++
+            pronunciationJob?.cancel()
+            pronunciationJob = null
             pronunciationListening = null
-            outcome.fold(
-                onSuccess = { score ->
-                    pronunciationResult = target to score
-                    if (PronunciationEngine.passed(score)) recordCompletion(ProgressEngine.PRONUNCIATION, lessonID, score)
-                },
-                onFailure = {
-                    notice = getApplication<Application>().getString(R.string.lesson_pronounce_unavailable)
-                },
-            )
+            pronunciationResult = null
+        }
+    }
+
+    fun checkPronunciation(target: String, lessonID: String) {
+        val owner = examOwnerIdentity.value
+        if (pronunciationListening != null || isRunning || !storageReady ||
+            loadedLearningIdentity != owner.ownerAccountID) return
+        val languageID = language.id
+        val attempt = ++pronunciationGeneration
+        fun isCurrent() = pronunciationGeneration == attempt && examOwnerIdentity.value == owner &&
+            loadedLearningIdentity == owner.ownerAccountID && language.id == languageID
+        pronunciationListening = target
+        pronunciationResult = null
+        pronunciationJob = viewModelScope.launch {
+            try {
+                val recorder = pronunciationRecorder()
+                val clean = try {
+                    check(recorder.start()) { "micro unavailable" }
+                    pronunciationCapture(recorder)
+                } finally {
+                    recorder.stop()
+                }
+                val score = PronunciationEngine.score(target, pronunciationTranscribe(clean, languageID))
+                if (!isCurrent()) return@launch
+                pronunciationResult = target to score
+                if (PronunciationEngine.passed(score)) {
+                    val mark = CompletionMark(ProgressEngine.PRONUNCIATION,
+                        ProgressEngine.completionKey(lessonID), pronunciationNowSeconds(), score, languageID)
+                    val marks = (archive.completions.orEmpty() + mark)
+                        .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS)
+                    archive = archive.copy(completions = marks.toMutableList())
+                    bumpLedgerRevision()
+                    // Recheck the captured context at the durable write boundary too:
+                    // an owner/language switch can happen while the write is queued.
+                    persistFencedAndWait(
+                        write = { db -> LearningDbWriter.completions(db, marks) },
+                        fencedWrite = { write ->
+                            synchronized(com.jkdc.app.data.LearnerOwnershipDao) {
+                                if (isCurrent()) { write(); true } else false
+                            }
+                        },
+                    )
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (isCurrent()) notice = getApplication<Application>().getString(R.string.lesson_pronounce_unavailable)
+            } finally {
+                if (attempt == pronunciationGeneration) {
+                    pronunciationListening = null
+                    pronunciationJob = null
+                }
+            }
         }
     }
 
     private fun remoteProgressForLanguage(languageID: String): Pair<String?, List<com.jkdc.app.core.ProgressAggregate>> {
         val db = store?.db ?: return null to emptyList()
-        val requested = com.jkdc.app.core.LocalLearnerIdentity.resolve(
-            examOwnerIdentity.value.ownerAccountID, localGuestIdentityID)
+        val requested = examOwnerIdentity.value.ownerAccountID
         val ownerKey = com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db)
         // N03 fence: during an account switch the database's active owner can
         // still be the PREVIOUS identity - consult remote rollups only when
@@ -2075,6 +2134,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         if (LanguageRegistry.get(preferences.learningLanguageID) == null || preferences.meaningLanguage !in MeaningLanguages.all || preferences.sessionMinutes !in 1..60) return
         val languageChanged = preferences.learningLanguageID != language.id
+        if (languageChanged) cancelPronunciation()
         actionJob?.cancel(); clearLookup(); working = false
         if (preferences.aiConsentVersion != 1) {
             finalAssessments.cancelAll(); hostedBindings.disableHelpers()
@@ -3462,5 +3522,5 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val name = LanguageRegistry.get(languageID)?.name ?: languageID
         notice = getApplication<Application>().getString(R.string.notice_language_data_deleted, name)
     }
-    override fun onCleared() { hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }
+    override fun onCleared() { cancelPronunciation(); hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }
 }

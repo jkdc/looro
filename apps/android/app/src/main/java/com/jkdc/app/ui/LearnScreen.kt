@@ -209,9 +209,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                 LevelBar(levels, selectedLevel, completedLevels, onSelect = { savedLevel = it })
             }
             if (vm.levelTestPool(selectedLevel) != null) item(key = "leveltest-entry") {
-                val history = remember(selectedLevel, attemptHistoryIdentity, attemptHistoryRefresh) {
-                    vm.levelTestHistory(selectedLevel)
-                }
+                val history = vm.levelTestHistory(selectedLevel)
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) {
                     levelTestAttemptID = null; levelTestLevel = selectedLevel
                 }
@@ -515,6 +513,7 @@ private fun LessonStars(tier: Int) {
 private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                          onPractice: (String) -> Unit, onTheme: (ConversationTheme) -> Unit,
                          onExercises: () -> Unit) {
+    DisposableEffect(lesson.id) { onDispose { vm.cancelPronunciation() } }
     val unit = CourseRegistry.all.flatMap { it.units }.firstOrNull { u -> u.lessons.any { it.id == lesson.id } }
     LaunchedEffect(lesson.id, vm.lessonAudioOn) {
         // A live practice session is listening: reading the card aloud would feed
