@@ -197,6 +197,10 @@ struct ConversationTopicSearchAdapter {
     /// fence key: a late session-changed notification must not cancel a sync
     /// that already serves the keychain's current account.
     @ObservationIgnored private var progressSyncTaskAccountID: String?
+    /// N04: a sync request that begin() refused because another identity's
+    /// operation was still active. It is scheduled when that operation
+    /// releases instead of being dropped with the nil return.
+    @ObservationIgnored private var pendingSyncSubstituteAccountID: String?
     @ObservationIgnored private let injectedProgressSyncAdapter: ConversationProgressSyncAdapter?
     private(set) var progressSyncStatus: ProgressSyncStatus?
 
@@ -211,7 +215,13 @@ struct ConversationTopicSearchAdapter {
               let capturedSession = adapter.loadSession() else { return }
         let identity = progressSyncOperation.identity(accountID: capturedSession.accountID,
                                                      accessToken: capturedSession.accessToken)
-        guard let operation = progressSyncOperation.begin(identity) else { return }
+        guard let operation = progressSyncOperation.begin(identity) else {
+            // N04: admission refused while another operation is still active -
+            // register the substitute so it is scheduled when that operation
+            // releases, instead of dropping the request on the nil return.
+            pendingSyncSubstituteAccountID = capturedSession.accountID
+            return
+        }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: capturedSession.accountID, phase: .pending)
         let capturedGeneration = adapter.generationSnapshot()
         progressSyncTaskAccountID = capturedSession.accountID
@@ -228,6 +238,7 @@ struct ConversationTopicSearchAdapter {
                 }
                 self.progressSyncOperation.finish(operation)
                 adapter.onFinish()
+                self.schedulePendingSyncSubstitute()
             }
             do {
                 let rows = await adapter.fetch(capturedSession.accessToken)
@@ -265,7 +276,13 @@ struct ConversationTopicSearchAdapter {
         let identity = progressSyncOperation.identity(accountID: session.accountID.uuidString,
                                                        accessToken: session.accessToken)
         let capturedDataGeneration = store.dataGeneration
-        guard let operation = progressSyncOperation.begin(identity) else { return }
+        guard let operation = progressSyncOperation.begin(identity) else {
+            // N04: admission refused while another operation is still active -
+            // register the substitute so it is scheduled when that operation
+            // releases, instead of dropping the request on the nil return.
+            pendingSyncSubstituteAccountID = session.accountID.uuidString
+            return
+        }
         progressSyncStatus = ProgressSyncStatus(ownerAccountID: session.accountID.uuidString, phase: .pending)
         progressSyncTaskAccountID = session.accountID.uuidString
         progressSyncTask = Task { [weak self] in
@@ -283,6 +300,7 @@ struct ConversationTopicSearchAdapter {
                     }
                 }
                 self.progressSyncOperation.finish(operation)
+                self.schedulePendingSyncSubstitute()
             }
             func isCurrent() -> Bool {
                 guard !Task.isCancelled, self.store.activeLearnerIdentity == "member:\(session.accountID.uuidString)",
@@ -746,13 +764,36 @@ struct ConversationTopicSearchAdapter {
         progressSyncOperation.invalidate()
         progressSyncTask?.cancel()
         progressSyncTask = nil
+        progressSyncTaskAccountID = nil
         progressSyncStatus = nil
+    }
+
+    /// N04: re-runs a sync request that begin() refused because another
+    /// identity's operation was still active. The re-run is self-fencing -
+    /// syncProgress re-reads the current session and begin() refuses stale
+    /// admissions - so a pending substitute for a superseded identity no-ops.
+    private func schedulePendingSyncSubstitute() {
+        guard pendingSyncSubstituteAccountID != nil else { return }
+        pendingSyncSubstituteAccountID = nil
+        syncProgress()
     }
 
     /// The view supplies the authenticated account identity; adopt its local
     /// partition before allowing progress synchronization to inspect eligibility.
     func activateAccountAndSync(_ accountID: String?) {
         store.activateLearnerIdentity(accountID)
+        // N04: the adoption transition OWNS the invalidation - a superseded
+        // account's operation must be torn down before the new identity can
+        // be admitted, because begin(B) is rejected while A's operation is
+        // still active and the late session-changed notification only
+        // cancels (it never schedules the substitute). Tearing down here
+        // makes the two entry points converge on one idempotent transition:
+        // adopt, invalidate, then sync the identity that is now current.
+        progressSyncOperation.invalidate()
+        progressSyncTask?.cancel()
+        progressSyncTask = nil
+        progressSyncTaskAccountID = nil
+        progressSyncStatus = nil
         syncProgress()
     }
     /// The error alert's "Get tokens" action: opens the paywall sheet with the
