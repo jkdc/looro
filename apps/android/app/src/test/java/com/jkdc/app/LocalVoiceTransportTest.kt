@@ -1290,10 +1290,14 @@ class LocalVoiceTransportTest {
         val runtime = FakeWhisperRuntime()
         val scope = CoroutineScope(Dispatchers.IO)
         val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        // Paced producer (1 ms per frame): a 0 ms burst artificially
+        // overflows the handoff and the producer then holds frames back, so
+        // the saturation below would depend on scheduling instead of the
+        // buffer logic under test.
         val transport = LocalVoiceTransport(
             null as android.content.Context?, scope,
             stt(createTempDir(), runtime), engine, FakeTts(),
-            frameSourceProvider = { source }, frameDelayMs = 0, openOnStart = true,
+            frameSourceProvider = { source }, frameDelayMs = 1, openOnStart = true,
         )
         transport.manualTurn = true
         transport.onEvent = { event -> events.add(event) }
@@ -1307,12 +1311,27 @@ class LocalVoiceTransportTest {
         // Saturate the retained opening prefix, then toggle mute twice: the
         // epoch change must invalidate the stale prefix instead of leaving it
         // parked at full capacity over the new epoch.
+        // epoch change must invalidate the stale prefix instead of leaving it
+        // parked at full capacity over the new epoch. The fill is topped up
+        // until the limit event fires: a stray Flush mid-fill resets the
+        // buffer and the cap must be reached regardless of that interleaving.
+        var fed = 160
         repeat(160) { source.queue.add(speech(amplitude = 0.6f)) }
-        assertTrue(source.awaitFramesRead(160, 5_000))
         val limitDeadline = System.currentTimeMillis() + 5_000
         while (events.none { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" } &&
-            System.currentTimeMillis() < limitDeadline) Thread.sleep(10)
-        assertTrue(events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
+            System.currentTimeMillis() < limitDeadline) {
+            Thread.sleep(25)
+            if (fed < 220) {
+                source.queue.add(speech(amplitude = 0.6f))
+                fed += 1
+            }
+        }
+        assertTrue(source.awaitFramesRead(fed, 5_000))
+        assertTrue(
+            "saturating the opening buffer must surface its limit; fed=$fed "
+                + "state=<${transport.captureWindowState}> "
+                + "events=${events.joinToString(prefix = "[", postfix = "]") { it["type"].toString() }}",
+            events.any { it["type"]?.jsonPrimitive?.content == "session.capture.limit_reached" })
 
         transport.mute(true)
         transport.mute(false)
@@ -1321,7 +1340,7 @@ class LocalVoiceTransportTest {
 
         // The post-unmute phrase is the only voice that may survive.
         repeat(8) { source.queue.add(speech(amplitude = 0.8f)) }
-        assertTrue(source.awaitFramesRead(168, 5_000))
+        assertTrue(source.awaitFramesRead(fed + 8, 5_000))
         Thread.sleep(150)
         transport.endTurn()
         greetingGate.complete(Unit)

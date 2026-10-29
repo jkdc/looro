@@ -97,6 +97,11 @@ class LocalVoiceTransport(
     private var openingReady = CompletableDeferred<Unit>()
     private val captureEpoch = AtomicInteger(0)
     @Volatile private var speaking = false
+
+    /** Test/diagnostic snapshot of the capture-window flags (N05 flake triage). */
+    internal val captureWindowState: String
+        get() = "running=$running opening=$openingInProgress speaking=$speaking " +
+            "muted=$muted epoch=$captureEpoch"
     /**
      * Depth of concurrent [speakSuppressed] callers (turn reply, opening
      * greeting, typed commentary run on different coroutines). The mic only
