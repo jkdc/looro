@@ -98,6 +98,11 @@ final class LearningDbStoreTests: XCTestCase {
         try (db ?? self.db).query("SELECT COUNT(*) AS n FROM \(table)").first!.long("n")
     }
 
+    private func countOwner(_ owner: String, _ table: String) throws -> Int64 {
+        try db.query("SELECT COUNT(*) AS n FROM \(table) WHERE owner_key = ?",
+                     args: [owner]).first!.long("n")
+    }
+
     private func meta(_ key: String, _ db: SqlDatabase? = nil) throws -> String? {
         try MetaDao.get(db ?? self.db, key)
     }
@@ -226,11 +231,67 @@ final class LearningDbStoreTests: XCTestCase {
         XCTAssertTrue(store.jsonMode, "the schema-pinned completions narrowing must abort, not lose a mark")
         XCTAssertFalse(source.migrated)
         XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
-        // the import's own transaction committed, but the bookkeeping (with
-        // the hash) rolled back: the residue is unreachable without the hash
-        XCTAssertEqual(Int64(1), try count("sessions"))
-        XCTAssertEqual(Int64(1), try count("completions"),
-                       "the primary key kept only the first same-instant mark")
+        // the single content transaction rolled back completely: the old
+        // import-commits-first split used to leave the archive's rows (and
+        // schema_flags/mastery) on disk without the marker - the residue that
+        // wedged later attempts - and atomicity means the retry starts clean
+        XCTAssertEqual(Int64(0), try count("sessions"))
+        XCTAssertEqual(Int64(0), try count("completions"),
+                       "the primary key kept only the first same-instant mark, and the rollback removed it")
+    }
+
+    func testMixedLegacyResidueWithoutClaimIsQuarantinedNotClaimed() throws {
+        // Pre-atomic residue: two identities each hold their own
+        // committed-but-unmarked rows, with no pending claim to prove whose
+        // attempt it was (the N02 mirror of Android's N01 probe). Opening as
+        // either identity must REFUSE the migration - clearing the opener's
+        // rows and reattributing the source is not authorized.
+        let archive = fixtureArchive()
+        try LearnerOwnershipDao.activate(db, identity: "member:account-a")
+        try ArchiveMapper.import(archive, db)
+        try LearnerOwnershipDao.activate(db, identity: "member:account-b")
+        try ArchiveMapper.import(archive, db)
+        let source = MockSource(try encoded(archive))
+
+        XCTAssertThrowsError(try LearningDbStore.open(database: db, source: source,
+                                                      activeIdentity: "member:account-b", clock: { self.now }),
+                             "mixed legacy residue must refuse the migration")
+        XCTAssertEqual(Int64(archive.sessions.count), try countOwner("member:account-b", "sessions"))
+        XCTAssertEqual(Int64(archive.sessions.count), try countOwner("member:account-a", "sessions"))
+        XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
+        XCTAssertNil(try meta(LearningDbStore.migrationPendingOwnerKey))
+        XCTAssertFalse(source.migrated)
+
+        // The same refusal applies to the other identity opening fresh (the
+        // mixed state stays quarantined until an explicit recovery resolves
+        // the provenance; the in-memory reopen mirrors the file restart).
+        XCTAssertThrowsError(try LearningDbStore.open(database: db, source: source,
+                                                      activeIdentity: "member:account-a", clock: { self.now }),
+                             "the refusal must hold for the other identity too")
+        XCTAssertEqual(Int64(archive.sessions.count), try countOwner("member:account-a", "sessions"))
+        XCTAssertEqual(Int64(archive.sessions.count), try countOwner("member:account-b", "sessions"))
+        XCTAssertNil(try meta(LearningDbStore.migrationHashKey))
+        XCTAssertFalse(source.migrated)
+    }
+
+    func testLegacyResidueOfTheOpeningOwnerAloneCanResume() throws {
+        // Residue that belongs EXCLUSIVELY to the opening identity:
+        // ownership is demonstrated by the persisted rows, so the retry
+        // claims the migration and recovers.
+        let archive = fixtureArchive()
+        try LearnerOwnershipDao.activate(db, identity: "member:account-a")
+        try ArchiveMapper.import(archive, db)
+        let source = MockSource(try encoded(archive))
+
+        let store = try LearningDbStore.open(database: db, source: source,
+                                             activeIdentity: "member:account-a", clock: { self.now })
+        XCTAssertFalse(store.jsonMode, "the demonstrated owner resumes instead of wedging")
+        XCTAssertTrue(source.migrated)
+        XCTAssertEqual(sha256Hex(try encoded(archive)), try meta(LearningDbStore.migrationHashKey))
+        XCTAssertNil(try meta(LearningDbStore.migrationPendingOwnerKey))
+        XCTAssertEqual(Int64(archive.sessions.count), try countOwner("member:account-a", "sessions"))
+        XCTAssertEqual(Int64(0), try countOwner("member:account-b", "sessions"))
+        try assertExportEquals(archive, db)
     }
 
     func testRetryAfterAnAbortedMigrationClearsResidueAndMigratesAnEvolvedPayload() throws {

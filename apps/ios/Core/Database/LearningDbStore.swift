@@ -57,38 +57,50 @@ public protocol LearningMigrationSource: AnyObject {
  *    no mastery cache (the iOS Archive model has no such field), so the
  *    migration writes no ticket rows and routes `nil` as the mapper's
  *    optional `masteryCache` parameter — the mapper's documented default;
- *  - retry hygiene: with the gate open, any learning rows already in the
- *    database are residue of an earlier ABORTED attempt (import commits
- *    before the bookkeeping does), and `ArchiveMapper.import` is insert-only
- *    — it never deletes — so they are CLEARED first, in their own
- *    transaction: the eight learning tables + the mastery meta rows
- *    (preferences and the non-mastery meta rows are not learning data and
- *    stay untouched). This keeps a retry count-stable after an aborted
- *    attempt. A committed migration —
- *    hash present — never reaches this and is never cleared;
- *  - the archive lands through `ArchiveMapper.import` (its single
- *    transaction is the migration's only content transaction; the
- *    transaction wrapper does not nest, so the pre-import clear and the
- *    bookkeeping each get their own);
- *  - one bookkeeping transaction: COUNT VERIFICATION against the decoded
- *    source (sessions, fragments, lessons, expressions, completions, skill
- *    errors, mastery meta rows, schema flags, tickets, outbox) + meta
- *    'migrated_at' (Apple-epoch seconds) + meta 'migration_hash' (SHA-256 of
- *    the raw payload bytes) written LAST — the hash's presence is the commit
- *    point the gate reads. Any count mismatch or any failure rolls the
- *    bookkeeping back;
+ *  - the pending claim: meta 'migration_pending_owner' (+ the source
+ *    bytes' hash) names the FIRST identity that attempts the one-way
+ *    migration, written in its own transaction before any content move.
+ *    A DIFFERENT active identity finding the claim open must not adopt -
+ *    or clear - another account's backup: it opens in database mode with
+ *    none of it and the payload stays for its owner's retry (the
+ *    identity-less tooling path writes no claim);
+ *  - retry hygiene + ONE content transaction: learning rows that belong
+ *    to the claiming owner are residue of an earlier ABORTED attempt,
+ *    and the import is insert-only - it never deletes - so they are
+ *    CLEARED first (inside the content transaction), then the archive
+ *    lands through `ArchiveMapper.importInTransaction`, then COUNT
+ *    VERIFICATION scoped to the importing owner (the tables are shared
+ *    across accounts: another identity's legitimate rows must neither
+ *    break the counts nor authorize clearing them), then meta
+ *    'migrated_at' (Apple-epoch seconds) + meta 'migration_hash' (SHA-256
+ *    of the raw payload bytes) written LAST - the hash's presence is the
+ *    commit point the gate reads - and the claim removed. Any mismatch
+ *    or any failure rolls the whole transaction back: nothing but the
+ *    pending claim outlives an aborted attempt;
+ *  - historical caution: with learning content already in the database
+ *    and NO claim (a pre-atomic version committed content without the
+ *    marker), only unambiguous provenance may claim - a fresh install,
+ *    or residue that belongs exclusively to the opening identity.
+ *    Another owner's or unattributed content REFUSES the migration: the
+ *    database and the payload stay untouched and the open throws
+ *    (preserved and communicated, never silently reattributed);
  *  - only after that commit: `source.markMigrated()`. The payload is never
  *    deleted; the mark is post-commit cleanup, so a failure there (or a
  *    crash in the window) leaves the record in place where the hash gate
  *    simply ignores it on every later launch.
  *
- * Crash windows and aborts are all safe. Before the hash is committed the
- * source bytes stay intact: an active-identity open throws on failure and
- * production never serves the unattributed SwiftData payload. A later
- * explicit retry clears any residue from the aborted attempt before
- * migrating those unchanged bytes. A crash after the commit leaves the hash,
- * so the next launch is in database mode and never re-migrates — a payload
- * record that survives is IGNORED, not merged again.
+ * Crash windows and aborts are all safe. Before the hash is committed
+ * the source bytes stay intact: an abort rolls the single content
+ * transaction back - no rows are ever committed without the marker - and
+ * the pending claim is what survives, naming the one identity that may
+ * resume. Its retry clears that owner's stale rows first, so a payload
+ * that evolved between attempts still satisfies count verification. A
+ * crash after the commit leaves the hash, so the next launch is in
+ * database mode and never re-migrates - a payload record that survives
+ * is IGNORED, not merged again. An ambiguous unclaimed residue (another
+ * identity's or unattributed rows, from a pre-atomic version) refuses
+ * the migration instead of being cleared: the state is preserved and
+ * the open throws until an explicit recovery resolves the provenance.
  *
  * Fail-safe contract: production calls `open` with an active learner
  * identity. Database-open or migration failure then throws without exposing
@@ -203,6 +215,13 @@ public final class LearningDbStore {
     public static let migrationHashKey = "migration_hash"
     public static let migratedAtKey = "migrated_at"
 
+    /// The one-way migration's pending claim: the FIRST identity that
+    /// started it plus the source bytes' hash, written before any content
+    /// move and removed in the same transaction as the commit hash (the
+    /// Swift mirror of the Kotlin store's pending-claim protection).
+    public static let migrationPendingOwnerKey = "migration_pending_owner"
+    public static let migrationPendingHashKey = "migration_pending_hash"
+
     /// The exact reason string the legacy load writes today.
     public static let recoveryEndReason = "App closed before finalization"
 
@@ -260,31 +279,68 @@ public final class LearningDbStore {
                                    + "Nothing was lost: this session keeps using the previous store.")
     }
 
+    /// Provenance of pre-existing learning content while the gate is open
+    /// WITHOUT a pending claim (a pre-atomic version could commit content
+    /// without the marker). FRESH: no learning rows at all - safe to claim.
+    /// OWN: every learning row is this owner's - a demonstrated earlier
+    /// attempt of the same identity, safe to clear and re-import.
+    /// AMBIGUOUS: any other-owner or unattributed row - clearing or
+    /// reattributing is not authorized, and the migration must be refused
+    /// (preserved and communicated, never reported as recovered). The iOS
+    /// archive model has no mastery cache, so ANY mastery row here is
+    /// unattributed legacy content.
+    fileprivate enum LegacyResidue {
+        case fresh
+        case own
+        case ambiguous(where: String)
+    }
+
     private static func migrate(_ database: SqlDatabase,
                                 _ source: any LearningMigrationSource,
                                 _ clock: () -> Double) throws {
         let payload = try source.readPayload()
         let archive = try Archive.decode(payload)
         // The iOS legacy payload carries no androidFinalAssessments retry
-        // ledger (Android-only metadata) — there is nothing to decode here,
-        // and no ticket rows are migrated (pinned by verifyCounts below).
-        // Retry hygiene (see the class doc): the gate is open, so any
-        // learning rows in the database are an earlier ABORTED attempt's
-        // residue — import is insert-only, so without this clear a payload
-        // that evolved between attempts could never satisfy count
-        // verification again.
-        try clearLearningTables(database)
-        // The archive in import's own single transaction (the transaction
-        // wrapper does not nest). masteryCache stays the mapper's documented
-        // optional parameter: the iOS Archive model has no cache field, and
-        // nil is exactly what the Kotlin mapper writes for an archive
-        // without one.
-        try ArchiveMapper.import(archive, database)
+        // ledger (Android-only metadata) - nothing to decode here, and no
+        // ticket rows are migrated (pinned by verifyCounts below).
+        let sourceHash = sha256Hex(payload)
+        if let ownerKey = try activeOwnerKey(database) {
+            // The one-way migration belongs to the FIRST identity that
+            // claimed it. A different active identity finding the claim
+            // open must not adopt - or clear - another account's backup:
+            // it opens in database mode with none of it and the payload
+            // stays here for its owner's retry.
+            let pendingOwner = try MetaDao.get(database, migrationPendingOwnerKey)
+            if let pendingOwner, pendingOwner != ownerKey { return }
+            if pendingOwner == nil {
+                // No claim yet: either a fresh install or a database a
+                // PRE-atomic version left with committed-but-unmarked
+                // content. Only unambiguous provenance may claim now.
+                if case .ambiguous(let where_) = try legacyResidueScope(database, ownerKey: ownerKey) {
+                    throw LearningDbStoreError.migrationAborted(
+                        "migration aborted: unattributed legacy content "
+                            + "without a pending claim (\(where_))")
+                }
+            }
+            try database.transaction { tx in
+                try MetaDao.put(tx, migrationPendingOwnerKey, ownerKey)
+                try MetaDao.put(tx, migrationPendingHashKey, sourceHash)
+            }
+        }
+        // ONE transaction for clear + import + verification + bookkeeping
+        // (the transaction wrapper does not nest): the old
+        // import-commits-first split left rows on disk without the marker
+        // whenever the bookkeeping failed. Any failure now rolls back to
+        // the pre-migration state; the pending claim is what survives.
         try database.transaction { tx in
+            try clearLearningTablesInTransaction(tx)
+            try ArchiveMapper.importInTransaction(tx, archive)
             try verifyCounts(tx, archive)
             try MetaDao.put(tx, migratedAtKey, String(clock()))
             // The commit point: written last, read first by the gate above.
-            try MetaDao.put(tx, migrationHashKey, sha256Hex(payload))
+            try MetaDao.put(tx, migrationHashKey, sourceHash)
+            _ = try tx.update("DELETE FROM meta WHERE key = ? OR key = ?",
+                              args: [migrationPendingOwnerKey, migrationPendingHashKey])
         }
         do {
             try source.markMigrated()
@@ -292,58 +348,103 @@ public final class LearningDbStore {
             // Post-commit cleanup only: the hash is already written, so a
             // stranded payload record is ignored on every later launch.
             // Failing the migration here would discard a verified commit.
-            print("LearningDbStore: committed migration but could not mark the previous store migrated — \(error)")
+            print("LearningDbStore: committed migration but could not mark the previous store migrated - \(error)")
         }
     }
 
-    /// Deletes every learning row — everything `ArchiveMapper.import` can
-    /// write, plus the mastery meta rows it replaces — so a retry starts
-    /// from the same empty state as a fresh install and count verification
-    /// sees only the current payload's content. preferences and the
-    /// non-mastery meta rows are not learning data and stay untouched. Only
-    /// ever called with the gate open (no migration_hash): a committed
-    /// migration's rows are never cleared. Fragments get their own DELETE
-    /// although sessions would cascade — explicit over FK-dependent.
-    static func clearLearningTables(_ db: SqlDatabase) throws {
-        try db.transaction { tx in
-            for table in ["fragments", "sessions", "expressions", "lesson_state",
-                          "completions", "skill_errors", "usage_outbox", "assessment_tickets"] {
-                _ = try tx.update("DELETE FROM \(table) WHERE \(ownerClause(tx))", args: ownerArguments(tx))
+    /// Provenance scope of the learning content already in the database
+    /// while the gate is open WITHOUT a pending claim - see the
+    /// `LegacyResidue` documentation.
+    static func legacyResidueScope(_ db: SqlDatabase,
+                                   ownerKey: String) throws -> LegacyResidue {
+        var anyContent = false
+        for table in ["fragments", "sessions", "expressions", "lesson_state",
+                      "completions", "skill_errors", "usage_outbox", "assessment_tickets"] {
+            let foreign = try db.query(
+                "SELECT EXISTS(SELECT 1 FROM \(table) WHERE owner_key IS NULL OR owner_key = '' "
+                    + "OR owner_key != ?) AS any_row", args: [ownerKey]).first!.bool("any_row")
+            if foreign { return .ambiguous(where: table) }
+            if !anyContent {
+                anyContent = try db.query("SELECT EXISTS(SELECT 1 FROM \(table)) AS any_row")
+                    .first!.bool("any_row")
             }
-            let prefix = try activeOwnerKey(tx).map { "\(MetaDao.masteryPrefix)\($0):" } ?? MetaDao.masteryPrefix
-            _ = try tx.update("DELETE FROM meta WHERE key LIKE ?", args: ["\(prefix)%"])
         }
+        let mastery = try db.query(
+            "SELECT EXISTS(SELECT 1 FROM meta WHERE key LIKE '\(MetaDao.masteryPrefix)%') AS any_row")
+            .first!.bool("any_row")
+        if mastery { return .ambiguous(where: "mastery") }
+        return anyContent ? .own : .fresh
     }
 
-    /// ANY mismatch aborts the migration (the throw rolls the transaction
-    /// back). The source of truth for every expectation is the decoded
-    /// archive itself; the retry ledger and the outbox have no archive-side
+    /// Deletes every learning row of the CLAIMING owner - everything
+    /// `ArchiveMapper.importInTransaction` can write, plus the owner's
+    /// mastery meta rows it replaces - inside the CALLER's migration
+    /// transaction (the wrapper does not nest). Another account's rows are
+    /// never cleared. Only ever called with the gate open (no
+    /// migration_hash): a committed migration's rows are never cleared.
+    /// Fragments get their own DELETE although sessions would cascade -
+    /// explicit over FK-dependent.
+    static func clearLearningTablesInTransaction(_ tx: SqlDatabase) throws {
+        for table in ["fragments", "sessions", "expressions", "lesson_state",
+                      "completions", "skill_errors", "usage_outbox", "assessment_tickets"] {
+            _ = try tx.update("DELETE FROM \(table) WHERE \(try ownerClause(tx))",
+                              args: try ownerArguments(tx))
+        }
+        let prefix = try activeOwnerKey(tx).map { "\(MetaDao.masteryPrefix)\($0):" } ?? MetaDao.masteryPrefix
+        _ = try tx.update("DELETE FROM meta WHERE key LIKE ?", args: ["\(prefix)%"])
+    }
+
+    /// ANY mismatch aborts the migration (the throw rolls the content
+    /// transaction back). Every count is scoped to the importing owner:
+    /// the tables are shared across accounts, so another identity's
+    /// legitimate rows must neither break the verification nor authorize
+    /// clearing them. The retry ledger and the outbox have no archive-side
     /// source on iOS (the legacy payload never carried tickets, and usage
-    /// events were never persisted in it), so both start empty — the mastery
-    /// expectation is 0 for the same model-gap reason documented on
-    /// `ArchiveMapper.import`.
+    /// events were never persisted in it), so both start empty - the
+    /// mastery expectation is 0 for the same model-gap reason documented
+    /// on `ArchiveMapper.import`.
     static func verifyCounts(_ db: SqlDatabase, _ archive: Archive) throws {
-        func requireCount(_ label: String, _ sql: String, _ expected: Int64) throws {
-            let actual = try db.query(sql).first!.long("n")
+        let clause = try ownerClause(db)
+        let args = try ownerArguments(db)
+        func requireCount(_ label: String, _ sql: String, _ expected: Int64,
+                          bind: [Any?]? = nil) throws {
+            let actual = try db.query(sql, args: bind ?? args).first!.long("n")
             if actual != expected {
                 throw LearningDbStoreError.migrationAborted(
                     "migration aborted: \(label) count \(actual) != \(expected)")
             }
         }
-        try requireCount("sessions", "SELECT COUNT(*) AS n FROM sessions", Int64(archive.sessions.count))
-        try requireCount("fragments", "SELECT COUNT(*) AS n FROM fragments",
+        try requireCount("sessions",
+                         "SELECT COUNT(*) AS n FROM sessions WHERE \(clause)",
+                         Int64(archive.sessions.count))
+        try requireCount("fragments",
+                         "SELECT COUNT(*) AS n FROM fragments WHERE \(clause)",
                          Int64(archive.sessions.reduce(0) { $0 + $1.fragments.count }))
-        try requireCount("lessons", "SELECT COUNT(*) AS n FROM lesson_state", Int64(archive.lessons?.count ?? 0))
-        try requireCount("expressions", "SELECT COUNT(*) AS n FROM expressions", Int64(archive.expressions?.count ?? 0))
-        try requireCount("completions", "SELECT COUNT(*) AS n FROM completions", Int64(archive.completions?.count ?? 0))
-        try requireCount("skill errors", "SELECT COUNT(*) AS n FROM skill_errors", Int64(archive.errors?.count ?? 0))
+        try requireCount("lessons",
+                         "SELECT COUNT(*) AS n FROM lesson_state WHERE \(clause)",
+                         Int64(archive.lessons?.count ?? 0))
+        try requireCount("expressions",
+                         "SELECT COUNT(*) AS n FROM expressions WHERE \(clause)",
+                         Int64(archive.expressions?.count ?? 0))
+        try requireCount("completions",
+                         "SELECT COUNT(*) AS n FROM completions WHERE \(clause)",
+                         Int64(archive.completions?.count ?? 0))
+        try requireCount("skill errors",
+                         "SELECT COUNT(*) AS n FROM skill_errors WHERE \(clause)",
+                         Int64(archive.errors?.count ?? 0))
+        let masteryPrefix = try activeOwnerKey(db)
+            .map { "\(MetaDao.masteryPrefix)\($0):" } ?? MetaDao.masteryPrefix
         try requireCount("mastery meta rows",
-                         "SELECT COUNT(*) AS n FROM meta WHERE key LIKE '\(MetaDao.masteryPrefix)%'", 0)
+                         "SELECT COUNT(*) AS n FROM meta WHERE key LIKE ?", 0,
+                         bind: ["\(masteryPrefix)%"])
         if try MetaDao.get(db, MetaDao.schemaFlagsKey) == nil {
-            throw LearningDbStoreError.migrationAborted("migration aborted: schema_flags row missing after import")
+            throw LearningDbStoreError.migrationAborted(
+                "migration aborted: schema_flags row missing after import")
         }
-        try requireCount("assessment tickets", "SELECT COUNT(*) AS n FROM assessment_tickets", 0)
-        try requireCount("usage outbox", "SELECT COUNT(*) AS n FROM usage_outbox", 0)
+        try requireCount("assessment tickets",
+                         "SELECT COUNT(*) AS n FROM assessment_tickets WHERE \(clause)", 0)
+        try requireCount("usage outbox",
+                         "SELECT COUNT(*) AS n FROM usage_outbox WHERE \(clause)", 0)
     }
 
     static func sha256Hex(_ data: Data) -> String {

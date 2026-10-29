@@ -51,29 +51,38 @@ public enum ArchiveMapper {
     public static func `import`(_ archive: Archive, _ db: SqlDatabase,
                                 masteryCache: [String: Int]? = nil) throws {
         try db.transaction { tx in
-            try PreferencesDao.put(tx, archive.preferences)
-            for session in archive.sessions {
-                try SessionsDao.upsert(tx, session)
-                try FragmentsDao.replaceInTx(tx, session.id.uuidString, session.fragments)
-            }
-            for lesson in archive.lessons ?? [] {
-                try LessonStateDao.upsert(tx, lesson)
-            }
-            // adoptLegacy = false: an import preserves the archive verbatim, so a
-            // legacy null-language expression and a language expression with the
-            // same norm_key coexist as two rows instead of one adopted row.
-            for expression in archive.expressions ?? [] {
-                _ = try ExpressionsDao.upsert(tx, expression, adoptLegacy: false)
-            }
-            for mark in archive.completions ?? [] {
-                _ = try CompletionsDao.add(tx, mark)
-            }
-            for error in archive.errors ?? [] {
-                try SkillErrorsDao.upsert(tx, error)
-            }
-            try MetaDao.replaceMastery(tx, masteryCache ?? [:])
-            try MetaDao.ensureSchemaFlags(tx)
+            try importInTransaction(tx, archive, masteryCache: masteryCache)
         }
+    }
+
+    /// `import`'s write set for a caller that already runs inside its own
+    /// transaction (the learning.json migration's single clear + import +
+    /// verify + bookkeeping transaction) - the transaction wrapper does not
+    /// nest, so the migration cannot wrap `import` itself.
+    public static func importInTransaction(_ tx: SqlDatabase, _ archive: Archive,
+                                           masteryCache: [String: Int]? = nil) throws {
+        try PreferencesDao.put(tx, archive.preferences)
+        for session in archive.sessions {
+            try SessionsDao.upsert(tx, session)
+            try FragmentsDao.replaceInTx(tx, session.id.uuidString, session.fragments)
+        }
+        for lesson in archive.lessons ?? [] {
+            try LessonStateDao.upsert(tx, lesson)
+        }
+        // adoptLegacy = false: an import preserves the archive verbatim, so a
+        // legacy null-language expression and a language expression with the
+        // same norm_key coexist as two rows instead of one adopted row.
+        for expression in archive.expressions ?? [] {
+            _ = try ExpressionsDao.upsert(tx, expression, adoptLegacy: false)
+        }
+        for mark in archive.completions ?? [] {
+            _ = try CompletionsDao.add(tx, mark)
+        }
+        for error in archive.errors ?? [] {
+            try SkillErrorsDao.upsert(tx, error)
+        }
+        try MetaDao.replaceMastery(tx, masteryCache ?? [:])
+        try MetaDao.ensureSchemaFlags(tx)
     }
 
     public static func export(_ db: SqlDatabase) throws -> Archive {
