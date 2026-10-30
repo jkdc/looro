@@ -1,6 +1,8 @@
 # Verificación: atajo de lectura drip
 
 ## Resultado
+
+Commit de implementación: `591b009`. Readback final tras commit:11 pruebas PG PASS; evidencia de24 fases validada.
 Implementado el cambio acotado propuesto tras el diagnóstico, base `360ab43`, en `feat/api-performance-hardening`. Seis líneas nuevas de producción; sin migraciones, caché, dependencias, cuotas ni cambios HTTP.
 
 - Configuración se sigue leyendo de BD en cada llamada.
