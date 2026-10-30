@@ -181,3 +181,7 @@ Esta tarea **no** reejecutó la suite funcional completa: no hay cambios de runt
 Pendientes: repeticiones estadísticas, soak de horas, datos grandes, TLS/Caddy, login real, voz, coste/cuotas de proveedor real, fallos de infraestructura, HA/multiinstancia y validación de producción. Tampoco se impusieron nuevos límites globales HTTP ni se subieron los existentes.
 
 **Conclusión:** la API tiene margen local útil para el perfil de lecturas medido, pero el proxy, las redes compartidas y la voz tienen restricciones distintas. Ya sabemos qué rango se ha demostrado y qué señales justifican la siguiente inversión, sin añadir complejidad sin necesidad.
+
+## Seguimiento de CPU y SQL
+
+El [diagnóstico posterior](informe-diagnostico-cpu-sql-api-2026-10-30.md) localiza trabajo repetido de concesiones gratuitas en lecturas de saldo y compara OTEL on/off. Define una optimización candidata sin caché ni aumento de cuotas; no se implementó todavía ni se eleva la capacidad certificada a partir del perfil.

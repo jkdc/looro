@@ -19,3 +19,6 @@ Sin despliegue, push o PR. Sin certificación de producción, soak, comparación
 ## Seguimiento autorizado tras la fase1
 - [x] Descubrir rango local sin objetivo de tráfico fijado por el usuario: escalera, sostenido5min, NAT y proveedor2s; solo medición/documentación.
 - [x] Dejar informe `informe-capacidad-api-2026-10-30.md` con disparadores y pasos de mejoras futuras; no se activa arquitectura distribuida automáticamente.
+
+- [x] Diagnosticar presión con CPU profiler y pg_stat_statements, comparando OTEL on/off en datos sintéticos.
+- [x] Documentar candidato de atajo para grants ya existentes, tradeoffs y regresiones; pendiente aprobación/implementación de ese cambio, no parte de la fase1 ya cerrada.

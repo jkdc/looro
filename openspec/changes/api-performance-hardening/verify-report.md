@@ -91,3 +91,7 @@ La muestra no justifica activar ahora Redis, PgBouncer, réplicas, caché/CDN, �
 ## Seguimiento: rango de carga medido
 
 Tras cerrar fase1 se ejecutó una escalera y cinco minutos sostenidos, sin cambiar runtime. Ver [informe de capacidad](../../../informe-capacidad-api-2026-10-30.md):200 ofrecidas/s durante5min,59983/60000útiles;400/s30s cumple criterio exploratorio;800/s no aprobado por llegadas perdidas y presión event loop/pool. Proxy con proveedor2s completa3/s sin rechazos,5/s ya produce9%busy. NAT125 lecturas produce120x200+5x429. Integridad272settled/usage,saldos=journal y0unresolved; cleanup observado. El listado de pendientes de fase1 anterior es histórico: este seguimiento cubre solo escalera de lecturas y sostenido corto, no soak de horas/voz/producción.
+
+## Seguimiento: perfil de CPU/SQL
+
+Comparación local de0577ace con CPU profiler y pg_stat_statements, OTEL on/off: ambos experimentos exit0 y cleanup. Con OTEL,24028 intentos de grant insertaron140filas;99.42%noops. Pila PG en40.5% de muestras no-idle inclusivas; no se atribuye al servidorSQL ni se desactivaOTEL. Ver [diagnóstico y pruebas de la mejora candidata](../../../informe-diagnostico-cpu-sql-api-2026-10-30.md). Sin cambios de runtime ni fix aplicado todavía.
