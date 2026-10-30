@@ -600,9 +600,16 @@ export function createApp(services: Services) {
     const unlock = (await db.query(`SELECT unlocked_at FROM entitlements WHERE account_id=$1`, [account])).rows[0]?.unlocked_at;
     if (!unlock) throw new ServiceError('unlock_required', 403);
     const body = objectBody(request);
-    const { status, payload } = await proxy.relay(account, body);
-    reply.code(status);
-    return payload;
+    const controller=new AbortController();
+    const cancel=()=>{if(!reply.raw.writableEnded)controller.abort();};
+    request.raw.once('aborted',cancel);reply.raw.once('close',cancel);
+    try {
+      const {status,payload}=await proxy.relay(account,body,{signal:controller.signal});
+      reply.code(status);return payload;
+    } catch(error) {
+      if(error instanceof ServiceError && error.code==='proxy_busy')reply.header('Retry-After','1');
+      throw error;
+    } finally {request.raw.removeListener('aborted',cancel);reply.raw.removeListener('close',cancel);}
   });
   app.get('/v1/minutes', async request => {
     const account = await authenticate(db, request.headers.authorization, true);

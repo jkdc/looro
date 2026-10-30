@@ -35,6 +35,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
   let hostedHelpers: HostedHelpers | undefined;
   let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>> | undefined;
   let generationScheduler: ReturnType<typeof createLevelTestScheduler> | undefined;
+  let tokenProxy: TokenProxy | undefined;
   let app: ReturnType<typeof createApp> | undefined;
   let cleanup: ReturnType<typeof setInterval> | undefined;
   let guestLinkCleanup: ReturnType<typeof setInterval> | undefined;
@@ -58,6 +59,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
       },
       async () => { await generationScheduler?.stop(); },
       async () => { await guestLinkFlight; },
+      async () => { await tokenProxy?.stop(); },
       async () => { await app?.close(); },
       async () => { await hosted?.stop(); },
       async () => { await minuteCommerce?.runner.stop(); },
@@ -166,6 +168,8 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
       }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
         status: 'failed', error_code: code }), undefined, timeoutMs);
     } });
+    const proxyConfig=tokenProxyConfig(env);
+    tokenProxy=proxyConfig?new TokenProxy(db,proxyConfig):undefined;
     app = createApp({ db, environment: env,
       generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false },
       auth: { googleClientID: env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
@@ -173,7 +177,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
       minuteCommerce, accessRequests, accounts, admin, aiReports, guestMinuteAttestor,
       subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
         { origin: origin.origin.replace(/\/$/, '') }) : undefined,
-      tokenProxy: tokenProxyConfig(env) && new TokenProxy(db, tokenProxyConfig(env)!) });
+      tokenProxy });
 
     cleanup = setInterval(() => {
       void pruneAuthenticationRecords(db).catch(() => { log.error('retention_cleanup_failed'); });
