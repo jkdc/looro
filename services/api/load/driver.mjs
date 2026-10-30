@@ -26,7 +26,7 @@ export function report(samples, timing) {
   for (const s of samples) statuses[s.status] = (statuses[s.status] ?? 0)+1;
   return { ...timing, completed:samples.length, dropped:timing.offered-timing.launched,
     drained:samples.length-timing.completedInWindow, useful:useful.length,
-    statuses, transportFailures:samples.filter(s => !s.status).length,
+    statuses, requestBodyBytes:samples.reduce((sum,s)=>sum+(s.requestBodyBytes??0),0),responseBodyBytes:samples.reduce((sum,s)=>sum+(s.responseBodyBytes??0),0), transportFailures:samples.filter(s => !s.status).length,
     offeredRps:timing.offered/timing.offeringSeconds,
     usefulRps:timing.elapsedSeconds ? useful.length/timing.elapsedSeconds : 0,
     latency:{ all:percentiles(samples), success:percentiles(useful) } };
@@ -70,6 +70,16 @@ export function usefulPayload(path, payload) {
   if(path==='/v1/proxy/responses') return Array.isArray(payload.choices) && typeof payload.metering?.nanoUSDSettled==='string';
   return false;
 }
+export function usefulResult(task,status,payload) {
+  const path=new URL(task.path,'http://localhost').pathname;
+  if(!payload||typeof payload!=='object')return false;
+  if(path==='/v1/progress'){
+    if(task.method==='POST')return status===202 && Array.isArray(task.body?.entries) && Number.isSafeInteger(payload.merged) && payload.merged===task.body.entries.length;
+    return task.method==='GET' && status===200 && Array.isArray(payload.progress) && payload.progress.every(row=>typeof row.itemID==='string'&&typeof row.language==='string'&&Number.isSafeInteger(row.attempts));
+  }
+  if(['/v1/level-tests/current','/v1/level-tests/hybrid'].includes(path))return task.method==='GET' && status===200 && payload.languageID==='en' && payload.level==='A1' && Number.isSafeInteger(payload.weekId) && Array.isArray(payload.items) && payload.items.length>0 && payload.items.every(item=>typeof item.id==='string'&&typeof item.section==='string');
+  return status===200 && usefulPayload(task.path,payload);
+}
 export async function sampleRequest(task,index,{base,timeoutMs=5000,networks=200,proxyToken='',fetch:fetchFn=fetch}) {
   const start=performance.now(), controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(new Error('deadline')),timeoutMs);
@@ -83,14 +93,15 @@ export async function sampleRequest(task,index,{base,timeoutMs=5000,networks=200
       if(reader) while(true) {const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>2*1024*1024) throw Error('response_too_large');chunks.push(value);}
     } finally {await reader?.cancel().catch(()=>{});}
     let payload;try {payload=JSON.parse(Buffer.concat(chunks).toString('utf8'));} catch {}
-    return {status:res.status,useful:res.status===200 && usefulPayload(task.path,payload),milliseconds:performance.now()-start,outcome:res.status>=400?'http_error':'response'};
+    return {status:res.status,useful:usefulResult(task,res.status,payload),requestBodyBytes:task.body?Buffer.byteLength(JSON.stringify(task.body)):0,responseBodyBytes:bytes,milliseconds:performance.now()-start,outcome:res.status>=400?'http_error':'response'};
   } catch {return {status:0,useful:false,milliseconds:performance.now()-start,outcome:controller.signal.aborted?'timeout':'transport_error'};}
   finally {clearTimeout(timer);}
 }
 export function validateTarget(env) {
   if(env.LOAD_ISOLATED!=='true' || !env.BASE) throw Error('Explicit isolated target required');
   const u=new URL(env.BASE);
-  if(u.protocol!=='http:' || !['localhost','127.0.0.1','[::1]','api-load'].includes(u.hostname) || u.username || u.password || u.pathname!=='/' || u.search || u.hash) throw Error('Unsafe target');
+  const allowed=u.protocol==='http:' && ['localhost','127.0.0.1','[::1]','api-load'].includes(u.hostname) || u.protocol==='https:' && u.hostname==='caddy-load';
+  if(!allowed || u.username || u.password || u.pathname!=='/' || u.search || u.hash) throw Error('Unsafe target');
   return u;
 }
 export async function preflight(env,fixture,fetchFn=fetch) {

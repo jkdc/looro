@@ -123,6 +123,10 @@ services:
       caddy-load:
         condition: service_started
     restart: 'no'
+  seed-load:
+    environment:
+      LOAD_RESOURCE_FIXTURE: 'true'
+      LOAD_NEW_ACCOUNTS: '1000'
 volumes:
   load_caddy_data: {}
   load_caddy_config: {}

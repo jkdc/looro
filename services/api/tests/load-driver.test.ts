@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 // JS driver is copied beside compiled tests in the API image.
 // @ts-ignore Native Node module has JSDoc rather than TS declarations.
-import { readTask, clientHeaders, report, runPhase } from '../load/driver.mjs';
+import { readTask, clientHeaders, report, runPhase, validateTarget, sampleRequest } from '../load/driver.mjs';
 
 test('anonymous reads never request undefined and tokens rotate by launch index', () => {
   assert.deepEqual([0,1,2].map(i => readTask(i, [])), [
@@ -128,4 +128,16 @@ test('driver startup never restarts one-shot seed or migration dependencies',asy
   const d=await import('../load/driver.mjs');
   assert.equal(typeof d.driverRunArguments,'function');
   assert.deepEqual(d.driverRunArguments(),['run','--rm','--no-deps','driver-load']);
+});
+test('resource TLS target is allowlisted without permitting arbitrary TLS hosts',async()=>{
+  assert.equal(validateTarget({LOAD_ISOLATED:'true',BASE:'https://caddy-load'}).hostname,'caddy-load');
+  for(const BASE of ['https://example.com','http://caddy-load','https://caddy-load/other','https://u:p@caddy-load','https://api-load'])assert.throws(()=>validateTarget({LOAD_ISOLATED:'true',BASE}));
+});
+test('sampleRequest counts successful progress merge202 without accepting a false 200',async()=>{
+  const task={method:'POST',path:'/v1/progress',body:{entries:[{}]}};
+  const result=await sampleRequest(task,0,{base:'http://api-load',fetch:async()=>new Response(JSON.stringify({merged:1}),{status:202})});
+  assert.equal(result.useful,true);
+  assert.equal(result.requestBodyBytes,Buffer.byteLength(JSON.stringify(task.body)));
+  assert.equal(result.responseBodyBytes,Buffer.byteLength(JSON.stringify({merged:1})));
+  const malformed=await sampleRequest(task,0,{base:'http://api-load',fetch:async()=>new Response('{}',{status:202})});assert.equal(malformed.useful,false);
 });
