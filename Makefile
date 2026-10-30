@@ -150,3 +150,10 @@ ios-device: ## Compila e instala en el iPhone conectado (requiere equipo de firm
 	xcrun devicectl device install app \
 	  --device $$(xcrun devicectl list devices -q | head -1) \
 	  .build/DerivedData/Build/Products/Debug-iphoneos/App.app
+
+.PHONY: load-api-smoke load-api-baseline
+load-api-smoke: ## Prueba de carga corta con fixtures y proveedor aislados
+	node services/api/load/run.mjs smoke
+
+load-api-baseline: ## Señal local de capacidad; no certifica producción
+	node services/api/load/run.mjs baseline

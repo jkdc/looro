@@ -58,3 +58,6 @@ apps/android/core/engine-local/.cxx/
 .zcode/
 .codegraph/
 docs/reports/
+
+# Capacity validation evidence is local and may contain operational metadata.
+/openspec/changes/api-performance-hardening/evidence/

@@ -1,0 +1,21 @@
+# Pruebas locales de capacidad
+
+El driver solo se ejecutará mediante el runner aislado de esta fase, no contra el stack persistente. Importar `driver.mjs` o `loadtest.mjs` no ejecuta tráfico. No usar tokens.txt ni proveedores reales.
+
+## Métricas
+
+Cada fase informa ofrecidas, lanzadas, descartadas por falta de capacidad/retraso, completadas en ventana y durante drenaje, útiles, status y fallos de transporte. La tasa útil usa el tiempo real incluido drenaje; los percentiles all y success se separan y una muestra vacía produce null. Un 429/402/403/503 nunca es trabajo útil. Las llegadas perdidas no se recuperan en ráfaga.
+
+Defaults: 100 en vuelo; timeout HTTP 5000 ms y proxy 35000 ms. Límites configurables del runner: NETWORKS 1–100000; en vuelo 1–10000; timeout 1–300000 ms; duración 1–7200 s; tasa 1–100000. Datos sintéticos y resultados son señales locales, no capacidad de producción.
+
+Pruebas sin PostgreSQL: `cd services/api && npm run test:load-driver`.
+
+## Ejecución
+
+Desde la raíz: `make load-api-smoke` o `make load-api-baseline`. Se necesita Docker local y las imágenes/dependencias de build disponibles; la red del runtime es interna. Cada ejecución genera un proyecto único y elimina solo sus recursos al salir. No hay `KEEP` ni destino remoto. `run.mjs` admite únicamente smoke/baseline, no tokens o URL externa por argv.
+
+Seed crea 200 cuentas sintéticas con wallet, unlock y sesión y escribe manifest privado en volumen efímero. Preflight comprueba UUID compartido con stub, lectura autenticada y completion metered de identidad, antes de ofrecer carga. El client ID Google de fixtures es una audiencia sintética de configuración; no se realiza intercambio de identidad ni llamada a Google.
+
+El entrypoint interno admite NETWORKS (200), MAX_IN_FLIGHT (100), TIMEOUT_MS (5000), DURATION_S (smoke2/baseline30) y TARGET_RPS (smoke4/baseline60). Proxy usa deadline35000ms. El runner usa configuración controlada; no reenvía estas variables del host. Fallos de preflight salen2; una fase sin éxitos o con fallos de transporte sale1 tras resumen. Rechazos y dropped siempre aparecen aunque no causen por sí mismos fallo del baseline exploratorio.
+
+El preset mantiene warmup, lecturas, challenge, mixed, pico300 y proxy5/s. La suma es limitada; el pico conserva el máximo en vuelo100 y puede descartar oferta. La telemetría OTLP del baseline se imprime después de fases, sin tokens ni cuerpos. Ejecutar suite funcional separadamente para no distorsionar medición. No usar el ejemplo histórico contra api_default ni `tokens.txt`.

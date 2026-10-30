@@ -17,6 +17,7 @@
     "test": "make -C ../.. test-api",
     "test:unit": "tsx --test --test-concurrency=1 tests/*.test.ts",
     "check": "tsc --noEmit",
+    "test:load-driver": "node --import tsx --test tests/load-driver.test.ts",
     "leveltests-generate": "tsx --env-file-if-exists=.env src/level-tests-generate.ts"
   },
   "dependencies": {

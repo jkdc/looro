@@ -8,9 +8,11 @@ COPY tests ./tests
 COPY admin-ui ./admin-ui
 COPY migrations ./migrations
 COPY operations ./operations
+COPY load/*.mjs ./load/
 RUN npm run build && cp -R migrations dist/migrations && cp -R operations dist/operations
 # Compiled tests (dist/tests/*.test.js) import the browser feature modules by the
 # same relative path the panel uses, so the tested sources must sit under dist.
+RUN mkdir -p dist/load && cp load/*.mjs dist/load/
 RUN mkdir -p dist/admin-ui && cp -R admin-ui/features dist/admin-ui/features
 
 FROM node:22-alpine
@@ -21,6 +23,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/tests/support ./dist/tests/support
 COPY migrations ./migrations
+COPY load/*.mjs ./load/
 USER node
 EXPOSE 8080
 CMD ["node", "dist/src/main.js"]

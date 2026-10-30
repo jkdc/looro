@@ -1,0 +1,77 @@
+# Dedicated synthetic runtime: no published ports, env_file or external network.
+services:
+  database-load:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: capacity_test
+      POSTGRES_USER: capacity
+      POSTGRES_PASSWORD: synthetic-load-only
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U capacity -d capacity_test']
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    volumes: [data:/var/lib/postgresql/data]
+  migrate-load:
+    image: palique-capacity:local
+    build: ..
+    environment: &db
+      DATABASE_URL: postgresql://capacity:synthetic-load-only@database-load:5432/capacity_test
+    command: [node, dist/src/migrate.js]
+    depends_on:
+      database-load: {condition: service_healthy}
+  seed-load:
+    image: palique-capacity:local
+    user: '0:0'
+    environment:
+      <<: *db
+      LOAD_RUN_ID: ${LOAD_RUN_ID:?unique local run id required}
+      ACCOUNTS_PROXY_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    command: [node, load/seed.mjs]
+    volumes: [fixtures:/fixtures]
+    depends_on:
+      migrate-load: {condition: service_completed_successfully}
+  stub-load:
+    image: palique-capacity:local
+    environment:
+      LOAD_RUN_ID: ${LOAD_RUN_ID}
+      STUB_MODE: ${STUB_MODE:-fast}
+    command: [node, load/stub.mjs]
+  api-load:
+    image: palique-capacity:local
+    environment:
+      <<: *db
+      PUBLIC_ORIGIN: http://localhost:8080
+      ACCOUNTS_ENABLED: 'true'
+      GOOGLE_CLIENT_ID: synthetic-load.apps.googleusercontent.com
+      ACCOUNTS_HMAC_KEY: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      ACCOUNTS_PROXY_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      PROXY_PROVIDER_URL: http://stub-load:8081/v1/chat/completions
+      PROXY_PROVIDER_KEY: synthetic-only
+      PROXY_TIMEOUT_MS: ${PROXY_TIMEOUT_MS:-30000}
+      OTEL_ENABLED: 'true'
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://stub-load:8081
+    healthcheck:
+      test: [CMD-SHELL, "node -e \"fetch('http://127.0.0.1:8080/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    depends_on:
+      seed-load: {condition: service_completed_successfully}
+      stub-load: {condition: service_started}
+  driver-load:
+    image: palique-capacity:local
+    environment:
+      BASE: http://api-load:8080
+      LOAD_ISOLATED: 'true'
+      LOAD_MODE: ${LOAD_MODE:-smoke}
+      LOAD_SCENARIO: ${LOAD_SCENARIO:-fast}
+    command: [node, load/loadtest.mjs]
+    volumes: [fixtures:/fixtures:ro]
+    depends_on:
+      api-load: {condition: service_healthy}
+networks:
+  default: {internal: true}
+volumes:
+  data: {}
+  fixtures: {}
