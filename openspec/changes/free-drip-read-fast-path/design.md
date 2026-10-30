@@ -1,6 +1,6 @@
 # Diseño: atajo positivo de drip gratuito
 
-Base 360 ab 43; rama feat/api-performance-hardening. Autorización: «continua» después de la propuesta y sus pruebas descritas en el diagnóstico CPU/SQL. Se conserva el método directo elegido previamente.
+Base `360ab43`; rama feat/api-performance-hardening. Autorización: «continua» después de la propuesta y sus pruebas descritas en el diagnóstico CPU/SQL. Se conserva el método directo elegido previamente.
 
 ## Decisión y tradeoffs
 Mantener lectura fresca de subscription_config. Si drip está desactivado o cantidad 0, devolver 0 sin transacción. Si está activo, buscar una concesión FREE de cuenta y periodo UTC con el mismo índice de expresión existente. Una presencia permite devolver 0; ausencia entra en el recorrido transaccional existente, con todos los guards e INSERT ON CONFLICT intactos. La consulta previa no concede nada ni sustituye exclusión/idempotencia.

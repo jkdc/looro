@@ -63,3 +63,5 @@ docs/reports/
 /openspec/changes/api-performance-hardening/evidence/
 
 /openspec/changes/free-drip-read-fast-path/evidence/
+
+/openspec/changes/free-drip-eligibility-shortcut/evidence/

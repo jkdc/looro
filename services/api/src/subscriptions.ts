@@ -135,11 +135,15 @@ export async function runDripForAccount(db: Database, account: string, now = new
   const config = await subscriptionConfig(db);
   if (!config.freeDripEnabled || config.freeDripMinutes === 0) return 0;
   const key = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
-  // Positive evidence only: an existing free grant cannot issue new credit.
-  // A miss must still use the transactional guards and unique claim below.
-  const prior = await db.query(`SELECT 1 FROM subscription_grants
-    WHERE COALESCE(subscription_id::text,'free')='free' AND account_id=$1 AND period_key=$2`, [account, key]);
-  if (prior.rowCount) return 0;
+  // Positive exclusions only. Any potentially eligible account still passes
+  // all transactional guards and the unique claim below before receiving credit.
+  const prior = await db.query<{ skip_grant: boolean }>(`SELECT CASE
+    WHEN EXISTS (SELECT 1 FROM subscription_grants
+      WHERE COALESCE(subscription_id::text,'free')='free' AND account_id=$1 AND period_key=$2) THEN true
+    WHEN EXISTS (SELECT 1 FROM accounts WHERE id=$1 AND is_guest) THEN true
+    WHEN EXISTS (SELECT 1 FROM subscriptions WHERE account_id=$1 AND status IN ('trialing','active')) THEN true
+    ELSE false END AS skip_grant`, [account, key]);
+  if (prior.rows[0]?.skip_grant === true) return 0;
   return transaction(db, async sql => {
     if ((await sql.query('SELECT 1 FROM accounts WHERE id=$1 AND is_guest', [account])).rowCount) return 0;
     if ((await sql.query(`SELECT 1 FROM subscriptions WHERE account_id=$1 AND status IN ('trialing','active') LIMIT 1`, [account])).rowCount)

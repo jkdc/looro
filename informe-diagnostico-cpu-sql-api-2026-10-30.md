@@ -147,3 +147,7 @@ Ambos stacks terminaron con 200 cuentas, saldo monetario igual al journal 199999
 No se modificó código de producto, no se ejecutó la optimización propuesta ni se reejecutó la suite funcional completa por esta tarea diagnóstica. No hay evidencia antes/después de un fix todavía. Sigue sin haber certificación de producción, voz, TLS o historial grande.
 
 **Siguiente paso concreto:** aprobar y ejecutar el atajo de concesión ya existente con las regresiones anteriores; solo después volver a evaluar si hace falta aislamiento de procesos o escalado HTTP. No se aumenta ninguna cuota en este diagnóstico.
+
+## Seguimiento: exclusiones de drip sin transacción
+
+El [seguimiento de elegibilidad](openspec/changes/free-drip-eligibility-shortcut/verify-report.md) extiende el precheck a invitados y suscripciones activas/trialing. Reduce las sentencias por lectura de esos perfiles de 10/11 a 7; el recorrido libre reclamado conserva 7. La comparación NO demuestra mayor RPS ni mejora universal de latencia: el p95 libre a 800/s fue mayor después. Se conserva este coste y el de candidatos nuevos como limitación explícita, sin cambiar las recomendaciones de capacidad previas.

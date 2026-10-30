@@ -189,3 +189,7 @@ El [diagnóstico posterior](informe-diagnostico-cpu-sql-api-2026-10-30.md) local
 ## Optimización posterior del recorrido de drip
 
 El [atajo de drip implementado](openspec/changes/free-drip-read-fast-path/verify-report.md) evita transacciones sin efecto tras una concesión gratuita existente. Se reduce ese recorrido de11 a7sentencias; los misses guest/suscrito añaden una consulta. Se conservaron minutos y se compararon tres repeticiones. Los RPS se solapan: esta mejora no eleva automáticamente el rango certificado de este informe.
+
+### Seguimiento de consultas por perfil
+
+La [verificación de exclusiones de drip](openspec/changes/free-drip-eligibility-shortcut/verify-report.md) documenta menos roundtrips para guest/suscriptores y sus tradeoffs medidos. No amplía el rango de capacidad aprobado en este informe ni convierte 800/s ofrecidos en carga soportada.

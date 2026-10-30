@@ -178,14 +178,13 @@ integration('two synchronized initial lookup misses still create only one financ
   const barrier = new Promise<void>(resolve => { release = resolve; });
   const wrapped = new Proxy(db, {
     get(target, property) {
-      if (property === 'query') return async (...args: any[]) => {
-        const result = await (target.query as any)(...args);
-        if (String(args[0]).startsWith('SELECT 1 FROM subscription_grants')) {
-          misses++;
-          if (misses === 2) release();
-          await barrier;
-        }
-        return result;
+      // Both calls have reached the fallback after their eligibility read.
+      // Pause before BEGIN, so neither can create a claim before the other miss.
+      if (property === 'connect') return async () => {
+        misses++;
+        if (misses === 2) release();
+        await barrier;
+        return target.connect();
       };
       const value = Reflect.get(target, property, target);
       return typeof value === 'function' ? value.bind(target) : value;
@@ -198,4 +197,96 @@ integration('two synchronized initial lookup misses still create only one financ
   assert.equal((await snapshot(db, id)).grants.length, 1);
   assert.equal((await snapshot(db, id)).entries.length, 1);
   assert.equal((await minuteBalance(db, id)).availableMilliseconds, 300000);
+});
+
+
+for (const state of ['guest', 'trialing', 'active'] as const) {
+  integration(`${state} eligibility avoids a no-op grant transaction and preserves persisted credit`, async db => {
+    const id = await account(db, state === 'guest');
+    if (state !== 'guest') await upsertSubscriptionFromStore(db, {
+      accountID: id, tier: 'standard', status: state, store: 'stripe', storeReference: `${state}-${id}`,
+      periodStart: new Date('2026-01-01T00:00:00Z'), periodEnd: new Date('2030-01-01T00:00:00Z'),
+    });
+    const before = await snapshot(db, id);
+    const observed = observeTransactions(db);
+    assert.equal(await runDripForAccount(observed.db, id, january), 0);
+    assert.deepEqual(await snapshot(db, id), before);
+    assert.equal(observed.acquisitions(), 0, 'A positive exclusion should not acquire a grant transaction.');
+  });
+}
+
+integration('past-due status does not suppress a free grant', async db => {
+  const id = await account(db);
+  await upsertSubscriptionFromStore(db, {
+    accountID: id, tier: 'standard', status: 'past_due', store: 'stripe', storeReference: `past-due-${id}`,
+    periodStart: new Date('2026-01-01T00:00:00Z'), periodEnd: new Date('2030-01-01T00:00:00Z'),
+  });
+  assert.equal(await runDripForAccount(db, id, january), 5);
+  assert.equal((await minuteBalance(db, id)).availableMilliseconds, 300000);
+  assert.equal((await snapshot(db, id)).grants.length, 1);
+  assert.equal((await snapshot(db, id)).entries.length, 1);
+});
+
+integration('eligibility lost after the precheck is revalidated before any credit write', async db => {
+  for (const reason of ['guest', 'subscription'] as const) {
+    const id = await account(db);
+    const before = await snapshot(db, id);
+    let acquired = false;
+    const wrapped = new Proxy(db, {
+      get(target, property) {
+        if (property === 'connect') return async () => {
+          acquired = true;
+          // Change real persisted eligibility after the read, before BEGIN.
+          // The production transaction must still run its original guards.
+          if (reason === 'guest') await db.query('UPDATE accounts SET is_guest=true WHERE id=$1', [id]);
+          else await upsertSubscriptionFromStore(db, {
+            accountID: id, tier: 'standard', status: 'active', store: 'stripe', storeReference: `concurrent-${id}`,
+            periodStart: new Date('2026-01-01T00:00:00Z'), periodEnd: new Date('2030-01-01T00:00:00Z'),
+          });
+          return target.connect();
+        };
+        const value = Reflect.get(target, property, target);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+    assert.equal(await runDripForAccount(wrapped, id, january), 0);
+    assert.equal(acquired, true, 'The candidate must have reached the guarded fallback.');
+    assert.deepEqual(await snapshot(db, id), before);
+  }
+});
+
+integration('a fresh eligibility read grants after registration or loss of paid status', async db => {
+  for (const transition of ['registration', 'past_due', 'canceled'] as const) {
+    const id = await account(db, transition === 'registration');
+    let subscriptionID: string | undefined;
+    if (transition !== 'registration') {
+      const sub = await upsertSubscriptionFromStore(db, {
+        accountID: id, tier: 'standard', status: 'active', store: 'stripe', storeReference: `transition-${id}`,
+        periodStart: new Date('2026-01-01T00:00:00Z'), periodEnd: new Date('2030-01-01T00:00:00Z'),
+      });
+      subscriptionID = sub.id;
+    }
+    const before = await snapshot(db, id);
+    assert.equal(await runDripForAccount(db, id, january), 0);
+    assert.deepEqual(await snapshot(db, id), before);
+    if (transition === 'registration') await db.query('UPDATE accounts SET is_guest=false WHERE id=$1', [id]);
+    else await db.query('UPDATE subscriptions SET status=$2 WHERE id=$1', [subscriptionID, transition]);
+    assert.equal(await runDripForAccount(db, id, january), 5);
+    assert.equal((await minuteBalance(db, id)).availableMilliseconds, 300000);
+    assert.equal((await snapshot(db, id)).grants.length, 1);
+    assert.equal((await snapshot(db, id)).entries.length, 1);
+  }
+});
+
+integration('a missing account keeps its foreign-key error without persisting credit', async db => {
+  const id = randomUUID();
+  // minuteBalance deliberately rejects missing accounts; inspect persisted rows
+  // directly so this probe reaches the production grant and its rollback.
+  const persisted = async () => (await db.query(`SELECT
+    (SELECT jsonb_agg(t) FROM subscription_grants t) AS grants,
+    (SELECT jsonb_agg(t) FROM minute_entries t) AS entries,
+    (SELECT jsonb_agg(t) FROM minute_wallets t) AS wallets`)).rows;
+  const before = await persisted();
+  await assert.rejects(runDripForAccount(db, id, january), (e: any) => e.code === '23503');
+  assert.deepEqual(await persisted(), before);
 });
