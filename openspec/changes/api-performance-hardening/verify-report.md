@@ -87,3 +87,7 @@ No ejecutados: pruebas de producción, proveedores reales, soak prolongado, esca
 La muestra no justifica activar ahora Redis, PgBouncer, réplicas, caché/CDN, índices nuevos ni distribución de voz. Siguen vigentes las limitaciones arquitectónicas del informe, especialmente líder único de voz, pool compartido y locks financieros globales. Siguientes inversiones requieren carga representativa y métricas adicionales; la instancia global del proxy no es una cuota distribuida.
 
 **Risk: items1,3,4,5 — migración/persistencia financiera, errores HTTP añadidos, concurrencia/cancelación y wiring de entorno.** Verificación independiente y pruebas locales no equivalen a aprobación de despliegue.
+
+## Seguimiento: rango de carga medido
+
+Tras cerrar fase1 se ejecutó una escalera y cinco minutos sostenidos, sin cambiar runtime. Ver [informe de capacidad](../../../informe-capacidad-api-2026-10-30.md):200 ofrecidas/s durante5min,59983/60000útiles;400/s30s cumple criterio exploratorio;800/s no aprobado por llegadas perdidas y presión event loop/pool. Proxy con proveedor2s completa3/s sin rechazos,5/s ya produce9%busy. NAT125 lecturas produce120x200+5x429. Integridad272settled/usage,saldos=journal y0unresolved; cleanup observado. El listado de pendientes de fase1 anterior es histórico: este seguimiento cubre solo escalera de lecturas y sostenido corto, no soak de horas/voz/producción.

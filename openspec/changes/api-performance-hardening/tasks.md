@@ -15,3 +15,7 @@ Primera fase implementada en feat/api-performance-hardening. Diseño y ejecució
 
 ## Alcance diferido
 Sin despliegue, push o PR. Sin certificación de producción, soak, comparación before/after cuantitativa, escalado horizontal de voz ni infraestructura distribuida. No se marcan como ejecutadas esas recomendaciones condicionales del informe.
+
+## Seguimiento autorizado tras la fase1
+- [x] Descubrir rango local sin objetivo de tráfico fijado por el usuario: escalera, sostenido5min, NAT y proveedor2s; solo medición/documentación.
+- [x] Dejar informe `informe-capacidad-api-2026-10-30.md` con disparadores y pasos de mejoras futuras; no se activa arquitectura distribuida automáticamente.
