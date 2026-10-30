@@ -113,3 +113,4 @@ export const writeTask=()=>({method:'POST',path:'/v1/auth/challenge',body:{}});
 export function loadScenario(value='fast') {
   if(!['fast','slow','hang'].includes(value))throw Error('Invalid load scenario');return value;
 }
+export const driverRunArguments=()=>['run','--rm','--no-deps','driver-load'];

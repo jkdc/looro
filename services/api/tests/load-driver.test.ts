@@ -122,3 +122,10 @@ test('CLI smoke exercises public routes even when authenticated fixtures exist',
   });
   assert.equal(code,0);for(const path of ['/v1/minutes','/v1/pricing','/v1/minutes/products','/healthz'])assert.ok(calls.has(path),path);
 });
+
+test('driver startup never restarts one-shot seed or migration dependencies',async()=>{
+  // @ts-ignore Shared Compose launch arguments.
+  const d=await import('../load/driver.mjs');
+  assert.equal(typeof d.driverRunArguments,'function');
+  assert.deepEqual(d.driverRunArguments(),['run','--rm','--no-deps','driver-load']);
+});
