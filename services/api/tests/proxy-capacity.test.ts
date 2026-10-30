@@ -60,3 +60,12 @@ test('proxy bounds work across accounts and records failed external outcomes',{s
     });
   } finally {await db.query(`DROP SCHEMA ${schema} CASCADE`);await db.end();}
 });
+
+test('deadline exhausted during SQL preparation never dispatches provider work',async t=>{
+  t.mock.timers.enable({apis:['setTimeout']});
+  let release!:()=>void,calls=0;
+  const db={query:()=>new Promise(r=>release=()=>r({rows:[{balance_nano:'1000000',reserved_nano:'0'}]}))} as any;
+  const proxy=new TokenProxy(db,{...config,timeoutMs:100},(async()=>{calls++;return Response.json(payload());}) as typeof fetch);
+  const result=proxy.relay(randomUUID(),{});const rejected=assert.rejects(result,(e:any)=>e.code==='provider_timeout');
+  t.mock.timers.tick(100);release();await rejected;assert.equal(calls,0);await proxy.stop();
+});
