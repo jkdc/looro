@@ -46,7 +46,7 @@ Runner local sin instalar dependencias nuevas por anticipación. Herramientas fa
 
 ## Task 3: Runner acotado, soak y fallos controlados (S1/S4)
 
-**Files:** crear `services/api/load/resource-run.mjs`, `resource-workload.mjs`, `faults.mjs`, tests `services/api/tests/load-resource-runner.test.ts`, `load-faults.test.ts`; modificar README/package.json solo para comando de harness documentado, sin dependencias nuevas.
+**Files:** modificar `services/api/src/db.ts`, crear `services/api/tests/database-recovery.test.ts` (hallazgo reproducido S4; ver ledger); crear `services/api/load/resource-run.mjs`, `resource-workload.mjs`, `faults.mjs`, tests `services/api/tests/load-resource-runner.test.ts`, `load-faults.test.ts`; modificar README/package.json solo para comando de harness documentado, sin dependencias nuevas.
 **Interfaces:** CLI `node load/resource-run.mjs <economy|standard|peak> <smoke|steps|soak|faults>`. `parseResourceRun(args)` devuelve perfil/preset cerrado y configuración; `faultAction(kind,ownedContainers)` solo slow/hang/http-error/restart-api/restart-db. `resource-workload.mjs` consume manifest y perfiles de T1/T2, emite ventanas y resumen de aceptación, no inicia Docker al importarse.
 - [ ] RED: CLI inválida no ejecuta Docker; no hereda secretos/destinos del host; SIGINT/fallo startup/fallo integridad/fallo cleanup terminan no-cero sin eliminar recursos ajenos. Tests por exec inyectado, no sleeps reales.
 - [ ] RED: soak es una fase lógica de3600 s compuesta por60 ventanas de 60 s, sin warmup repetido ni retener muestras entre ventanas. No promediar percentiles como p95 global; presentar ventanas y totales sumables. Fallo de ventana no desaparece de resumen.
