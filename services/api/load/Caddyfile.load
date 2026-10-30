@@ -1,0 +1,8 @@
+{
+	admin off
+	auto_https disable_redirects
+}
+https://caddy-load {
+	tls internal
+	reverse_proxy api-load:8080
+}

@@ -1,0 +1,131 @@
+# Synthetic resource-budget overlay; no published ports.
+services:
+  api-load:
+    cpus: ${LOAD_API_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_API_MEMORY:?profile memory required}
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://collector-load:4318
+    depends_on:
+      collector-load:
+        condition: service_started
+  database-load:
+    cpus: ${LOAD_DATABASE_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_DATABASE_MEMORY:?profile memory required}
+  caddy-load:
+    cpus: ${LOAD_CADDY_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_CADDY_MEMORY:?profile memory required}
+    image: caddy:2-alpine
+    volumes:
+    - ./Caddyfile.load:/etc/caddy/Caddyfile:ro
+    - load_caddy_data:/data
+    - load_caddy_config:/config
+    depends_on:
+      api-load:
+        condition: service_healthy
+  collector-load:
+    cpus: ${LOAD_COLLECTOR_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_COLLECTOR_MEMORY:?profile memory required}
+    image: otel/opentelemetry-collector-contrib:0.127.0
+    command:
+    - --config=/etc/otelcol-contrib/config.yaml
+    volumes:
+    - ./telemetry/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    depends_on:
+      tempo-load:
+        condition: service_started
+  prometheus-load:
+    cpus: ${LOAD_PROMETHEUS_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_PROMETHEUS_MEMORY:?profile memory required}
+    image: prom/prometheus:v2.54.1
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --storage.tsdb.path=/prometheus
+    - --storage.tsdb.retention.time=90d
+    - --storage.tsdb.retention.size=2GB
+    volumes:
+    - ./telemetry/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ./telemetry/alerts.yml:/etc/prometheus/alerts.yml:ro
+    - load_prometheus_data:/prometheus
+    depends_on:
+      collector-load:
+        condition: service_started
+      alertmanager-load:
+        condition: service_started
+  tempo-load:
+    cpus: ${LOAD_TEMPO_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_TEMPO_MEMORY:?profile memory required}
+    image: grafana/tempo:2.7.1
+    command:
+    - -config.file=/etc/tempo/tempo.yaml
+    volumes:
+    - ./telemetry/tempo.yaml:/etc/tempo/tempo.yaml:ro
+    - load_tempo_data:/tmp/tempo
+    user: 0:0
+  alertmanager-load:
+    cpus: ${LOAD_ALERTMANAGER_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_ALERTMANAGER_MEMORY:?profile memory required}
+    image: prom/alertmanager:v0.27.0
+    volumes:
+    - ./telemetry/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    depends_on:
+      webhook-load:
+        condition: service_started
+  webhook-load:
+    cpus: ${LOAD_WEBHOOK_CPUS:?profile CPU required}
+    mem_limit: ${LOAD_WEBHOOK_MEMORY:?profile memory required}
+    image: python:3.12-alpine
+    command:
+    - python
+    - -c
+    - |
+      import json
+      from http.server import BaseHTTPRequestHandler, HTTPServer
+
+      class Handler(BaseHTTPRequestHandler):
+          def do_POST(self):
+              length = int(self.headers.get("Content-Length", 0))
+              body = self.rfile.read(length).decode("utf-8", "replace")
+              try:
+                  pretty = json.dumps(json.loads(body), ensure_ascii=False, sort_keys=True)
+              except ValueError:
+                  pretty = body
+              print(f"ALERT POST {self.path}: {pretty}", flush=True)
+              self.send_response(200)
+              self.send_header("Content-Type", "application/json")
+              self.end_headers()
+              self.wfile.write(b'{"ok":true}')
+
+          def log_message(self, *args):
+              pass
+
+      HTTPServer(("0.0.0.0", 5001), Handler).serve_forever()
+  driver-load:
+    environment:
+      BASE: https://caddy-load
+      NODE_EXTRA_CA_CERTS: /trust/root.crt
+    volumes:
+    - load_trust:/trust:ro
+  trust-load:
+    image: palique-capacity:local
+    user: 0:0
+    command:
+    - node
+    - --input-type=module
+    - -e
+    - import {access,copyFile,chmod} from 'node:fs/promises'; let ready=false; for(let
+      i=0;i<120;i++){try{await access('/caddy/caddy/pki/authorities/local/root.crt');ready=true;break}catch{await
+      new Promise(r=>setTimeout(r,500))}} if(!ready)process.exit(1); await copyFile('/caddy/caddy/pki/authorities/local/root.crt','/trust/root.crt');await
+      chmod('/trust/root.crt',0o444);
+    volumes:
+    - load_caddy_data:/caddy:ro
+    - load_trust:/trust
+    depends_on:
+      caddy-load:
+        condition: service_started
+    restart: 'no'
+volumes:
+  load_caddy_data: {}
+  load_caddy_config: {}
+  load_prometheus_data: {}
+  load_tempo_data: {}
+  load_trust: {}

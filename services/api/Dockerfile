@@ -9,10 +9,12 @@ COPY admin-ui ./admin-ui
 COPY migrations ./migrations
 COPY operations ./operations
 COPY load/*.mjs ./load/
+COPY load/*.d.mts ./load/
+COPY load/*.yaml ./load/
 RUN npm run build && cp -R migrations dist/migrations && cp -R operations dist/operations
 # Compiled tests (dist/tests/*.test.js) import the browser feature modules by the
 # same relative path the panel uses, so the tested sources must sit under dist.
-RUN mkdir -p dist/load && cp load/*.mjs dist/load/
+RUN mkdir -p dist/load && cp load/*.mjs load/*.yaml dist/load/
 RUN mkdir -p dist/admin-ui && cp -R admin-ui/features dist/admin-ui/features
 
 FROM node:22-alpine
