@@ -61,3 +61,5 @@ docs/reports/
 
 # Capacity validation evidence is local and may contain operational metadata.
 /openspec/changes/api-performance-hardening/evidence/
+
+/openspec/changes/free-drip-read-fast-path/evidence/

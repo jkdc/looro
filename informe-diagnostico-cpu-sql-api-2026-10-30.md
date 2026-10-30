@@ -2,6 +2,8 @@
 
 **Fecha:** 30 de octubre de 2026. **Código analizado:** `0577ace`. **Estado:** diagnóstico y propuesta; ningún cambio de runtime implementado en esta tarea.
 
+**Seguimiento:** el atajo descrito aquí se ha implementado posteriormente. Ver [SDD y resultados](openspec/changes/free-drip-read-fast-path/verify-report.md):11→7 sentencias en saldo libre repetido, con una consulta adicional en misses guest/suscrito. Las observaciones siguientes describen el diagnóstico previo, no una nueva garantía de capacidad.
+
 ## 1. Conclusión
 
 La siguiente mejora candidata es **evitar que cada lectura de saldo repita la transacción de concesión gratuita cuando esa concesión mensual ya existe**. No hace falta empezar por Redis, otro índice, un pool mayor o desactivar observabilidad.

@@ -185,3 +185,7 @@ Pendientes: repeticiones estadísticas, soak de horas, datos grandes, TLS/Caddy,
 ## Seguimiento de CPU y SQL
 
 El [diagnóstico posterior](informe-diagnostico-cpu-sql-api-2026-10-30.md) localiza trabajo repetido de concesiones gratuitas en lecturas de saldo y compara OTEL on/off. Define una optimización candidata sin caché ni aumento de cuotas; no se implementó todavía ni se eleva la capacidad certificada a partir del perfil.
+
+## Optimización posterior del recorrido de drip
+
+El [atajo de drip implementado](openspec/changes/free-drip-read-fast-path/verify-report.md) evita transacciones sin efecto tras una concesión gratuita existente. Se reduce ese recorrido de11 a7sentencias; los misses guest/suscrito añaden una consulta. Se conservaron minutos y se compararon tres repeticiones. Los RPS se solapan: esta mejora no eleva automáticamente el rango certificado de este informe.

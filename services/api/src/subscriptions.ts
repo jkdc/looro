@@ -133,7 +133,13 @@ export async function grantSubscriptionPeriod(db: Database, subscription: Subscr
  *  received their attested welcome grant and stay out of the drip. */
 export async function runDripForAccount(db: Database, account: string, now = new Date()): Promise<number> {
   const config = await subscriptionConfig(db);
+  if (!config.freeDripEnabled || config.freeDripMinutes === 0) return 0;
   const key = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+  // Positive evidence only: an existing free grant cannot issue new credit.
+  // A miss must still use the transactional guards and unique claim below.
+  const prior = await db.query(`SELECT 1 FROM subscription_grants
+    WHERE COALESCE(subscription_id::text,'free')='free' AND account_id=$1 AND period_key=$2`, [account, key]);
+  if (prior.rowCount) return 0;
   return transaction(db, async sql => {
     if ((await sql.query('SELECT 1 FROM accounts WHERE id=$1 AND is_guest', [account])).rowCount) return 0;
     if ((await sql.query(`SELECT 1 FROM subscriptions WHERE account_id=$1 AND status IN ('trialing','active') LIMIT 1`, [account])).rowCount)
