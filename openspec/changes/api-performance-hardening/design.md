@@ -3,7 +3,7 @@
 ## Intención y autorización
 El usuario solicita «quiero que crees una rama nueva y siguiendo sdd de superpowers implementes los cambios necesarios para informe-performance-api-2026-10-30.md» y aprueba empezar por generador, observabilidad y límites del proxy, medir aislado y decidir después las mejoras condicionales. Este diseño concreta esa primera fase, no convierte todas las recomendaciones del informe en requisitos inmediatos.
 
-Estado: pendiente de aprobación del diseño. Rama `feat/api-performance-hardening`. Implementación y plan detallado vendrán después de aprobarlo.
+Estado: diseño aprobado por el usuario mediante «continua» tras presentarlo para aprobación. Rama `feat/api-performance-hardening`. Plan detallado preparado; implementación pendiente de revisión del plan.
 
 ## Enfoques considerados
 1. **Incremental sobre Node/Fastify/pg existentes — elegido por el usuario.** Corregir medición y limitar recursos antes de escalar. Menos infraestructura y evidencia comparable; no resuelve todavía el singleton de voz.

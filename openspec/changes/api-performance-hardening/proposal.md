@@ -13,4 +13,4 @@ Implementar incrementalmente las mejoras justificadas del informe `informe-perfo
 Separar workers, cambiar watchdog/locks financieros, Redis, PgBouncer, caché/CDN, índices, réplica de PostgreSQL y despliegue multiinstancia. Se decidirán a partir de la baseline. Sin llamadas reales a proveedores, ejecución remota, push ni PR.
 
 ## Estado
-Diseño pendiente de aprobación; todavía sin implementación. Rama `feat/api-performance-hardening`. Artefactos previos no relacionados se preservan.
+Diseño aprobado; plan detallado pendiente de revisión y método de ejecución; todavía sin implementación. Rama `feat/api-performance-hardening`. Artefactos previos no relacionados se preservan.

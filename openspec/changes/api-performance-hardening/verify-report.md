@@ -13,3 +13,6 @@ Aprobación del diseño, plan Superpowers, RED/GREEN, type-check, integración P
 
 ## Revisión de diseño
 Revisor independiente: no quedan preguntas importantes para elaborar el plan. Diseño aún pendiente de aprobación del usuario; este dictamen no verifica implementación.
+
+## Plan
+Diseño aprobado por «continua». Plan T0–T6 redactado y autorrevisado con cobertura S1–S6 y cinco clases de fallo asignadas a pruebas. Node local observado: v22.23.2. Todavía sin type-check ni pruebas funcionales; pendiente aprobación del plan/método.
