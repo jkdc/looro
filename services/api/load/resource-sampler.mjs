@@ -26,12 +26,16 @@ export function summarizeContainer(inspect,stats={},cgroup=null){
 /** Only inspect identities obtained from this unique Compose project. exec is injectable. */
 export async function sampleContainers(project,containers,profile,exec){
   const result=[];
-  for(const id of containers){
-    const [inspect]=JSON.parse(await exec(['inspect',id]));
+  for(const item of containers){
+    const id=typeof item==='string'?item:item.id;let inspect;
+    try{[inspect]=JSON.parse(await exec(['inspect',id]));}
+    catch(error){if(item.service==='driver-load'){result.push({service:'driver-load',includedInBudget:false,unavailable:true});continue;}throw error;}
     const service=inspect.Config?.Labels?.['com.docker.compose.service'];
     assertOwnedContainer(inspect,project,[...Object.keys(profile.services),'driver-load','stub-load']);
     if(profile.services[service])assertEffectiveLimits(inspect,profile.services[service]);
-    const stats=JSON.parse(await exec(['stats','--no-stream','--format','{{json .}}',id]));
+    if(item.service&&item.service!==service)throw Error('Container inventory label mismatch');
+    let stats;try{stats=JSON.parse(await exec(['stats','--no-stream','--format','{{json .}}',id]));}
+    catch(error){if(profile.services[service])throw error;result.push({...summarizeContainer(inspect,{},null),includedInBudget:false,unavailable:true});continue;}
     let cgroup=null;
     try{cgroup=await exec(['exec',id,'cat','/sys/fs/cgroup/cpu.stat']);}catch{ /* Distroless images may not contain cat; report unavailable, never zero. */ }
     result.push({...summarizeContainer(inspect,stats,cgroup),includedInBudget:Boolean(profile.services[service])});

@@ -1,6 +1,6 @@
 # Verificación de capacidad por recursos
 
-Estado: ejecución directa del plan aprobado; T1/T2 completadas, T3–T6 pendientes. Sin despliegue ni certificación de capacidad todavía.
+Estado: ejecución directa del plan aprobado; T1–T3 completadas; T4–T6 pendientes. Sin despliegue ni certificación de capacidad todavía.
 
 ## T1 — Presupuestos y observabilidad real
 
@@ -24,3 +24,15 @@ Evidencia raw sintética ignorada: `evidence/t1-smoke*.log`; las mediciones temp
 - Bytes del driver son cuerpos de petición/respuesta, no cabeceras/TLS ni cuota de transferencia total.
 
 Sigue pendiente escalera por presupuesto, soak, fallos, comparación CASE/Redis y análisis móvil.
+
+## T3 — Runner, resistencia y recuperación
+
+- CLI cerrada con ayuda y soak de tasa explícita, 60 ventanas de60s, sin muestras globales ni promediar percentiles. Entorno saneado, proyecto único, cleanup propio en error/cancelación. Escalera exploratoria se detiene en frontera no aprobada sin llamarla capacidad.
+- Smokes economy/standard/peak: cada uno24/24 útiles y0rechazos/fallos, PostgreSQL/TLS reales y ocho residentes con cuotas verificadas; progresos202 y exámenes reales. Prueba reforzada:1201cuentas, dinero/ledger1200999999991nanoUSD, minutos/diario55500000ms, uso=settled1, unknown/rejected/pending0, wallets porcuenta y grants duplicados0; cleanup PASS. Son smokes a4/s porflujo, no capacidad de cada perfil.
+- Carreras corregidas con RED/GREEN: CAtransitoria aún en ejecución rechazada correctamente por sampler; `up --wait` también fallaba si el mismo job terminaba0 demasiado pronto. Separamos arranque de residentes y job con espera explícita de exit0. Se mantiene el guard de pertenencia. Driver efímero desaparecido se marca unavailable, no cero, mientras fallos de residentes siguen siendo error.
+- Fallos standard: proveedor2s/colgado/429 devuelve504/504/502, con lecturas útiles concurrentes. ReinicioAPI recupera; reinicioBD falló dos veces antes de corrección, con categorías saneadas `unhandled_client_error` y `postgres_connection_terminated`.
+- Raíz confirmada en `pg-pool/index.js:51–62`: pg retira el cliente idle roto y emite Pool.error; sin listener el EventEmitter termina el proceso. `connectDatabase` carecía de listener, también en main. Regresión nueva1RED/1preservaciónPASS; tras listener con evento cerrado sin objetos de conexión,2PASS. No cambia pool, timeouts, retries o manejo de queries activas.
+- Repetición real después de corregir: reiniciosAPI yBD recuperan, proveedor degradado conserva2unknown/1rejected/0pendientes, solo1settled y1usage; dinero/ledger1200999999991 y minutos/diario55500000; mismatches porcuenta/duplicados0. Limpieza PASS. No se reinicia API automáticamente para esconder el fallo de BD.
+- La ayuda CLI usa un subproceso Node: el sandbox lo bloqueó con EPERM; pruebas escaladas observan el comportamiento real. El scratch sin rama help devuelve2, ayuda actual0. El EPERM no se cuenta como RED de comportamiento.
+
+Falta la suite API completa y revisión independiente de todo el cambio; se ejecutarán antes del cierre, sin solaparlas con mediciones. Todavía NO se ha ejecutado soak ni escalera representativa ni comparaciónCASE bajo cuotas.

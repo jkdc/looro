@@ -35,3 +35,15 @@ TLS: el contenedor transitorio `trust-load` copia exclusivamente la CA pública 
 Cohortes resource: 1201 cuentas por defecto (probe1, libres180, guest10, activos10, nuevas1000); el modo anterior sigue creando200 cuentas. Preflight usa probe y no consume nuevas. `workloadTask('new',i,manifest)` no recicla al agotarse; preparar otro fixture para otra ráfaga inicial. Progreso V1 exige HTTP202/merged correcto y examen híbrido usa contenido real; rechazos/errores no son útiles. Bytes agregados son solo cuerpos. Las sesiones resource duran8h para soportar ensayo prolongado, no son ajustes a sesiones productivas.
 
 Construcción: `api-load` solo refiere una imagen. El servicio con `build` es `migrate-load`: construir ese servicio y registrar digest; un exit0 de `compose build api-load` no demuestra una imagen actualizada. El probe de integración está en `tests/support/load-resource-probe.mjs` y se ejecuta dentro del driver sintético tras inicializar la confianza pública TLS.
+
+## Runner mantenido por presupuesto
+
+Desde `services/api`: `npm run load:resources -- economy smoke`, `standard steps`, `peak smoke` o `standard faults`. Ayuda: `node load/resource-run.mjs --help`. Soak: `node load/resource-run.mjs PROFILE soak RATE`; RATE1–1000 es explícita y debe elegirse tras la escalera con margen, no copiar un supuesto200/s. Son 60 ventanas de60s, una sola preparación/warmup y sin retener todas las muestras de una hora ni promediar percentiles.
+
+La escalera mezcla70% saldo reclamado,10%POSTprogreso,10%GETprogreso y10%examen; comienza50/100/200/400/800por segundo y se detiene en la primera ventana que no cumple los criterios exploratorios (99%oferta útil,98%emitida,p95éxito≤300ms,p99total≤1000ms). `steps` sale0 tras informar una frontera no aprobada: NO significa que esa tasa se soporte. Smoke/soak sí fallan si no cumplen. La CLI rechaza destinos y flags arbitrarios y no hereda secretos del entorno.
+
+Los residentes arrancan con `--wait`; el job transitorio de CA se arranca sin esa bandera y se espera su exit0 explícitamente. Tratar un job ya terminado como residente hace fallar Compose de forma dependiente de su velocidad. El sampler tolera que desaparezca un driver efímero, marcándolo unavailable, pero NO oculta fallos de muestreo de residentes. `RestartCount` es el contador del motor Docker, no una auditoría de reinicios manuales.
+
+`faults` usa proveedor2s, colgado y HTTP429 (respuestas API504/504/502) con lecturas concurrentes, y reinicios propios de API/BD con tráfico de progreso. La disponibilidad durante reinicio se observa, no se presenta como SLO cumplido; la recuperación posterior y la contabilidad sí se exigen. El fixture espera2intentos unknown y1rejected, ninguno pendiente, solo el preflight liquidado; compara cada wallet con su diario y todo débito con usage settled. Diagnósticos de fallo son categorías cerradas, sin volcar objetos de conexión.
+
+Los bytes del driver excluyen cabeceras/TLS y cuerpos incompletos en fallos de transporte; no son ancho de banda externo facturado. Ninguno de estos comandos toca Coolify ni certifica recursos físicos del destino.

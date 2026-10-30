@@ -17,3 +17,13 @@ test('sampler accepts only owned identities and rejects mismatched effective lim
   assert.throws(()=>assertEffectiveLimits(inspect,{cpus:1,memoryBytes:1073741824}));
   assert.throws(()=>assertEffectiveLimits({...inspect,HostConfig:{}},{cpus:.4,memoryBytes:1073741824}));
 });
+test('short-lived external driver disappearance does not hide a resident sampling failure',async()=>{
+  const {sampleContainers}=await import('../load/resource-sampler.mjs');
+  const {resourceProfile}=await import('../load/resource-profiles.mjs');
+  const external={...inspect,Config:{Labels:{...inspect.Config.Labels,'com.docker.compose.service':'driver-load'}}};
+  const exec=async(args:string[])=>{if(args[0]==='inspect')return JSON.stringify([external]);throw Error('driver exited between ps and stats');};
+  const [r]=await sampleContainers('palique-resource-test',['driver'],resourceProfile('economy'),exec) as any[];
+  assert.equal(r.includedInBudget,false);assert.equal(r.unavailable,true);
+  const gone=await sampleContainers('palique-resource-test',[{id:'driver',service:'driver-load'}],resourceProfile('economy'),async()=>{throw Error('driver removed');}) as any[];assert.equal(gone[0].unavailable,true);
+  await assert.rejects(sampleContainers('palique-resource-test',['api'],resourceProfile('economy'),async args=>{if(args[0]==='inspect')return JSON.stringify([inspect]);throw Error('resident stats failed');}));
+});
