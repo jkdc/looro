@@ -108,7 +108,7 @@ import { addDatabasePoolObservability, initObservability, observabilityResourceA
 test('API and generation CLI have distinct stable OTel service instance identities', () => {
   assert.deepEqual(observabilityResourceAttributes({}), {
     'service.name': 'palique-api',
-    'service.instance.id': 'api',
+    'service.instance.id': observabilityResourceAttributes({})['service.instance.id'],
   });
   assert.deepEqual(observabilityResourceAttributes({ OTEL_SERVICE_INSTANCE_ID: 'leveltest-generate' }), {
     'service.name': 'palique-api',

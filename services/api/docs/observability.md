@@ -250,3 +250,21 @@ espera (`state="waiting"`) y picos de tráfico. El máximo del pool es
 - Sin presupuesto IA por techo: el corte de gasto vive en el ledger.
 - Sin entrega externa de alertas: `webhook-logger` es el destino verificable;
   Slack/PagerDuty sería un segundo receiver vía `ALERTMANAGER_WEBHOOK_URL`.
+
+## Señales de capacidad (fase incremental)
+
+La instancia API genera un UUID de proceso por defecto; `OTEL_SERVICE_INSTANCE_ID` explícito lo sustituye. El pipeline debe conservar esa dimensión al comparar réplicas. No es una identidad de usuario.
+
+| Instrumento OTel | Unidad / labels cerrados |
+|---|---|
+| palique.process.event_loop.delay | segundos; p99 del intervalo del monitor |
+| palique.process.event_loop.utilization | razón 0–1 |
+| palique.process.memory | bytes; state=rss,heap_used,heap_total |
+| palique.proxy.in_flight | operaciones admitidas en este proceso |
+| palique.proxy.rejected | reason=account,global |
+| palique.proxy.provider.duration | segundos; outcome=ok,http_error,transport_error,timeout,oversize,invalid_usage,client_cancelled |
+| palique.proxy.unknown_attempts | resultados externos pendientes de revisión |
+
+Prometheus normaliza puntos a guiones bajos y añade sufijos de unidad/tipo según su exportador (p. ej. `palique_proxy_provider_duration_seconds_bucket`). Verificar nombres exportados al desplegar; no inferir que una serie ausente vale cero. El delay se convierte desde nanosegundos y se reinicia por colección. Monitores se instalan solo con OTEL habilitado y se desactivan al shutdown. No hay labels por cuenta, URL ni petición.
+
+Los gauges actuales de pool permiten detectar espera; esta fase no mide adquisición de cada overload pg. La duración del proxy incluye cierre/registro del intento además de transporte, por lo que se usa para comparar resultados, no para atribuir toda latencia al proveedor.

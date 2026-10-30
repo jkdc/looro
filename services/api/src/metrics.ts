@@ -2,6 +2,13 @@ import { metrics } from '@opentelemetry/api';
 import type { Counter, Gauge, Histogram, Meter, ObservableGauge } from '@opentelemetry/api';
 
 export interface PaliqueMetrics {
+  processEventLoopDelay: ObservableGauge;
+  processEventLoopUtilization: ObservableGauge;
+  processMemory: ObservableGauge;
+  proxyInFlight: ObservableGauge;
+  proxyRejected: Counter;
+  proxyProviderDuration: Histogram;
+  proxyUnknownAttempts: Counter;
   requestDuration: Histogram;
   requestsRejected: Counter;
   dbPoolConnections: ObservableGauge;
@@ -17,6 +24,13 @@ export interface PaliqueMetrics {
 
 function build(meter: Meter): PaliqueMetrics {
   return {
+    processEventLoopDelay: meter.createObservableGauge('palique.process.event_loop.delay', { unit: 's' }),
+    processEventLoopUtilization: meter.createObservableGauge('palique.process.event_loop.utilization'),
+    processMemory: meter.createObservableGauge('palique.process.memory', { unit: 'By' }),
+    proxyInFlight: meter.createObservableGauge('palique.proxy.in_flight'),
+    proxyRejected: meter.createCounter('palique.proxy.rejected'),
+    proxyProviderDuration: meter.createHistogram('palique.proxy.provider.duration', { unit: 's' }),
+    proxyUnknownAttempts: meter.createCounter('palique.proxy.unknown_attempts'),
     // RED of every HTTP request. Prometheus series:
     // http_server_request_duration_seconds_{count,sum,bucket}.
     requestDuration: meter.createHistogram('http.server.request.duration', { unit: 's',

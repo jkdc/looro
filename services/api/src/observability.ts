@@ -1,6 +1,8 @@
 // OpenTelemetry wiring: explicit tracer/meter providers plus OTLP/HTTP
 // exporters. No NodeSDK on purpose — the API owns exactly what it installs
 // and can shut every piece down deterministically.
+import { randomUUID } from 'node:crypto';
+import { monitorEventLoopDelay, performance } from 'node:perf_hooks';
 import { context, metrics, trace } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
@@ -12,6 +14,7 @@ import type { Database } from './db.js';
 import { initDomainMetrics, paliqueMetrics } from './metrics.js';
 import { AsyncLocalStorageContextManager } from './request-context.js';
 
+const processInstanceID = randomUUID();
 let shutdown: (() => Promise<void>) | undefined;
 const requestContextManager = new AsyncLocalStorageContextManager();
 let contextManagerInstalled = false;
@@ -19,7 +22,7 @@ let contextManagerInstalled = false;
 export function observabilityResourceAttributes(env: NodeJS.ProcessEnv): Record<string, string> {
   return {
     [ATTR_SERVICE_NAME]: env.OTEL_SERVICE_NAME ?? 'palique-api',
-    [ATTR_SERVICE_INSTANCE_ID]: env.OTEL_SERVICE_INSTANCE_ID ?? 'api',
+    [ATTR_SERVICE_INSTANCE_ID]: env.OTEL_SERVICE_INSTANCE_ID ?? processInstanceID,
   };
 }
 
@@ -52,10 +55,14 @@ export function initObservability(env: NodeJS.ProcessEnv = process.env): void {
   });
   metrics.setGlobalMeterProvider(meterProvider);
   initDomainMetrics(metrics.getMeter('palique-api'));
-  shutdown = () => Promise.allSettled([tracerProvider.shutdown(), meterProvider.shutdown()]).then(() => {
+  const stopProcessMetrics = startProcessMetrics();
+  shutdown = () => {
+    stopProcessMetrics();
+    return Promise.allSettled([tracerProvider.shutdown(), meterProvider.shutdown()]).then(() => {
     requestContextManager.disable();
     shutdown = undefined;
   });
+  };
 }
 
 export function shutdownObservability(): Promise<void> { return shutdown?.() ?? Promise.resolve(); }
@@ -108,4 +115,36 @@ export function addDatabasePoolObservability(db: Database): void {
     observer.observe(db.totalCount - db.idleCount, { state: 'in_use' });
     observer.observe(db.waitingCount, { state: 'waiting' });
   });
+}
+
+
+/** Install process-only gauges; the caller owns their lifecycle. */
+export function startProcessMetrics(dependencies?: {
+  monitor: () => { enable: () => unknown; disable: () => unknown; percentile: (n:number) => number; reset: () => void };
+  utilization: () => number;
+  memory: () => { rss:number; heapUsed:number; heapTotal:number };
+}): () => void {
+  let previous = performance.eventLoopUtilization();
+  const source = dependencies ?? {
+    monitor: () => monitorEventLoopDelay({ resolution: 20 }),
+    utilization: () => { const current=performance.eventLoopUtilization(); const delta=performance.eventLoopUtilization(current,previous); previous=current; return delta.utilization; },
+    memory: () => process.memoryUsage(),
+  };
+  const monitor=source.monitor(); monitor.enable();
+  const instruments=paliqueMetrics;
+  const delay: Parameters<typeof instruments.processEventLoopDelay.addCallback>[0] = o => {
+    const value=monitor.percentile(99)/1e9;
+    if(Number.isFinite(value)) o.observe(value);
+    monitor.reset();
+  };
+  const utilization: Parameters<typeof instruments.processEventLoopUtilization.addCallback>[0] = o => o.observe(source.utilization());
+  const memory: Parameters<typeof instruments.processMemory.addCallback>[0] = o => {
+    const m=source.memory(); o.observe(m.rss,{state:'rss'}); o.observe(m.heapUsed,{state:'heap_used'}); o.observe(m.heapTotal,{state:'heap_total'});
+  };
+  instruments.processEventLoopDelay.addCallback(delay);
+  instruments.processEventLoopUtilization.addCallback(utilization);
+  instruments.processMemory.addCallback(memory);
+  let stopped=false;
+  return () => { if(stopped)return;stopped=true;monitor.disable();
+    instruments.processEventLoopDelay.removeCallback(delay);instruments.processEventLoopUtilization.removeCallback(utilization);instruments.processMemory.removeCallback(memory); };
 }

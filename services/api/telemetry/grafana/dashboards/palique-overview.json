@@ -165,6 +165,10 @@
           "legendFormat": "{{direction}}"
         }
       ]
-    }
+    },
+    {"id": 9, "type": "timeseries", "title": "Event loop p99 delay", "datasource": {"type": "prometheus", "uid": "prometheus"}, "gridPos": {"h": 8, "w": 6, "x": 0, "y": 16}, "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}, "targets": [{"refId": "A", "expr": "max(palique_process_event_loop_delay_seconds)", "legendFormat": "{{state}}{{reason}}"}]},
+    {"id": 10, "type": "timeseries", "title": "Process memory", "datasource": {"type": "prometheus", "uid": "prometheus"}, "gridPos": {"h": 8, "w": 6, "x": 6, "y": 16}, "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []}, "targets": [{"refId": "A", "expr": "sum by (state) (palique_process_memory_bytes)", "legendFormat": "{{state}}{{reason}}"}]},
+    {"id": 11, "type": "timeseries", "title": "Proxy in flight", "datasource": {"type": "prometheus", "uid": "prometheus"}, "gridPos": {"h": 8, "w": 6, "x": 12, "y": 16}, "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}, "targets": [{"refId": "A", "expr": "sum(palique_proxy_in_flight)", "legendFormat": "{{state}}{{reason}}"}]},
+    {"id": 12, "type": "timeseries", "title": "Proxy admission rejections", "datasource": {"type": "prometheus", "uid": "prometheus"}, "gridPos": {"h": 8, "w": 6, "x": 18, "y": 16}, "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}, "targets": [{"refId": "A", "expr": "sum by (reason) (rate(palique_proxy_rejected_total[$__rate_interval]))", "legendFormat": "{{state}}{{reason}}"}]}
   ]
 }
