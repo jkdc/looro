@@ -76,7 +76,7 @@ test('invalid and missing fixture identities fail closed', async () => {
   const d=await import('../load/driver.mjs');assert.equal(typeof d.preflight,'function');
   const env={BASE:'http://api-load:8080',LOAD_ISOLATED:'true'};
   await assert.rejects(d.preflight(env,{runId:'abc',tokens:[]},async()=>new Response('{}')));
-  await assert.rejects(d.preflight(env,{runId:'abc',tokens:['a'.repeat(64)],proxyToken:'test'},async()=>new Response(JSON.stringify({runId:'other'}))));
+  await assert.rejects(d.preflight(env,{runId:'00000000-0000-4000-8000-000000000001',tokens:['a'.repeat(43)],proxyToken:'test'},async()=>new Response(JSON.stringify({runId:'other'}))),/Fixture identity mismatch/);
 });
 
 test('fixture session tokens satisfy the real authentication boundary',async()=>{

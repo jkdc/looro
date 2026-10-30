@@ -114,4 +114,4 @@ Cobertura: S1 T1; S2 T2; S3 T3+T5; S4 T5; S5 T4+T5; S6 T0+T6. Cinco condiciones 
 
 ## Estado de ejecución
 
-Pendiente de revisión del plan y selección del método por el usuario. Recomendación: ejecución directa en esta sesión, con verificación independiente final por el riesgo financiero; alternativa subagentes por tarea con revisión por entrega, con mayor coste de coordinación. Ningún paso de implementación está completado todavía.
+Plan aprobado mediante «si continua»; ejecución directa con revisor final independiente. T0–T5 implementados en commits c255b03, a58ab51, aa5a67e, 30105cf y corrección5a5126b. Evidencias y estado de validación final en tasks.md y verify-report.md; las casillas específicas se cierran solo con prueba observada.
