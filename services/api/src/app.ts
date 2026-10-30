@@ -596,14 +596,18 @@ export function createApp(services: Services) {
   app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {
     const proxy = services.tokenProxy;
     if (!proxy) throw new ServiceError('proxy_unavailable', 503);
-    const account = await authenticate(db, request.headers.authorization);
-    const unlock = (await db.query(`SELECT unlocked_at FROM entitlements WHERE account_id=$1`, [account])).rows[0]?.unlocked_at;
-    if (!unlock) throw new ServiceError('unlock_required', 403);
-    const body = objectBody(request);
+    // Observe disconnects before authentication can await SQL. A completed request body
+    // is not a disconnect: only an aborted request or destroyed response/socket counts.
     const controller=new AbortController();
     const cancel=()=>{if(!reply.raw.writableEnded)controller.abort();};
-    request.raw.once('aborted',cancel);reply.raw.once('close',cancel);
+    const checkClosed=()=>{if(request.raw.aborted||reply.raw.destroyed||request.raw.socket.destroyed)cancel();};
+    request.raw.once('aborted',cancel);reply.raw.once('close',cancel);checkClosed();
     try {
+      const account = await authenticate(db, request.headers.authorization);
+      const unlock = (await db.query(`SELECT unlocked_at FROM entitlements WHERE account_id=$1`, [account])).rows[0]?.unlocked_at;
+      if (!unlock) throw new ServiceError('unlock_required', 403);
+      const body = objectBody(request);
+      checkClosed();
       const {status,payload}=await proxy.relay(account,body,{signal:controller.signal});
       reply.code(status);return payload;
     } catch(error) {

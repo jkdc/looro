@@ -32,6 +32,26 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
     assert.equal((await first).status,200);
    } finally {await proxy.stop();await app.close();}
   });
+  await t.test('disconnect during authentication never dispatches billable provider work',async()=>{
+   let release!:()=>void,entered!:()=>void,closed!:()=>void,finished!:()=>void;
+   const hold=new Promise<void>(r=>release=r),gate=new Promise<void>(r=>entered=r),closeGate=new Promise<void>(r=>closed=r),done=new Promise<void>(r=>finished=r);
+   const delayed=new Proxy(db,{get(target,key){
+    if(key==='query')return async(...args:any[])=>{if(typeof args[0]==='string'&&args[0].includes('SELECT s.account_id FROM auth_sessions')){entered();await hold;}return (target.query as any)(...args);};
+    const value=(target as any)[key];return typeof value==='function'?value.bind(target):value;
+   }});
+   let calls=0;
+   const proxy=new TokenProxy(db,config,(async()=>{calls++;return Response.json({choices:[],usage:{prompt_tokens:10,completion_tokens:5}});}) as typeof fetch);
+   const relay=proxy.relay.bind(proxy);proxy.relay=async(...args)=>{try{return await relay(...args);}finally{finished();}};
+   const app=createApp({db:delayed,auth:{},tokenProxy:proxy});app.addHook('onRequest',async(_req,reply)=>{reply.raw.once('close',closed);});
+   await app.listen({port:0,host:'127.0.0.1'});
+   const balance=(await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano;
+   try {
+    const req=httpRequest({hostname:'127.0.0.1',port:(app.server.address() as any).port,path:'/v1/proxy/responses',method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'}});req.on('error',()=>{});req.end('{}');
+    await gate;req.destroy();await closeGate;release();await done;
+    assert.equal(calls,0);
+    assert.equal((await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano,balance);
+   } finally {release();await proxy.stop();await app.close();}
+  });
   await t.test('closing an actual socket during transport persists unknown and releases capacity',async()=>{
    let entered!:()=>void,aborted!:()=>void;const gate=new Promise<void>(r=>entered=r),abortGate=new Promise<void>(r=>aborted=r);
    const proxy=new TokenProxy(db,config,(async(_url:any,o:any)=>{entered();return new Promise((_resolve,reject)=>{o.signal.addEventListener('abort',()=>{aborted();reject(o.signal.reason);},{once:true});});}) as typeof fetch);

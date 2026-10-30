@@ -101,3 +101,24 @@ test('isolated failure scenarios are a closed domain and never accept destinatio
   assert.equal(d.loadScenario(undefined),'fast');assert.equal(d.loadScenario('slow'),'slow');assert.equal(d.loadScenario('hang'),'hang');
   assert.throws(()=>d.loadScenario('https://provider.example'));assert.throws(()=>d.loadScenario(''));
 });
+
+
+test('CLI smoke exercises public routes even when authenticated fixtures exist',async()=>{
+  // @ts-ignore Native CLI uses dependency injection for transport and manifest boundaries.
+  const {runCli}=await import('../load/loadtest.mjs');
+  const id='00000000-0000-4000-8000-000000000001',calls=new Set<string>();let now=0;
+  const code=await runCli({BASE:'http://api-load:8080',LOAD_ISOLATED:'true',LOAD_MODE:'smoke',DURATION_S:'1',TARGET_RPS:'4'}, {
+    print:()=>{},readManifest:async()=>({runId:id,tokens:['a'.repeat(43)],proxyToken:'synthetic'}),now:()=>now,sleep:async(ms:number)=>{now+=ms;},
+    fetch:async(url:any)=>{const path=new URL(url).pathname;calls.add(path);
+      if(path==='/fixture/identity')return Response.json({runId:id});
+      if(path==='/v1/proxy/responses')return Response.json({choices:[{message:{content:id}}],metering:{nanoUSDSettled:'0'}});
+      if(path==='/v1/minutes')return Response.json({availableMilliseconds:0});
+      if(path==='/v1/auth/challenge')return Response.json({challengeID:'fixture'});
+      if(path==='/healthz')return Response.json({ok:true});
+      if(path==='/v1/pricing')return Response.json({currency:'USD',moneyUnit:'nanoUSD'});
+      if(path==='/v1/minutes/products')return Response.json({products:[]});
+      return Response.json({});
+    }
+  });
+  assert.equal(code,0);for(const path of ['/v1/minutes','/v1/pricing','/v1/minutes/products','/healthz'])assert.ok(calls.has(path),path);
+});
