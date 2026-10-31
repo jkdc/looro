@@ -15,10 +15,29 @@ test('progress 202 is useful only for the right method and matching merge result
   for(const [status,body] of [[200,{merged:1}],[202,{}],[202,{merged:0}],[429,{merged:1}],[302,{merged:1}]] as const)assert.equal(usefulResult(t,status,body),false);
   assert.equal(usefulResult({method:'GET',path:'/v1/progress'},200,{progress:[]}),true);
   assert.equal(usefulResult({method:'GET',path:'/v1/progress'},200,{progress:[{}]}),false);
+  assert.equal(usefulResult({method:'GET',path:'/v1/progress'},200,{progress:[{kind:'lesson',itemID:'lesson-1',language:'en',attempts:1}]}),false);
+  assert.equal(usefulResult({method:'GET',path:'/v1/progress'},200,{progress:[{kind:'lesson',itemID:'lesson-1',language:'en',firstAt:1,lastAt:2,attempts:1,bestScore:80}]}),true);
 });
 test('exam content checks real payload fields and does not accept empty success bodies',async()=>{
   const t=workloadTask('exams',0,fixture);
   const {composeWeekly}=await import('../src/level-tests.js');
   const payload=composeWeekly('en','A1',new Date('2026-10-30T12:00:00Z'))!;
   assert.equal(usefulResult(t,200,payload),true);assert.equal(usefulResult(t,200,{}),false);assert.equal(usefulResult(t,404,payload),false);
+  assert.equal(usefulResult(t,200,{languageID:'en',level:'A1',weekId:2965,items:[{id:'i1',section:'reading'}]}),false);
+  assert.equal(usefulResult(t,200,{...payload,items:payload.items.map((item,index)=>index===0?{...item,prompt:''}:item)}),false);
+});
+test('bounded mobile flow covers the source-derived foreground session routes',()=>{
+  const tasks=Array.from({length:6},(_,index)=>workloadTask('mobile',index,fixture));
+  assert.deepEqual(tasks.map(({method,path})=>[method,path]),[
+    ['GET','/v1/auth/providers'],['GET','/v1/account'],['GET','/v1/minutes'],
+    ['POST','/v1/progress'],['GET','/v1/progress'],['GET','/v1/level-tests/hybrid?language=en&level=A1'],
+  ]);
+  assert.equal(tasks[1]!.token,'c');assert.equal(tasks[2]!.token,'c');assert.equal(tasks[3]!.token,'c');assert.equal(tasks[4]!.token,'c');
+  assert.deepEqual(tasks[3]!.body,{entries:[{kind:'lesson',itemID:'en-foundations-u1-to-be',language:'en',at:1793318400000,attempts:1,bestScore:80}]});
+});
+test('mobile foreground route checks reject malformed provider and account responses',()=>{
+  assert.equal(usefulResult({method:'GET',path:'/v1/auth/providers'},200,{google:true,googleAndroid:false,apple:false}),true);
+  assert.equal(usefulResult({method:'GET',path:'/v1/auth/providers'},200,{google:'yes',googleAndroid:false,apple:false}),false);
+  assert.equal(usefulResult({method:'GET',path:'/v1/account'},200,{accountID:'00000000-0000-4000-8000-000000000000',email:null,providers:[],createdAt:'2026-10-30T00:00:00.000Z'}),true);
+  assert.equal(usefulResult({method:'GET',path:'/v1/account'},200,{accountID:'bad',providers:[]}),false);
 });

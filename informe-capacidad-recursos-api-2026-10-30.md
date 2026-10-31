@@ -1,6 +1,6 @@
 # Capacidad y presupuesto de recursos de la API
 
-**Conclusión:** el perfil de 2 vCPU/8 GiB (`telemetry-db-balanced-v4`) completó una hora con 50 solicitudes sintéticas por segundo a través de TLS interno. Es una referencia de carga reproducible para este fixture, NO una garantía de capacidad de producción ni una medición del servidor de Coolify. La mezcla móvil real y sus bytes quedan pendientes del informe complementario.
+**Conclusión:** el perfil de 2 vCPU/8 GiB (`telemetry-db-balanced-v4`) completó una hora con 50 solicitudes sintéticas por segundo a través de TLS interno en su mezcla de harness. Una prueba móvil hipotética separada validó seis rutas a 50 RPS durante 15 segundos; tampoco es una garantía de capacidad de producción ni una medición del servidor de Coolify. El informe complementario describe frecuencias desconocidas, no tráfico observado.
 
 ## Qué se midió
 
@@ -10,6 +10,17 @@
 - Criterio exploratorio del runner: ≥99% de oferta útil, ≥98% de solicitudes lanzadas, p95 de éxitos ≤300ms y p99 total ≤1.000ms. Una escalera se detiene en el primer nivel no aprobado. Un soak sólo confirma la tasa que efectivamente sostuvo.
 
 La infraestructura declarada por el usuario es 4 vCPU, 16 GB RAM, 200 GB NVMe y 16 TB de transferencia. No se inspeccionó Coolify ni se verificaron físicamente esos recursos; son límites informados, no observados.
+
+## Componentes del ensayo y orientación de despliegue
+
+| Estado en el ensayo `standard` | Componentes | Interpretación para el host declarado |
+|---|---|---|
+| Residentes medidos, suman 2 vCPU / 8 GiB | API, PostgreSQL, Caddy, collector OTel, Prometheus, Tempo, Alertmanager y webhook de alertas | `standard` es la única asignación V4 con soak de una hora aprobado. Son cuotas por contenedor y suman un techo, no una reserva exclusiva del host. |
+| Fuera del presupuesto residente | Driver de carga y stub de proveedor | Son herramientas sintéticas externas al límite del servicio, no carga o recursos de la app desplegada. |
+| Transitorio, termina antes de la medición | `trust-load`, migración y seed | No se suman como residentes medidos; operaciones normales de despliegue sí requieren presupuesto y deben coordinarse. |
+| Apagados/no incluidos | Grafana y UI estática admin separada | El ensayo no demuestra cuánto ahorra apagarlos. Tampoco demuestra que en producción exista un contenedor admin independiente: no detener API/Caddy ni retirar rutas hasta verificar el Compose y servir/admin de Coolify. |
+
+Como punto de partida orientativo, `standard` usaría hasta la mitad del presupuesto nominal del usuario (2 vCPU/8 GiB de cuotas) y dejaría margen nominal para Ubuntu, Coolify y otros servicios. Ese margen **no está garantizado** porque las cuotas no son reservas y la presión del host no se midió. `economy` (1/4) no aprobó el ensayo V4 comparable a 50 RPS; `peak` (4/12) no tiene curva V4 medida. No configurar autoescalado ni asignar el pico completo por anticipado: medir el host compartido y ejecutar la mezcla pertinente antes de subir límites.
 
 ## Resultado principal: perfil recomendado para comenzar
 
@@ -80,6 +91,6 @@ No se incorpora Redis: no se aisló un cuello dominante cacheable que justifique
 
 ## Límites de la conclusión
 
-El ensayo es sintético, aislado y usa cuotas Docker, TLS de Caddy interno y un driver que corre fuera del presupuesto del servicio. No observa dispositivos, conectividad móvil, proxy público de Coolify, competencia con otros contenedores, vCPU física, SSD, bandwidth facturado, picos estacionales ni volumen de sesiones. El análisis de llamadas móviles en `informe-uso-api-movil-2026-10-30.md` está pendiente; por tanto, todavía no se estima cuántos usuarios simultáneos o activos soportará la aplicación.
+El ensayo es sintético, aislado y usa cuotas Docker, TLS de Caddy interno y un driver que corre fuera del presupuesto del servicio. No observa dispositivos, conectividad móvil, proxy público de Coolify, competencia con otros contenedores, vCPU física, SSD, bandwidth facturado, picos estacionales ni volumen de sesiones. La prueba `mobile-smoke` ejercita 6 rutas a 50 RPS por 15 segundos con una sesión sintética code-derived; valida el flujo y el contrato de respuesta, no mide su frecuencia real, un soak móvil de una hora ni usuarios concurrentes. Ver `informe-uso-api-movil-2026-10-30.md`: sin telemetría no se estima cuántos usuarios activos o simultáneos soportará la aplicación.
 
 Evidencia reproducible (logs privados ignorados por Git): `openspec/changes/api-resource-envelope/evidence/standard-soak-v4-50-tls.log`, `standard-v4-burst-50.log`, `standard-v3-steps-{tls,direct}.log`, `peak-v3-steps-{tls,direct}.log`, `standard-steps-{tls,direct}.log` y registros `*-v3-burst-50*.log`. La comparación CASE está en los registros `case-*` del mismo directorio.

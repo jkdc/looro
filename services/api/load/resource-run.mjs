@@ -5,8 +5,8 @@ import {assertOwnedContainer,sampleContainers} from './resource-sampler.mjs';
 const execute=promisify(execFile);
 export function parseResourceRun(args){
   const [profile,preset,value]=args;resourceProfile(profile);
-  if(!['smoke','steps','soak','faults'].includes(preset)||args.length!==(preset==='soak'?3:2))throw Error('Usage: resource-run.mjs economy|standard|peak smoke|steps|faults OR profile soak RATE(1..1000)');
-  const rate=preset==='soak'?Number(value):4;
+  if(!['smoke','mobile-smoke','steps','soak','faults'].includes(preset)||args.length!==(preset==='soak'?3:2))throw Error('Usage: resource-run.mjs economy|standard|peak smoke|mobile-smoke|steps|faults OR profile soak RATE(1..1000)');
+  const rate=preset==='soak'?Number(value):preset==='mobile-smoke'?50:4;
   if(!Number.isSafeInteger(rate)||rate<1||rate>1000)throw Error('Invalid endurance rate');
   return {profile,preset,rate};
 }
@@ -125,7 +125,7 @@ const persistenceProbe=`import {Pool} from 'pg';import {readFile} from 'node:fs/
 \`)).rows[0];console.log(JSON.stringify({type:'resource_integrity',expected_accounts:f.expectedAccounts,...r}));if(r.accounts!==f.expectedAccounts)process.exitCode=1}finally{await p.end()}`;
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===process.argv[1]){
-  if(process.argv.length===3&&process.argv[2]==='--help'){console.log('Usage: node load/resource-run.mjs economy|standard|peak smoke|steps|faults\n       node load/resource-run.mjs PROFILE soak RATE (1..1000)\nLocal synthetic fixtures only. No deployment or remote targets.');process.exit(0);}
+  if(process.argv.length===3&&process.argv[2]==='--help'){console.log('Usage: node load/resource-run.mjs economy|standard|peak smoke|mobile-smoke|steps|faults\n       node load/resource-run.mjs PROFILE soak RATE (1..1000)\nmobile-smoke runs one bounded 15-second source-derived foreground-flow sample at 50 RPS; it is not a user-frequency or capacity estimate.\nLocal synthetic fixtures only. No deployment or remote targets.');process.exit(0);}
   let config;try{config=parseResourceRun(process.argv.slice(2));}catch(e){console.error(e.message);process.exit(2);}
   const controller=new AbortController();for(const s of ['SIGINT','SIGTERM'])process.on(s,()=>controller.abort());
   process.exitCode=await runResourceExperiment(config,{signal:controller.signal});

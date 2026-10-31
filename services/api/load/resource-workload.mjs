@@ -7,6 +7,10 @@ export function windowPlan(preset,rate){
   }
   if(preset==='steps')return [50,100,200,400,800].map(r=>({name:`step-${r}`,kind:'mixed',durationS:15,targetRps:r}));
   if(preset==='smoke')return ['claimed','new','guest','active','progress','exams'].map(kind=>({name:kind,kind,durationS:1,targetRps:4}));
+  if(preset==='mobile-smoke'){
+    if(!Number.isSafeInteger(rate)||rate<1||rate>1000)throw Error('Invalid mobile smoke rate');
+    return [{name:'mobile-flow',kind:'mobile',durationS:15,targetRps:rate}];
+  }
   throw Error('Unknown workload preset');
 }
 export function acceptWindow(r){

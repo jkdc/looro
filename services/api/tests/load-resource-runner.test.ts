@@ -3,6 +3,7 @@ import {parseResourceRun,withResourceProject} from '../load/resource-run.mjs';
 import {windowPlan,acceptWindow,summarizeWindows} from '../load/resource-workload.mjs';
 test('resource CLI is closed and endurance requires an explicit validated rate',()=>{
   assert.equal(parseResourceRun(['economy','smoke']).profile,'economy');
+  assert.equal(parseResourceRun(['standard','mobile-smoke']).rate,50);
   assert.equal(parseResourceRun(['standard','soak','25']).rate,25);
   for(const args of [[],['custom','steps'],['economy','unknown'],['peak','soak'],['peak','soak','0'],['peak','soak','1001'],['economy','smoke','25'],['economy','smoke','--url','https://example.com']])assert.throws(()=>parseResourceRun(args));
 });
@@ -12,6 +13,10 @@ test('endurance is sixty bounded windows with no percentile averaging or lost fa
   const good={offered:100,launched:100,useful:100,completed:100,dropped:0,transportFailures:0,latency:{success:{p95:10},all:{p99:20}},elapsedSeconds:60};
   assert.equal(acceptWindow(good),true);assert.equal(acceptWindow({...good,useful:90}),false);
   const s=summarizeWindows([good,{...good,useful:90}]);assert.equal(s.useful,190);assert.equal(s.accepted,false);assert.equal(s.failedWindows,1);assert.equal('p95' in s,false);assert.equal('samples' in s,false);
+});
+test('mobile-smoke is one bounded 50-RPS route-flow sample, not a capacity claim',()=>{
+  const plan=windowPlan('mobile-smoke',50);
+  assert.deepEqual(plan,[{name:'mobile-flow',kind:'mobile',durationS:15,targetRps:50}]);
 });
 test('startup, integrity, interruption and cleanup errors fail without broad Docker cleanup',async()=>{
   for(const reason of ['startup','integrity','abort','cleanup']){
@@ -36,7 +41,7 @@ test('transient CA job must finish successfully before resident-only sampling',a
 test('resource CLI help documents commands and exits without starting Docker',async()=>{
   const {execFileSync}=await import('node:child_process');const {fileURLToPath}=await import('node:url');
   const output=execFileSync(process.execPath,[fileURLToPath(new URL('../load/resource-run.mjs',import.meta.url)),'--help'],{encoding:'utf8'});
-  assert.match(output,/economy\|standard\|peak/);assert.match(output,/soak RATE/);
+  assert.match(output,/economy\|standard\|peak/);assert.match(output,/mobile-smoke/);assert.match(output,/soak RATE/);
 });
 test('resource proof rejects hidden debits, per-account mismatches and invented uncertainty',async()=>{
   const {validateResourceProof}=await import('../load/resource-run.mjs');

@@ -65,8 +65,12 @@ export function usefulPayload(path, payload) {
   if(path==='/healthz') return payload.ok===true;
   if(path==='/v1/pricing') return payload.currency==='USD' && payload.moneyUnit==='nanoUSD';
   if(path==='/v1/minutes/products') return Array.isArray(payload.products);
-  if(path==='/v1/minutes') return typeof payload.availableMilliseconds==='number';
+  if(path==='/v1/minutes') return Number.isFinite(payload.availableMilliseconds) && payload.availableMilliseconds>=0;
   if(path==='/v1/auth/challenge') return typeof payload.challengeID==='string';
+  if(path==='/v1/auth/providers') return typeof payload.google==='boolean'&&typeof payload.googleAndroid==='boolean'&&typeof payload.apple==='boolean';
+  if(path==='/v1/account') return typeof payload.accountID==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(payload.accountID)
+    && (payload.email===null||typeof payload.email==='string')&&Array.isArray(payload.providers)&&payload.providers.every(p=>p==='google'||p==='apple')
+    && typeof payload.createdAt==='string'&&Number.isFinite(Date.parse(payload.createdAt));
   if(path==='/v1/proxy/responses') return Array.isArray(payload.choices) && typeof payload.metering?.nanoUSDSettled==='string';
   return false;
 }
@@ -75,9 +79,25 @@ export function usefulResult(task,status,payload) {
   if(!payload||typeof payload!=='object')return false;
   if(path==='/v1/progress'){
     if(task.method==='POST')return status===202 && Array.isArray(task.body?.entries) && Number.isSafeInteger(payload.merged) && payload.merged===task.body.entries.length;
-    return task.method==='GET' && status===200 && Array.isArray(payload.progress) && payload.progress.every(row=>typeof row.itemID==='string'&&typeof row.language==='string'&&Number.isSafeInteger(row.attempts));
+    return task.method==='GET' && status===200 && Array.isArray(payload.progress) && payload.progress.every(row=>row&&typeof row.kind==='string'&&row.kind.length>0
+      &&typeof row.itemID==='string'&&row.itemID.length>0&&typeof row.language==='string'&&row.language.length>0
+      &&Number.isFinite(row.firstAt)&&Number.isFinite(row.lastAt)&&Number.isSafeInteger(row.attempts)&&row.attempts>=1&&Number.isSafeInteger(row.bestScore));
   }
-  if(['/v1/level-tests/current','/v1/level-tests/hybrid'].includes(path))return task.method==='GET' && status===200 && payload.languageID==='en' && payload.level==='A1' && Number.isSafeInteger(payload.weekId) && Array.isArray(payload.items) && payload.items.length>0 && payload.items.every(item=>typeof item.id==='string'&&typeof item.section==='string');
+  if(['/v1/level-tests/current','/v1/level-tests/hybrid'].includes(path))return task.method==='GET' && status===200 && payload.schemaVersion===1
+    && payload.languageID==='en'&&payload.level==='A1'&&Number.isSafeInteger(payload.version)&&payload.version>0&&Number.isSafeInteger(payload.weekId)
+    &&typeof payload.expiresAt==='string'&&Number.isFinite(Date.parse(payload.expiresAt))&&payload.thresholds&&typeof payload.thresholds==='object'&&!Array.isArray(payload.thresholds)
+    &&Object.values(payload.thresholds).length>0&&Object.values(payload.thresholds).every(v=>Number.isFinite(v))
+    &&typeof payload.examId==='string'&&payload.examId.length>0&&typeof payload.contentId==='string'&&payload.contentId.length>0
+    &&typeof payload.contentHash==='string'&&/^[a-f0-9]{64}$/i.test(payload.contentHash)
+    &&Number.isSafeInteger(payload.contentRevision)&&payload.contentRevision>0&&Number.isSafeInteger(payload.gradingVersion)&&payload.gradingVersion>0
+    &&Array.isArray(payload.passages)&&payload.passages.length>0&&payload.passages.every(p=>p&&typeof p.id==='string'&&p.id.length>0
+      &&typeof p.title==='string'&&p.title.trim().length>0&&typeof p.text==='string'&&p.text.trim().length>0)
+    &&Array.isArray(payload.readingPassageIds)&&payload.readingPassageIds.every(id=>typeof id==='string')
+    &&Array.isArray(payload.listeningPassageIds)&&payload.listeningPassageIds.every(id=>typeof id==='string')
+    &&Array.isArray(payload.items)&&payload.items.length>0&&payload.items.every(item=>item&&typeof item.id==='string'
+      &&['recognition','reading','listening','writing'].includes(item.section)&&typeof item.kind==='string'&&item.kind.length>0
+      &&typeof item.prompt==='string'&&item.prompt.trim().length>0&&Array.isArray(item.answers)&&item.answers.length>0
+      &&item.answers.every(a=>typeof a==='string'&&a.trim().length>0)&&typeof item.explain==='string'&&item.explain.trim().length>0);
   return status===200 && usefulPayload(task.path,payload);
 }
 export async function sampleRequest(task,index,{base,timeoutMs=5000,networks=200,proxyToken='',fetch:fetchFn=fetch}) {
