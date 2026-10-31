@@ -24,6 +24,19 @@ export async function withResourceProject(config,{exec=defaultExec,log=console.l
       const events=[];if(/Unhandled 'error' event|Unhandled.*error/i.test(raw))events.push('unhandled_client_error');if(/57P01|terminating connection due to administrator command/.test(raw))events.push('postgres_connection_terminated');if(/ECONNRESET/.test(raw))events.push('connection_reset');
       log(JSON.stringify({type:'resource_diagnostics',project,events}));
     }catch{log(JSON.stringify({type:'resource_diagnostics',project,unavailable:true}));}
+    try{
+      const raw=await exec(['ps','-a','--filter',`label=com.docker.compose.project=${project}`,'--format','{{.ID}} {{.Label "com.docker.compose.service"}} {{.State}}'],{env});
+      const listed=new Map();
+      for(const line of raw.split(/\r?\n/)){
+        const [id,service,state]=line.trim().split(/\s+/);
+        if(!/^[a-zA-Z0-9]+$/.test(id??'')||!Object.hasOwn(profile.services,service)||!['created','running','restarting','paused','exited','dead'].includes(state))continue;
+        let details={oomKilled:null,restarts:null,exitCode:null};
+        try{const inspected=await exec(['inspect','--format','{{.State.OOMKilled}} {{.RestartCount}} {{.State.ExitCode}}',id],{env});const match=/^(true|false) (\d+) (-?\d+)$/.exec(inspected.trim());if(match)details={oomKilled:match[1]==='true',restarts:Number(match[2]),exitCode:Number(match[3])};}catch{}
+        listed.set(service,{service,state,...details});
+      }
+      const services=Object.keys(profile.services).sort().map(service=>listed.get(service)??{service,state:'missing',oomKilled:null,restarts:null,exitCode:null});
+      log(JSON.stringify({type:'resource_service_states',project,services}));
+    }catch{log(JSON.stringify({type:'resource_service_states',project,unavailable:true}));}
   }
   finally{
     try{await exec([...base,'down','--volumes','--remove-orphans'],{env});log(JSON.stringify({type:'resource_cleanup',project,result:'PASS'}));}
@@ -39,7 +52,7 @@ export async function runResourceExperiment(config,dependencies={}){
     validateResourceBudget(profile,Object.keys(cfg.services).filter(s=>profile.services[s]));
     await compose(['build','migrate-load']);
     const image=await docker(['image','inspect','palique-capacity:local','--format','{{.Id}}']);
-    log(JSON.stringify({type:'resource_environment',project,profile:profile.name,image:image.trim(),cpuLimit:profile.cpuLimit,memoryLimitBytes:profile.memoryLimitBytes,excluded:['driver-load','stub-load'],optionalOff:['grafana','admin-static-ui']}));
+    log(JSON.stringify({type:'resource_environment',project,profile:profile.name,allocationVersion:profile.allocationVersion,image:image.trim(),cpuLimit:profile.cpuLimit,memoryLimitBytes:profile.memoryLimitBytes,excluded:['driver-load','stub-load'],optionalOff:['grafana','admin-static-ui']}));
     await compose(['up','-d','--wait','--wait-timeout','180','caddy-load','prometheus-load']);
     await waitFixtureJob(ctx,'trust-load');
     const sample=async()=>{

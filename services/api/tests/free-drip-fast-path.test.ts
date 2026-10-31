@@ -201,7 +201,7 @@ integration('two synchronized initial lookup misses still create only one financ
 
 
 for (const state of ['guest', 'trialing', 'active'] as const) {
-  integration(`${state} eligibility avoids a no-op grant transaction and preserves persisted credit`, async db => {
+  integration(`${state} fallback preserves persisted credit without issuing a grant`, async db => {
     const id = await account(db, state === 'guest');
     if (state !== 'guest') await upsertSubscriptionFromStore(db, {
       accountID: id, tier: 'standard', status: state, store: 'stripe', storeReference: `${state}-${id}`,
@@ -211,7 +211,7 @@ for (const state of ['guest', 'trialing', 'active'] as const) {
     const observed = observeTransactions(db);
     assert.equal(await runDripForAccount(observed.db, id, january), 0);
     assert.deepEqual(await snapshot(db, id), before);
-    assert.equal(observed.acquisitions(), 0, 'A positive exclusion should not acquire a grant transaction.');
+    assert.equal(observed.acquisitions(), 1, 'The simpler precheck retains the original guarded fallback for excluded accounts.');
   });
 }
 

@@ -56,3 +56,14 @@ test('failure diagnostics retain closed error categories without leaking raw con
   assert.ok(diagnostic);assert.ok(diagnostic.events.includes('unhandled_client_error'));assert.ok(diagnostic.events.includes('postgres_connection_terminated'));
   assert.ok(!records.join('').includes('never-log-this'));
 });
+test('failure diagnostics identify stopped resident services without logging raw Docker output',async()=>{
+  const records:string[]=[];
+  const rc=await withResourceProject(parseResourceRun(['standard','soak','50']),{
+    exec:async(args:string[])=>args.includes('ps')?'abc123\ttempo-load\texited\nxyz789\tapi-load\trunning\n':args.includes('inspect')?'true 1 137':'',log:s=>records.push(s),
+  },async()=>{throw Error('soak failure');});
+  assert.equal(rc,1);
+  const diagnostic=records.map(s=>JSON.parse(s)).find(r=>r.type==='resource_service_states');
+  assert.ok(diagnostic);assert.deepEqual(diagnostic.services.find((s:any)=>s.service==='tempo-load'),{service:'tempo-load',state:'exited',oomKilled:true,restarts:1,exitCode:137});
+  assert.equal(diagnostic.services.find((s:any)=>s.service==='api-load')?.state,'running');
+  assert.ok(!records.join('').includes('137)'));
+});
