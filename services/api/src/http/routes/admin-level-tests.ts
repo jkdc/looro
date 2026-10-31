@@ -15,8 +15,6 @@ interface AdminLevelTestRouteDependencies {
   db: Database;
   env: NodeJS.ProcessEnv;
   assertPageOrigin: (request: FastifyRequest) => void;
-  assertCsrf: (request: FastifyRequest) => void;
-  authenticateAdmin: (request: FastifyRequest) => Promise<{ adminID: string }>;
   generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };
 }
 
@@ -45,25 +43,22 @@ const runIdsFromQuery = (value: unknown): string[] | undefined => {
 
 /** Routes which launch or inspect generation weeks; registered on the root app. */
 export function registerAdminLevelTestGenerationRoutes(app: FastifyInstance,
-  { db, env, assertPageOrigin, assertCsrf, authenticateAdmin }: AdminLevelTestRouteDependencies): void {
+  { db, env, assertPageOrigin }: AdminLevelTestRouteDependencies): void {
   app.get('/v1/admin/level-tests/weeks', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const listing = await listLevelTestWeeks(db, parseWeekListQuery(request.query as Record<string, unknown>));
     reply.header('cache-control', 'no-store');
     return listing;
   });
   app.get('/v1/admin/level-tests/weeks/:id', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const week = await levelTestWeekDetail(db, uuid((request.params as { id: string }).id));
     reply.header('cache-control', 'no-store');
     if (!week) throw new ServiceError('level_test_week_not_found', 404);
     return week;
   });
   app.post('/v1/admin/level-tests/regenerate', { bodyLimit: 4096 }, async (request, reply) => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => !['languageID', 'level', 'weekIndex', 'reason'].includes(key)))
       throw new ServiceError('invalid_request');
     const languageID = stringField(body, 'languageID', 8), level = stringField(body, 'level', 4);
@@ -82,8 +77,7 @@ export function registerAdminLevelTestGenerationRoutes(app: FastifyInstance,
     return reply.code(202).send({ started: true, runCorrelationId });
   });
   app.post('/v1/admin/level-tests/generate', { bodyLimit: 4096 }, async (request, reply) => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => !['languageID', 'levels', 'weekIndex', 'reason'].includes(key)))
       throw new ServiceError('invalid_request');
     const languageID = stringField(body, 'languageID', 8);
@@ -105,10 +99,9 @@ export function registerAdminLevelTestGenerationRoutes(app: FastifyInstance,
 
 /** Review and moderation routes retain their existing publication boundaries. */
 export function registerAdminLevelTestReviewRoutes(app: FastifyInstance,
-  { db, generationStatus, assertPageOrigin, assertCsrf, authenticateAdmin }: AdminLevelTestRouteDependencies): void {
+  { db, generationStatus, assertPageOrigin }: AdminLevelTestRouteDependencies): void {
   app.get('/v1/admin/level-tests/status', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const runIds = runIdsFromQuery((request.query as Record<string, unknown>).runIds);
     const result = await levelTestGenerationStatus(db, generationStatus, runIds);
     reply.header('cache-control', 'no-store');
@@ -116,28 +109,24 @@ export function registerAdminLevelTestReviewRoutes(app: FastifyInstance,
   });
   app.get('/v1/admin/level-tests/drafts', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const result = await listLevelTestDrafts(db, request.query as Record<string, unknown>);
     reply.header('cache-control', 'no-store');
     return result;
   });
   app.post('/v1/admin/level-tests/:generationId/reject', { bodyLimit: 1024 }, async request => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
     const id = uuid((request.params as { generationId: string }).generationId);
     return rejectGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
   });
   app.post('/v1/admin/level-tests/:generationId/approve', { bodyLimit: 1024 }, async request => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
     const id = uuid((request.params as { generationId: string }).generationId);
     return approveGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
   });
   app.post('/v1/admin/level-tests/:generationId/retire', { bodyLimit: 1024 }, async request => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
     const id = uuid((request.params as { generationId: string }).generationId);
     return retireGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));

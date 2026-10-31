@@ -8,8 +8,6 @@ import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTe
 interface AdminLevelTestLlmRouteDependencies {
   db: Database;
   env: NodeJS.ProcessEnv;
-  assertCsrf: (request: FastifyRequest) => void;
-  authenticateAdmin: (request: FastifyRequest) => Promise<{ adminID: string }>;
   testTimeoutMs?: number;
 }
 
@@ -21,15 +19,13 @@ const objectBody = (request: FastifyRequest): Record<string, unknown> => {
 
 /** LLM settings routes are separate from HTTP composition but remain on its root Fastify instance. */
 export function registerAdminLevelTestLlmConfigRoutes(app: FastifyInstance,
-  { db, env, assertCsrf, authenticateAdmin, testTimeoutMs }: AdminLevelTestLlmRouteDependencies): void {
+  { db, env, testTimeoutMs }: AdminLevelTestLlmRouteDependencies): void {
   app.get('/v1/admin/llm-config', async request => {
-    await authenticateAdmin(request);
     const view = await readLlmConfigView(db, env);
     return { ...view, providers: LLM_PROVIDER_CATALOG };
   });
   app.put('/v1/admin/llm-config', { bodyLimit: 8192 }, async (request, reply) => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request), body = objectBody(request);
+    const admin = request.admin!, body = objectBody(request);
     const allowed = ['provider', 'baseUrl', 'model', 'apiKey', 'label', 'publishMode', 'verifyMode', 'variants'];
     if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
     try {
@@ -44,8 +40,7 @@ export function registerAdminLevelTestLlmConfigRoutes(app: FastifyInstance,
     }
   });
   app.post('/v1/admin/llm-config/test', { bodyLimit: 4096 }, async (request, reply) => {
-    assertCsrf(request);
-    const admin = await authenticateAdmin(request);
+    const admin = request.admin!;
     try {
       const config = await storedConfigForTest(db, env);
       const auditOutcome = async (outcome: string, status: number | null) => {

@@ -36,6 +36,11 @@ import { normalizeAccessEmail } from './access-requests.js';
 import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
   updateSubscriptionConfig } from './subscriptions.js';
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
+
+declare module 'fastify' {
+  interface FastifyContextConfig { adminPublic?: boolean }
+  interface FastifyRequest { admin?: { adminID: string; email: string | null } }
+}
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { registerAdminLevelTestGenerationRoutes, registerAdminLevelTestReviewRoutes } from './http/routes/admin-level-tests.js';
@@ -197,6 +202,18 @@ export function createApp(services: Services) {
     }
     if (++slot.count > 120) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
   });
+  // Admin authorization is structural: every route registered under /v1/admin/
+  // requires a live admin session in this hook, so a route that forgets its own
+  // check still fails closed. The four login-surface routes opt out via route
+  // config; mutating methods keep their Origin anchor for every admin route.
+  app.addHook('preHandler', async request => {
+    const path = request.routeOptions.url ?? '';
+    if (!path.startsWith('/v1/admin/')) return;
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    assertAdminOrigin(request.headers, services.admin.services.config.allowedOrigin, request.method);
+    if (request.routeOptions.config?.adminPublic) return;
+    request.admin = await adminAuthenticate(services.admin.services.db, request.headers);
+  });
   app.setErrorHandler((error, request, reply) => {
     const purchaseReconciliation = error && typeof error === 'object' && 'code' in error && 'message' in error && error.code === 'P0001' &&
         error.message === 'minute_purchase_reconciliation_required';
@@ -353,29 +370,21 @@ export function createApp(services: Services) {
     googleAndroid: Boolean(services.accounts && services.auth.googleAndroidServerClientID && services.auth.googleAndroidClientIDs?.length),
     apple: Boolean(services.accounts && services.auth.appleClientID && services.appleRevoker) }));
   // ---- Admin panel ----
-  const adminOnly = async (request: FastifyRequest) => {
-    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
-    return adminAuthenticate(services.admin.services.db, request.headers);
-  };
-  const assertAdminCsrf = (request: FastifyRequest) => {
-    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
-    assertAdminOrigin(request.headers, services.admin.services.config.allowedOrigin, request.method);
-  };
+  // Session authentication and the mutation Origin anchor live in the preHandler
+  // guard above; handlers consume `request.admin`.
   const assertAdminPageOrigin = (request: FastifyRequest) => {
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     const origin = request.headers.origin;
     if (origin !== undefined && origin !== services.admin.services.config.allowedOrigin)
       throw new ServiceError('admin_origin_required', 403);
   };
-  app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
-    assertAdminCsrf(request);
+  app.post('/v1/admin/auth/challenge', { bodyLimit: 1024, config: { adminPublic: true } }, async request => {
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
     // The challenge stays a single-use gate even for password login: it is
     // rate-limited per operator IP and burned on success.
     return createChallenge(db);
   });
-  app.post('/v1/admin/auth/login', { bodyLimit: 4_096 }, async (request, reply) => {
-    assertAdminCsrf(request);
+  app.post('/v1/admin/auth/login', { bodyLimit: 4_096, config: { adminPublic: true } }, async (request, reply) => {
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     const body = objectBody(request);
     if (Object.keys(body).some(key => !['username', 'password', 'challengeID'].includes(key)))
@@ -386,37 +395,26 @@ export function createApp(services: Services) {
     reply.header('Set-Cookie', adminCookieHeader(result.token));
     return { adminID: result.adminID };
   });
-  app.post('/v1/admin/auth/session', { bodyLimit: 1024 }, async (request, reply) => {
-    assertAdminCsrf(request);
+  app.post('/v1/admin/auth/session', { bodyLimit: 1024, config: { adminPublic: true } }, async (request, reply) => {
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     const result = await exchangeSessionToken(services.admin.services, stringField(objectBody(request), 'bearer', 128));
     reply.header('Set-Cookie', adminCookieHeader(result.token));
     return { adminID: result.adminID };
   });
-  app.post('/v1/admin/auth/sign-out', { bodyLimit: 1024 }, async (request, reply) => {
-    assertAdminCsrf(request);
+  app.post('/v1/admin/auth/sign-out', { bodyLimit: 1024, config: { adminPublic: true } }, async (request, reply) => {
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
     await adminSignOut(services.admin.services, request.headers);
     reply.header('Set-Cookie', adminClearCookieHeader());
     return { signedOut: true };
   });
-  app.get('/v1/admin/me', async request => {
-    const admin = await adminOnly(request);
-    return { adminID: admin.adminID, email: admin.email };
+  app.get('/v1/admin/me', async request => ({ adminID: request.admin!.adminID, email: request.admin!.email }));
+  app.get('/v1/admin/browse', async request => {    return { tables: browseSchema() };
   });
-  app.get('/v1/admin/browse', async request => {
-    await adminOnly(request);
-    return { tables: browseSchema() };
-  });
-  app.get('/v1/admin/accounts/:id', async request => {
-    await adminOnly(request);
-    return accountCloseoutReport(db, uuid((request.params as { id: string }).id));
+  app.get('/v1/admin/accounts/:id', async request => {    return accountCloseoutReport(db, uuid((request.params as { id: string }).id));
   });
   const browseSchemaCache = browseSchema();
-  app.get('/v1/admin/browse/:table', async request => {
-    await adminOnly(request);
-    const tableName = (request.params as { table: string }).table;
+  app.get('/v1/admin/browse/:table', async request => {    const tableName = (request.params as { table: string }).table;
     if (!(tableName in BROWSE_TABLES)) throw new ServiceError('table_not_browsable', 404);
     const built = buildBrowseQuery(tableName, request.query as Record<string, unknown>);
     const admin = services.admin!;
@@ -426,36 +424,22 @@ export function createApp(services: Services) {
     return { table: tableName, total: Number(totals.rows[0]!.total), limit: built.limit, offset: built.offset,
       columns: browseSchemaCache[tableName], rows: rows.rows };
   });
-  app.get('/v1/admin/metrics', async request => {
-    await adminOnly(request);
-    return adminSnapshot(db);
+  app.get('/v1/admin/metrics', async request => {    return adminSnapshot(db);
   });
-  app.get('/v1/admin/metrics/timeseries', async request => {
-    await adminOnly(request);
-    const query = request.query as Record<string, unknown>;
+  app.get('/v1/admin/metrics/timeseries', async request => {    const query = request.query as Record<string, unknown>;
     const set = typeof query.set === 'string' ? query.set : 'overview';
     if (!(TIMESERIES_SETS as readonly string[]).includes(set)) throw new ServiceError('invalid_request');
     const days = query.days === undefined ? 30 : Number(query.days);
     return timeseries(db, set, days);
   });
-  app.get('/v1/admin/metrics/usage', async request => {
-    await adminOnly(request);
-    const query = request.query as Record<string, unknown>;
+  app.get('/v1/admin/metrics/usage', async request => {    const query = request.query as Record<string, unknown>;
     return usageOverview(db, query.days === undefined ? 30 : Number(query.days));
   });
   // ---- Audited panel actions (every mutation writes admin_actions) ----
   const adminActor = (admin: { adminID: string; email: string | null }) => `admin:${admin.email ?? admin.adminID}`;
-  app.get('/v1/admin/policy/welcome', async request => {
-    await adminOnly(request);
-    return welcomePolicy(db);
-  });
-  app.get('/v1/admin/plans', async request => {
-    await adminOnly(request);
-    return { config: await subscriptionConfig(db), tiers: await subscriptionTiers(db) };
-  });
-  app.put('/v1/admin/plans', { bodyLimit: 8192 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
+  app.get('/v1/admin/policy/welcome', async request => welcomePolicy(db));
+  app.get('/v1/admin/plans', async request => ({ config: await subscriptionConfig(db), tiers: await subscriptionTiers(db) }));
+  app.put('/v1/admin/plans', { bodyLimit: 8192 }, async (request, reply) => {    const admin = request.admin!, body = objectBody(request);
     const allowed = ['version', 'reason', 'freeDripEnabled', 'freeDripMinutes', 'freeDripRolloverCapMinutes',
       'trialDays', 'lifetimeDripBudgetMinutes', 'tiers'];
     if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
@@ -463,9 +447,7 @@ export function createApp(services: Services) {
     const result = await updateSubscriptionConfig(db, admin.adminID, body as unknown as Parameters<typeof updateSubscriptionConfig>[2]);
     return reply.send(result);
   });
-  app.put('/v1/admin/policy/welcome', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
+  app.put('/v1/admin/policy/welcome', { bodyLimit: 4096 }, async (request, reply) => {    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => !['version', 'welcomeEnabled', 'welcomeMinutes', 'reason'].includes(key)))
       throw new ServiceError('invalid_request');
     const reason = stringField(body, 'reason', 500);
@@ -476,9 +458,7 @@ export function createApp(services: Services) {
         { welcomeEnabled: policy.welcomeEnabled, welcomeMinutes: policy.welcomeMinutes }));
     return reply.send(after);
   });
-  app.post('/v1/admin/campaigns', { bodyLimit: 1_048_576 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
+  app.post('/v1/admin/campaigns', { bodyLimit: 1_048_576 }, async (request, reply) => {    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => !['audience', 'minutesPerUser', 'maxTotalMinutes', 'reason'].includes(key)))
       throw new ServiceError('invalid_request');
     const reason = stringField(body, 'reason', 500);
@@ -492,9 +472,7 @@ export function createApp(services: Services) {
         audienceSize: Array.isArray(audience) ? audience.length : 'all-current-users' }));
     return reply.code(201).send(summary);
   });
-  app.post('/v1/admin/campaigns/:id/apply', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
+  app.post('/v1/admin/campaigns/:id/apply', { bodyLimit: 4096 }, async (request, reply) => {    const admin = request.admin!, body = objectBody(request);
     const confirmation = stringField(body, 'confirmation', 64), reason = stringField(body, 'reason', 500);
     if (!/^[a-f0-9]{64}$/.test(confirmation)) throw new ServiceError('campaign_confirmation_required');
     let outcome;
@@ -504,9 +482,7 @@ export function createApp(services: Services) {
       (request.params as { id: string }).id, reason, outcome));
     return reply.send(outcome);
   });
-  app.delete('/v1/admin/access-requests', { bodyLimit: 4096 }, async request => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request), body = objectBody(request);
+  app.delete('/v1/admin/access-requests', { bodyLimit: 4096 }, async request => {    const admin = request.admin!, body = objectBody(request);
     if (Object.keys(body).some(key => !['email', 'reason'].includes(key))) throw new ServiceError('invalid_request');
     const email = normalizeAccessEmail(body.email);
     const reason = stringField(body, 'reason', 500);
@@ -517,9 +493,7 @@ export function createApp(services: Services) {
       return { deleted: true };
     });
   });
-  app.post('/v1/admin/hosted-sessions/:id/close', { bodyLimit: 4096 }, async (request, reply) => {
-    assertAdminCsrf(request);
-    const admin = await adminOnly(request);
+  app.post('/v1/admin/hosted-sessions/:id/close', { bodyLimit: 4096 }, async (request, reply) => {    const admin = request.admin!;
     if (!services.hosted) throw new ServiceError('hosted_voice_not_ready', 503);
     const reason = stringField(objectBody(request), 'reason', 500);
     const sessionID = uuid((request.params as { id: string }).id);
@@ -529,16 +503,15 @@ export function createApp(services: Services) {
     return reply.send(outcome);
   });
   const adminLevelTestRouteDependencies = { db, env: environment,
-    assertPageOrigin: assertAdminPageOrigin, assertCsrf: assertAdminCsrf,
-    authenticateAdmin: adminOnly, generationStatus: services.generationStatus };
+    assertPageOrigin: assertAdminPageOrigin, generationStatus: services.generationStatus };
   // Generation routes retain their original registration position and root hooks.
   registerAdminLevelTestGenerationRoutes(app, adminLevelTestRouteDependencies);
   // Student exam result reads stay on the root Fastify instance so they inherit
   // the same admission, tracing, and error policies as every other admin route.
-  registerAdminLevelTestAttemptRoutes(app, { db, assertPageOrigin: assertAdminPageOrigin, authenticateAdmin: adminOnly });
+  registerAdminLevelTestAttemptRoutes(app, { db, assertPageOrigin: assertAdminPageOrigin });
   registerAdminLevelTestReviewRoutes(app, adminLevelTestRouteDependencies);
-  registerAdminLevelTestLlmConfigRoutes(app, { db, env: environment, assertCsrf: assertAdminCsrf,
-    authenticateAdmin: adminOnly, testTimeoutMs: services.llmTestTimeoutMs });
+  registerAdminLevelTestLlmConfigRoutes(app, { db, env: environment,
+    testTimeoutMs: services.llmTestTimeoutMs });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {
     const reports = services.aiReports;

@@ -7,7 +7,6 @@ import { attemptCsv, levelTestAttemptDetail, levelTestAttemptSummary, listLevelT
 export interface AdminLevelTestAttemptRouteDependencies {
   db: Database;
   assertPageOrigin: (request: FastifyRequest) => void;
-  authenticateAdmin: (request: FastifyRequest) => Promise<unknown>;
 }
 
 const accountID = (value: string): string => {
@@ -17,11 +16,11 @@ const accountID = (value: string): string => {
 };
 
 export function registerAdminLevelTestAttemptRoutes(app: FastifyInstance,
-  { db, assertPageOrigin, authenticateAdmin }: AdminLevelTestAttemptRouteDependencies): void {
-  // Keep origin validation before session authentication, matching the original handlers.
+  { db, assertPageOrigin }: AdminLevelTestAttemptRouteDependencies): void {
+  // Session authentication lives in the root preHandler guard; this handler
+  // keeps its page-origin validation.
   app.get('/v1/admin/level-test-attempts', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const listing = await listLevelTestAttempts(db, parseAttemptListQuery(request.query as Record<string, unknown>));
     reply.header('cache-control', 'no-store');
     return listing;
@@ -29,7 +28,6 @@ export function registerAdminLevelTestAttemptRoutes(app: FastifyInstance,
 
   app.get('/v1/admin/level-test-attempts/summary', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const query = request.query as Record<string, unknown>;
     const group = query.group === undefined ? undefined : String(query.group);
     if (group !== undefined && group !== 'week' && group !== 'level') throw new ServiceError('invalid_request');
@@ -42,7 +40,6 @@ export function registerAdminLevelTestAttemptRoutes(app: FastifyInstance,
 
   app.get('/v1/admin/level-test-attempts/export', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const csv = await attemptCsv(db, parseAttemptListQuery(request.query as Record<string, unknown>));
     reply.header('cache-control', 'no-store');
     if (csv === undefined) throw new ServiceError('export_too_large', 413);
@@ -53,7 +50,6 @@ export function registerAdminLevelTestAttemptRoutes(app: FastifyInstance,
 
   app.get('/v1/admin/level-test-attempts/:accountId/:attemptId', async (request, reply) => {
     assertPageOrigin(request);
-    await authenticateAdmin(request);
     const attempt = await levelTestAttemptDetail(db,
       accountID((request.params as { accountId: string }).accountId), (request.params as { attemptId: string }).attemptId);
     reply.header('cache-control', 'no-store');
