@@ -1,6 +1,6 @@
 # Capacidad y presupuesto de recursos de la API
 
-**Conclusión:** el perfil de 2 vCPU/8 GiB (`telemetry-db-balanced-v4`) completó una hora con 50 solicitudes sintéticas por segundo a través de TLS interno en su mezcla de harness. Una prueba móvil hipotética separada validó seis rutas a 50 RPS durante 15 segundos; tampoco es una garantía de capacidad de producción ni una medición del servidor de Coolify. El informe complementario describe frecuencias desconocidas, no tráfico observado.
+**Conclusión:** el perfil de 2 vCPU/8 GiB (`telemetry-db-balanced-v4`) completó una hora con 50 solicitudes sintéticas por segundo a través de TLS interno en su mezcla de harness. Una prueba móvil hipotética separada validó seis rutas a 50 RPS durante 15 segundos (750/750 útiles, p95=36,92ms, p99=93,33ms); tampoco es una garantía de capacidad de producción ni una medición del servidor de Coolify. El informe complementario describe frecuencias desconocidas, no tráfico observado.
 
 ## Qué se midió
 
@@ -91,6 +91,6 @@ No se incorpora Redis: no se aisló un cuello dominante cacheable que justifique
 
 ## Límites de la conclusión
 
-El ensayo es sintético, aislado y usa cuotas Docker, TLS de Caddy interno y un driver que corre fuera del presupuesto del servicio. No observa dispositivos, conectividad móvil, proxy público de Coolify, competencia con otros contenedores, vCPU física, SSD, bandwidth facturado, picos estacionales ni volumen de sesiones. La prueba `mobile-smoke` ejercita 6 rutas a 50 RPS por 15 segundos con una sesión sintética code-derived; valida el flujo y el contrato de respuesta, no mide su frecuencia real, un soak móvil de una hora ni usuarios concurrentes. Ver `informe-uso-api-movil-2026-10-30.md`: sin telemetría no se estima cuántos usuarios activos o simultáneos soportará la aplicación.
+El ensayo es sintético, aislado y usa cuotas Docker, TLS de Caddy interno y un driver que corre fuera del presupuesto del servicio. No observa dispositivos, conectividad móvil, proxy público de Coolify, competencia con otros contenedores, vCPU física, SSD, bandwidth facturado, picos estacionales ni volumen de sesiones. La prueba `mobile-smoke` ejercita 6 rutas a 50 RPS por 15 segundos con una sesión sintética code-derived; el log retenido registra 750/750 útiles, p95=36,92ms y p99=93,33ms (una ejecución previa no retenida dio17,83/41,25ms). Esa variación subraya que valida el flujo y el contrato, no frecuencia real, un soak móvil de una hora ni usuarios concurrentes. Sin telemetría no se estima cuántos usuarios activos o simultáneos soportará la aplicación.
 
 Evidencia reproducible (logs privados ignorados por Git): `openspec/changes/api-resource-envelope/evidence/standard-soak-v4-50-tls.log`, `standard-v4-burst-50.log`, `standard-v3-steps-{tls,direct}.log`, `peak-v3-steps-{tls,direct}.log`, `standard-steps-{tls,direct}.log` y registros `*-v3-burst-50*.log`. La comparación CASE está en los registros `case-*` del mismo directorio.
