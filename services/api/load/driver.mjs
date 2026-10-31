@@ -77,6 +77,11 @@ export function usefulPayload(path, payload) {
 export function usefulResult(task,status,payload) {
   const path=new URL(task.path,'http://localhost').pathname;
   if(!payload||typeof payload!=='object')return false;
+  if(path==='/v1/level-test-attempts')return task.method==='GET'&&status===200&&Array.isArray(payload.attempts)
+    &&payload.attempts.every(attempt=>attempt&&typeof attempt==='object'&&!Array.isArray(attempt))
+    &&(payload.nextCursor===null||typeof payload.nextCursor==='string'&&payload.nextCursor.length>0);
+  if(path==='/v1/usage/events')return task.method==='POST'&&status===202&&Array.isArray(task.body?.events)
+    &&Number.isSafeInteger(payload.accepted)&&payload.accepted===task.body.events.length;
   if(path==='/v1/progress'){
     if(task.method==='POST')return status===202 && Array.isArray(task.body?.entries) && Number.isSafeInteger(payload.merged) && payload.merged===task.body.entries.length;
     return task.method==='GET' && status===200 && Array.isArray(payload.progress) && payload.progress.every(row=>row&&typeof row.kind==='string'&&row.kind.length>0

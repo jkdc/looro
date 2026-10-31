@@ -41,3 +41,32 @@ test('mobile foreground route checks reject malformed provider and account respo
   assert.equal(usefulResult({method:'GET',path:'/v1/account'},200,{accountID:'00000000-0000-4000-8000-000000000000',email:null,providers:[],createdAt:'2026-10-30T00:00:00.000Z'}),true);
   assert.equal(usefulResult({method:'GET',path:'/v1/account'},200,{accountID:'bad',providers:[]}),false);
 });
+
+test('Android session route profile covers one assumed call per foreground action',()=>{
+  const tasks=Array.from({length:7},(_,index)=>workloadTask('android-session',index,fixture));
+  assert.deepEqual(tasks.map(({method,path})=>[method,path]),[
+    ['GET','/v1/auth/providers'],['GET','/v1/account'],['GET','/v1/minutes'],
+    ['GET','/v1/level-test-attempts?limit=10'],['POST','/v1/progress'],
+    ['GET','/v1/level-tests/hybrid?language=en&level=A1&variant=1'],['POST','/v1/usage/events'],
+  ]);
+  assert.equal(tasks[1]!.token,'c');assert.equal(tasks[2]!.token,'c');
+  assert.equal(tasks[3]!.token,'c');assert.equal(tasks[4]!.token,'c');assert.equal(tasks[6]!.token,'c');
+  assert.equal(tasks[4]!.body?.entries?.length,1);
+  const usageBody=JSON.parse(JSON.stringify(tasks[6]!.body)) as {platform:string;events:unknown[]};
+  assert.equal(usageBody.platform,'android');
+  assert.equal(usageBody.events.length,1);
+});
+
+test('Android session history and usage responses require their real route contracts',()=>{
+  const history={method:'GET',path:'/v1/level-test-attempts?limit=10'};
+  assert.equal(usefulResult(history,200,{attempts:[],nextCursor:null}),true);
+  assert.equal(usefulResult(history,200,{attempts:{},nextCursor:null}),false);
+  assert.equal(usefulResult(history,200,{attempts:[],nextCursor:7}),false);
+  assert.equal(usefulResult(history,401,{attempts:[],nextCursor:null}),false);
+
+  const usage=workloadTask('android-session',6,fixture);
+  assert.equal(usefulResult(usage,202,{accepted:1}),true);
+  assert.equal(usefulResult(usage,202,{accepted:0}),false);
+  assert.equal(usefulResult(usage,200,{accepted:1}),false);
+  assert.equal(usefulResult(usage,202,{accepted:'1'}),false);
+});

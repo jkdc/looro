@@ -18,6 +18,24 @@ test('mobile-smoke is one bounded 50-RPS route-flow sample, not a capacity claim
   const plan=windowPlan('mobile-smoke',50);
   assert.deepEqual(plan,[{name:'mobile-flow',kind:'mobile',durationS:15,targetRps:50}]);
 });
+test('android-session-smoke is a separate bounded source-derived route mix',()=>{
+  assert.equal(parseResourceRun(['standard','android-session-smoke']).rate,50);
+  assert.deepEqual(windowPlan('android-session-smoke',50),[
+    {name:'android-session-route-mix',kind:'android-session',durationS:15,targetRps:50},
+  ]);
+  assert.throws(()=>parseResourceRun(['standard','android-session-smoke','100']));
+});
+test('resource runner executes and validates the seven-route Android contract probe',async()=>{
+  const {runResourceContractProbe}=await import('../load/resource-run.mjs');
+  const commands:string[][]=[];
+  const result=await runResourceContractProbe(async(args:string[])=>{
+    commands.push(args);
+    return JSON.stringify({type:'resource_contract_probe',result:'PASS',androidSessionRoutes:7,usageEventPersisted:1});
+  });
+  assert.deepEqual(commands,[['run','--rm','--no-deps','-e','BASE=https://caddy-load','driver-load','node','dist/tests/support/load-resource-probe.mjs']]);
+  assert.equal(result.androidSessionRoutes,7);assert.equal(result.usageEventPersisted,1);
+  await assert.rejects(()=>runResourceContractProbe(async()=>JSON.stringify({type:'resource_contract_probe',result:'PASS',androidSessionRoutes:6,usageEventPersisted:0})));
+});
 test('startup, integrity, interruption and cleanup errors fail without broad Docker cleanup',async()=>{
   for(const reason of ['startup','integrity','abort','cleanup']){
     const calls:any[]=[];const signal=new AbortController();if(reason==='abort')signal.abort();
@@ -41,7 +59,7 @@ test('transient CA job must finish successfully before resident-only sampling',a
 test('resource CLI help documents commands and exits without starting Docker',async()=>{
   const {execFileSync}=await import('node:child_process');const {fileURLToPath}=await import('node:url');
   const output=execFileSync(process.execPath,[fileURLToPath(new URL('../load/resource-run.mjs',import.meta.url)),'--help'],{encoding:'utf8'});
-  assert.match(output,/economy\|standard\|peak/);assert.match(output,/mobile-smoke/);assert.match(output,/soak RATE/);
+  assert.match(output,/economy\|standard\|peak/);assert.match(output,/mobile-smoke/);assert.match(output,/android-session-smoke/);assert.match(output,/soak RATE/);
 });
 test('resource proof rejects hidden debits, per-account mismatches and invented uncertainty',async()=>{
   const {validateResourceProof}=await import('../load/resource-run.mjs');

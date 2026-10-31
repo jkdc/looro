@@ -11,6 +11,10 @@ export function windowPlan(preset,rate){
     if(!Number.isSafeInteger(rate)||rate<1||rate>1000)throw Error('Invalid mobile smoke rate');
     return [{name:'mobile-flow',kind:'mobile',durationS:15,targetRps:rate}];
   }
+  if(preset==='android-session-smoke'){
+    if(!Number.isSafeInteger(rate)||rate<1||rate>1000)throw Error('Invalid Android session smoke rate');
+    return [{name:'android-session-route-mix',kind:'android-session',durationS:15,targetRps:rate}];
+  }
   throw Error('Unknown workload preset');
 }
 export function acceptWindow(r){

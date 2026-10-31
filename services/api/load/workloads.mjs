@@ -5,7 +5,7 @@ export function fixtureLayout(resource=false,newAccounts=1000){
   return ['probe',...Array(180).fill('claimed'),...Array(10).fill('guest'),...Array(10).fill('active'),...Array(newAccounts).fill('new')];
 }
 export function workloadTask(kind,index,manifest){
-  if(!['claimed','new','guest','active','progress','exams','mobile'].includes(kind)||!Number.isSafeInteger(index)||index<0)throw Error('Invalid workload');
+  if(!['claimed','new','guest','active','progress','exams','mobile','android-session'].includes(kind)||!Number.isSafeInteger(index)||index<0)throw Error('Invalid workload');
   if(kind==='mobile'){
     const account=manifest.cohorts?.claimed?.[0];if(!account)throw Error('Mobile flow requires a claimed account');
     const tasks=[
@@ -15,6 +15,23 @@ export function workloadTask(kind,index,manifest){
       {method:'POST',path:'/v1/progress',token:account,body:{entries:[{kind:'lesson',itemID:'en-foundations-u1-to-be',language:'en',at:1793318400000,attempts:1,bestScore:80}]}},
       {method:'GET',path:'/v1/progress',token:account},
       {method:'GET',path:'/v1/level-tests/hybrid?language=en&level=A1'},
+    ];
+    return tasks[index%tasks.length];
+  }
+  if(kind==='android-session'){
+    const account=manifest.cohorts?.claimed?.[0];if(!account)throw Error('Android session requires a claimed account');
+    const sequence=Math.floor(index/7),suffix=sequence.toString(16).padStart(12,'0');
+    if(suffix.length!==12)throw Error('Android session event sequence exhausted');
+    const tasks=[
+      {method:'GET',path:'/v1/auth/providers'},
+      {method:'GET',path:'/v1/account',token:account},
+      {method:'GET',path:'/v1/minutes',token:account},
+      {method:'GET',path:'/v1/level-test-attempts?limit=10',token:account},
+      {method:'POST',path:'/v1/progress',token:account,body:{entries:[{kind:'lesson',itemID:'en-foundations-u1-to-be',language:'en',at:1793318400000,attempts:1,bestScore:80}]}},
+      {method:'GET',path:'/v1/level-tests/hybrid?language=en&level=A1&variant=1'},
+      {method:'POST',path:'/v1/usage/events',token:account,body:{platform:'android',appVersion:'synthetic-load',events:[{
+        id:`00000000-0000-4000-8000-${suffix}`,name:'app_open',at:1793318400000,props:{},
+      }] }},
     ];
     return tasks[index%tasks.length];
   }

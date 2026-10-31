@@ -15,9 +15,14 @@ try{
  for(let i=0;i<20;i++)assert.equal((await sampleRequest(workloadTask('new',i,fixture),i,{base:process.env.BASE,proxyToken:fixture.proxyToken})).useful,true);
  assert.equal(await countNew(),20);
  for(const kind of ['guest','active','progress','exams'])assert.equal((await sampleRequest(workloadTask(kind,0,fixture),0,{base:process.env.BASE,proxyToken:fixture.proxyToken})).useful,true,kind);
+ for(let i=0;i<7;i++)assert.equal((await sampleRequest(workloadTask('android-session',i,fixture),i,{base:process.env.BASE,proxyToken:fixture.proxyToken})).useful,true,`android-session-${i}`);
+ const tokenHash=createHash('sha256').update(fixture.cohorts.claimed[0]).digest('hex');
+ const usageRows=Number((await db.query(`SELECT count(*) FROM usage_events e JOIN auth_sessions s ON s.account_id=e.account_id
+   WHERE s.token_hash=$1 AND e.platform='android' AND e.app_version='synthetic-load'`,[tokenHash])).rows[0].count);
+ assert.equal(usageRows,1);
  const r=await fetch('https://caddy-load/v1/progress',{headers:{authorization:`Bearer ${fixture.cohorts.claimed[0]}`,...clientHeaders(0,200,fixture.proxyToken)}});
  assert.equal(r.status,200);const p=await r.json();assert.equal(p.progress.length,1);assert.equal(p.progress[0].bestScore,80);
  const integrity=(await db.query(`SELECT (SELECT sum(balance_ms)::text FROM minute_wallets) balance,(SELECT sum(balance_delta_ms)::text FROM minute_entries) journal,(SELECT sum(balance_nano)::text FROM wallets) money,(SELECT sum(balance_delta_nano)::text FROM ledger) ledger`)).rows[0];
  assert.equal(integrity.balance,integrity.journal);assert.equal(integrity.money,integrity.ledger);
- console.log(JSON.stringify({type:'resource_contract_probe',result:'PASS',newGrants:20,preflightCohortIsolated:true,progressReadback:true,realExam:true,integrity}));
+ console.log(JSON.stringify({type:'resource_contract_probe',result:'PASS',newGrants:20,preflightCohortIsolated:true,progressReadback:true,realExam:true,androidSessionRoutes:7,usageEventPersisted:usageRows,integrity}));
 }finally{await db.end();}

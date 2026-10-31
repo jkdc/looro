@@ -5,8 +5,8 @@ import {assertOwnedContainer,sampleContainers} from './resource-sampler.mjs';
 const execute=promisify(execFile);
 export function parseResourceRun(args){
   const [profile,preset,value]=args;resourceProfile(profile);
-  if(!['smoke','mobile-smoke','steps','soak','faults'].includes(preset)||args.length!==(preset==='soak'?3:2))throw Error('Usage: resource-run.mjs economy|standard|peak smoke|mobile-smoke|steps|faults OR profile soak RATE(1..1000)');
-  const rate=preset==='soak'?Number(value):preset==='mobile-smoke'?50:4;
+  if(!['smoke','mobile-smoke','android-session-smoke','steps','soak','faults'].includes(preset)||args.length!==(preset==='soak'?3:2))throw Error('Usage: resource-run.mjs economy|standard|peak smoke|mobile-smoke|android-session-smoke|steps|faults OR profile soak RATE(1..1000)');
+  const rate=preset==='soak'?Number(value):['mobile-smoke','android-session-smoke'].includes(preset)?50:4;
   if(!Number.isSafeInteger(rate)||rate<1||rate>1000)throw Error('Invalid endurance rate');
   return {profile,preset,rate};
 }
@@ -55,6 +55,7 @@ export async function runResourceExperiment(config,dependencies={}){
     log(JSON.stringify({type:'resource_environment',project,profile:profile.name,allocationVersion:profile.allocationVersion,image:image.trim(),cpuLimit:profile.cpuLimit,memoryLimitBytes:profile.memoryLimitBytes,excluded:['driver-load','stub-load'],optionalOff:['grafana','admin-static-ui']}));
     await compose(['up','-d','--wait','--wait-timeout','180','caddy-load','prometheus-load']);
     await waitFixtureJob(ctx,'trust-load');
+    if(config.preset==='android-session-smoke')log(JSON.stringify(await runResourceContractProbe(compose)));
     const sample=async()=>{
       const ids=(await docker(['ps','--filter',`label=com.docker.compose.project=${project}`,'--format','{{.ID}} {{.Label "com.docker.compose.service"}}'])).trim().split('\n').filter(Boolean).map(line=>{const [id,service]=line.trim().split(/\s+/);return {id,service};});
       const samples=await sampleContainers(project,ids,profile,docker);
@@ -71,6 +72,12 @@ export async function runResourceExperiment(config,dependencies={}){
     await run;await sample();
     const proof=await compose(['run','--rm','--no-deps','driver-load','node','--input-type=module','-e',persistenceProbe]);const parsed=JSON.parse(proof.trim());validateResourceProof(parsed,parsed.expected_accounts);log(proof);
   });
+}
+export async function runResourceContractProbe(compose){
+  const output=await compose(['run','--rm','--no-deps','-e','BASE=https://caddy-load','driver-load','node','dist/tests/support/load-resource-probe.mjs']);
+  let result;try{result=JSON.parse(output.trim());}catch{throw Error('Android resource contract probe returned invalid JSON');}
+  if(result.type!=='resource_contract_probe'||result.result!=='PASS'||result.androidSessionRoutes!==7||result.usageEventPersisted!==1)throw Error('Android resource contract probe failed');
+  return result;
 }
 export async function waitFixtureJob(ctx,service){
   if(!['trust-load','seed-load','migrate-load'].includes(service))throw Error('Unknown fixture job');
@@ -125,7 +132,7 @@ const persistenceProbe=`import {Pool} from 'pg';import {readFile} from 'node:fs/
 \`)).rows[0];console.log(JSON.stringify({type:'resource_integrity',expected_accounts:f.expectedAccounts,...r}));if(r.accounts!==f.expectedAccounts)process.exitCode=1}finally{await p.end()}`;
 
 if(process.argv[1]&&fileURLToPath(import.meta.url)===process.argv[1]){
-  if(process.argv.length===3&&process.argv[2]==='--help'){console.log('Usage: node load/resource-run.mjs economy|standard|peak smoke|mobile-smoke|steps|faults\n       node load/resource-run.mjs PROFILE soak RATE (1..1000)\nmobile-smoke runs one bounded 15-second source-derived foreground-flow sample at 50 RPS; it is not a user-frequency or capacity estimate.\nLocal synthetic fixtures only. No deployment or remote targets.');process.exit(0);}
+  if(process.argv.length===3&&process.argv[2]==='--help'){console.log('Usage: node load/resource-run.mjs economy|standard|peak smoke|mobile-smoke|android-session-smoke|steps|faults\n       node load/resource-run.mjs PROFILE soak RATE (1..1000)\nmobile-smoke runs one bounded 15-second six-route contract sample at 50 RPS; it is not a user-frequency or capacity estimate.\nandroid-session-smoke runs seven Android-derived foreground actions once per cycle for 15 seconds at 50 RPS; its route weights are assumptions, not observed user frequency or capacity.\nLocal synthetic fixtures only. No deployment or remote targets.');process.exit(0);}
   let config;try{config=parseResourceRun(process.argv.slice(2));}catch(e){console.error(e.message);process.exit(2);}
   const controller=new AbortController();for(const s of ['SIGINT','SIGTERM'])process.on(s,()=>controller.abort());
   process.exitCode=await runResourceExperiment(config,{signal:controller.signal});

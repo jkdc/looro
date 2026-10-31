@@ -74,6 +74,16 @@ Runner local sin instalar dependencias nuevas por anticipación. Herramientas fa
 - [ ] Comparar mezcla del ensayo con inventario; si difiere significativamente añadir testRED y perfil mínimoGREEN, ejecutar solo smoke+validación temporal acotada por presupuesto relevante. No repetir soak completo por defecto.
 - [ ] Documentar candidatos de ahorro por frecuencia y datos, no modificar app sin petición específica; commit `docs(performance): model mobile API demand from client flows`.
 
+### Reapertura acotada de T5 — perfil de sesión Android
+
+**Motivo:** el usuario autorizó derivar la mezcla desde las rutas Android durante la fase de desarrollo, en lugar de esperar telemetría real. El informe ya documenta una sesión asumida de siete llamadas, pero el harness actual solo recorre seis rutas y omite historial y lote de uso.
+
+**Files:** modificar `services/api/load/workloads.mjs`, `resource-workload.mjs`, `resource-run.mjs`, `tests/load-workloads.test.ts`, `tests/load-resource-runner.test.ts`, `tests/support/load-resource-probe.mjs`, `services/api/load/README.md` y `informe-uso-api-movil-2026-10-30.md`.
+- [x] RED: probar la secuencia de siete rutas: `GET /v1/auth/providers`, `GET /v1/account`, `GET /v1/minutes`, `GET /v1/level-test-attempts?limit=10`, `POST /v1/progress`, `GET /v1/level-tests/hybrid?language=en&level=A1`, `POST /v1/usage/events`; exigir contratos válidos para lista vacía de historial y lote de uso aceptado.
+- [x] GREEN: añadir `android-session-smoke` separado de `mobile-smoke`, 15 s a 50 RPS por defecto, tareas cíclicas con una llamada por acción, payload sintético estable, cuenta de fixture y validación de respuesta.
+- [x] Integración: ejecutar el probe de PostgreSQL/TLS sobre las siete acciones y verificar un evento usage persistido. RED detectó que el probe preexistente no se invocaba y que el path publicado no existía en la imagen final; corregidos llamada, override HTTPS y ruta `dist/tests/support`. No incluir compra/guest/voz opcionales; no inferir frecuencias de producción.
+- [x] Documentación: conservar medidas históricas de `mobile-smoke`; documentar perfil y resultados asumidos de Android. Tests focalizados 18/18, typecheck, smoke TLS 750/750 y probe PASS; `make test-api` 839/839 PASS. Commit `a96d81f` (`feat(load): add Android session route profile`).
+
 ## Task 6: Revisión independiente y cierre operativo (S1–S6)
 
 **Files:** `tasks.md`, `verify-report.md`, informesT4/T5, referencias históricas en informe-capacidad/diagnostico y `api-performance-hardening/tasks.md`; guía `services/api/docs/api-capacity.md` si corresponde.
@@ -84,3 +94,8 @@ Runner local sin instalar dependencias nuevas por anticipación. Herramientas fa
 
 ## Autorrevisión del plan
 Cobertura: T1 S1/S5; T2 S2/S3; T3 S1/S4; T4 S2/S4/S5; T5 S6; T6 todos. Interfaces y destinos cerrados coherentes; runners antiguos conservados. Lectura móvil se programa después de medición como pidió el usuario. Tests deterministas antes de cambios; medición/documentación con excepción RED explícita. Coste de soak se anuncia antes de ejecutar. Redis permanece condicional; no es requisito automático de instalación.
+
+## Log
+
+- L1: «continua» (2026-10-31). Reanuda el trabajo a partir del perfil sintético Android propuesto.
+- L2: «estamos en fase de desarrollo por lo que tendremos métricas de prueba, si quieres saber qué rutas usan la app moviles puedes analizar el proyecto android y ver a qué rutas de la api llama y para qué y de ahí sacar lo que necesites» (2026-10-31). Se deriva un perfil desde el flujo de código, sin esperar datos de producción; las frecuencias se mantienen explícitamente como supuesto de prueba.

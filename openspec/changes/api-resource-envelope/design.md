@@ -54,3 +54,7 @@ Sin datos, tokens ni proveedores reales; sin SSH o acceso a Coolify. Mantener fi
 ## Entregables y cierre
 
 Mantener proposal, specs, plan, tasks y verify-report en este change antes/durante implementación; informes `informe-*.md` en raíz según convención. Actualizar referencias históricas que siguen llamando pendiente a cambios ya implementados, sin borrar sus mediciones originales. Cerrar cada resultado con pruebas observadas y límites explícitos. Cualquier prueba no ejecutable queda pendiente identificada, nunca PASS inventado.
+
+## Addendum — perfil sintético Android (2026-10-31)
+
+El usuario aclaró que, durante desarrollo, la mezcla debe derivarse de las rutas y usos visibles en el cliente Android. Se conserva el `mobile-smoke` existente como comprobación de seis contratos básicos y se añade un preset separado que modela una sesión foreground posterior al bootstrap, con siete acciones: consultar providers, cuenta y saldo; pedir una página de historial; subir progreso pendiente; cargar el examen híbrido; y enviar un evento de uso por lotes. Se usa una acción de cada tipo solo para validar una mezcla de rutas; no representa una frecuencia observada, concurrencia de usuarios ni un «usuario típico». Las rutas condicionales de compra, guest y voz alojada quedan fuera de este perfil base y deben seguir identificadas como otros escenarios.
