@@ -1,11 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
 import { connectDatabase, transaction } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { conversationPolicy } from '../src/conversation-policy.js';
 import { proxyQuotaConfig, runDailyQuotaGrants, setSubscription } from '../src/proxy-quota.js';
 import { grantQuota, reconcileHold } from '../src/tokens-admin.js';
+import { TokenProxy } from '../src/token-proxy.js';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Dedicated test database required.');
@@ -30,14 +32,16 @@ integration('daily quota grants are idempotent and cover subscriptions plus the 
       await db.query('INSERT INTO wallets(account_id) VALUES($1)', [id]);
     }
     // Pilot plan: 1000 in + 500 out daily. Free allowance: 100 in + 50 out.
+    // grant-quota credits the subscriber's current day immediately, so the
+    // sweep below only adds the free-allowance member grant.
     await grantQuota(db, { accountID: subscriber, actor: 'ops', reason: 'pilot onboarding', plan: 'pilot',
       days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });
     const allowance = { dailyInputTokens: 100, dailyOutputTokens: 50 };
 
     // Seeded rate 2026-09-minimax-m ($0.30/M in, $1.20/M out):
-    // subscriber 900n, member 90n, guest nothing.
+    // subscriber 900n (from grant-quota), member 90n, guest nothing.
     const first = await runDailyQuotaGrants(db, allowance);
-    assert.equal(first.granted, 2);
+    assert.equal(first.granted, 1);
     const balance = async (account: string) =>
       (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0].balance_nano;
     assert.equal(await balance(subscriber), '900');
@@ -63,7 +67,76 @@ integration('daily quota grants are idempotent and cover subscriptions plus the 
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
 
-integration('quota exhaustion surfaces through the balance admission of a proxied call', async () => {
+integration('subscribers are funded even with the free daily allowance off', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const subscriber = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [subscriber]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [subscriber]);
+    // Default configuration: the free funnel is off. The paid plan must still
+    // be funded — the sweep gate must only cover the member free sweep (B1).
+    // The subscription is created with the bare upsert (no immediate grant)
+    // so this test isolates the sweep behavior.
+    await setSubscription(db, { accountID: subscriber, plan: 'standard', days: 30, dailyInputTokens: 1000n, dailyOutputTokens: 500n });
+    const first = await runDailyQuotaGrants(db, { dailyInputTokens: 0, dailyOutputTokens: 0 });
+    assert.equal(first.granted, 1);
+    const balance = async () =>
+      (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [subscriber])).rows[0].balance_nano;
+    // 1000 in + 500 out = 300 + 600 nano at the seeded rate.
+    assert.equal(await balance(), '900');
+    // Same-day rerun stays idempotent.
+    const rerun = await runDailyQuotaGrants(db, { dailyInputTokens: 0, dailyOutputTokens: 0 });
+    assert.equal(rerun.granted, 0);
+    assert.equal(await balance(), '900');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('a rejected grant-quota leaves plan, ledger and audit untouched', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const guest = randomUUID();
+    await db.query('INSERT INTO accounts(id,is_guest) VALUES($1,true)', [guest]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [guest]);
+    await assert.rejects(
+      grantQuota(db, { accountID: guest, actor: 'ops', reason: 'must be refused', plan: 'pilot',
+        days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' }),
+      /campaign_grant_requires_member/,
+    );
+    // Validation, upsert and audit share one transaction: the refused
+    // assignment persists nothing (B4).
+    const plans = (await db.query('SELECT count(*)::int AS n FROM token_subscriptions')).rows[0].n;
+    assert.equal(plans, 0);
+    const audits = (await db.query(`SELECT count(*)::int AS n FROM token_admin_audit WHERE action='grant_quota'`)).rows[0].n;
+    assert.equal(audits, 0);
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('grant-quota credits the first day immediately for late signups', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    // Signup after the day's sweep ran: the assignment itself must fund the
+    // current day idempotently (B2), never double-grant on a rerun.
+    const applied = await grantQuota(db, { accountID: member, actor: 'ops', reason: 'late signup', plan: 'pilot',
+      days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });
+    assert.equal(applied.accountID, member);
+    const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    assert.equal(balance, '900');
+    await runDailyQuotaGrants(db, { dailyInputTokens: 0, dailyOutputTokens: 0 });
+    const after = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    assert.equal(after, '900');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('quota exhaustion refuses a proxied call before the provider is contacted', async () => {
   const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
   url.searchParams.set('options', `-c search_path=${schema}`);
   const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
@@ -71,15 +144,34 @@ integration('quota exhaustion surfaces through the balance admission of a proxie
     const account = randomUUID();
     await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
     await db.query('INSERT INTO wallets(account_id) VALUES($1)', [account]);
-    // A tiny allowance ($0.0001-ish) so the next estimate-admitted call must refuse.
+    // A tiny allowance: 1 in + 1 out = 1.5 nano → 1n credit (truncating),
+    // below any plausible estimate, so the proxy must refuse with 402.
     await setSubscription(db, { accountID: account, plan: 'pilot', days: 1, dailyInputTokens: 1n, dailyOutputTokens: 1n });
-    await runDailyQuotaGrants(db, { dailyInputTokens: 0, dailyOutputTokens: 0 });
     await runDailyQuotaGrants(db, { dailyInputTokens: 1, dailyOutputTokens: 1 });
-    // 1 in + 1 out = 300000/1e6 + 1200000/1e6 = 1.5 → 1n credit (truncating).
     const wallet = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
     assert.equal(wallet.balance_nano, '1');
     const policy = await conversationPolicy(db, account, null);
     assert.equal(policy.quota.limitTokens, 2);
+    // Through the real proxy this time: the provider is never contacted.
+    let calls = 0;
+    const provider = createServer((_request, response) => {
+      calls++;
+      response.setHeader('content-type', 'application/json');
+      response.end(JSON.stringify({ choices: [], usage: { prompt_tokens: 1, completion_tokens: 1 } }));
+    });
+    await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+    const port = (provider.address() as { port: number }).port;
+    const proxy = new TokenProxy(db, { providerURL: `http://127.0.0.1:${port}/v1/chat/completions`,
+      providerKey: 'k', maxTokens: 128, maxConcurrentPerAccount: 2 });
+    try {
+      await assert.rejects(
+        proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] }),
+        (error: { code?: string; status?: number }) => error.code === 'token_balance_exhausted' && error.status === 402,
+      );
+      assert.equal(calls, 0);
+    } finally {
+      await new Promise<void>(resolve => provider.close(() => resolve()));
+    }
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
 

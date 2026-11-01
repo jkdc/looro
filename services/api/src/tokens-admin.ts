@@ -5,7 +5,7 @@ import { connectDatabase, transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { appendEntry, lockWallet } from './ledger.js';
 import { isProxyPurpose } from './proxy-policy.js';
-import { releaseProxyHold } from './proxy-attempts.js';
+import { reconcileUnknownHoldInTransaction } from './proxy-attempts.js';
 import { setSubscription } from './proxy-quota.js';
 
 // Local operator process only (same standing as minutes-admin): assignment of
@@ -135,22 +135,26 @@ export async function tokenAccountSummary(db: Database, accountID: string): Prom
 
 // --- Purpose routing, subscription quota and hold reconciliation (proxy-api-provider) ---
 
-export interface RouteUpdateInput { actor: string; reason: string; purpose: string; model: string; cap: number }
+export interface RouteUpdateInput { actor: string; reason: string; purpose: string; model: string; cap: number; label?: string }
 
-/** Operator routing decision: which model (and output cap) serves a purpose.
- * Audited; no HTTP route mutates routing. */
+/** Operator routing decision: which model (and output cap) serves a purpose,
+ * plus the display label the policy endpoint publishes (B6: model and label
+ * move together, so the client-facing name never drifts from the routed
+ * model). Audited; no HTTP route mutates routing. */
 export async function setPurposeRoute(db: Database, input: RouteUpdateInput) {
   auditText(input.actor); auditText(input.reason);
-  if (!isProxyPurpose(input.purpose) || typeof input.model !== 'string' || input.model.trim().length === 0 ||
-      input.model.length > 128 || !Number.isSafeInteger(input.cap) || input.cap < 64 || input.cap > 65536)
+  const model = typeof input.model === 'string' ? input.model.trim() : '';
+  const label = (typeof input.label === 'string' ? input.label.trim() : '') || model;
+  if (!isProxyPurpose(input.purpose) || model.length === 0 || model.length > 128 || label.length > 128 ||
+      !Number.isSafeInteger(input.cap) || input.cap < 64 || input.cap > 65536)
     throw new ServiceError('invalid_request');
   return transaction(db, async sql => {
-    const updated = await sql.query(`UPDATE proxy_purpose_routes SET model=$2,output_cap=$3,updated_at=now()
-      WHERE purpose=$1`, [input.purpose, input.model.trim(), input.cap]);
+    const updated = await sql.query(`UPDATE proxy_purpose_routes SET model=$2,display_name=$3,output_cap=$4,updated_at=now()
+      WHERE purpose=$1`, [input.purpose, model, label, input.cap]);
     if (!updated.rowCount) throw new ServiceError('purpose_route_not_found', 404);
     await audit(sql, 'set_purpose_route', null, input.actor, input.reason, null,
-      { purpose: input.purpose, model: input.model.trim(), outputCap: input.cap });
-    return { purpose: input.purpose, model: input.model.trim(), outputCap: input.cap };
+      { purpose: input.purpose, model, displayLabel: label, outputCap: input.cap });
+    return { purpose: input.purpose, model, displayLabel: label, outputCap: input.cap };
   });
 }
 
@@ -163,34 +167,57 @@ export interface QuotaGrantInput extends TokenGrantInput {
   plan: string; days: number | null; dailyInputTokens: string; dailyOutputTokens: string;
 }
 
-/** Pilot subscription assignment: plan window + daily token allowance. The
- * daily job converts the allowance to ledger credit; this only sets the
- * plan. */
+/** Pilot subscription assignment: plan window + daily token allowance, with
+ * member validation, upsert, audit and the **immediate grant of the current
+ * day** in one transaction (B4: a refused assignment persists nothing; B2:
+ * a signup after the day's sweep is funded now, idempotently). */
 export async function grantQuota(db: Database, input: QuotaGrantInput) {
   auditText(input.actor); auditText(input.reason);
-  if (!isUUID(input.accountID) || !/^\d+$/.test(input.dailyInputTokens) || !/^\d+$/.test(input.dailyOutputTokens) ||
+  if (!isUUID(input.accountID) || !['free', 'pilot', 'standard'].includes(input.plan) ||
+    !/^\d+$/.test(input.dailyInputTokens) || !/^\d+$/.test(input.dailyOutputTokens) ||
     (input.days !== null && (!Number.isSafeInteger(input.days) || input.days < 1 || input.days > 3650)))
     throw new ServiceError('invalid_request');
-  const applied = await setSubscription(db, { accountID: input.accountID, plan: input.plan, days: input.days,
-    dailyInputTokens: BigInt(input.dailyInputTokens), dailyOutputTokens: BigInt(input.dailyOutputTokens) });
-  await transaction(db, async sql => {
+  const dailyInput = BigInt(input.dailyInputTokens), dailyOutput = BigInt(input.dailyOutputTokens);
+  if (dailyInput <= 0n || dailyOutput <= 0n) throw new ServiceError('invalid_request');
+  const day = new Date().toISOString().slice(0, 10);
+  return transaction(db, async sql => {
     await memberAccount(sql, input.accountID);
+    await sql.query(`INSERT INTO token_subscriptions(account_id,plan,daily_input_tokens,daily_output_tokens,active_until)
+      VALUES($1,$2,$3,$4,CASE WHEN $5::int IS NULL THEN NULL ELSE now() + ($5::int * interval '1 day') END)
+      ON CONFLICT (account_id) DO UPDATE SET plan=EXCLUDED.plan,daily_input_tokens=EXCLUDED.daily_input_tokens,
+        daily_output_tokens=EXCLUDED.daily_output_tokens,active_until=EXCLUDED.active_until,updated_at=now()`,
+      [input.accountID, input.plan, dailyInput.toString(), dailyOutput.toString(), input.days]);
     await audit(sql, 'grant_quota', input.accountID, input.actor, input.reason, null,
       { plan: input.plan, days: input.days, dailyInputTokens: input.dailyInputTokens, dailyOutputTokens: input.dailyOutputTokens });
+    // The current day's allowance, at the active rate version; the unique
+    // ledger reference makes a same-day reassignment or sweep rerun a no-op.
+    const rate = (await sql.query('SELECT id,nano_per_million_input,nano_per_million_output FROM rate_versions ORDER BY valid_from DESC LIMIT 1')).rows[0];
+    let firstGrantNanoUSD = '0';
+    if (rate) {
+      const credit = (dailyInput * BigInt(rate.nano_per_million_input) + dailyOutput * BigInt(rate.nano_per_million_output)) / 1_000_000n;
+      if (credit > 0n) {
+        const reference = `subscription-grant:${day}:${input.accountID}`;
+        const applied = await appendEntry(sql, input.accountID, reference, 'purchase', credit, 0n, rate.id as string);
+        if (applied) firstGrantNanoUSD = credit.toString();
+      }
+    }
+    return { accountID: input.accountID, plan: input.plan, days: input.days,
+      dailyInputTokens: input.dailyInputTokens, dailyOutputTokens: input.dailyOutputTokens, firstGrantNanoUSD };
   });
-  return applied;
 }
 
 /** Reconciliation: releases the hold of an attempt whose outcome stayed
- * unknown. Audited; never settles a guess. */
+ * unknown. Release and audit share one transaction (B5): an audit failure
+ * rolls the release back, and attempts still prepared or in flight are
+ * refused without side effects. */
 export async function reconcileHold(db: Database, input: { attemptID: string; actor: string; reason: string }) {
   auditText(input.actor); auditText(input.reason);
   if (!isUUID(input.attemptID)) throw new ServiceError('invalid_request');
-  const result = await releaseProxyHold(db, input.attemptID);
-  await transaction(db, async sql => {
+  return transaction(db, async sql => {
+    const result = await reconcileUnknownHoldInTransaction(sql, input.attemptID);
     await audit(sql, 'release_hold', null, input.actor, input.reason, `proxy:${input.attemptID}`, { attemptID: input.attemptID });
+    return result;
   });
-  return result;
 }
 
 // Local operator process only. No administrative HTTP routes or client admin key.

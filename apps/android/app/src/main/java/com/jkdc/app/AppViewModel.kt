@@ -630,6 +630,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // Debug builds keep the build-time selection byte-for-byte.
     private val defaultEngineId: String =
         if (BuildConfig.DEBUG || BuildConfig.CONVERSATION_ENGINE != "openai") BuildConfig.CONVERSATION_ENGINE else "api"
+
+    /** Effective engine id: every decision (transport, gates, attribution)
+        must use this, not the raw build flag — on release a persisted BYOK
+        selection normalizes back to the proxy-backed default (A2). */
+    private fun resolveEngineSelection(): String {
+        val id = engineSelection.selected(defaultEngineId)
+        return if (BuildConfig.DEBUG || id == "api" || id == "hosted-proxy" || id == "openai") id else defaultEngineId
+    }
+
     private val conversationEngine: TeachingClient =
         if (defaultEngineId == "openai") {
             ConversationEngineFactory.create(defaultEngineId, engineDeps)
@@ -637,20 +646,44 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             // Runtime-selectable among the bundled local engines; the effective
             // default (build-time, or api on release) remains the fallback.
             com.jkdc.app.core.engines.LocalEngineSwitcher(engineDeps) {
-                engineSelection.selected(defaultEngineId)
+                resolveEngineSelection()
             }
         }
 
     /** Refreshes the display-only conversation policy for the api provider.
-        Best effort: a stale map only degrades the label display — the proxy
-        enforces the real routing decision per call. */
-    fun refreshConversationPolicy() {
+        Failures retry with a bounded backoff (an initial failure must not
+        block the api engine until the next account change, A3); a late reply
+        from a previous account is discarded, and a new fetch cancels the
+        in-flight one, so responses never pollute another account's state
+        (A4). Best effort: a stale map only degrades the label display — the
+        proxy enforces the real routing decision per call. */
+    private var policyFetchJob: kotlinx.coroutines.Job? = null
+    private var policyFetchAttempts = 0
+
+    fun refreshConversationPolicy(force: Boolean = false) {
         val client = policyCommerceClient ?: return
-        viewModelScope.launch {
+        if (force) policyFetchAttempts = 0
+        if (policyFetchJob?.isActive == true) return
+        if (policyFetchAttempts >= 5) return
+        policyFetchJob?.cancel()
+        val revision = accountRevision
+        policyFetchJob = viewModelScope.launch {
             try {
                 val session = memberSessions?.read() ?: return@launch
-                conversationPolicyStore.update(client.conversationPolicy(session))
-            } catch (_: Exception) { /* keep the last known policy; nothing to gate on */ }
+                val state = client.conversationPolicy(session)
+                if (revision == accountRevision) {
+                    conversationPolicyStore.update(state)
+                    policyFetchAttempts = 0
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                policyFetchAttempts++
+                if (policyFetchAttempts < 5) {
+                    delay(15_000L * policyFetchAttempts)
+                    refreshConversationPolicy()
+                }
+            }
         }
     }
 
@@ -690,7 +723,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val liveTransport by lazy { LiveTransport(application, viewModelScope) }
 
     private val transport: VoiceTransport
-        get() = if (BuildConfig.CONVERSATION_ENGINE == "openai") liveTransport else localTransport
+        get() = if (defaultEngineId == "openai") liveTransport else localTransport
     private val providerStore = ConversationProviderStore(application)
     private val guests = hostedConfiguration?.let { config ->
         GuestMinuteController(GuestInstallationStore(application, config.origin.toString()), GuestMinuteClient(config), {
@@ -1844,10 +1877,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-    /** Applies to new conversations; rejected while a conversation runs. */
+    /** Applies to new conversations; rejected while a conversation runs.
+        Release builds only accept the proxy-backed engines: a BYOK id is
+        dropped here *and* normalized on read (A2). */
     fun selectLocalEngine(id: String) {
         if (isRunning || defaultEngineId == "openai") return
-        runCatching { engineSelection.select(id) }.onSuccess { enginesVersion++ }
+        val normalized = id.trim().lowercase()
+        if (!BuildConfig.DEBUG && normalized != "api" && normalized != "hosted-proxy") return
+        runCatching { engineSelection.select(normalized) }.onSuccess { enginesVersion++ }
     }
 
     fun saveEngineKey(id: String, key: String): Boolean {
@@ -1954,7 +1991,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onAccountChanged(account: AccountState) {
         accountRevision++
-        refreshConversationPolicy()
+        // A new identity invalidates any in-flight policy fetch (A4) and
+        // resets the retry budget (A3).
+        refreshConversationPolicy(force = true)
         topicTransition.invalidate()
         val previousOwnerIdentity = examOwnerIdentity.value.ownerAccountID
         setExamOwner(account.accountID)
@@ -2608,7 +2647,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
         }
-        val localVoice = BuildConfig.CONVERSATION_ENGINE != "openai"
+        val localVoice = defaultEngineId != "openai"
         if (!localVoice) {
             if (!cloudReady()) return
         } else {
@@ -2637,7 +2676,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         newSession(true); state = "connecting"
         usageReporter.record(UsageEvents.SESSION_STARTED) {
             put("input", "voice")
-            put("provider", if (localVoice || choice == ConversationProvider.PERSONAL_KEY) "byok" else "hosted")
+            // Closed label set: the api provider is neither byok nor hosted.
+            put("provider", when {
+                !localVoice -> "hosted"
+                resolveEngineSelection() == "api" -> "api"
+                choice == ConversationProvider.PERSONAL_KEY -> "byok"
+                else -> "byok"
+            })
             if (localVoice) put("engine", BuildConfig.CONVERSATION_ENGINE)
         }
         session?.takeIf { it.isLesson }?.lessonID?.let { lessonID ->

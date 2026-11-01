@@ -200,15 +200,18 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     guestLinkCleanup = setInterval(retryGuestLinks, 60_000);
     guestLinkCleanup.unref();
     retryGuestLinks();
-    // Daily subscription-quota grants: at most once per UTC day, idempotent
-    // by ledger reference, so restarts and reruns add nothing.
+    // Daily subscription-quota grants: idempotent by ledger reference, so a
+    // failed or partial sweep retries on the next tick and only a completed
+    // day is marked done (B2). Late signups are covered by the immediate
+    // first grant inside grant-quota.
     if (tokenProxy || proxyQuota.dailyInputTokens > 0 || proxyQuota.dailyOutputTokens > 0) {
-      let lastQuotaDay = '';
+      let lastCompletedDay = '';
       const runQuota = () => {
         const day = new Date().toISOString().slice(0, 10);
-        if (day === lastQuotaDay) return;
-        lastQuotaDay = day;
-        void runDailyQuotaGrants(db, proxyQuota).catch(() => { log.error('quota_grant_failed'); });
+        if (day === lastCompletedDay) return;
+        void runDailyQuotaGrants(db, proxyQuota)
+          .then(() => { lastCompletedDay = day; })
+          .catch(() => { log.warn('quota_grant_retry_scheduled'); });
       };
       runQuota();
       quotaCleanup = setInterval(runQuota, 60_000);

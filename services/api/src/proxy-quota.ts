@@ -33,36 +33,37 @@ const tokenCreditNano = (input: bigint, output: bigint, rate: { nanoPerMillionIn
 
 /** Grants the day's allowance. Idempotent by the unique ledger reference
  * (`subscription-grant:<date>:<accountID>`): reruns and restarts add nothing.
- * A conflicting reference reuse surfaces as 409 (operator-visible bug). */
+ * A conflicting reference reuse surfaces as 409 (operator-visible bug).
+ * Active subscriptions are funded **regardless of the free-funnel knobs**
+ * (B1): the allowance gate only covers the free member sweep. Guests and
+ * deleted accounts are excluded defensively in both queries. */
 export async function runDailyQuotaGrants(db: Database, allowance: QuotaAllowance): Promise<{ granted: number }> {
-  if (allowance.dailyInputTokens <= 0 && allowance.dailyOutputTokens <= 0) return { granted: 0 };
   const rate = await activeRateVersion(db);
   const day = grantDay();
   let granted = 0;
-  // Active subscriptions use their own plan size.
-  const subscribed = (await db.query(`SELECT account_id,daily_input_tokens,daily_output_tokens FROM token_subscriptions
-    WHERE active_until IS NULL OR active_until > now()`)).rows;
-  for (const row of subscribed) {
-    const credit = tokenCreditNano(BigInt(row.daily_input_tokens), BigInt(row.daily_output_tokens), rate);
-    if (credit <= 0n) continue;
-    const reference = `subscription-grant:${day}:${row.account_id}`;
-    const applied = await transaction(db, sql => appendEntry(sql, row.account_id as string, reference, 'purchase', credit, 0n, rate.id));
+  const grantOnce = async (accountID: string, credit: bigint) => {
+    if (credit <= 0n) return;
+    const reference = `subscription-grant:${day}:${accountID}`;
+    const applied = await transaction(db, sql => appendEntry(sql, accountID, reference, 'purchase', credit, 0n, rate.id));
     if (applied) granted++;
-  }
+  };
+  // Active subscriptions use their own plan size.
+  const subscribed = (await db.query(`SELECT s.account_id,s.daily_input_tokens,s.daily_output_tokens FROM token_subscriptions s
+    JOIN accounts a ON a.id=s.account_id
+    WHERE (s.active_until IS NULL OR s.active_until > now()) AND NOT a.is_guest AND a.deleted_at IS NULL`)).rows;
+  for (const row of subscribed)
+    await grantOnce(row.account_id as string, tokenCreditNano(BigInt(row.daily_input_tokens), BigInt(row.daily_output_tokens), rate));
   // Free daily allowance for every non-guest member without an active
-  // subscription. Guests never hold proxy credit.
+  // subscription — only when the funnel is enabled. Guests never hold
+  // proxy credit.
   if (allowance.dailyInputTokens > 0 || allowance.dailyOutputTokens > 0) {
-    const members = (await db.query(`SELECT a.id AS account_id FROM accounts a
-      WHERE NOT a.is_guest AND NOT a.deleted_at IS NOT NULL AND NOT EXISTS (
-        SELECT 1 FROM token_subscriptions s WHERE s.account_id=a.id AND (s.active_until IS NULL OR s.active_until > now()))
-      ORDER BY a.id`)).rows;
     const credit = tokenCreditNano(BigInt(allowance.dailyInputTokens), BigInt(allowance.dailyOutputTokens), rate);
     if (credit > 0n) {
-      for (const row of members) {
-        const reference = `subscription-grant:${day}:${row.account_id}`;
-        const applied = await transaction(db, sql => appendEntry(sql, row.account_id as string, reference, 'purchase', credit, 0n, rate.id));
-        if (applied) granted++;
-      }
+      const members = (await db.query(`SELECT a.id AS account_id FROM accounts a
+        WHERE NOT a.is_guest AND a.deleted_at IS NULL AND NOT EXISTS (
+          SELECT 1 FROM token_subscriptions s WHERE s.account_id=a.id AND (s.active_until IS NULL OR s.active_until > now()))
+        ORDER BY a.id`)).rows;
+      for (const row of members) await grantOnce(row.account_id as string, credit);
     }
   }
   return { granted };

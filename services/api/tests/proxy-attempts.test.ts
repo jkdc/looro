@@ -82,3 +82,66 @@ test('funded admission refuses a second concurrent reservation the balance canno
     assert.equal((await db.query("SELECT count(*) FROM ledger WHERE kind='reserve'")).rows[0].count,'1');
   } finally {await db.query(`DROP SCHEMA ${schema} CASCADE`);await db.end();}
 });
+test('a settlement cannot consume another call\'s reservation',{skip:!url},async()=>{
+  const schema=`attempt_${randomUUID().replaceAll('-','')}`, u=new URL(url!);u.searchParams.set('options',`-c search_path=${schema}`);
+  const db=connectDatabase(u.toString());
+  try {
+    await db.query(`CREATE SCHEMA ${schema}`);await migrate(db);
+    // @ts-ignore New orchestration module is introduced by this delivery.
+    const a=await import('../src/proxy-attempts.js');
+    const accountID=randomUUID(),rateVersionID='2026-09-minimax-m';
+    await db.query('INSERT INTO accounts(id) VALUES($1)',[accountID]);await db.query('INSERT INTO wallets(account_id) VALUES($1)',[accountID]);
+    await transaction(db,sql=>appendEntry(sql,accountID,`seed:${accountID}`,'purchase',100n,0n));
+    // A holds 40, B holds 60. A's real cost (70) exceeds its own hold: the
+    // settle must stop at what the wallet holds minus B's backing (40), so B's
+    // already-dispatched work stays funded. Confirmed cost over the settle cap
+    // is visible as cost_nano > settled_nano in proxy_usage (B3).
+    const holdA=randomUUID(),holdB=randomUUID();
+    await a.prepareProxyAttempt(db,{id:holdA,accountID,rateVersionID,estimateNano:40n});
+    await a.prepareProxyAttempt(db,{id:holdB,accountID,rateVersionID,estimateNano:60n});
+    await a.markProxyDispatched(db,holdA);await a.markProxyDispatched(db,holdB);
+    const metering=await a.settleProxyAttempt(db,{id:holdA,usage:{inputTokens:1n,outputTokens:1n},estimateNano:40n,costNano:70n});
+    assert.equal(metering.nanoUSDSettled,'40');
+    const wallet=(await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1',[accountID])).rows[0];
+    assert.equal(wallet.balance_nano,'60');   // 100 - 40 settled
+    assert.equal(wallet.reserved_nano,'60');  // B's backing untouched
+    const usage=(await db.query('SELECT cost_nano,settled_nano FROM proxy_usage WHERE attempt_id=$1',[holdA])).rows[0];
+    assert.equal(usage.cost_nano,'70');       // confirmed cost stays visible
+    assert.equal(usage.settled_nano,'40');    // what the wallet could pay without B's backing
+    // B still settles afterwards and never goes below zero.
+    await a.settleProxyAttempt(db,{id:holdB,usage:{inputTokens:1n,outputTokens:1n},estimateNano:60n,costNano:60n});
+    const after=(await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1',[accountID])).rows[0];
+    assert.equal(after.balance_nano,'0');
+    assert.equal(after.reserved_nano,'0');
+  } finally {await db.query(`DROP SCHEMA ${schema} CASCADE`);await db.end();}
+});
+test('reconciliation only releases unknown attempts',{skip:!url},async()=>{
+  const schema=`attempt_${randomUUID().replaceAll('-','')}`, u=new URL(url!);u.searchParams.set('options',`-c search_path=${schema}`);
+  const db=connectDatabase(u.toString());
+  try {
+    await db.query(`CREATE SCHEMA ${schema}`);await migrate(db);
+    // @ts-ignore New orchestration module is introduced by this delivery.
+    const a=await import('../src/proxy-attempts.js');
+    const accountID=randomUUID(),rateVersionID='2026-09-minimax-m';
+    await db.query('INSERT INTO accounts(id) VALUES($1)',[accountID]);await db.query('INSERT INTO wallets(account_id) VALUES($1)',[accountID]);
+    await transaction(db,sql=>appendEntry(sql,accountID,`seed:${accountID}`,'purchase',10000n,0n));
+    // A prepared (not dispatched) and a dispatched in-flight attempt hold
+    // funds for work that may still be running: releasing them is not
+    // reconciliation (B5).
+    let held='0';
+    for (const state of ['prepared','dispatched'] as const) {
+      const id=randomUUID();
+      await a.prepareProxyAttempt(db,{id,accountID,rateVersionID,estimateNano:100n});
+      if (state==='dispatched') await a.markProxyDispatched(db,id);
+      await assert.rejects(a.releaseProxyHold(db,id),/proxy_hold_not_open/);
+      assert.equal((await db.query("SELECT state FROM reservations WHERE id=$1",[id])).rows[0].state,'open');
+      held='200'; // both holds survive the refusals
+    }
+    assert.equal((await db.query('SELECT reserved_nano FROM wallets WHERE account_id=$1',[accountID])).rows[0].reserved_nano,held);
+    // An unknown attempt releases exactly once.
+    const unknown=randomUUID();
+    await a.prepareProxyAttempt(db,{id:unknown,accountID,rateVersionID,estimateNano:100n});
+    await a.markProxyDispatched(db,unknown);await a.finishProxyAttempt(db,unknown,'unknown');
+    assert.equal((await a.releaseProxyHold(db,unknown)).releasedNano,'100');
+  } finally {await db.query(`DROP SCHEMA ${schema} CASCADE`);await db.end();}
+});

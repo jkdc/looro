@@ -15,13 +15,19 @@ uses them:
    `402 token_balance_exhausted`, nothing dispatched.
 2. On settled success: `settle` actual usage **and** `release` the remaining
    reservation in the same transaction (both keyed to the attempt id, so the
-   sequence is replay-safe).
+   sequence is replay-safe). The settle is capped at
+   `balance − (totalReserved − ownHold)`: an overrun above this call's own
+   estimate can consume its own hold and the free balance, **never another
+   call's reservation**; the confirmed-but-uncollected difference stays
+   visible as `cost_nano > settled_nano` in `proxy_usage` for reconciliation.
 3. On rejected upstream (400/401/403/429 proven not dispatched work):
    `release` the full hold.
 4. On `unknown` (timeout, disconnect, oversize, invalid usage): the hold is
    **kept**. It is released only by the reconciliation procedure (operator
    CLI `tokens-admin release-hold <attemptID> --actor --reason`, writing
-   `token_admin_audit`). This keeps "money possibly spent" funded instead of
+   `token_admin_audit` in the same transaction as the release). Reconciliation
+   refuses attempts still `prepared` or `dispatched`: their provider work may
+   still be running. This keeps "money possibly spent" funded instead of
    fabricating or erasing cost.
 
 The plain unlocked balance read disappears from admission; `availableBalance`
@@ -31,9 +37,8 @@ mechanism, not a financial invariant.
 
 Legacy grace note: the old "single call may settle beyond balance" grace is
 replaced by the reservation bound — a call is never dispatched unless its
-estimate is funded, and settled cost can only exceed the estimate if the
-provider returns usage above `PROXY_MAX_TOKENS` output, which the request
-policy now makes impossible (server-set cap forwarded to the provider).
+estimate is funded, and its settle can never push the account below zero or
+eat another call's backing.
 
 ## 2. Request policy (audit F06–F07)
 
@@ -59,8 +64,8 @@ This is what makes "what we price" and "what we forward" the same request.
   enum (`typed_reply`, `meaning`, `assessment`, `lookup`, `topic`, `help`,
   `scenario_review`, `delegation`). Unknown value → `400 unknown_purpose`.
 - Missing header → **legacy route** (today's behavior: provider default
-  model). A server flag (`PROXY_REQUIRE_PURPOSE=1`) flips it to required
-  once fleet coverage allows.
+  model). A server flag (`PROXY_REQUIRE_PURPOSE=true` or `1`) flips it to
+  required once fleet coverage allows.
 - New table (migration `057_proxy_purpose_routes`):
 
 ```sql
@@ -117,6 +122,19 @@ CREATE TABLE token_subscriptions (
 - Guest accounts keep today's rejection (no quota, no proxy).
 
 ## 5. Policy endpoint
+
+**Quota semantics (explicit product decision, D1 of the audit
+`informe-auditoria-suscripcion-llm-2026-11-01.md`):** grants are **permanent
+ledger credit that accumulates across days** — they survive the plan window
+and never expire. The daily allowance is therefore a *funding pace*, not a
+strict per-period budget: admission is purely balance-based, and the
+`quota` block of the policy endpoint is a pacing display (it can read
+exhausted while credit remains, or not exhausted while the next reservation
+would not fit). If the product later promises a strict daily quota with
+expiry/rollover, that is a separate change: compensating ledger entries per
+period, packs kept separate from the granted credit, and admission plus the
+policy display sharing the same period arithmetic. This v1 documents the
+simpler promise: prepaid credit, refilled daily while the plan is active.
 
 `GET /v1/conversation-policy` (session auth):
 

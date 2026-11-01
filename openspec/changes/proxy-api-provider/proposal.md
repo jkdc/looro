@@ -44,11 +44,12 @@ and quota control depend on them; that change is archived when this one lands.
   with `typed_reply → strong paid model`, everything else → free/flash
   model; legacy clients without the header keep today's behavior. Closes
   audit F06–F07.
-- **F3 — Daily quota (backend):** `subscriptions` (plan, daily token grant,
+- **F3 — Daily quota (backend):** `token_subscriptions` (plan, daily token grant,
   active window) + an idempotent daily grant written to the immutable ledger
   (`subscription-grant:<date>:<account>`); a small configurable free daily
-  allowance keeps the funnel open. Exhausted quota → `402 quota_exhausted`
-  (distinct from balance). Admin CLI grants for pilots; recurring
+  allowance keeps the funnel open. Exhausted quota surfaces through the
+  existing balance admission as `402 token_balance_exhausted` — one money
+  path, no parallel error contract. Admin CLI grants for pilots; recurring
   Play/Stripe subscription purchases are the follow-up change.
 - **F4 — Policy endpoint (backend):** `GET /v1/conversation-policy` returns
   the quota state and the model label per purpose — display only; the proxy

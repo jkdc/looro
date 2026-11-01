@@ -59,13 +59,17 @@ export async function settleProxyAttempt(db: Database, value: { id: string; usag
       return { rateVersion: attempt.rate_version as string, nanoUSDSettled: String(prior.settled_nano) };
     }
     if (attempt.state !== 'dispatched') throw new ServiceError('proxy_attempt_conflict', 409);
-    // Settle at what the wallet can actually pay (never negative): the hold
-    // is part of the balance, so an overrun above the estimate is still
-    // bounded by funds the account holds today.
-    const balance = BigInt((await sql.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [attempt.account_id as string])).rows[0].balance_nano);
-    const settled = value.costNano > balance ? balance : value.costNano;
     const hold = (await sql.query('SELECT * FROM reservations WHERE id=$1 FOR UPDATE', [value.id])).rows[0];
-    const reservedDelta = hold && hold.state === 'open' ? -BigInt(hold.reserved_nano as string) : 0n;
+    // Settle at what the wallet can pay **without consuming the reservation
+    // of another in-flight call**: balance minus the other holds. An overrun
+    // above this call's own estimate is covered by its own hold and the free
+    // balance, never by another call's backing; the confirmed-but-uncollected
+    // difference stays visible as cost_nano > settled_nano in proxy_usage.
+    const wallet = await lockWallet(sql, owner.account_id as string);
+    const ownHold = hold && hold.state === 'open' ? BigInt(hold.reserved_nano as string) : 0n;
+    const settleCap = wallet.balance - (wallet.reserved - ownHold);
+    const settled = value.costNano > settleCap ? (settleCap > 0n ? settleCap : 0n) : value.costNano;
+    const reservedDelta = hold && hold.state === 'open' ? -ownHold : 0n;
     const reference = `proxy:${value.id}`;
     // The combined settle entry debits actual usage and releases the hold in
     // one immutable row; a zero-cost settled call still releases the hold.
@@ -81,17 +85,25 @@ export async function settleProxyAttempt(db: Database, value: { id: string; usag
   });
 }
 
+/** Reconciliation core (single transaction step): validates that the attempt
+ * is `unknown` — the only reconcilable state — and releases its open hold.
+ * Called by the operator CLI, which owns the wallet lock order and the
+ * audit write inside the same transaction. */
+export async function reconcileUnknownHoldInTransaction(sql: Parameters<Parameters<typeof transaction>[1]>[0], attemptID: string) {
+  const attempt = (await sql.query('SELECT account_id,state FROM proxy_attempts WHERE id=$1', [attemptID])).rows[0];
+  if (!attempt) throw new ServiceError('proxy_attempt_not_found', 404);
+  if (attempt.state !== 'unknown') throw new ServiceError('proxy_hold_not_open', 409);
+  await lockWallet(sql, attempt.account_id as string);
+  const hold = (await sql.query('SELECT * FROM reservations WHERE id=$1 FOR UPDATE', [attemptID])).rows[0];
+  if (!hold || hold.state !== 'open') throw new ServiceError('proxy_hold_not_open', 409);
+  await appendEntry(sql, hold.account_id as string, `proxy-release:${attemptID}`, 'release', 0n, -BigInt(hold.reserved_nano as string), hold.rate_version as string);
+  await sql.query("UPDATE reservations SET state='released' WHERE id=$1", [attemptID]);
+  return { attemptID, releasedNano: String(hold.reserved_nano) };
+}
+
 /** Reconciliation primitive (operator CLI only): releases the hold of an
- * attempt whose outcome stayed unknown. Never settles a guess. */
+ * attempt whose outcome stayed unknown. Never settles a guess and never
+ * releases an attempt that is still prepared or in flight. */
 export async function releaseProxyHold(db: Database, attemptID: string) {
-  return transaction(db, async sql => {
-    const attempt = (await sql.query('SELECT account_id FROM proxy_attempts WHERE id=$1', [attemptID])).rows[0];
-    if (!attempt) throw new ServiceError('proxy_attempt_not_found', 404);
-    await lockWallet(sql, attempt.account_id as string);
-    const hold = (await sql.query('SELECT * FROM reservations WHERE id=$1 FOR UPDATE', [attemptID])).rows[0];
-    if (!hold || hold.state !== 'open') throw new ServiceError('proxy_hold_not_open', 409);
-    await appendEntry(sql, hold.account_id as string, `proxy-release:${attemptID}`, 'release', 0n, -BigInt(hold.reserved_nano as string), hold.rate_version as string);
-    await sql.query("UPDATE reservations SET state='released' WHERE id=$1", [attemptID]);
-    return { attemptID, releasedNano: String(hold.reserved_nano) };
-  });
+  return transaction(db, sql => reconcileUnknownHoldInTransaction(sql, attemptID));
 }
