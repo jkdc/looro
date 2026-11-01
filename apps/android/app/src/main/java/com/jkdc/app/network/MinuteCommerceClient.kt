@@ -1,6 +1,7 @@
 package com.jkdc.app.network
 
 import com.jkdc.app.core.*
+import com.jkdc.app.core.engines.ConversationPolicyState
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
@@ -145,6 +146,22 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
         val body = request("GET", "wallet", session)
         TokenWallet.parse(body.text("currency"), body.text("balanceNanoUSD"), body.text("reservedNanoUSD"),
             body.text("availableNanoUSD")) ?: throw MinuteCommerceFailure.InvalidResponse
+    }
+
+    /** Display-only policy for the Palique API provider (GET /v1/conversation-policy):
+        the model label per purpose and the account's quota state. It never
+        authorizes anything — the proxy decides per call. Parsed fail-closed. */
+    suspend fun conversationPolicy(session: AccountSession): ConversationPolicyState = decoded {
+        val body = request("GET", "conversation-policy", session)
+        val quota = body["quota"] as? JsonObject ?: throw MinuteCommerceFailure.InvalidResponse
+        val modelsBody = body["models"] as? JsonObject ?: throw MinuteCommerceFailure.InvalidResponse
+        val models = modelsBody.entries.associate { (key, value) ->
+            key to ((value as? JsonPrimitive)?.takeIf { it.isString }?.content
+                ?: throw MinuteCommerceFailure.InvalidResponse)
+        }
+        ConversationPolicyState(models,
+            limitTokens = quota.count("limitTokens", Int.MAX_VALUE.toLong()),
+            usedTokensToday = quota.count("usedTokensToday", Int.MAX_VALUE.toLong()))
     }
     private fun parseStatus(body: JsonObject): MinutePurchaseStatus {
         val kind = (body["entitlementKind"] as? JsonPrimitive)?.takeIf { it.isString }?.content

@@ -15,6 +15,7 @@ class ConversationEngineFactoryTest {
         assertEquals("glm", ConversationEngineFactory.validate("GLM"))
         assertEquals("glm-4.5", ConversationEngineFactory.validate("GLM-4.5"))
         assertEquals("opencode", ConversationEngineFactory.validate("OpenCode"))
+        assertEquals("api", ConversationEngineFactory.validate(" API "))
         assertEquals("hosted-proxy", ConversationEngineFactory.validate("Hosted-Proxy"))
     }
 
@@ -41,6 +42,7 @@ class ConversationEngineFactoryTest {
         assertTrue("glm" in ids)
         assertTrue("glm-4.5" in ids)
         assertTrue("opencode" in ids)
+        assertTrue("api" in ids)
         assertTrue("hosted-proxy" in ids)
     }
 

@@ -233,6 +233,19 @@ class OpenAICompatibleEngineTest {
     }
 
     @Test
+    fun `api provider exposes no environment key and needs the session instead`() {
+        val api = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.API,
+            deps = deps(),
+            client = OkHttpClient(),
+            baseUrl = server.url("/"),
+            completionsPath = "v1/proxy/responses",
+            credential = { null },
+        )
+        assertEquals(null, api.keyEnvVar)
+    }
+
+    @Test
     fun `opencode engine sends session and user agent headers with its default model`() = runTest {
         server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
         val opencode = OpenAICompatibleEngine(
@@ -254,6 +267,53 @@ class OpenAICompatibleEngineTest {
         assertEquals("palique-android/1.0", recorded.getHeader("User-Agent"))
         val body = Json.parseToJsonElement(recorded.body.readUtf8()).jsonObject
         assertEquals("glm-5.3-flash", body["model"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `api engine sends the purpose header and the policy model`() = runTest {
+        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
+        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
+        val api = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.API,
+            deps = deps(),
+            client = OkHttpClient(),
+            baseUrl = server.url("/"),
+            completionsPath = "v1/proxy/responses",
+            credential = { "session-token" },
+            modelOverride = { purpose -> if (purpose == HelperPurpose.MEANING) "free-m" else "strong-m" },
+            proxyErrorMessages = true,
+        )
+
+        api.respond("i", "in", purpose = HelperPurpose.MEANING)
+        val meaning = server.takeRequest()
+        assertEquals("free-m", Json.parseToJsonElement(meaning.body.readUtf8()).jsonObject["model"]!!.jsonPrimitive.content)
+        assertEquals("meaning", meaning.getHeader("x-palique-purpose"))
+        assertEquals("Bearer session-token", meaning.getHeader("Authorization"))
+
+        // A null purpose maps to the dominant conversation case.
+        api.respond("i", "in")
+        val typed = server.takeRequest()
+        assertEquals("strong-m", Json.parseToJsonElement(typed.body.readUtf8()).jsonObject["model"]!!.jsonPrimitive.content)
+        assertEquals("typed_reply", typed.getHeader("x-palique-purpose"))
+    }
+
+    @Test
+    fun `api engine refuses to guess a model when the policy is unavailable`() = runTest {
+        val api = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.API,
+            deps = deps(),
+            client = OkHttpClient(),
+            baseUrl = server.url("/"),
+            completionsPath = "v1/proxy/responses",
+            credential = { "session-token" },
+        )
+        try {
+            api.respond("i", "in")
+            fail("expected EngineException")
+        } catch (e: EngineException) {
+            assertTrue(e.message!!.contains("conversation policy"))
+        }
+        assertEquals(0, server.requestCount)
     }
 
     @Test

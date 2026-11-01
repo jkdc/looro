@@ -1,4 +1,4 @@
-# Conversation Engines (OpenAI / DeepSeek / GLM / OpenCode)
+# Conversation Engines (OpenAI / DeepSeek / GLM / OpenCode / Palique API)
 
 The app's AI teaching calls (typed replies, meanings, assessments, topics) run
 through a single contract, `com.jkdc.app.network.TeachingClient`, and a single
@@ -12,8 +12,35 @@ AppViewModel.teaching()
               ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com/v1
               ├── "glm"               OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-5.3-flash (thinking low)
               ├── "glm-4.5"           OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-4.5-flash (thinking off)
-              └── "opencode"          OpenAICompatibleEngine → opencode.ai/zen/go/v1 · model chosen in Settings
+              ├── "opencode"          OpenAICompatibleEngine → opencode.ai/zen/go/v1 · model chosen in Settings
+              └── "api"               OpenAICompatibleEngine → backend /v1/proxy/responses · server-chosen model per purpose
 ```
+
+**`api` is the production provider** (change `proxy-api-provider`): every call
+rides the backend proxy with the session bearer, carries its
+`x-palique-purpose` header, and uses the model the server decides per purpose
+(resolved from `GET /v1/conversation-policy` via `ConversationPolicyStore` —
+the engine refuses to guess a model when the policy is unavailable). No
+provider key material exists on the device. **Release builds default to `api`
+and only offer the proxy-backed providers** (`api`, `Palique (tokens)`);
+debug builds keep the full list.
+
+### Benchmarking providers (debug builds)
+
+To compare response times of direct providers against the proxy path, build
+debug with the engine you want and switch engines in Settings:
+
+```bash
+cd apps/android
+./gradlew :app:assembleDebug -Papp.conversationEngine=opencode   # or glm / deepseek / api
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+# Settings → Conversation provider → pick the engine (needs its key in
+# api-keys.properties for BYOK engines; api needs a signed-in session).
+```
+
+The per-purpose model choice of the `api` provider is server configuration
+(`proxy_purpose_routes`, edited with `tokens-admin set-route`); measure it
+against the direct engines to validate latency budgets.
 
 Adding a provider in the future = one registry row in `ConversationEngineFactory`
 (+ one adapter class only if the API is not OpenAI-compatible). No ViewModel, UI,

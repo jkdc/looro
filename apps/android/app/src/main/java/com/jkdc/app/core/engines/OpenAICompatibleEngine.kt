@@ -36,6 +36,9 @@ data class RemoteEngineConfig(
     /** Header that must carry a fresh UUID per request (the OpenCode Go gateway
         routes per conversation and rejects session-less requests). */
     val sessionHeader: String? = null,
+    /** Sends `x-palique-purpose` on every call (the Palique API provider):
+        routing advice for the backend's per-purpose model decision. */
+    val purposeHeader: Boolean = false,
 ) {
     companion object {
         val DEEPSEEK = RemoteEngineConfig("deepseek", "https://api.deepseek.com/v1/", "deepseek-chat", "DEEPSEEK_API_KEY")
@@ -68,6 +71,12 @@ data class RemoteEngineConfig(
         // the seeded rate version 2026-09-minimax-m pins MiniMax M as the launch
         // provider. Auth is the app session bearer, never an environment key.
         val HOSTED_PROXY = RemoteEngineConfig("hosted-proxy", "", "MiniMax-M2", "")
+        // The production first-party path (change proxy-api-provider): all
+        // calls ride the backend proxy with the session bearer, the purpose
+        // header drives the server's per-purpose model decision, and the
+        // model comes from the conversation policy — never client-pinned
+        // (blank defaultModel forces the policy resolution).
+        val API = RemoteEngineConfig("api", "", "", "", purposeHeader = true)
         // OpenCode Go gateway (same preset as the server's LLM_PRESETS.opencode):
         // one key unlocks a multi-vendor catalog, selectable from Settings via
         // EngineModelCatalog; glm-5.3-flash is the preset's default model.
@@ -110,9 +119,11 @@ class OpenAICompatibleEngine(
     private val credential: (suspend () -> String?)? = null,
     /** Turns 402/403/429 proxy rejections into readable messages instead of a raw payload dump. */
     private val proxyErrorMessages: Boolean = false,
-    /** Model override resolved per call (the Settings model picker); null or a
-        null result keeps [RemoteEngineConfig.defaultModel]. */
-    private val modelOverride: (() -> String?)? = null,
+    /** Model override resolved per call: the Settings model picker passes a
+        purpose-agnostic lambda; the Palique API provider resolves the
+        server-chosen model from the conversation policy. Null or a null
+        result keeps [RemoteEngineConfig.defaultModel]. */
+    private val modelOverride: ((com.jkdc.app.network.HelperPurpose?) -> String?)? = null,
 ) : TeachingClient {
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -154,8 +165,10 @@ class OpenAICompatibleEngine(
         } else {
             instructions
         }
+        val model = modelOverride?.invoke(purpose) ?: config.defaultModel
+        if (model.isBlank()) throw EngineException("${config.id} engine needs the conversation policy (no model resolved for this purpose)")
         val body = buildJsonObject {
-            put("model", modelOverride?.invoke() ?: config.defaultModel)
+            put("model", model)
             put("messages", kotlinx.serialization.json.JsonArray(listOf(
                 buildJsonObject { put("role", "system"); put("content", systemPrompt) },
                 buildJsonObject { put("role", "user"); put("content", input) },
@@ -182,6 +195,11 @@ class OpenAICompatibleEngine(
                 if (config.sessionHeader != null) {
                     header(config.sessionHeader, java.util.UUID.randomUUID().toString())
                     header("User-Agent", "palique-android/1.0")
+                }
+                // Purpose is routing advice for the backend's model decision;
+                // a null purpose maps to the dominant conversation case.
+                if (config.purposeHeader) {
+                    header("x-palique-purpose", purpose?.wireValue ?: "typed_reply")
                 }
             }
             .post(body.toRequestBody("application/json".toMediaType()))

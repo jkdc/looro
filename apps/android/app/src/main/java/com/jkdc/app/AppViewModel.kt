@@ -596,6 +596,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val engineSelection = com.jkdc.app.core.engines.LocalEngineSelectionStore(application)
     // Backs the opencode model picker; consulted per request through modelLookup.
     private val engineModelsStore = EngineModelsStore(application)
+    // Display-only conversation policy for the api provider (models per
+    // purpose, quota state). The backend proxy is the real decision point.
+    private val conversationPolicyStore = com.jkdc.app.core.engines.ConversationPolicyStore()
+    private val policyCommerceClient = com.jkdc.app.network.MinuteCommerceConfiguration
+        .parse(BuildConfig.MANAGED_API_ORIGIN)?.let { com.jkdc.app.network.MinuteCommerceClient(it) }
     // Declared before engineDeps: the hosted-proxy engine resolves its bearer
     // from this store — the same one the hosted client authenticates with.
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
@@ -618,17 +623,36 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         json = json,
         readSession = memberSessions?.let { it::read },
         modelLookup = { engineModelsStore.selectedRaw(it) },
+        policyModel = { purpose -> conversationPolicyStore.modelFor(purpose) },
     )
+    // Release builds ship the proxy-backed api provider as the default: the
+    // BYOK engines are a debug/benchmarking surface, not a deployment choice.
+    // Debug builds keep the build-time selection byte-for-byte.
+    private val defaultEngineId: String =
+        if (BuildConfig.DEBUG || BuildConfig.CONVERSATION_ENGINE != "openai") BuildConfig.CONVERSATION_ENGINE else "api"
     private val conversationEngine: TeachingClient =
-        if (BuildConfig.CONVERSATION_ENGINE == "openai") {
-            ConversationEngineFactory.create(BuildConfig.CONVERSATION_ENGINE, engineDeps)
+        if (defaultEngineId == "openai") {
+            ConversationEngineFactory.create(defaultEngineId, engineDeps)
         } else {
-            // Runtime-selectable among the bundled local engines; the build-time
-            // engine remains the default.
+            // Runtime-selectable among the bundled local engines; the effective
+            // default (build-time, or api on release) remains the fallback.
             com.jkdc.app.core.engines.LocalEngineSwitcher(engineDeps) {
-                engineSelection.selected(BuildConfig.CONVERSATION_ENGINE)
+                engineSelection.selected(defaultEngineId)
             }
         }
+
+    /** Refreshes the display-only conversation policy for the api provider.
+        Best effort: a stale map only degrades the label display — the proxy
+        enforces the real routing decision per call. */
+    fun refreshConversationPolicy() {
+        val client = policyCommerceClient ?: return
+        viewModelScope.launch {
+            try {
+                val session = memberSessions?.read() ?: return@launch
+                conversationPolicyStore.update(client.conversationPolicy(session))
+            } catch (_: Exception) { /* keep the last known policy; nothing to gate on */ }
+        }
+    }
 
     /** Compose-observable mirror of the transport's turnInFlight: the flag
         flips from the IO loop, so a plain getter would never recompose the
@@ -1803,12 +1827,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private var enginesVersion by mutableStateOf(0)
 
-    /** Local engines for the Settings selector; recomputed after each mutation. */
+    /** Local engines for the Settings selector; recomputed after each mutation.
+        Release builds only offer the proxy-backed providers: the BYOK engines
+        stay a debug/benchmarking surface (their keys must never ship). */
     val localEngines: List<LocalEngineStatus>
         get() {
             @Suppress("UNUSED_EXPRESSION") enginesVersion
-            val selected = engineSelection.selected(BuildConfig.CONVERSATION_ENGINE)
-            return ConversationEngineFactory.available.filter { it.id != "openai" }.map { info ->
+            val selected = engineSelection.selected(defaultEngineId)
+            val visible = if (BuildConfig.DEBUG) ConversationEngineFactory.available
+                else ConversationEngineFactory.available.filter { it.id == "api" || it.id == "hosted-proxy" }
+            return visible.filter { it.id != "openai" }.map { info ->
                 val hasCustom = engineOverrides.hasCustomKey(info.id)
                 val env = com.jkdc.app.core.engines.localEngineKeyEnv(info.id)
                 LocalEngineStatus(info.id, info.label, selected = selected == info.id,
@@ -1818,7 +1846,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Applies to new conversations; rejected while a conversation runs. */
     fun selectLocalEngine(id: String) {
-        if (isRunning || BuildConfig.CONVERSATION_ENGINE == "openai") return
+        if (isRunning || defaultEngineId == "openai") return
         runCatching { engineSelection.select(id) }.onSuccess { enginesVersion++ }
     }
 
@@ -1906,7 +1934,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return false
         }
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") return engineKeyReady()
+        if (defaultEngineId != "openai") return engineKeyReady()
         val currentHosted = session?.id in hostedSessionIDs
         if (!currentHosted && conversationProvider == ConversationProvider.PERSONAL_KEY && !hasKey) {
             presentError(getApplication<Application>().getString(R.string.error_missing_key), needsKeySetup = true); return false
@@ -1926,6 +1954,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onAccountChanged(account: AccountState) {
         accountRevision++
+        refreshConversationPolicy()
         topicTransition.invalidate()
         val previousOwnerIdentity = examOwnerIdentity.value.ownerAccountID
         setExamOwner(account.accountID)

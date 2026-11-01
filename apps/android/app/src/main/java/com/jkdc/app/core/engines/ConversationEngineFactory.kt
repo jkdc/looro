@@ -32,9 +32,10 @@ object ConversationEngineFactory {
         "glm-4.5" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM_45, deps) },
         "opencode" to { deps ->
             OpenAICompatibleEngine(RemoteEngineConfig.OPENCODE, deps,
-                modelOverride = { deps.modelLookup?.invoke(RemoteEngineConfig.OPENCODE.id) })
+                modelOverride = { _ -> deps.modelLookup?.invoke(RemoteEngineConfig.OPENCODE.id) })
         },
         "hosted-proxy" to { deps -> hostedProxy(deps) },
+        "api" to { deps -> apiProxy(deps) },
     )
 
     val available: List<EngineInfo> = listOf(
@@ -44,6 +45,7 @@ object ConversationEngineFactory {
         EngineInfo("glm-4.5", "Zhipu GLM 4.5 Flash"),
         EngineInfo("opencode", "OpenCode (personal key)"),
         EngineInfo("hosted-proxy", "Palique (tokens)"),
+        EngineInfo("api", "Palique API"),
     )
 
     /** Validates and normalizes an engine id; throws listing the known ids. */
@@ -78,6 +80,26 @@ object ConversationEngineFactory {
             baseUrl = origin,
             completionsPath = "v1/proxy/responses",
             credential = { readSession()?.takeIf { it.isValid(System.currentTimeMillis()) }?.accessToken },
+            proxyErrorMessages = true,
+        )
+    }
+
+    /** The production first-party path (change proxy-api-provider): the same
+        relay as hosted-proxy, but the model is the server's per-purpose
+        decision (resolved from the conversation policy) and every call
+        carries its purpose. No key material, no client-pinned model. */
+    private fun apiProxy(deps: ConversationEngineDeps): TeachingClient {
+        val readSession = deps.readSession
+            ?: throw EngineException("api engine needs the app account session source")
+        val origin = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)?.origin
+            ?: throw EngineException("api engine needs a configured Palique API origin")
+        return OpenAICompatibleEngine(
+            RemoteEngineConfig.API,
+            deps,
+            baseUrl = origin,
+            completionsPath = "v1/proxy/responses",
+            credential = { readSession()?.takeIf { it.isValid(System.currentTimeMillis()) }?.accessToken },
+            modelOverride = { purpose -> deps.policyModel?.invoke(purpose) },
             proxyErrorMessages = true,
         )
     }
