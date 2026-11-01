@@ -640,11 +640,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             engineSelection.selected(defaultEngineId), defaultEngineId, BuildConfig.DEBUG)
 
     private val conversationEngine: TeachingClient =
-        if (defaultEngineId == "openai") {
+        if (defaultEngineId == "openai" && !BuildConfig.DEBUG) {
+            // Release BYOK build: a fixed OpenAI realtime engine, no selector.
             ConversationEngineFactory.create(defaultEngineId, engineDeps)
         } else {
             // Runtime-selectable among the bundled local engines; the effective
-            // default (build-time, or api on release) remains the fallback.
+            // selection (build-time default, or the persisted pick — also in a
+            // debug build whose flag is openai) drives adapter, transport and
+            // gates alike (audit rev.4, finding 3).
             com.jkdc.app.core.engines.LocalEngineSwitcher(engineDeps) {
                 resolveEngineSelection()
             }
@@ -687,6 +690,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /** Starts a policy refresh when the api engine is about to run without a
+        cached policy (audit rev.4, finding 2): exhausting the retry budget
+        must not leave the engine blocked until the next account change — the
+        next conversation attempt re-queries. The very first attempt may still
+        fail while the fetch is in flight; the retry then finds the cache. */
+    private fun ensureConversationPolicy() {
+        if (resolveEngineSelection() == "api" && conversationPolicyStore.current() == null) refreshConversationPolicy()
+    }
+
     /** Compose-observable mirror of the transport's turnInFlight: the flag
         flips from the IO loop, so a plain getter would never recompose the
         end-turn button's pending state. */
@@ -723,7 +735,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val liveTransport by lazy { LiveTransport(application, viewModelScope) }
 
     private val transport: VoiceTransport
-        get() = if (defaultEngineId == "openai") liveTransport else localTransport
+        get() = if (resolveEngineSelection() == "openai") liveTransport else localTransport
     private val providerStore = ConversationProviderStore(application)
     private val guests = hostedConfiguration?.let { config ->
         GuestMinuteController(GuestInstallationStore(application, config.origin.toString()), GuestMinuteClient(config), {
@@ -1879,9 +1891,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Applies to new conversations; rejected while a conversation runs.
         Release builds only accept the proxy-backed engines: a BYOK id is
-        dropped here *and* normalized on read (A2). */
+        dropped here *and* normalized on read (A2). A debug build whose flag
+        is openai keeps the selector live so the persisted pick actually
+        drives adapter and transport (audit rev.4, finding 3). */
     fun selectLocalEngine(id: String) {
-        if (isRunning || defaultEngineId == "openai") return
+        if (isRunning || (defaultEngineId == "openai" && !BuildConfig.DEBUG)) return
         val normalized = id.trim().lowercase()
         if (!com.jkdc.app.core.engines.EngineSelectionPolicy.selectable(normalized, BuildConfig.DEBUG)) return
         runCatching { engineSelection.select(normalized) }.onSuccess { enginesVersion++ }
@@ -1971,7 +1985,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return false
         }
-        if (defaultEngineId != "openai") return engineKeyReady()
+        if (resolveEngineSelection() != "openai") return engineKeyReady()
         val currentHosted = session?.id in hostedSessionIDs
         if (!currentHosted && conversationProvider == ConversationProvider.PERSONAL_KEY && !hasKey) {
             presentError(getApplication<Application>().getString(R.string.error_missing_key), needsKeySetup = true); return false
@@ -2647,7 +2661,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
         }
-        val localVoice = defaultEngineId != "openai"
+        val localVoice = resolveEngineSelection() != "openai"
+        if (resolveEngineSelection() == "api") ensureConversationPolicy()
         if (!localVoice) {
             if (!cloudReady()) return
         } else {
@@ -3260,6 +3275,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun sendTyped(text: String) {
         val localOnly = resolveEngineSelection() != "openai"
+        if (resolveEngineSelection() == "api") ensureConversationPolicy()
         val clean = text.trim().take(2000)
         if (clean.isEmpty() || working || state in listOf("connecting", "closing")) return
         if (!localOnly && !cloudReady()) return

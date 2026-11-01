@@ -1,5 +1,29 @@
 # Verify report: proxy-api-provider
 
+Fecha: 2026-11-01 (rev. 4, tras la tercera revisión de `8de65cb`) · Rama: `feat/proxy-api-provider`.
+
+## Rev. 4 — tercera ronda de auditoría
+
+Tres hallazgos sobre `8de65cb`, todos confirmados y corregidos test-first
+(los dos backend reproducidos RED → GREEN contra PG 17):
+
+| Hallazgo | Corrección | Prueba versionada |
+|---|---|---|
+| **Alta** — cambios sucesivos de plan fallaban: el top-up descontaba solo el grant original y reutilizaba una única identidad de upgrade (90→900→1800 → 409; 90→900→450 → 409 pese a no deber retirar crédito; reproducido en PG) | `grantSubscriptionDayInTransaction` calcula bajo lock el **total acreditado del día** (grant + top-ups) y concede solo la diferencia pendiente; cada incremento usa `subscription-topup:<día>:<cuenta>:<objetivo>` — el objetivo forma parte de la identidad, así que reintentar el mismo top-up es no-op y otro plan es identidad nueva | `successive plan upgrades never conflict and accumulate to the last allowance` · `a downgrade after a bigger same-day allowance adds nothing and never conflicts` (PG) |
+| **Media** — agotar los reintentos de política dejaba el motor api bloqueado hasta el siguiente cambio de cuenta | `ensureConversationPolicy()` lanza un ciclo de refresco nuevo en cada inicio de conversación (voz y escrito) cuando el motor api no tiene cache; el ciclo agotado ya no es un estado permanente (los intentos viven por ciclo) | (wiring; la lógica de ciclo está cubierta por compilación + revisión) |
+| **Media** — debug con build-flag `openai` y preferencia persistida `api`/`glm`: el adaptador se construía como OpenAI y el transporte seguía realtime pese al resolver | El switcher se usa también en debug con flag `openai` (solo el release BYOK fija el motor); transporte, `start()`, `cloudReady()` y gates resuelven la selección efectiva | (misma política testeada; wiring por revisión) |
+
+El auditor confirmó en esta ronda: primer upgrade correcto, valoración
+compartida, normalización release y cancelación/limpieza de política.
+
+**Pendientes reconocidos (sin cambio)**: wiring App de iOS (gate macOS),
+perfil de carga con propósitos (Task 8.1), sonda manual
+`set-route` → policy → llamada, E2E con proveedor real.
+
+---
+
+## Rev. 3 — segunda ronda de auditoría
+
 Fecha: 2026-11-01 (rev. 3, tras la re-revisión de `9cb3807`) · Rama: `feat/proxy-api-provider`.
 
 ## Rev. 3 — segunda ronda de auditoría

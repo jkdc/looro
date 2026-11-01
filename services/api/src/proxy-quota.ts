@@ -36,28 +36,35 @@ export const tokenCreditNano = (input: bigint, output: bigint, rate: { nanoPerMi
   (input * rate.nanoPerMillionInput + output * rate.nanoPerMillionOutput) / 1_000_000n;
 
 /** Funds today's allowance for one account inside a caller transaction.
- * Idempotent identities: the full allowance lands under the standard
- * `subscription-grant:<date>:<accountID>` reference; when today was already
- * funded by a **smaller** grant (free sweep, smaller plan), only the
- * difference is topped up under a distinct `subscription-upgrade:` reference
- * — reusing the standard reference with another amount would be a 409, not
- * an upgrade. Already funded at or above the allowance → 0n (credit is
- * never clawed back). Returns the granted amount. */
+ * The pending amount is computed from the **total already credited today**
+ * across every subscription identity (grant + top-ups) while the caller
+ * holds the wallet lock — so successive plan changes in one day each top up
+ * only their remaining difference and never reuse another amount's
+ * idempotent identity (audit rev.4): the first grant lands under the
+ * standard `subscription-grant:<date>:<accountID>` reference, and every
+ * increment uses `subscription-topup:<date>:<accountID>:<credit>` where the
+ * target amount is part of the identity, making a retry of the same top-up a
+ * no-op and a different plan a fresh one. Already funded at or above the
+ * allowance → 0n (credit is never clawed back). Returns the granted amount. */
 export async function grantSubscriptionDayInTransaction(
   sql: Parameters<Parameters<typeof transaction>[1]>[0],
   accountID: string, credit: bigint, rate: { id: string; nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint },
   day: string,
 ): Promise<bigint> {
   if (credit <= 0n) return 0n;
-  const reference = `subscription-grant:${day}:${accountID}`;
-  const existing = (await sql.query('SELECT balance_delta_nano FROM ledger WHERE reference=$1', [reference])).rows[0];
-  if (!existing) {
-    return (await appendEntry(sql, accountID, reference, 'purchase', credit, 0n, rate.id)) ? credit : 0n;
+  const total = BigInt((await sql.query(
+    `SELECT COALESCE(SUM(balance_delta_nano),0)::bigint AS total FROM ledger
+      WHERE account_id=$1 AND kind='purchase'
+        AND (reference LIKE $2 OR reference LIKE $3)`,
+    [accountID, `subscription-grant:${day}:${accountID}`, `subscription-topup:${day}:${accountID}:%`])).rows[0].total);
+  const pending = credit - total;
+  if (pending <= 0n) return 0n;
+  if (total === 0n) {
+    return (await appendEntry(sql, accountID, `subscription-grant:${day}:${accountID}`, 'purchase', pending, 0n, rate.id))
+      ? pending : 0n;
   }
-  const difference = credit - BigInt(existing.balance_delta_nano as string);
-  if (difference <= 0n) return 0n;
-  return (await appendEntry(sql, accountID, `subscription-upgrade:${day}:${accountID}`, 'purchase', difference, 0n, rate.id))
-    ? difference : 0n;
+  return (await appendEntry(sql, accountID, `subscription-topup:${day}:${accountID}:${credit}`, 'purchase', pending, 0n, rate.id))
+    ? pending : 0n;
 }
 
 /** Grants the day's allowance. Idempotent by the unique ledger reference

@@ -158,9 +158,10 @@ integration('a plan upgrade after the free grant tops up the difference under it
     assert.equal(await balance(), '900');
     const entries = (await db.query(`SELECT reference,balance_delta_nano FROM ledger WHERE account_id=$1 AND kind='purchase' ORDER BY reference`,
       [member])).rows;
+    const day = entries[0].reference.split(':')[1];
     assert.deepEqual(entries.map(row => [row.reference, BigInt(row.balance_delta_nano)]), [
-      ['subscription-grant:' + entries[0].reference.split(':')[1] + ':' + member, 90n],
-      ['subscription-upgrade:' + entries[0].reference.split(':')[1] + ':' + member, 810n],
+      [`subscription-grant:${day}:${member}`, 90n],
+      [`subscription-topup:${day}:${member}:900`, 810n],
     ]);
     // The sweep rerun is still a no-op for the standard reference.
     await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 });
@@ -212,6 +213,58 @@ integration('sweep and assignment value the same allowance identically', async (
       (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0].balance_nano;
     assert.equal(await balance(swept), '3');
     assert.equal(await balance(assigned), '3');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('successive plan upgrades never conflict and accumulate to the last allowance', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    const balance = async () =>
+      (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    // Free sweep 90n → plan 900n → plan 1800n the same day: each change tops
+    // up only its pending difference, and no top-up reuses another amount's
+    // idempotent identity (audit rev.4, high).
+    await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 });   // 90n
+    await grantQuota(db, { accountID: member, actor: 'ops', reason: 'plan 900', plan: 'standard',
+      days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });                  // +810 → 900
+    assert.equal(await balance(), '900');
+    await grantQuota(db, { accountID: member, actor: 'ops', reason: 'plan 1800', plan: 'standard',
+      days: 30, dailyInputTokens: '2000', dailyOutputTokens: '1000' });                 // +900 → 1800
+    assert.equal(await balance(), '1800');
+    // Retrying the same assignment is a no-op.
+    await grantQuota(db, { accountID: member, actor: 'ops', reason: 'plan 1800 retry', plan: 'standard',
+      days: 30, dailyInputTokens: '2000', dailyOutputTokens: '1000' });
+    assert.equal(await balance(), '1800');
+    // A sweep rerun is a no-op too.
+    await runDailyQuotaGrants(db, { dailyInputTokens: 0, dailyOutputTokens: 0 });
+    assert.equal(await balance(), '1800');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('a downgrade after a bigger same-day allowance adds nothing and never conflicts', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    const balance = async () =>
+      (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    // 90 → 900 → 450: already funded above the new plan, so nothing happens —
+    // and no idempotency identity is reused with another amount (audit rev.4).
+    await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 });   // 90n
+    await grantQuota(db, { accountID: member, actor: 'ops', reason: 'plan 900', plan: 'standard',
+      days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });                  // 900n
+    const applied = await grantQuota(db, { accountID: member, actor: 'ops', reason: 'downgrade to 450',
+      plan: 'pilot', days: 7, dailyInputTokens: '500', dailyOutputTokens: '250' });     // 450n < 900n
+    assert.equal(applied.firstGrantNanoUSD, '0');
+    assert.equal(await balance(), '900');
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
 
