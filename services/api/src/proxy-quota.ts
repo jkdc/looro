@@ -28,12 +28,40 @@ export const proxyQuotaConfig = (env: NodeJS.ProcessEnv): QuotaAllowance => ({
 
 const grantDay = () => new Date().toISOString().slice(0, 10);
 
-const tokenCreditNano = (input: bigint, output: bigint, rate: { nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint }): bigint =>
-  input * rate.nanoPerMillionInput / 1_000_000n + output * rate.nanoPerMillionOutput / 1_000_000n;
+/** The nanoUSD value of a token allowance at a rate version. **Single
+ * valuation for every path** (sweep, assignment, upgrade): sum the token
+ * costs first, then divide — per-direction truncation would make the daily
+ * sweep and the assignment disagree on the same allowance. */
+export const tokenCreditNano = (input: bigint, output: bigint, rate: { nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint }): bigint =>
+  (input * rate.nanoPerMillionInput + output * rate.nanoPerMillionOutput) / 1_000_000n;
+
+/** Funds today's allowance for one account inside a caller transaction.
+ * Idempotent identities: the full allowance lands under the standard
+ * `subscription-grant:<date>:<accountID>` reference; when today was already
+ * funded by a **smaller** grant (free sweep, smaller plan), only the
+ * difference is topped up under a distinct `subscription-upgrade:` reference
+ * — reusing the standard reference with another amount would be a 409, not
+ * an upgrade. Already funded at or above the allowance → 0n (credit is
+ * never clawed back). Returns the granted amount. */
+export async function grantSubscriptionDayInTransaction(
+  sql: Parameters<Parameters<typeof transaction>[1]>[0],
+  accountID: string, credit: bigint, rate: { id: string; nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint },
+  day: string,
+): Promise<bigint> {
+  if (credit <= 0n) return 0n;
+  const reference = `subscription-grant:${day}:${accountID}`;
+  const existing = (await sql.query('SELECT balance_delta_nano FROM ledger WHERE reference=$1', [reference])).rows[0];
+  if (!existing) {
+    return (await appendEntry(sql, accountID, reference, 'purchase', credit, 0n, rate.id)) ? credit : 0n;
+  }
+  const difference = credit - BigInt(existing.balance_delta_nano as string);
+  if (difference <= 0n) return 0n;
+  return (await appendEntry(sql, accountID, `subscription-upgrade:${day}:${accountID}`, 'purchase', difference, 0n, rate.id))
+    ? difference : 0n;
+}
 
 /** Grants the day's allowance. Idempotent by the unique ledger reference
  * (`subscription-grant:<date>:<accountID>`): reruns and restarts add nothing.
- * A conflicting reference reuse surfaces as 409 (operator-visible bug).
  * Active subscriptions are funded **regardless of the free-funnel knobs**
  * (B1): the allowance gate only covers the free member sweep. Guests and
  * deleted accounts are excluded defensively in both queries. */
@@ -42,10 +70,9 @@ export async function runDailyQuotaGrants(db: Database, allowance: QuotaAllowanc
   const day = grantDay();
   let granted = 0;
   const grantOnce = async (accountID: string, credit: bigint) => {
-    if (credit <= 0n) return;
-    const reference = `subscription-grant:${day}:${accountID}`;
-    const applied = await transaction(db, sql => appendEntry(sql, accountID, reference, 'purchase', credit, 0n, rate.id));
-    if (applied) granted++;
+    const applied = await transaction(db, sql =>
+      grantSubscriptionDayInTransaction(sql, accountID, credit, rate, day));
+    if (applied > 0n) granted++;
   };
   // Active subscriptions use their own plan size.
   const subscribed = (await db.query(`SELECT s.account_id,s.daily_input_tokens,s.daily_output_tokens FROM token_subscriptions s

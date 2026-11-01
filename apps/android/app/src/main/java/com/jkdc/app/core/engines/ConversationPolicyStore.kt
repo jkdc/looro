@@ -22,6 +22,10 @@ class ConversationPolicyStore {
 
     fun update(state: ConversationPolicyState) { policy = state }
 
+    /** Drops the cached policy: an identity change must not leave the
+        previous account's quota snapshot behind. */
+    fun clear() { policy = null }
+
     fun current(): ConversationPolicyState? = policy
 
     /** The server-chosen model for a purpose; null when the policy is

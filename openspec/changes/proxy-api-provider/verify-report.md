@@ -1,5 +1,37 @@
 # Verify report: proxy-api-provider
 
+Fecha: 2026-11-01 (rev. 3, tras la re-revisión de `9cb3807`) · Rama: `feat/proxy-api-provider`.
+
+## Rev. 3 — segunda ronda de auditoría
+
+La re-revisión de `9cb3807` confirmó B1/B3/B4/B5/B6 corregidos pero halló
+**2 regresiones backend (reproducidas en PostgreSQL) y 4 pendientes Android**.
+Todas corregidas test-first (RED → GREEN contra PG 17; las Android ahora con
+**tests versionados** sobre una política pura parametrizada):
+
+| Hallazgo | Corrección | Prueba versionada |
+|---|---|---|
+| **Alta** — upgrade gratuito→plan: mismo idempotency-reference con importe distinto → `idempotency_conflict` y rollback del alta (reproducido en PG) | `grantSubscriptionDayInTransaction` compartida por barrido y asignación: importe completo bajo `subscription-grant:<día>:<cuenta>`, **top-up de la diferencia** bajo `subscription-upgrade:<día>:<cuenta>`, no-op si ya está financiada a o por encima (el crédito nunca se reclama); el rerun del barrido tras un upgrade es no-op | `a plan upgrade after the free grant tops up the difference under its own identity` · `a plan downgrade after a bigger free grant adds nothing and never conflicts` |
+| **Media** — barrido y asignación redondeaban distinto (2/2 tokens: 3n vs 2n) | Valoración única compartida `tokenCreditNano` (suma antes de dividir) en ambas rutas | `sweep and assignment value the same allowance identically` |
+| **Alta** — el reintento de política no ocurría (reentrada recursiva bloqueada por el job activo) | Bucle de reintentos dentro de **una** coroutine (backoff acotado 5), sin recursión al método protegido | (lógica pinzada por compilación + revisión; el store con `clear()` sí tiene test) |
+| **Alta** — BYOK ejecutable en release: el default con build-flag `glm`/`opencode` salía del resolver sin normalizar | `EngineSelectionPolicy` pura y parametrizada: `defaultEngine` normaliza el default del build, `effectiveSelection` normaliza la preferencia persistida, `selectable` filtra el setter; los 12 usos del flag crudo en AppViewModel sustituidos por `resolveEngineSelection()` | `EngineSelectionPolicyTest` (4 tests: default, persistida, selector) |
+| **Media** — cambio de cuenta no cancelaba el GET ni limpiaba el cache | `force` cancela el vuelo previo y llama a `ConversationPolicyStore.clear()` antes de consultar; publicación condicionada a la revisión de cuenta | `clear drops the previous account's state so it can never leak` |
+| **Media** — `sendTyped()` y otros 10 puntos usaban el flag crudo | Todos los usos del flag crudo sustituidos por la resolución efectiva (voz, escrito, gates, atribución, labels, duración, assessments) | (misma política testeada; wiring por revisión) |
+
+Sobre el señalamiento de evidencia: correcto — la rev. 1 afirmaba «test-first»
+para Android sin tests versionados que lo respalden. En esta rev. la parte
+decidible en JVM (política de ejecución y store) tiene tests propios, y el
+gating dependiente de `BuildConfig.DEBUG` queda reducido a un resolver puro
+parametrizado cuyo comportamiento de release está pinzado.
+
+**Pendientes reconocidos (sin cambio)**: wiring App de iOS (requiere macOS),
+perfil de carga con propósitos (Task 8.1), sonda manual
+`set-route` → policy → llamada, E2E con proveedor real.
+
+---
+
+## Rev. 2 — remediación de la auditoría (misma fecha)
+
 Fecha: 2026-11-01 (rev. 2, tras la auditoría `informe-auditoria-suscripcion-llm-2026-11-01.md`) · Rama: `feat/proxy-api-provider` (rama nueva creada desde `feat/security-hardening`, con commit checkpoint del árbol previo).
 
 ## Rev. 2 — remediación de la auditoría (misma fecha)

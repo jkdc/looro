@@ -627,17 +627,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     )
     // Release builds ship the proxy-backed api provider as the default: the
     // BYOK engines are a debug/benchmarking surface, not a deployment choice.
-    // Debug builds keep the build-time selection byte-for-byte.
+    // Debug builds keep the build-time selection byte-for-byte. The policy is
+    // pure and JVM-tested (EngineSelectionPolicy).
     private val defaultEngineId: String =
-        if (BuildConfig.DEBUG || BuildConfig.CONVERSATION_ENGINE != "openai") BuildConfig.CONVERSATION_ENGINE else "api"
+        com.jkdc.app.core.engines.EngineSelectionPolicy.defaultEngine(BuildConfig.CONVERSATION_ENGINE, BuildConfig.DEBUG)
 
     /** Effective engine id: every decision (transport, gates, attribution)
         must use this, not the raw build flag — on release a persisted BYOK
         selection normalizes back to the proxy-backed default (A2). */
-    private fun resolveEngineSelection(): String {
-        val id = engineSelection.selected(defaultEngineId)
-        return if (BuildConfig.DEBUG || id == "api" || id == "hosted-proxy" || id == "openai") id else defaultEngineId
-    }
+    private fun resolveEngineSelection(): String =
+        com.jkdc.app.core.engines.EngineSelectionPolicy.effectiveSelection(
+            engineSelection.selected(defaultEngineId), defaultEngineId, BuildConfig.DEBUG)
 
     private val conversationEngine: TeachingClient =
         if (defaultEngineId == "openai") {
@@ -651,37 +651,37 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     /** Refreshes the display-only conversation policy for the api provider.
-        Failures retry with a bounded backoff (an initial failure must not
-        block the api engine until the next account change, A3); a late reply
-        from a previous account is discarded, and a new fetch cancels the
-        in-flight one, so responses never pollute another account's state
-        (A4). Best effort: a stale map only degrades the label display — the
-        proxy enforces the real routing decision per call. */
+        Bounded retries run **inside one coroutine** (audit rev.3: recursive
+        re-entry returned because the same job was still active); `force`
+        cancels the in-flight fetch and clears the previous account's state
+        before fetching (A3/A4), and a late reply is discarded unless the
+        account revision still matches. Best effort: a stale map only
+        degrades the label display — the proxy enforces the real routing
+        decision per call. */
     private var policyFetchJob: kotlinx.coroutines.Job? = null
-    private var policyFetchAttempts = 0
 
     fun refreshConversationPolicy(force: Boolean = false) {
         val client = policyCommerceClient ?: return
-        if (force) policyFetchAttempts = 0
+        if (force) {
+            policyFetchJob?.cancel()
+            conversationPolicyStore.clear()
+        }
         if (policyFetchJob?.isActive == true) return
-        if (policyFetchAttempts >= 5) return
-        policyFetchJob?.cancel()
         val revision = accountRevision
         policyFetchJob = viewModelScope.launch {
-            try {
-                val session = memberSessions?.read() ?: return@launch
-                val state = client.conversationPolicy(session)
-                if (revision == accountRevision) {
-                    conversationPolicyStore.update(state)
-                    policyFetchAttempts = 0
-                }
-            } catch (cancelled: kotlinx.coroutines.CancellationException) {
-                throw cancelled
-            } catch (_: Exception) {
-                policyFetchAttempts++
-                if (policyFetchAttempts < 5) {
-                    delay(15_000L * policyFetchAttempts)
-                    refreshConversationPolicy()
+            var attempts = 0
+            while (true) {
+                try {
+                    val session = memberSessions?.read() ?: return@launch
+                    val state = client.conversationPolicy(session)
+                    if (revision == accountRevision) conversationPolicyStore.update(state)
+                    return@launch
+                } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                    throw cancelled
+                } catch (_: Exception) {
+                    attempts++
+                    if (attempts >= 5 || revision != accountRevision) return@launch
+                    delay(15_000L * attempts)
                 }
             }
         }
@@ -1883,7 +1883,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun selectLocalEngine(id: String) {
         if (isRunning || defaultEngineId == "openai") return
         val normalized = id.trim().lowercase()
-        if (!BuildConfig.DEBUG && normalized != "api" && normalized != "hosted-proxy") return
+        if (!com.jkdc.app.core.engines.EngineSelectionPolicy.selectable(normalized, BuildConfig.DEBUG)) return
         runCatching { engineSelection.select(normalized) }.onSuccess { enginesVersion++ }
     }
 
@@ -2039,7 +2039,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun dismissMinuteAccess() { showMinuteAccess = false }
     fun needsMinuteAccess(): Boolean {
         // On-device/remote-compatible engines never use hosted minutes.
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") return false
+        if (resolveEngineSelection() != "openai") return false
         if (conversationProvider != ConversationProvider.HOSTED_MINUTES || isRunning) return false
         if (hostedReadiness.ready && !selectedAccount.busy) return false
         showMinuteAccess = true; refreshHostedReadiness(); return true
@@ -2109,7 +2109,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun teaching(localID: String?, purpose: HelperPurpose, logicalID: String,
         instructions: String, input: String, schema: JsonObject? = null, search: Boolean = false): APIResult {
         if (archive.preferences.aiConsentVersion != 1) throw HostedFailure.Unavailable
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+        if (resolveEngineSelection() != "openai") {
             return conversationEngine.respond(instructions, input, schema, search, purpose)
         }
         if (localID != null && localID in hostedSessionIDs) {
@@ -2256,7 +2256,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         finally { hasKey = credentials.hasKey }
     }
     fun updatePreferences(preferences: Preferences) {
-        val localEngine = BuildConfig.CONVERSATION_ENGINE != "openai"
+        val localEngine = resolveEngineSelection() != "openai"
         if (!storageReady) return
         if (isRunning) {
             // OpenAI voice sessions keep server-side state and stay gated (original behavior).
@@ -2575,7 +2575,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Beginner voice mode: the turn ends only when the user presses the button. */
     var voiceManualTurn by androidx.compose.runtime.mutableStateOf(
-        BuildConfig.CONVERSATION_ENGINE != "openai" && voiceManualTurnStore.get())
+        resolveEngineSelection() != "openai" && voiceManualTurnStore.get())
         private set
 
     fun updateVoiceManualTurn(enabled: Boolean) {
@@ -2683,7 +2683,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 choice == ConversationProvider.PERSONAL_KEY -> "byok"
                 else -> "byok"
             })
-            if (localVoice) put("engine", BuildConfig.CONVERSATION_ENGINE)
+            if (localVoice) put("engine", resolveEngineSelection())
         }
         session?.takeIf { it.isLesson }?.lessonID?.let { lessonID ->
             usageReporter.record(UsageEvents.LESSON_STARTED) {
@@ -3034,7 +3034,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     private fun startDurationChecks() {
         durationJob?.cancel()
-        val localVoiceSession = BuildConfig.CONVERSATION_ENGINE != "openai"
+        val localVoiceSession = resolveEngineSelection() != "openai"
         durationJob = viewModelScope.launch {
             while (state == "active") {
                 delay(5000)
@@ -3217,7 +3217,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // Local LLM: per-turn assessments are full generations; running them
         // after every user turn starves the conversation. Final assessments
         // (on session end) still run so learning stats keep working.
-        if (BuildConfig.CONVERSATION_ENGINE != "openai" && state == "active") return
+        if (resolveEngineSelection() != "openai" && state == "active") return
         assessmentJob?.cancel()
         assessmentJob = viewModelScope.launch {
             delay(3000)
@@ -3259,7 +3259,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     fun sendTyped(text: String) {
-        val localOnly = BuildConfig.CONVERSATION_ENGINE != "openai"
+        val localOnly = resolveEngineSelection() != "openai"
         val clean = text.trim().take(2000)
         if (clean.isEmpty() || working || state in listOf("connecting", "closing")) return
         if (!localOnly && !cloudReady()) return
@@ -3270,15 +3270,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             newSession(false); state = "active"; startDurationChecks()
             usageReporter.record(UsageEvents.SESSION_STARTED) {
                 put("input", "typed")
-                put("provider", if (BuildConfig.CONVERSATION_ENGINE != "openai" ||
+                put("provider", if (resolveEngineSelection() != "openai" ||
                     conversationProvider == ConversationProvider.PERSONAL_KEY) "byok" else "hosted")
-                if (BuildConfig.CONVERSATION_ENGINE != "openai") put("engine", BuildConfig.CONVERSATION_ENGINE)
+                if (resolveEngineSelection() != "openai") put("engine", resolveEngineSelection())
             }
         }
         val id = session!!.id; val token = generation
         val offset = ((nowSeconds() - session!!.startedAt) * 1000).toInt().coerceAtLeast(0)
         updateSession { it.append(Fragment(speaker = Speaker.user, text = clean, startMS = offset, endMS = offset + 1, meaningVisible = archive.preferences.meaningVisible, typed = true)) }
-        if (voiceSession && BuildConfig.CONVERSATION_ENGINE != "openai") command("user_message", clean)
+        if (voiceSession && resolveEngineSelection() != "openai") command("user_message", clean)
         lastActivity = nowSeconds(); working = true
         actionJob = viewModelScope.launch {
             try {
@@ -3295,7 +3295,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (token != generation || session?.id != id || state != "active") return@launch
                 updateSession { addUsage(it, result.usage) }
                 if (voiceSession) {
-                    if (BuildConfig.CONVERSATION_ENGINE == "openai") command("thinking", "The learner typed (data): ${clean.take(650)}")
+                    if (resolveEngineSelection() == "openai") command("thinking", "The learner typed (data): ${clean.take(650)}")
                     command("commentary", result.text)
                 }
                 else {

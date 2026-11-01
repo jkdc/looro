@@ -6,7 +6,7 @@ import { ServiceError } from './errors.js';
 import { appendEntry, lockWallet } from './ledger.js';
 import { isProxyPurpose } from './proxy-policy.js';
 import { reconcileUnknownHoldInTransaction } from './proxy-attempts.js';
-import { setSubscription } from './proxy-quota.js';
+import { setSubscription, tokenCreditNano, grantSubscriptionDayInTransaction } from './proxy-quota.js';
 
 // Local operator process only (same standing as minutes-admin): assignment of
 // proxy unlock and wallet credit without a store purchase. There is
@@ -189,17 +189,15 @@ export async function grantQuota(db: Database, input: QuotaGrantInput) {
       [input.accountID, input.plan, dailyInput.toString(), dailyOutput.toString(), input.days]);
     await audit(sql, 'grant_quota', input.accountID, input.actor, input.reason, null,
       { plan: input.plan, days: input.days, dailyInputTokens: input.dailyInputTokens, dailyOutputTokens: input.dailyOutputTokens });
-    // The current day's allowance, at the active rate version; the unique
-    // ledger reference makes a same-day reassignment or sweep rerun a no-op.
+    // The current day's allowance at the active rate version, funded through
+    // the same shared day-grant the sweep uses (one valuation, one
+    // upgrade/top-up identity — see grantSubscriptionDayInTransaction).
     const rate = (await sql.query('SELECT id,nano_per_million_input,nano_per_million_output FROM rate_versions ORDER BY valid_from DESC LIMIT 1')).rows[0];
     let firstGrantNanoUSD = '0';
     if (rate) {
-      const credit = (dailyInput * BigInt(rate.nano_per_million_input) + dailyOutput * BigInt(rate.nano_per_million_output)) / 1_000_000n;
-      if (credit > 0n) {
-        const reference = `subscription-grant:${day}:${input.accountID}`;
-        const applied = await appendEntry(sql, input.accountID, reference, 'purchase', credit, 0n, rate.id as string);
-        if (applied) firstGrantNanoUSD = credit.toString();
-      }
+      const credit = tokenCreditNano(dailyInput, dailyOutput,
+        { nanoPerMillionInput: BigInt(rate.nano_per_million_input), nanoPerMillionOutput: BigInt(rate.nano_per_million_output) });
+      firstGrantNanoUSD = (await grantSubscriptionDayInTransaction(sql, input.accountID, credit, rate, day)).toString();
     }
     return { accountID: input.accountID, plan: input.plan, days: input.days,
       dailyInputTokens: input.dailyInputTokens, dailyOutputTokens: input.dailyOutputTokens, firstGrantNanoUSD };

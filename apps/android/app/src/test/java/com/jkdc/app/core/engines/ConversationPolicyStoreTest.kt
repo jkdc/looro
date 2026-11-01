@@ -28,4 +28,13 @@ class ConversationPolicyStoreTest {
         store.update(ConversationPolicyState(mapOf("typed_reply" to "  "), 0, 0))
         assertNull(store.modelFor(null))
     }
+
+    @Test
+    fun `clear drops the previous account's state so it can never leak`() {
+        val store = ConversationPolicyStore()
+        store.update(ConversationPolicyState(mapOf("typed_reply" to "Strong"), 1500, 812))
+        store.clear()
+        assertNull(store.current())
+        assertNull(store.modelFor(null))
+    }
 }

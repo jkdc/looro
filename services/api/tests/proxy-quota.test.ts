@@ -136,6 +136,85 @@ integration('grant-quota credits the first day immediately for late signups', as
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
 
+integration('a plan upgrade after the free grant tops up the difference under its own identity', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    // Free sweep already funded today (100/50 → 90n). Assigning a bigger plan
+    // the same day must succeed by topping the difference up under a distinct
+    // idempotent reference — reusing the same reference with another amount is
+    // a 409 by design (audit rev.3, high).
+    await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 });
+    const applied = await grantQuota(db, { accountID: member, actor: 'ops', reason: 'upgrade to paid plan',
+      plan: 'standard', days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });
+    assert.equal(applied.accountID, member);
+    const balance = async () =>
+      (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    // Total credit equals the plan allowance (900n), not 90 + 900.
+    assert.equal(await balance(), '900');
+    const entries = (await db.query(`SELECT reference,balance_delta_nano FROM ledger WHERE account_id=$1 AND kind='purchase' ORDER BY reference`,
+      [member])).rows;
+    assert.deepEqual(entries.map(row => [row.reference, BigInt(row.balance_delta_nano)]), [
+      ['subscription-grant:' + entries[0].reference.split(':')[1] + ':' + member, 90n],
+      ['subscription-upgrade:' + entries[0].reference.split(':')[1] + ':' + member, 810n],
+    ]);
+    // The sweep rerun is still a no-op for the standard reference.
+    await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 });
+    assert.equal(await balance(), '900');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('a plan downgrade after a bigger free grant adds nothing and never conflicts', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    await runDailyQuotaGrants(db, { dailyInputTokens: 100, dailyOutputTokens: 50 }); // 90n
+    const applied = await grantQuota(db, { accountID: member, actor: 'ops', reason: 'smaller pilot', plan: 'pilot',
+      days: 7, dailyInputTokens: '50', dailyOutputTokens: '25' }); // 45n < 90n
+    assert.equal(applied.firstGrantNanoUSD, '0');
+    const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    assert.equal(balance, '90'); // credit already granted is never clawed back
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('sweep and assignment value the same allowance identically', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    // 2 in + 2 out: per-direction truncation would give 0+2=2n, shared
+    // sum-then-divide valuation gives 3n — one rounding for both paths
+    // (audit rev.3, medium).
+    const swept = randomUUID(), assigned = randomUUID();
+    for (const id of [swept, assigned]) {
+      await db.query('INSERT INTO accounts(id) VALUES($1)', [id]);
+      await db.query('INSERT INTO wallets(account_id) VALUES($1)', [id]);
+    }
+    await setSubscription(db, { accountID: swept, plan: 'pilot', days: 1, dailyInputTokens: 2n, dailyOutputTokens: 2n });
+    await runDailyQuotaGrants(db, { dailyInputTokens: 2, dailyOutputTokens: 2 });
+    // The assignment for an identical allowance must reuse the swept grant
+    // (same reference, same amount) instead of conflicting.
+    const applied = await grantQuota(db, { accountID: swept, actor: 'ops', reason: 'same-day reassignment', plan: 'pilot',
+      days: 1, dailyInputTokens: '2', dailyOutputTokens: '2' });
+    assert.equal(applied.firstGrantNanoUSD, '0');
+    // A fresh assignment values it identically.
+    await grantQuota(db, { accountID: assigned, actor: 'ops', reason: 'fresh assignment', plan: 'pilot',
+      days: 1, dailyInputTokens: '2', dailyOutputTokens: '2' });
+    const balance = async (account: string) =>
+      (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0].balance_nano;
+    assert.equal(await balance(swept), '3');
+    assert.equal(await balance(assigned), '3');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
 integration('quota exhaustion refuses a proxied call before the provider is contacted', async () => {
   const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
   url.searchParams.set('options', `-c search_path=${schema}`);
