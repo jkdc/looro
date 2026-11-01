@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-10-31T18:31:19.663Z",
+  "sessionId": "sess_570faca5-117d-495f-917c-d144c86e2ac7",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "/home/joaquin/Proyectos/looro-test/looro/services/api/docs/observability.md",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 11,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

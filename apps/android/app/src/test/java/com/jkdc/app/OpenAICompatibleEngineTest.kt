@@ -199,6 +199,64 @@ class OpenAICompatibleEngineTest {
     }
 
     @Test
+    fun `model override replaces the configured model in the request body`() = runTest {
+        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
+        val overridden = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.DEEPSEEK,
+            deps = deps(mapOf("DEEPSEEK_API_KEY" to "test-key-123")),
+            client = OkHttpClient(),
+            baseUrl = server.url("/v1/"),
+            modelOverride = { "beam-free" },
+        )
+
+        overridden.respond("i", "in")
+
+        val body = Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
+        assertEquals("beam-free", body["model"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `model override resolving to null falls back to the configured model`() = runTest {
+        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
+        val overridden = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.DEEPSEEK,
+            deps = deps(mapOf("DEEPSEEK_API_KEY" to "test-key-123")),
+            client = OkHttpClient(),
+            baseUrl = server.url("/v1/"),
+            modelOverride = { null },
+        )
+
+        overridden.respond("i", "in")
+
+        val body = Json.parseToJsonElement(server.takeRequest().body.readUtf8()).jsonObject
+        assertEquals("deepseek-chat", body["model"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `opencode engine sends session and user agent headers with its default model`() = runTest {
+        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
+        val opencode = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.OPENCODE,
+            deps = deps(mapOf("OPENCODE_API_KEY" to "oc-key")),
+            client = OkHttpClient(),
+            baseUrl = server.url("/v1/"),
+        )
+
+        opencode.respond("i", "in")
+
+        val recorded = server.takeRequest()
+        assertEquals("Bearer oc-key", recorded.getHeader("Authorization"))
+        // The gateway routes per conversation and rejects session-less requests:
+        // a fresh UUID per call, same criterion as the server's transport.
+        val session = recorded.getHeader("x-opencode-session")
+        assertTrue("x-opencode-session must be a UUID, got: $session",
+            session != null && session.matches(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
+        assertEquals("palique-android/1.0", recorded.getHeader("User-Agent"))
+        val body = Json.parseToJsonElement(recorded.body.readUtf8()).jsonObject
+        assertEquals("glm-5.3-flash", body["model"]!!.jsonPrimitive.content)
+    }
+
+    @Test
     fun `keyEnvVar exposes the provider variable so gates can skip the OpenAI key`() {
         assertEquals("DEEPSEEK_API_KEY", engine.keyEnvVar)
         assertEquals("ZHIPUAI_API_KEY",

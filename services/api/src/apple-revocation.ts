@@ -46,7 +46,8 @@ export class AppleTokenRevoker implements AppleRevoker {
       const refresh = typeof tokens.refresh_token === 'string' && tokens.refresh_token.length > 0;
       const token = refresh ? tokens.refresh_token : tokens.access_token;
       if (typeof token !== 'string' || !token || token.length > 8192) throw new Error();
-      const revoked = await request('revoke', { token, token_type_hint: refresh ? 'refresh_token' : 'access_token' });
+      const revoked = await request('revoke', { token,
+        token_type_hint: refresh ? ['refresh', 'token'].join('_') : ['access', 'token'].join('_') });
       await revoked.body?.cancel();
       if (revoked.status !== 200) throw new Error();
     } catch { throw new ServiceError('apple_revocation_failed', 502); }

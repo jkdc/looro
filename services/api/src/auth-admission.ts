@@ -4,7 +4,7 @@ import { transaction, type Database } from './db.js';
 import { trustedClientNetwork } from './access-requests.js';
 import { ServiceError } from './errors.js';
 
-export type AuthOperation = 'challenge' | 'exchange' | 'account' | 'guest' | 'admin' | 'admin-api';
+export type AuthOperation = 'challenge' | 'exchange' | 'account' | 'guest' | 'admin' | 'admin-api' | 'public';
 export interface AuthAdmissionConfig { hmacKey: string; proxyToken: string; allowLocalLoopback: boolean }
 export function accountAdmissionConfig(env: NodeJS.ProcessEnv): AuthAdmissionConfig | undefined {
   if (env.ACCOUNTS_ENABLED !== 'true') return undefined;
@@ -17,10 +17,17 @@ const limits: Record<AuthOperation, { network: number; global: number }> = {
   challenge: { network: 60, global: 2000 }, exchange: { network: 120, global: 4000 }, account: { network: 600, global: 20_000 },
   guest: { network: 30, global: 2000 },
   // The panel is one operator: strict per-network caps, generous-but-bounded global headroom.
-  'admin': { network: 30, global: 500 }, 'admin-api': { network: 600, global: 10_000 }
+  'admin': { network: 30, global: 500 }, 'admin-api': { network: 600, global: 10_000 },
+  // Cacheable public reads (catalog, level tests): generous per visitor, hard
+  // ceiling for the surface as a whole.
+  'public': { network: 3600, global: 240_000 }
 };
 export class AuthAdmission {
-  constructor(readonly db: Database, readonly config: AuthAdmissionConfig) {}
+  readonly #limits: Record<AuthOperation, { network: number; global: number }>;
+  constructor(readonly db: Database, readonly config: AuthAdmissionConfig,
+    overrides: Partial<Record<AuthOperation, { network: number; global: number }>> = {}) {
+    this.#limits = { ...limits, ...overrides };
+  }
   async enter(operation: AuthOperation, headers: IncomingHttpHeaders, remoteAddress: string): Promise<void> {
     let address: string;
     try { address = trustedClientNetwork(headers, remoteAddress, this.config.proxyToken, this.config.allowLocalLoopback); }
@@ -30,7 +37,7 @@ export class AuthAdmission {
       const hour = new Date(now); hour.setUTCMinutes(0, 0, 0);
       const identifier = createHmac('sha256', Buffer.from(this.config.hmacKey, 'hex')).update(`${now.toISOString().slice(0, 10)}\n${address}`).digest('hex');
       for (const scope of ['global', 'network'] as const) {
-        const maximum = limits[operation][scope];
+        const maximum = this.#limits[operation][scope];
         const row = (await sql.query(`INSERT INTO auth_rate_limits(operation,scope,identifier,window_start,expires_at,hits)
           VALUES($1,$2,$3,$4,$5,1) ON CONFLICT(operation,scope,identifier,window_start)
           DO UPDATE SET hits=LEAST(auth_rate_limits.hits+1,$6) RETURNING hits`,
@@ -43,6 +50,22 @@ export class AuthAdmission {
         }
       }
       return true;
+    });
+    if (!accepted) throw new ServiceError('rate_limit', 429);
+  }
+  /** Global-scope admission only, for requests whose client network cannot be
+      authenticated: a shared per-address bucket would let one visitor exhaust
+      everyone, so unidentifiable traffic shares only the global allowance. */
+  async enterGlobal(operation: AuthOperation): Promise<void> {
+    const accepted = await transaction(this.db, async sql => {
+      const now = (await sql.query<{ now: Date }>('SELECT now()')).rows[0]!.now;
+      const hour = new Date(now); hour.setUTCMinutes(0, 0, 0);
+      const maximum = this.#limits[operation].global;
+      const row = (await sql.query(`INSERT INTO auth_rate_limits(operation,scope,identifier,window_start,expires_at,hits)
+        VALUES($1,'global','all',$2,$3,1) ON CONFLICT(operation,scope,identifier,window_start)
+        DO UPDATE SET hits=LEAST(auth_rate_limits.hits+1,$4) RETURNING hits`,
+      [operation, hour, new Date(hour.getTime() + 2 * 3_600_000), maximum + 1])).rows[0]!;
+      return row.hits <= maximum;
     });
     if (!accepted) throw new ServiceError('rate_limit', 429);
   }

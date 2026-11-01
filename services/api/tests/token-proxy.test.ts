@@ -19,10 +19,12 @@ const CONFIG = { providerURL: 'http://provider.internal/v1/chat/completions', pr
 integration('tokenProxyConfig requires both URL and key', async () => {
   assert.equal(tokenProxyConfig({}), undefined);
   assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'not a url', PROXY_PROVIDER_KEY: 'k' }), /absolute URL/);
-  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k' })?.providerKey, 'k');
+  // The provider URL carries the server key: plain http is loopback-only.
+  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k' }), /must be https/);
+  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k' })?.providerKey, 'k');
   // Concurrency cap knob: defaults to 2, must be a positive integer when set.
-  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k' })?.maxConcurrentPerAccount, 2);
-  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k', PROXY_MAX_CONCURRENT: '0' }), /positive integer/);
+  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k' })?.maxConcurrentPerAccount, 2);
+  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k', PROXY_MAX_CONCURRENT: '0' }), /positive integer/);
 });
 
 integration('relay meters provider usage at the active rate version and debits the wallet', async () => {

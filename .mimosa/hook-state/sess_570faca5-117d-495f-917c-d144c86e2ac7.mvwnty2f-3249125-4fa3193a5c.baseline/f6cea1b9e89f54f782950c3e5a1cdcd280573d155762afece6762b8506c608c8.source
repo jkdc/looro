@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Pushes the whisper STT model to the Palique app's private external storage.
+#
+# The on-device LLM (.gguf) push was removed on 2026-09-17 together with the
+# local llama.cpp engine; this script is now whisper-only (deepseek/glm voice
+# runs STT on device, the LLM remotely).
+#
+# Target layout (app-private, writable by adb):
+#   /sdcard/Android/data/com.jkdc.app.android/files/models/whisper/<file>.bin
+#
+# Files are taken from apps/android/local-models/ (gitignored).
+# Only changed files (size differs) are pushed, so re-deploys are cheap.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"   # apps/android
+SRC="$ROOT/local-models"
+    # Derive the on-device application id from the canonical branding file (same
+    # source as deploy-local.sh), so the model always lands in the app's own
+    # external files directory.
+    PKG="$(sed -n 's/^ANDROID_APPLICATION_ID=//p' "$ROOT/../../branding.properties")"
+DEST="/sdcard/Android/data/$PKG/files/models"
+SERIAL="${SERIAL:-}"
+
+# Multilingual Whisper models (STT leg). Downloaded on first run only.
+# The app prefers small (much better WER on accented / non-English speech);
+# base stays as the lightweight fallback so first runs work before the
+# bigger download lands.
+WHISPER_NAMES=("ggml-small-q5_1.bin" "ggml-base-q5_1.bin")
+WHISPER_SIZES=("180 MB" "60 MB")
+WHISPER_URLS=(
+  "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin"
+  "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base-q5_1.bin"
+)
+
+command -v adb >/dev/null || { echo "adb not found"; exit 1; }
+DEVICE="$(bash "$(dirname "$0")/adb-device.sh" "$SERIAL")"
+ADB="adb -s $DEVICE"
+
+mkdir -p "$SRC"
+${ADB} shell mkdir -p "$DEST/whisper"
+
+for i in "${!WHISPER_NAMES[@]}"; do
+  name="${WHISPER_NAMES[$i]}"
+  if [ ! -f "$SRC/$name" ]; then
+    echo "[down] $name (multilingual Whisper, ~${WHISPER_SIZES[$i]})"
+    curl -L --fail --retry 3 -o "$SRC/$name" "${WHISPER_URLS[$i]}"
+  fi
+done
+
+pushed=0
+push_one() { # $1 local file, $2 remote subdir
+  local f="$1" sub="$2"
+  local name local_size remote_size
+  name="$(basename "$f")"
+  local_size="$(stat -c %s "$f")"
+  remote_size="$(${ADB} shell stat -c %s "$DEST/$sub/$name" 2>/dev/null | tr -d '\r')" || remote_size=""
+  if [[ "$remote_size" == "$local_size" ]]; then
+    echo "[skip] $name already on device"
+  else
+    echo "[push] $name ($(du -h "$f" | cut -f1))..."
+    ${ADB} push "$f" "$DEST/$sub/" >/dev/null
+    echo "[ok]   $name pushed"
+    pushed=$((pushed+1))
+  fi
+}
+
+# STT models (small preferred by the app, base fallback)
+for f in "$SRC"/ggml-small-q5_1.bin "$SRC"/ggml-base-q5_1.bin; do
+  [ -f "$f" ] && push_one "$f" "whisper"
+done
+echo "Done ($pushed pushed). Restart the app to load models:"
+echo "  $ADB shell am force-stop $PKG"

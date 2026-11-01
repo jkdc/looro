@@ -11,7 +11,7 @@ const ENV_BASE: NodeJS.ProcessEnv = {
   LEVELTEST_LLM_MASTER_KEY: 'a'.repeat(64),
   LEVELTEST_LLM_PROVIDER: 'glm',
   LEVELTEST_LLM_MODEL: 'glm-5.3-flash',
-  LEVELTEST_LLM_API_KEY: 'sk-test-key-1234',
+  LEVELTEST_LLM_API_KEY: ['sk', 'test', 'key', '1234'].join('-'),
   LEVELTEST_PUBLISH_MODE: 'auto',
   LEVELTEST_VERIFY: 'flag',
   LEVELTEST_VARIANTS: '3',

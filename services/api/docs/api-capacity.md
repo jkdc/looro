@@ -49,3 +49,14 @@ La antigüedad no prueba muerte de otro proceso. Revisar evidencia del proveedor
 `make load-api-smoke` construye y ejecuta PostgreSQL, migración, seed, API y stub en proyecto único y red interna, sin puertos publicados ni env_file. El runner no hereda secretos de la shell. `make load-api-baseline` amplía duración; los resultados del host no equivalen a cuotas reales del proveedor. Ver `../load/README.md`.
 
 Antes de aumentar recursos, observar colas/latencia/memoria y conservar invariantes financieras. Voz sigue teniendo líder único; separar workers, distribuir límites y cambiar locks se decide tras medir.
+
+## Límites de tarifa y escalado
+
+Hay dos capas: admission durable en `auth_rate_limits` (auth, invitados,
+panel y, desde la migración 056, las lecturas públicas: catálogo,
+level-tests, con cap por red y global) y un limitador en memoria
+(120 req/min por red, ventanas Map 10k/20k) para el resto de rutas de
+cliente. **El limitador en memoria es de instancia única**: no sincroniza
+entre procesos, así que escalar a réplicas requiere sustituirlo por el
+limiter durable antes de poner más de una instancia de la API detrás del
+proxy.

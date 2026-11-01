@@ -473,6 +473,12 @@
     <string name="engine_key_hint">Clave API propia del proveedor seleccionado</string>
     <string name="engine_key_save">Guardar clave</string>
     <string name="engine_key_remove">Volver a la clave incluida</string>
+    <string name="settings_engine_model_label">Modelo</string>
+    <string name="settings_engine_model_hint">Elige el modelo que OpenCode usa en las conversaciones.</string>
+    <string name="engine_model_free">(gratis)</string>
+    <string name="engine_models_loading">Cargando modelos…</string>
+    <string name="engine_models_error">No se pudieron cargar los modelos — se muestra la lista integrada.</string>
+    <string name="engine_models_refresh">Actualizar</string>
     <string name="learn_recall_title">Repasar</string>
     <string name="learn_recall_card">%1$d expresiones listas para repasar</string>
     <string name="recall_title">Repasar</string>

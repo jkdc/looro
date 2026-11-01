@@ -33,6 +33,9 @@ data class RemoteEngineConfig(
     val keyEnvVar: String,
     /** Provider-specific body fields merged into every request (e.g. Zhipu thinking switch). */
     val extraBody: JsonObject? = null,
+    /** Header that must carry a fresh UUID per request (the OpenCode Go gateway
+        routes per conversation and rejects session-less requests). */
+    val sessionHeader: String? = null,
 ) {
     companion object {
         val DEEPSEEK = RemoteEngineConfig("deepseek", "https://api.deepseek.com/v1/", "deepseek-chat", "DEEPSEEK_API_KEY")
@@ -65,6 +68,16 @@ data class RemoteEngineConfig(
         // the seeded rate version 2026-09-minimax-m pins MiniMax M as the launch
         // provider. Auth is the app session bearer, never an environment key.
         val HOSTED_PROXY = RemoteEngineConfig("hosted-proxy", "", "MiniMax-M2", "")
+        // OpenCode Go gateway (same preset as the server's LLM_PRESETS.opencode):
+        // one key unlocks a multi-vendor catalog, selectable from Settings via
+        // EngineModelCatalog; glm-5.3-flash is the preset's default model.
+        val OPENCODE = RemoteEngineConfig(
+            id = "opencode",
+            defaultBaseUrl = "https://opencode.ai/zen/go/v1",
+            defaultModel = "glm-5.3-flash",
+            keyEnvVar = "OPENCODE_API_KEY",
+            sessionHeader = "x-opencode-session",
+        )
     }
 }
 
@@ -97,6 +110,9 @@ class OpenAICompatibleEngine(
     private val credential: (suspend () -> String?)? = null,
     /** Turns 402/403/429 proxy rejections into readable messages instead of a raw payload dump. */
     private val proxyErrorMessages: Boolean = false,
+    /** Model override resolved per call (the Settings model picker); null or a
+        null result keeps [RemoteEngineConfig.defaultModel]. */
+    private val modelOverride: (() -> String?)? = null,
 ) : TeachingClient {
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -139,7 +155,7 @@ class OpenAICompatibleEngine(
             instructions
         }
         val body = buildJsonObject {
-            put("model", config.defaultModel)
+            put("model", modelOverride?.invoke() ?: config.defaultModel)
             put("messages", kotlinx.serialization.json.JsonArray(listOf(
                 buildJsonObject { put("role", "system"); put("content", systemPrompt) },
                 buildJsonObject { put("role", "user"); put("content", input) },
@@ -160,6 +176,14 @@ class OpenAICompatibleEngine(
         val request = Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $key")
+            .apply {
+                // One fresh UUID per request, the same criterion the server's
+                // opencode transport uses (one session id per generation run).
+                if (config.sessionHeader != null) {
+                    header(config.sessionHeader, java.util.UUID.randomUUID().toString())
+                    header("User-Agent", "palique-android/1.0")
+                }
+            }
             .post(body.toRequestBody("application/json".toMediaType()))
             .build()
 

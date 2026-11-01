@@ -8,6 +8,7 @@ Usage: ui.py <command> [args]
   shot <path>              screenshot to <path>
   wait <text> [seconds]    poll until <text> is visible
 """
+import os
 import re
 import subprocess
 import sys
@@ -66,8 +67,12 @@ def swipe():
 
 
 def shot(path):
-    open(path, "wb").write(adb("exec-out", "screencap", "-p", binary=True))
-    print(f"shot {path}")
+    # Evidence screenshots stay inside this evidence directory: the argument is
+    # operator-supplied, so only its basename is used for the write.
+    target = os.path.realpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.basename(path)))
+    open(target, "wb").write(adb("exec-out", "screencap", "-p", binary=True))
+    print(f"shot {target}")
 
 
 def wait(want, seconds=15):

@@ -1,0 +1,101 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - complementary [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - heading " Palique · Admin" [level=1] [ref=f1e5]:
+          - generic [ref=f1e6]: 
+          - generic [ref=f1e8]: Palique · Admin
+        - text:            
+    - generic [ref=f1e9]:
+      - text: 
+      - generic [ref=f1e13]:
+        - generic [ref=f1e15]:
+          - generic [ref=f1e19]:
+            - generic [ref=f1e20]: 
+            - generic [ref=f1e23]:
+              - generic [ref=f1e24]: Cuentas
+              - generic [ref=f1e25]: "1"
+          - generic [ref=f1e29]:
+            - generic [ref=f1e30]: 
+            - generic [ref=f1e33]:
+              - generic [ref=f1e34]: Invitados
+              - generic [ref=f1e35]: "0"
+          - generic [ref=f1e39]:
+            - generic [ref=f1e40]: 
+            - generic [ref=f1e43]:
+              - generic [ref=f1e44]: Sesiones app vivas
+              - generic [ref=f1e45]: "0"
+          - generic [ref=f1e49]:
+            - generic [ref=f1e50]: 
+            - generic [ref=f1e53]:
+              - generic [ref=f1e54]: Activos 30 días
+              - generic [ref=f1e55]: "0"
+          - generic [ref=f1e59]:
+            - generic [ref=f1e60]: 
+            - generic [ref=f1e63]:
+              - generic [ref=f1e64]: Minutos en wallets
+              - generic [ref=f1e65]: 0 min
+          - generic [ref=f1e69]:
+            - generic [ref=f1e70]: 
+            - generic [ref=f1e73]:
+              - generic [ref=f1e74]: Minutos reservados
+              - generic [ref=f1e75]: 0 min
+          - generic [ref=f1e79]:
+            - generic [ref=f1e80]: 
+            - generic [ref=f1e83]:
+              - generic [ref=f1e84]: Órdenes / volumen
+              - generic [ref=f1e85]: 0 · $0,00
+          - generic [ref=f1e89]:
+            - generic [ref=f1e90]: 
+            - generic [ref=f1e93]:
+              - generic [ref=f1e94]: Coste helpers 30d
+              - generic [ref=f1e95]: $0
+          - generic [ref=f1e99]:
+            - generic [ref=f1e100]: 
+            - generic [ref=f1e103]:
+              - generic [ref=f1e104]: Waitlist
+              - generic [ref=f1e105]: "0"
+          - generic [ref=f1e109]:
+            - generic [ref=f1e110]: 
+            - generic [ref=f1e113]:
+              - generic [ref=f1e114]: Sesiones voz activas
+              - generic [ref=f1e115]: "0"
+          - generic [ref=f1e119]:
+            - generic [ref=f1e120]: 
+            - generic [ref=f1e123]:
+              - generic [ref=f1e124]: Suscripciones activas
+              - generic [ref=f1e125]: "0"
+          - generic [ref=f1e129]:
+            - generic [ref=f1e130]: 
+            - generic [ref=f1e133]:
+              - generic [ref=f1e134]: En prueba
+              - generic [ref=f1e135]: "0"
+          - generic [ref=f1e139]:
+            - generic [ref=f1e140]: 
+            - generic [ref=f1e143]:
+              - generic [ref=f1e144]: Acciones admin
+              - generic [ref=f1e145]: "5"
+          - generic [ref=f1e149]:
+            - generic [ref=f1e150]: 
+            - generic [ref=f1e153]:
+              - generic [ref=f1e154]: Informes IA 30d
+              - generic [ref=f1e155]: "0"
+        - generic [ref=f1e156]:
+          - heading " Nuevas cuentas" [level=3] [ref=f1e160]:
+            - generic [ref=f1e161]: 
+            - text: Nuevas cuentas
+          - heading " Sesiones de voz" [level=3] [ref=f1e167]:
+            - generic [ref=f1e168]: 
+            - text: Sesiones de voz
+          - heading "ﾥ Órdenes de compra" [level=3] [ref=f1e174]:
+            - generic [ref=f1e175]: ﾥ
+            - text: Órdenes de compra
+          - heading "ﾥ Volumen de órdenes (céntimos)" [level=3] [ref=f1e181]:
+            - generic [ref=f1e182]: ﾥ
+            - text: Volumen de órdenes (céntimos)
+          - heading " Peticiones de waitlist" [level=3] [ref=f1e188]:
+            - generic [ref=f1e189]: 
+            - text: Peticiones de waitlist
+      - contentinfo [ref=f1e11]:
+        - generic [ref=f1e12]: Palique Admin · panel de operador · todas las acciones quedan auditadas
+  - text: 

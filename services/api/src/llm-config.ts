@@ -2,6 +2,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID }
 import { Agent } from 'undici';
 import type { Database } from './db.js';
 import { paliqueMetrics } from './metrics.js';
+import { assertOutboundUrl } from './outbound-url.js';
 
 /** LLM provider configuration for weekly level-test generation
     (level-tests-llm): presets (openai / glm z.ai / opencode go gateway),
@@ -80,14 +81,21 @@ export async function resolveLlmConfig(db: Database, env: NodeJS.ProcessEnv): Pr
     for (const row of rows.rows ?? []) {
       if (!isLlmProvider(row.provider)) continue;
       const key = decryptSecret(row.api_key_encrypted, env);
-      if (key && row.base_url && row.model)
-        return { provider: row.provider, baseUrl: row.base_url, model: row.model, apiKey: key };
+      if (!key || !row.base_url || !row.model) continue;
+      // An operator row pointing at a public plain-http host never runs: it is
+      // skipped so the env path decides instead of sending the API key in
+      // clear text.
+      try { assertOutboundUrl(row.base_url, 'LLM base_url'); }
+      catch { continue; }
+      return { provider: row.provider, baseUrl: row.base_url, model: row.model, apiKey: key };
     }
   } catch { /* table missing or DB unavailable: env path decides. */ }
   const provider = env.LEVELTEST_LLM_PROVIDER;
   if (isLlmProvider(provider) && env.LEVELTEST_LLM_API_KEY) {
     const preset = LLM_PRESETS[provider];
-    return { provider, baseUrl: env.LEVELTEST_LLM_URL || preset.baseUrl,
+    const baseUrl = env.LEVELTEST_LLM_URL || preset.baseUrl;
+    assertOutboundUrl(baseUrl, 'LEVELTEST_LLM_URL');
+    return { provider, baseUrl,
       model: env.LEVELTEST_LLM_MODEL || preset.models[0] || '', apiKey: env.LEVELTEST_LLM_API_KEY };
   }
   return undefined;

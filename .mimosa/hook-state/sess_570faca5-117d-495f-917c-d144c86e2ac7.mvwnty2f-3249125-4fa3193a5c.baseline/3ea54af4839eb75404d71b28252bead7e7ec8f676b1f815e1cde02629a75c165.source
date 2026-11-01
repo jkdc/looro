@@ -1,0 +1,51 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift-core:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: swift test --package-path apps/ios
+
+  server:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run check
+      - run: npm run build
+      - run: npm test
+      # Compose interpolation needs the two required variables; nothing starts.
+      - name: Validate observability configs
+        env:
+          POSTGRES_PASSWORD: local_ci_only
+          API_DOMAIN: ci.local
+        run: |
+          docker compose --project-directory . -f compose.yaml config -q
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint promtool prom/prometheus:v2.54.1 check rules /telemetry/alerts.yml
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint promtool prom/prometheus:v2.54.1 test rules /telemetry/alerts.test.yml
+          docker run --rm -v "$PWD/telemetry:/telemetry:ro" --entrypoint amtool prom/alertmanager:v0.27.0 check-config /telemetry/alertmanager.yml

@@ -473,6 +473,12 @@
     <string name="engine_key_hint">Custom API key for the selected provider</string>
     <string name="engine_key_save">Save key</string>
     <string name="engine_key_remove">Use included key again</string>
+    <string name="settings_engine_model_label">Model</string>
+    <string name="settings_engine_model_hint">Choose the model OpenCode uses for conversations.</string>
+    <string name="engine_model_free">(free)</string>
+    <string name="engine_models_loading">Loading models…</string>
+    <string name="engine_models_error">Could not load models — showing the built-in list.</string>
+    <string name="engine_models_refresh">Refresh</string>
     <string name="learn_recall_title">Recall</string>
     <string name="learn_recall_card">%1$d expressions ready for review</string>
     <string name="recall_title">Recall</string>

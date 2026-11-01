@@ -1,0 +1,13 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - complementary [ref=f3e3]:
+      - generic [ref=f3e4]:
+        - heading " Palique · Admin" [level=1] [ref=f3e5]:
+          - generic [ref=f3e6]: 
+          - generic [ref=f3e8]: Palique · Admin
+        - text:            
+    - generic [ref=f3e9]:
+      - text: 
+      - contentinfo [ref=f3e189]:
+        - generic [ref=f3e190]: Palique Admin · panel de operador · todas las acciones quedan auditadas
+  - text: 

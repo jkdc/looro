@@ -1,0 +1,3 @@
+[  587156ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8090/v1/admin/llm-config:0
+[  587156ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8090/v1/admin/level-tests/status:0
+[  587156ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://127.0.0.1:8090/v1/admin/level-tests/weeks?limit=50&offset=0:0

@@ -297,6 +297,44 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                                     }
                                 }
                             }
+                            // OpenCode model picker: only the opencode engine
+                            // exposes a subscription catalog. A changed model
+                            // applies from the next conversation on (same rule
+                            // as engine switching).
+                            if (selected?.id == "opencode") {
+                                LaunchedEffect(Unit) { vm.ensureEngineModelsLoaded() }
+                                SettingsDivider()
+                                Text(stringResource(R.string.settings_engine_model_label),
+                                    style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink)
+                                Text(stringResource(R.string.settings_engine_model_hint),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                if (vm.engineModelsLoading) {
+                                    Text(stringResource(R.string.engine_models_loading),
+                                        style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                }
+                                if (vm.engineModelsFailed && !vm.engineModelsLoading) {
+                                    Text(stringResource(R.string.engine_models_error),
+                                        style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                }
+                                vm.engineModelOptions.forEach { model ->
+                                    val modelLabel = if (model.isFree) {
+                                        model.name + " " + stringResource(R.string.engine_model_free)
+                                    } else model.name
+                                    Row(Modifier.fillMaxWidth()
+                                            .clickable(enabled = !vm.isRunning) { vm.selectEngineModel(model.id) }
+                                            .padding(vertical = 4.dp).testTag("engine-model-" + model.id),
+                                        verticalAlignment = Alignment.CenterVertically) {
+                                        RadioButton(selected = vm.selectedEngineModel == model.id,
+                                            onClick = { vm.selectEngineModel(model.id) }, enabled = !vm.isRunning)
+                                        Text(modelLabel, style = MaterialTheme.typography.bodyMedium, color = AppColors.Ink)
+                                    }
+                                }
+                                TextButton(enabled = !vm.isRunning && !vm.engineModelsLoading,
+                                    onClick = { vm.ensureEngineModelsLoaded(force = true) },
+                                    modifier = Modifier.testTag("engine-models-refresh")) {
+                                    Text(stringResource(R.string.engine_models_refresh), color = AppColors.Ink)
+                                }
+                            }
                             // Commercial surface for the hosted-proxy engine ("Palique (tokens)").
                             // Engine SELECTION is the factory row above; this row is only the
                             // paywall/pack entry, with the server's balance display hint.

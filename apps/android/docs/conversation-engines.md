@@ -1,4 +1,4 @@
-# Conversation Engines (OpenAI / DeepSeek / GLM)
+# Conversation Engines (OpenAI / DeepSeek / GLM / OpenCode)
 
 The app's AI teaching calls (typed replies, meanings, assessments, topics) run
 through a single contract, `com.jkdc.app.network.TeachingClient`, and a single
@@ -11,12 +11,30 @@ AppViewModel.teaching()
               ├── "openai"   (default) OpenAIEngineAdapter → existing APIClient
               ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com/v1
               ├── "glm"               OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-5.3-flash (thinking low)
-              └── "glm-4.5"           OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-4.5-flash (thinking off)
+              ├── "glm-4.5"           OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-4.5-flash (thinking off)
+              └── "opencode"          OpenAICompatibleEngine → opencode.ai/zen/go/v1 · model chosen in Settings
 ```
 
 Adding a provider in the future = one registry row in `ConversationEngineFactory`
 (+ one adapter class only if the API is not OpenAI-compatible). No ViewModel, UI,
 or prompt changes.
+
+## OpenCode model picker
+
+The `opencode` engine (same gateway preset as the server's
+`LLM_PRESETS.opencode`) unlocks a multi-vendor catalog with one key. Settings
+shows a **Model** picker under the engine list when OpenCode is selected:
+
+- The live catalog is fetched from `GET {baseUrl}/models`; it is public, and a
+  configured key is forwarded so subscription-scoped catalogs resolve.
+- Models whose text input AND output prices are both 0 are labelled
+  `(free)` (`(gratis)` in ES) — the pricing shape the catalog ships.
+- If the fetch fails (offline, HTTP error, malformed payload) the picker falls
+  back to the built-in preset (`EngineModelCatalog.OPENCODE_FALLBACK`, the
+  server's model list) and shows a persistent hint; no silent failure.
+- The chosen model is persisted per engine (`EngineModelsStore`) and applies
+  from the next conversation on; a model the catalog later drops falls back to
+  `glm-5.3-flash` (the preset default).
 
 ## Local engine (removed 2026-09-17)
 
@@ -71,6 +89,7 @@ cp api-keys.properties.example api-keys.properties
 # edita api-keys.properties con tus claves reales:
 #   ZHIPUAI_API_KEY=<tu clave de z.ai / bigmodel>
 #   DEEPSEEK_API_KEY=<tu clave>
+#   OPENCODE_API_KEY=<tu clave de OpenCode (opencode.ai)>
 
 adb push api-keys.properties \
   /sdcard/Android/data/com.jkdc.app.android/files/api_keys.properties

@@ -10,18 +10,21 @@ const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Dedicated test database required.');
 const january = new Date('2026-01-31T23:59:59.999Z');
 const february = new Date('2026-02-01T00:00:00.000Z');
+// Fixed suite schema: literal DDL only, so no dynamic identifier ever
+// reaches the SQL text and parallel runs reset it instead of colliding.
+const SUITE_SCHEMA = 'drip_fast_security_suite';
 
 async function fixture(run: (db: Database) => Promise<void>) {
-  const schema = `drip_fast_${randomUUID().replaceAll('-', '')}`;
   const url = new URL(databaseURL!);
-  url.searchParams.set('options', `-c search_path=${schema}`);
+  url.searchParams.set('options', `-c search_path=${SUITE_SCHEMA}`);
   const db = connectDatabase(url.toString());
   try {
-    await db.query(`CREATE SCHEMA ${schema}`);
+    await db.query('DROP SCHEMA IF EXISTS drip_fast_security_suite CASCADE');
+    await db.query('CREATE SCHEMA drip_fast_security_suite');
     await migrate(db);
     await run(db);
   } finally {
-    await db.query(`DROP SCHEMA ${schema} CASCADE`);
+    await db.query('DROP SCHEMA IF EXISTS drip_fast_security_suite CASCADE');
     await db.end();
   }
 }

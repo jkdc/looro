@@ -475,6 +475,7 @@ def read_inventory(conn):
     for name in names:
         if is_internal_table(name):
             continue
+        assert_identifier(name)
         # PRAGMA table_info rows: (cid, name, type, notnull, dflt_value, pk)
         cols = [(r[1], r[2], r[3], r[5], r[4])
                 for r in conn.execute(f'PRAGMA table_info("{name}")')]
@@ -483,13 +484,24 @@ def read_inventory(conn):
     for name in names:
         if is_internal_table(name):
             continue
+        assert_identifier(name)
         for row in conn.execute(f'PRAGMA index_list("{name}")'):
             idx_name, origin = row[1], row[3]
             if origin != 'c':  # 'c' = explicitly CREATE INDEX'd
                 continue
+            assert_identifier(idx_name)
             cols = [r[2] for r in conn.execute(f"PRAGMA index_info('{idx_name}')")]
             indexes.add((idx_name, name, tuple(cols)))
     return tables, indexes
+
+
+def assert_identifier(name):
+    """PRAGMA statements cannot bind identifiers, so the inventory interpolates
+    names read back from sqlite_master. SQLite permits almost any quoted string
+    as a table or index name; anything outside the plain-identifier shape the
+    pinned schema uses must fail loudly instead of reaching the SQL text."""
+    if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name):
+        raise ValueError(f'unexpected schema identifier: {name!r}')
 
 
 def is_internal_table(name):

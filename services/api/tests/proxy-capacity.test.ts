@@ -5,7 +5,9 @@ import { connectDatabase, transaction } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { appendEntry } from '../src/ledger.js';
 import { TokenProxy, tokenProxyConfig } from '../src/token-proxy.js';
-const env={PROXY_PROVIDER_URL:'http://stub/v1',PROXY_PROVIDER_KEY:'test'};
+// The provider URL carries the server key, so it must be https (or loopback
+// http for lab transports); these unit cases use a public-shaped https URL.
+const env={PROXY_PROVIDER_URL:'https://stub/v1',PROXY_PROVIDER_KEY:'test'};
 test('proxy capacity configuration defaults and bounds reject empty and invalid numbers',()=>{
   const c=tokenProxyConfig(env) as any;
   assert.equal(c.maxInFlight,10);assert.equal(c.timeoutMs,30000);assert.equal(c.maxResponseBytes,1048576);

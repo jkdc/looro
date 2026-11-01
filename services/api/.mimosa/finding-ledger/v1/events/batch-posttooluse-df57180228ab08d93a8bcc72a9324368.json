@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "posttooluse-df57180228ab08d93a8bcc72a9324368",
+  "runId": null,
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "PostToolUse"
+  },
+  "revision": null,
+  "diffHash": null,
+  "rulesVersion": null,
+  "sessionHash": "6946969228e9f66c08e376f3f94275c93c50d726665ab77e7927ad8dc4eda516",
+  "reportRef": null,
+  "events": [
+    {
+      "eventId": "hook-ff9b921332d6aee834e6b21a7e60d64e",
+      "findingId": "mimosa-dd8753c88b0ca2b0e16a24c6",
+      "type": "static_fix_verified",
+      "at": "2026-10-31T18:00:49.431Z",
+      "identity": {
+        "projectRelativeFile": "tests/minute-commerce-config.test.ts",
+        "ruleId": "security",
+        "codeEvidenceHash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 26,
+      "endLine": 26,
+      "reasonCode": "static_rescan_passed",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "evidenceHash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175"
+      },
+      "sequence": 0
+    }
+  ],
+  "observedFindingIds": [],
+  "verifiedFiles": [],
+  "recordedAt": "2026-10-31T18:00:50.346Z"
+}

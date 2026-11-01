@@ -5,13 +5,18 @@ import { connectDatabase } from '../src/db.js';
 
 const baseURL = process.env.SMOKE_API_BASE_URL;
 const proxyToken = process.env.SMOKE_ADMIN_PROXY_TOKEN;
+// Absolute fixture URLs, built once: the smoke client always talks to the
+// ephemeral API of the isolated stack, never to request-controlled targets.
+const readyURL = baseURL ? new URL('/readyz', baseURL).href : '';
+const pricingURL = baseURL ? new URL('/v1/pricing', baseURL).href : '';
+const adminStatusURL = baseURL ? new URL('/v1/admin/level-tests/status', baseURL).href : '';
 
 test('compiled API is ready over HTTP and enforces admin authentication', { skip: !baseURL || !proxyToken }, async () => {
   const deadline = Date.now() + 45_000;
   let ready = false;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`${baseURL}/readyz`, { signal: AbortSignal.timeout(2_000) });
+      const response = await fetch(readyURL, { signal: AbortSignal.timeout(2_000) });
       if (response.ok) {
         const body = await response.json() as { database?: boolean };
         if (body.database === true) { ready = true; break; }
@@ -21,7 +26,7 @@ test('compiled API is ready over HTTP and enforces admin authentication', { skip
   }
   assert.equal(ready, true, 'compiled API did not become ready within 45 seconds');
 
-  const pricing = await fetch(`${baseURL}/v1/pricing`, { signal: AbortSignal.timeout(2_000) });
+  const pricing = await fetch(pricingURL, { signal: AbortSignal.timeout(2_000) });
   assert.equal(pricing.status, 200);
   const pricingBody = await pricing.json() as { currency?: string; rateVersion?: string };
   assert.equal(pricingBody.currency, 'USD');
@@ -37,7 +42,7 @@ test('compiled API is ready over HTTP and enforces admin authentication', { skip
   };
   try {
     const before = await admissionHits();
-    const admin = await fetch(`${baseURL}/v1/admin/level-tests/status`, {
+    const admin = await fetch(adminStatusURL, {
       headers: { 'x-app-client-ip': '198.51.100.23', 'x-app-proxy-token': proxyToken! },
       signal: AbortSignal.timeout(2_000),
     });

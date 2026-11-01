@@ -11,7 +11,12 @@ import androidx.lifecycle.viewModelScope
 import com.jkdc.app.core.*
 import com.jkdc.app.core.engines.ConversationEngineDeps
 import com.jkdc.app.core.engines.EngineException
+import com.jkdc.app.core.engines.EngineModel
+import com.jkdc.app.core.engines.EngineModelCatalog
+import com.jkdc.app.core.engines.EngineModelsStore
 import com.jkdc.app.core.engines.ConversationEngineFactory
+import com.jkdc.app.core.engines.RemoteEngineConfig
+import com.jkdc.app.core.engines.resolveEngineModelSelection
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.core.voice.VoiceTransport
 import com.jkdc.app.data.ArchiveHealth
@@ -36,6 +41,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -588,6 +594,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val api = APIClient(credentials)
     private val engineOverrides = com.jkdc.app.core.engines.EngineOverridesStore(application)
     private val engineSelection = com.jkdc.app.core.engines.LocalEngineSelectionStore(application)
+    // Backs the opencode model picker; consulted per request through modelLookup.
+    private val engineModelsStore = EngineModelsStore(application)
     // Declared before engineDeps: the hosted-proxy engine resolves its bearer
     // from this store — the same one the hosted client authenticates with.
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
@@ -609,6 +617,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         keyLookup = engineKeyLookup,
         json = json,
         readSession = memberSessions?.let { it::read },
+        modelLookup = { engineModelsStore.selectedRaw(it) },
     )
     private val conversationEngine: TeachingClient =
         if (BuildConfig.CONVERSATION_ENGINE == "openai") {
@@ -1821,6 +1830,67 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun removeEngineKey(id: String) {
         if (isRunning) return
         engineOverrides.removeCustomKey(id); enginesVersion++
+    }
+
+    // --- OpenCode model picker (Settings). Only the opencode engine exposes a
+    // subscription catalog; the picker is disabled while a conversation runs
+    // and a changed model applies from the next conversation on.
+    private val engineModelsClient = okhttp3.OkHttpClient()
+
+    /** The live catalog once fetched, else null (Settings then shows the
+        built-in preset); null also before the first fetch. */
+    var engineModels by mutableStateOf<List<EngineModel>?>(null)
+        private set
+    var engineModelsLoading by mutableStateOf(false)
+        private set
+    var engineModelsFailed by mutableStateOf(false)
+        private set
+
+    /** Models offered in Settings: the live catalog when available, else the
+        built-in preset (the server's LLM_PRESETS.opencode list). */
+    val engineModelOptions: List<EngineModel>
+        get() {
+            @Suppress("UNUSED_EXPRESSION") enginesVersion
+            return engineModels ?: EngineModelCatalog.OPENCODE_FALLBACK
+        }
+
+    val selectedEngineModel: String
+        get() {
+            @Suppress("UNUSED_EXPRESSION") enginesVersion
+            return resolveEngineModelSelection(
+                engineModelsStore.selectedRaw(RemoteEngineConfig.OPENCODE.id),
+                engineModelOptions.map { it.id },
+                RemoteEngineConfig.OPENCODE.defaultModel,
+            )
+        }
+
+    /** Fetches the opencode catalog (once, or forced by the refresh row). A
+        failure keeps the built-in preset and sets [engineModelsFailed] so the
+        UI shows a persistent hint instead of failing silently. */
+    fun ensureEngineModelsLoaded(force: Boolean = false) {
+        if (engineModelsLoading) return
+        if (engineModels != null && !engineModelsFailed && !force) return
+        viewModelScope.launch {
+            engineModelsLoading = true
+            engineModelsFailed = false
+            val fetched = runCatching {
+                EngineModelCatalog.fetchModels(
+                    RemoteEngineConfig.OPENCODE.defaultBaseUrl.toHttpUrl(),
+                    engineKeyLookup(RemoteEngineConfig.OPENCODE.keyEnvVar),
+                    engineModelsClient,
+                )
+            }.getOrNull()
+            engineModels = fetched
+            engineModelsFailed = fetched == null
+            engineModelsLoading = false
+        }
+    }
+
+    /** Applies to new conversations; rejected while a conversation runs. */
+    fun selectEngineModel(modelId: String) {
+        if (isRunning) return
+        engineModelsStore.select(RemoteEngineConfig.OPENCODE.id, modelId)
+        enginesVersion++
     }
 
     private fun engineKeyReady(): Boolean {

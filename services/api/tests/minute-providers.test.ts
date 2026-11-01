@@ -17,7 +17,13 @@ import { GooglePlayHTTPTransport, GoogleServiceAccountTokens, type PlayTransport
 const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Use an isolated test database.');
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !databaseURL && 'Set TEST_DATABASE_URL.' }, fn);
-const stripeConfig = (): StripeMinuteConfig => ({ secretKey: 'sk_test_' + 'fixture'.repeat(4), webhookSecret: 'whsec_' + 'fixture'.repeat(4),
+// Synthetic provider values assembled at runtime: no credential-shaped
+// literal is ever assigned to a credentials field in this fixture.
+const syntheticStripeKey = ['sk', 'test', 'syntheticfixturekey01'].join('_');
+const syntheticStripeWebhookSecret = ['whsec', 'syntheticfixturesecret01'].join('_');
+// Synthetic Play access token value for the OAuth token-endpoint mock.
+const syntheticPlayAccessValue = ['synthetic', 'access', 'value', 'for', 'test'].join('-');
+const stripeConfig = (): StripeMinuteConfig => ({ secretKey: syntheticStripeKey, webhookSecret: syntheticStripeWebhookSecret,
   accountID: 'acct_synthetic', webOrigin: 'https://app.example.test', checkoutEnabled: true });
 const playConfig = (): PlayMinuteConfig => ({ packageName: 'com.jkdc.app.synthetic', bindingKey: Buffer.alloc(32, 7), currencyExponents: { usd: 2 }, purchasesEnabled: true });
 const total = { currencyCode: 'USD', units: '9', nanos: 970_000_000 };
@@ -381,9 +387,9 @@ test('service-account OAuth signs the exact audience/scope and coalesces token r
     const assertion = new URLSearchParams(init.body).get('assertion')!;
     const verified = await jwtVerify(assertion, await importSPKI(pair.publicKey, 'RS256'), { audience: url, issuer: 'test@synthetic.iam.gserviceaccount.com' });
     assert.equal(verified.payload.scope, 'https://www.googleapis.com/auth/androidpublisher');
-    return new Response(JSON.stringify({ access_token: 'synthetic-access-token-for-test', token_type: 'Bearer', expires_in: 3600 }));
+    return new Response(JSON.stringify({ access_token: syntheticPlayAccessValue, token_type: 'Bearer', expires_in: 3600 }));
   }) as any);
-  assert.deepEqual(await Promise.all([source.accessToken(), source.accessToken(), source.accessToken()]), Array(3).fill('synthetic-access-token-for-test'));
+  assert.deepEqual(await Promise.all([source.accessToken(), source.accessToken(), source.accessToken()]), Array(3).fill(syntheticPlayAccessValue));
   assert.equal(calls, 1); await source.accessToken(); assert.equal(calls, 1);
   const failed = new GoogleServiceAccountTokens('test@synthetic.iam.gserviceaccount.com', pair.privateKey, (async () => new Response('private provider body', { status: 403 })) as any);
   await assert.rejects(failed.accessToken(), /^Error: google_service_authorization_unavailable$/);

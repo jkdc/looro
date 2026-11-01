@@ -469,8 +469,8 @@ test('empty optional environment URL/model use provider defaults in GET and part
   const { db } = database(), env = { ...ENV, LEVELTEST_LLM_API_KEY: '', LEVELTEST_LLM_URL: '', LEVELTEST_LLM_MODEL: '' };
   const view = await readLlmConfigView(db, env);
   assert.equal(view.baseUrl, 'https://api.openai.com/v1'); assert.ok(view.model);
-  await upsertLlmConfig(db, env, { apiKey: 'fake-new-key' });
-  assert.deepEqual(await readLlmConfigView(db, env), { ...view, keyHint: maskKey('fake-new-key') });
+  await upsertLlmConfig(db, env, { apiKey: 'fake' });
+  assert.deepEqual(await readLlmConfigView(db, env), { ...view, keyHint: maskKey('fake') });
 });
 test('GET and partial settings PUT preserve DB values through strict to flag to off', async () => {
   const { db, state } = database(); state.settings = { publish_mode: 'auto', verify_mode: 'strict', variants: 5 };

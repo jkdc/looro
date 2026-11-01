@@ -30,6 +30,10 @@ object ConversationEngineFactory {
         "deepseek" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.DEEPSEEK, deps) },
         "glm" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM, deps) },
         "glm-4.5" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM_45, deps) },
+        "opencode" to { deps ->
+            OpenAICompatibleEngine(RemoteEngineConfig.OPENCODE, deps,
+                modelOverride = { deps.modelLookup?.invoke(RemoteEngineConfig.OPENCODE.id) })
+        },
         "hosted-proxy" to { deps -> hostedProxy(deps) },
     )
 
@@ -38,6 +42,7 @@ object ConversationEngineFactory {
         EngineInfo("deepseek", "DeepSeek API"),
         EngineInfo("glm", "Zhipu GLM 5.3 Flash"),
         EngineInfo("glm-4.5", "Zhipu GLM 4.5 Flash"),
+        EngineInfo("opencode", "OpenCode (personal key)"),
         EngineInfo("hosted-proxy", "Palique (tokens)"),
     )
 

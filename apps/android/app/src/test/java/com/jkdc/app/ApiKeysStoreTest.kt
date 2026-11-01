@@ -35,4 +35,13 @@ class ApiKeysStoreTest {
         f.writeText("ZHIPUAI_API_KEY=   \n")
         assertNull(ApiKeysStore.readFromFile(f, "ZHIPUAI_API_KEY"))
     }
+
+    @Test
+    fun `external storage keys are only read in debug builds`() {
+        // Release builds never read external storage: anyone with device
+        // access could drop api_keys.properties and redirect engine traffic
+        // to their own key or endpoint. Deployed keys ship with the build.
+        assertEquals(false, ApiKeysStore.readsExternalStorage(isDebugBuild = false))
+        assertEquals(true, ApiKeysStore.readsExternalStorage(isDebugBuild = true))
+    }
 }

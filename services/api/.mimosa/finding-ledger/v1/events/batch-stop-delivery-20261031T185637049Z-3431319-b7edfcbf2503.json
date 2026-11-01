@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-delivery-20261031T185637049Z-3431319-b7edfcbf2503",
+  "runId": "20261031T185637049Z-3431319-b7edfcbf2503",
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "StopDelivery"
+  },
+  "revision": "07ffbe629762823f54d60e91ccf86ccd7f9fe46d",
+  "diffHash": "010e752734c80fcb56c30dfc48656d0872c9ed1b86f14c8097f43c09e3eeba80",
+  "rulesVersion": "unavailable",
+  "sessionHash": "6946969228e9f66c08e376f3f94275c93c50d726665ab77e7927ad8dc4eda516",
+  "reportRef": ".mimosa/reports/task-review-sess_570faca5-117d-495f-917c-d144c86e2ac7-20261031T185637049Z-3431319-b7edfcbf2503.json",
+  "events": [
+    {
+      "eventId": "hook-7d50f9decc8f92958df4e0e6ed67c38d",
+      "findingId": "mimosa-9a61240f5105f93280f91a5d",
+      "type": "finding_blocked",
+      "at": "2026-10-31T18:56:37.890Z",
+      "identity": {
+        "projectRelativeFile": "tests/free-drip-fast-path.test.ts",
+        "ruleId": "security",
+        "codeEvidenceHash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 22,
+      "endLine": 22,
+      "reasonCode": "stop_rewake",
+      "reportedToAgent": true,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4"
+      },
+      "sequence": 0
+    },
+    {
+      "eventId": "hook-95b9f924074c5075f46691a0bb2c6e2b",
+      "findingId": "mimosa-7903d34691bba5bb5c59b488",
+      "type": "finding_blocked",
+      "at": "2026-10-31T18:56:37.890Z",
+      "identity": {
+        "projectRelativeFile": "tests/free-drip-fast-path.test.ts",
+        "ruleId": "security",
+        "codeEvidenceHash": "8d58ebb316b9c80442dbd026cd84b77009837426b1f218b3e6cc653908e72e9b",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 23,
+      "endLine": 23,
+      "reasonCode": "stop_rewake",
+      "reportedToAgent": true,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "8d58ebb316b9c80442dbd026cd84b77009837426b1f218b3e6cc653908e72e9b"
+      },
+      "sequence": 1
+    },
+    {
+      "eventId": "hook-370716ebb336a10ab7d5d048c91792d2",
+      "findingId": "mimosa-9a61240f5105f93280f91a5d",
+      "type": "finding_blocked",
+      "at": "2026-10-31T18:56:37.890Z",
+      "identity": {
+        "projectRelativeFile": "tests/free-drip-fast-path.test.ts",
+        "ruleId": "security",
+        "codeEvidenceHash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 27,
+      "endLine": 27,
+      "reasonCode": "stop_rewake",
+      "reportedToAgent": true,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4"
+      },
+      "sequence": 2
+    }
+  ],
+  "observedFindingIds": [],
+  "verifiedFiles": [],
+  "recordedAt": "2026-10-31T18:56:38.856Z"
+}

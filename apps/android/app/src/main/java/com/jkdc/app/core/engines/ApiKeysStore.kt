@@ -17,10 +17,17 @@ import java.util.Properties
  */
 object ApiKeysStore {
 
+    /** Release builds never read external storage: anyone with device access
+        could drop api_keys.properties there and silently redirect engine
+        traffic to their own key or endpoint. The adb-push key flow stays a
+        development convenience; deployed keys ship with the build. */
+    fun readsExternalStorage(isDebugBuild: Boolean): Boolean = isDebugBuild
+
     fun file(context: Context): File =
         File(context.getExternalFilesDir(null) ?: context.filesDir, "api_keys.properties")
 
-    fun get(context: Context, name: String): String? = readFromFile(file(context), name)
+    fun get(context: Context, name: String): String? =
+        if (readsExternalStorage(com.jkdc.app.BuildConfig.DEBUG)) readFromFile(file(context), name) else null
 
     fun readFromFile(file: File, name: String): String? = runCatching {
         if (!file.isFile) return null

@@ -40,6 +40,14 @@ def require(condition: bool, message: str) -> None:
         raise InvalidRelease(message)
 
 
+def parse_release_xml(text: str, message: str) -> "ET.Element":
+    """Single parse entry for release XML: bounded size, no DTD — entity
+    expansion (CWE-776) needs a DOCTYPE, so DOCTYPE documents are rejected
+    before ElementTree sees them."""
+    require(len(text) <= 1024 * 1024 and "<!DOCTYPE" not in text.upper(), message)
+    return ET.fromstring(text)
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -132,9 +140,7 @@ def check_branding(root: Path, spec: dict) -> dict:
 
     def xml(field: str) -> ET.Element:
         source = below(root, branding[field])
-        text = source.read_text()
-        require(len(text) <= 1024 * 1024 and "<!DOCTYPE" not in text.upper(), "Unexpected branding XML document")
-        return ET.fromstring(text)
+        return parse_release_xml(source.read_text(), "Unexpected branding XML document")
 
     app = xml("androidManifest").find("application")
     adaptive_path = Path(branding["androidAdaptiveIcon"])
@@ -267,8 +273,7 @@ def check_aab(path: Path, licenses: list[str]) -> dict:
 
 
 def check_bundle_manifest(text: str, spec: dict) -> dict:
-    require("<!DOCTYPE" not in text.upper() and len(text) <= 1024 * 1024, "Unexpected manifest document")
-    root = ET.fromstring(text)
+    root = parse_release_xml(text, "Unexpected manifest document")
     require(root.tag == "manifest" and root.get("package") == spec["packageName"], "AAB package differs from release specification")
     require(root.get(ANDROID + "versionCode") == str(spec["versionCode"]), "AAB versionCode differs from release specification")
     require(root.get(ANDROID + "versionName") == spec["versionName"], "AAB versionName differs from release specification")

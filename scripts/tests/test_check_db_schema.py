@@ -234,6 +234,15 @@ class SchemaTest(unittest.TestCase):
         self.assertTrue(any('FIXTURE_MISSING_COUNT' in i and 'fragments' in i
                             for i in issues), issues)
 
+    def test_inventory_rejects_non_identifier_table_names(self):
+        # SQLite allows quoting almost any string as a table name; the PRAGMA
+        # inventory interpolates names, so non-identifiers must fail loudly
+        # instead of reaching the SQL text.
+        hostile = "evil'quote"
+        self.conn.execute(f'CREATE TABLE "{hostile}" (id)')
+        with self.assertRaisesRegex(ValueError, 'unexpected schema identifier'):
+            check_db_schema.read_inventory(self.conn)
+
 
 if __name__ == '__main__':
     unittest.main()

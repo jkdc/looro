@@ -1,0 +1,26 @@
+import json
+from pathlib import Path
+p=Path('/tmp/elig-compare.log'); rows=[]
+for line in p.read_text().splitlines():
+ try: rows.append(json.loads(line))
+ except ValueError: pass
+phases={(r['label'],r['name']):r for r in rows if r.get('type')=='phase'}
+assert len(phases)==26
+out=[]
+for r in rows:
+ if r.get('type')!='phase_sql' or r['phase']=='warmup-free':continue
+ phase=phases[(r['label'],r['phase'])];qs=r['queries'];auth=sum(int(q['calls']) for q in qs if 's.token_hash=' in q['query'])
+ begin=sum(int(q['calls']) for q in qs if q['query']=='BEGIN')
+ inserts=sum(int(q['calls']) for q in qs if q['query'].startswith('INSERT INTO subscription_grants'))
+ assert phase['useful']==phase['launched']==phase['completed']==phase['statuses']['200']
+ assert phase['offered']==phase['launched']+phase['dropped'] and phase['transportFailures']==0
+ assert not inserts
+ expected=auth if r['label'].startswith('before') and r['phase'].startswith(('guest','subscribed')) else 0
+ assert begin==expected,(r['label'],r['phase'],begin,expected)
+ out.append(dict(label=r['label'],phase=r['phase'],auth=auth,begin=begin,sql_calls=sum(int(q['calls']) for q in qs),useful=phase['useful'],dropped=phase['dropped'],p95_ms=round(phase['latency']['success']['p95'],2),useful_rps=round(phase['usefulRps'],2)))
+proof=[r for r in rows if r.get('type')=='integrity'];assert len(proof)==2
+for r in proof:
+ assert r['accounts']==200 and r['grants']==180 and r['balance']==r['journal']=='199999999991'
+ assert r['minute_balance']==r['minute_journal']=='54000000' and r['usage']==r['settled']==1 and r['unresolved']==0
+assert 'Controlled comparison failed' not in p.read_text()
+print(json.dumps(dict(check='PASS',phases=out,integrity=proof),indent=2))

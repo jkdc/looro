@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20261031T185637049Z-3431319-b7edfcbf2503",
+  "runStatus": "inconclusive",
+  "errors": [
+    "candidate-select:tests/proxy-capacity.test.ts: candidate_limit_exceeded: 1 changed reviewable file(s) were not scanned because the limit is 20",
+    "baseline:.: baseline_partial: baseline capture had enumeration or snapshot errors"
+  ],
+  "target": ".",
+  "revision": "07ffbe629762823f54d60e91ccf86ccd7f9fe46d",
+  "diffHash": "010e752734c80fcb56c30dfc48656d0872c9ed1b86f14c8097f43c09e3eeba80",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-10-31T18:56:37.049Z",
+  "timing": {
+    "startedAt": "2026-10-31T18:56:34.440Z",
+    "completedAt": "2026-10-31T18:56:37.049Z",
+    "durationMs": 2609
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 6,
+    "bySeverity": {
+      "high": 6
+    },
+    "byStatus": {
+      "static_verified": 4,
+      "blocked": 2
+    }
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "candidate_limit_exceeded": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-sess_570faca5-117d-495f-917c-d144c86e2ac7-20261031T185637049Z-3431319-b7edfcbf2503.json"
+}

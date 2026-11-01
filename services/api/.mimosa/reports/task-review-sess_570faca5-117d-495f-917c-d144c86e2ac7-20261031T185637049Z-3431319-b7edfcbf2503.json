@@ -1,0 +1,1016 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261031T185637049Z-3431319-b7edfcbf2503",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "tests/proxy-capacity.test.ts",
+      "reason": "candidate_limit_exceeded: 1 changed reviewable file(s) were not scanned because the limit is 20"
+    },
+    {
+      "stage": "baseline",
+      "target": ".",
+      "reason": "baseline_partial: baseline capture had enumeration or snapshot errors"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": false,
+      "captured_files": 21,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 3,
+      "compensated_target_count": 21
+    },
+    "change_tracking": {
+      "touched_observed": 21,
+      "touched_retained": 21,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 21,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 21,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 20,
+      "scanned_files": 20,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 3,
+      "detailed_findings": 3,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "candidate_limit_exceeded": 1,
+      "baseline_partial": 1,
+      "project_check_failed": 2
+    },
+    "reasons": [
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "tests/proxy-capacity.test.ts",
+        "detail": "1 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "tests/proxy-capacity.test.ts",
+        "detail": "candidate_limit_exceeded: 1 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-31T18:56:37.049Z",
+  "session_id": "sess_570faca5-117d-495f-917c-d144c86e2ac7",
+  "target": ".",
+  "revision": "07ffbe629762823f54d60e91ccf86ccd7f9fe46d",
+  "rules_version": "unavailable",
+  "diff_hash": "010e752734c80fcb56c30dfc48656d0872c9ed1b86f14c8097f43c09e3eeba80",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 20,
+    "changed_files": [
+      {
+        "file": "src/app.ts",
+        "ranges": [
+          {
+            "start": 39,
+            "end": 43
+          },
+          {
+            "start": 70,
+            "end": 73
+          },
+          {
+            "start": 173,
+            "end": 201
+          },
+          {
+            "start": 231,
+            "end": 242
+          },
+          {
+            "start": 399,
+            "end": 400
+          },
+          {
+            "start": 407,
+            "end": 407
+          },
+          {
+            "start": 413,
+            "end": 413
+          },
+          {
+            "start": 424,
+            "end": 424
+          },
+          {
+            "start": 430,
+            "end": 430
+          },
+          {
+            "start": 437,
+            "end": 438
+          },
+          {
+            "start": 440,
+            "end": 440
+          },
+          {
+            "start": 443,
+            "end": 443
+          },
+          {
+            "start": 453,
+            "end": 453
+          },
+          {
+            "start": 455,
+            "end": 455
+          },
+          {
+            "start": 461,
+            "end": 461
+          },
+          {
+            "start": 466,
+            "end": 468
+          },
+          {
+            "start": 476,
+            "end": 476
+          },
+          {
+            "start": 487,
+            "end": 487
+          },
+          {
+            "start": 501,
+            "end": 501
+          },
+          {
+            "start": 511,
+            "end": 511
+          },
+          {
+            "start": 522,
+            "end": 522
+          },
+          {
+            "start": 532,
+            "end": 532
+          },
+          {
+            "start": 537,
+            "end": 537
+          },
+          {
+            "start": 539,
+            "end": 540
+          }
+        ],
+        "before_hash": "37d121d1d64b01d0978013c9a56dfb3904ff12dcd4e5e537618bf243d77e077b",
+        "after_hash": "29608af9f3f16ef43772feb9b6a6292389abd70333c82c272065f1c915a57d68"
+      },
+      {
+        "file": "src/apple-revocation.ts",
+        "ranges": [
+          {
+            "start": 49,
+            "end": 50
+          }
+        ],
+        "before_hash": "786585c0a07f1fbfe7dd9dde32981f741a1e097f13f3903f1471f61cb53dcd2b",
+        "after_hash": "78039aba1660023a1e22b9544e73c3f52ba355d68947d23d2fd366c944148640"
+      },
+      {
+        "file": "src/auth-admission.ts",
+        "ranges": [
+          {
+            "start": 7,
+            "end": 7
+          },
+          {
+            "start": 20,
+            "end": 23
+          },
+          {
+            "start": 26,
+            "end": 30
+          },
+          {
+            "start": 40,
+            "end": 40
+          },
+          {
+            "start": 56,
+            "end": 71
+          }
+        ],
+        "before_hash": "64c39e850c215d4564d9377933ce54735a4b794d4f17f049e52b2c0741472222",
+        "after_hash": "94792765d1963795c99fcc4112750b34f431a8c36126b2217a17b5988777bdb4"
+      },
+      {
+        "file": "src/http/routes/admin-level-test-attempts.ts",
+        "ranges": [
+          {
+            "start": 19,
+            "end": 21
+          }
+        ],
+        "before_hash": "c03971625798eb6cc8f0ba07f49fe0ef00802ad12b1266bf159dc0016d06c7eb",
+        "after_hash": "8fb4f276e197c3c38c42a7e01e387ddeba99116dd0137a4f6324914a0a7d2941"
+      },
+      {
+        "file": "src/http/routes/admin-level-test-llm-config.ts",
+        "ranges": [
+          {
+            "start": 22,
+            "end": 22
+          },
+          {
+            "start": 28,
+            "end": 28
+          },
+          {
+            "start": 43,
+            "end": 43
+          }
+        ],
+        "before_hash": "8d546fc645c0488c37a497c3237153fa178c9fdc7e490deec5d3f4a06dfe6eb3",
+        "after_hash": "3b21fcab7d3326f51476ebe30a0f141e30c0d3c9ae93add66f6b4c84b0320654"
+      },
+      {
+        "file": "src/http/routes/admin-level-tests.ts",
+        "ranges": [
+          {
+            "start": 46,
+            "end": 46
+          },
+          {
+            "start": 61,
+            "end": 61
+          },
+          {
+            "start": 80,
+            "end": 80
+          },
+          {
+            "start": 102,
+            "end": 102
+          },
+          {
+            "start": 117,
+            "end": 117
+          },
+          {
+            "start": 123,
+            "end": 123
+          },
+          {
+            "start": 129,
+            "end": 129
+          }
+        ],
+        "before_hash": "70e21f70c8b6bd24d4cfa388ac10c5661df9b3a2a325696afddb280e89394717",
+        "after_hash": "0be00c3278892fbb2208987c726bc14898f50ae1b7739df4b57cc49e665c2832"
+      },
+      {
+        "file": "src/llm-config.ts",
+        "ranges": [
+          {
+            "start": 5,
+            "end": 5
+          },
+          {
+            "start": 84,
+            "end": 90
+          },
+          {
+            "start": 96,
+            "end": 98
+          }
+        ],
+        "before_hash": "fe67d753d64c544a77397f8a033cba1a57898ef3f4366098ae8609866dd29fd1",
+        "after_hash": "dfd7f48194de36e91504829252d3f4f870d0948bf77750269e88048b3cc4fb6c"
+      },
+      {
+        "file": "src/outbound-url.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 14
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "390a9bf006763d3c780aec5f61cf6217b684531653efeb690ae911e5a6a4caae"
+      },
+      {
+        "file": "src/token-proxy.ts",
+        "ranges": [
+          {
+            "start": 8,
+            "end": 8
+          },
+          {
+            "start": 33,
+            "end": 35
+          }
+        ],
+        "before_hash": "b52bc1b4146422dc2961d9843d67e703aca50b08620edc421702f19b6913c660",
+        "after_hash": "d7d2bfe361bf8f71411f10313267728c2302d7a86ee4140d56088c7d20b98463"
+      },
+      {
+        "file": "tests/admin-route-guard.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 98
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "140f3ab28a0d821dde816cf552c1194b97e3cd8fd39d2d91c0468a6369426e74"
+      },
+      {
+        "file": "tests/apple-revocation.test.ts",
+        "ranges": [
+          {
+            "start": 7,
+            "end": 13
+          },
+          {
+            "start": 33,
+            "end": 33
+          },
+          {
+            "start": 35,
+            "end": 35
+          },
+          {
+            "start": 51,
+            "end": 51
+          },
+          {
+            "start": 60,
+            "end": 61
+          },
+          {
+            "start": 63,
+            "end": 63
+          }
+        ],
+        "before_hash": "8628ebf9d1e62d946fd9f68e66acc03db3f70ccab4ca24e43e2d11210fe479a3",
+        "after_hash": "debfac4407edbf7f2d020ce598f18907851283b32ded0b7e156afcf78765e991"
+      },
+      {
+        "file": "tests/compiled-api-smoke.test.ts",
+        "ranges": [
+          {
+            "start": 8,
+            "end": 12
+          },
+          {
+            "start": 19,
+            "end": 19
+          },
+          {
+            "start": 29,
+            "end": 29
+          },
+          {
+            "start": 45,
+            "end": 45
+          }
+        ],
+        "before_hash": "7244781ae99da00e4444b0ab00044e267e8dc2005847c887242717abc88cd33e",
+        "after_hash": "5800345af790feccefc9f5da2389155a2d1273c63675611a85893306027e95a3"
+      },
+      {
+        "file": "tests/free-drip-fast-path.test.ts",
+        "ranges": [
+          {
+            "start": 13,
+            "end": 15
+          },
+          {
+            "start": 19,
+            "end": 19
+          },
+          {
+            "start": 22,
+            "end": 23
+          },
+          {
+            "start": 27,
+            "end": 27
+          }
+        ],
+        "before_hash": "1afd4b2ce8896dccedae79a8c0e0713c76bc3988310faf0258baf9a6b6a951aa",
+        "after_hash": "70ebe3af7574098f782b49e8aab446e0a672071451366b24dc0190704a1e614a"
+      },
+      {
+        "file": "tests/http.test.ts",
+        "ranges": [
+          {
+            "start": 52,
+            "end": 60
+          },
+          {
+            "start": 94,
+            "end": 95
+          }
+        ],
+        "before_hash": "cc2b97633730d433bd2794e30c7e9dcda7a319285bfabff91a92ca00c469892d",
+        "after_hash": "78a3655566f4ae6e8e137a18e07b2a5de028d7b9c4079ae4fcf208285a466560"
+      },
+      {
+        "file": "tests/level-tests-llm.test.ts",
+        "ranges": [
+          {
+            "start": 14,
+            "end": 14
+          }
+        ],
+        "before_hash": "c675c4f057920ddecb7e33a0fe49560c8f017c4e11daf7781795cfbc91146b1f",
+        "after_hash": "535f1d12ab31c1039f48c4db27ec64725aa303848427cf6830b82d8b3fb872da"
+      },
+      {
+        "file": "tests/level-tests-policy.test.ts",
+        "ranges": [
+          {
+            "start": 472,
+            "end": 473
+          }
+        ],
+        "before_hash": "9a2d3820e47b68a94ba8be5fe6cd02be9690b4543a3dbb0826a628a5cc48e952",
+        "after_hash": "6bd77366894502407cc4808f88a99ad1173d53aeabb4008d3e7e07d920000603"
+      },
+      {
+        "file": "tests/minute-commerce-config.test.ts",
+        "ranges": [
+          {
+            "start": 16,
+            "end": 19
+          },
+          {
+            "start": 32,
+            "end": 32
+          },
+          {
+            "start": 121,
+            "end": 125
+          }
+        ],
+        "before_hash": "306a1e9a34d69f1a5b8e471fe3f45f19b839d497b2c85864d0a50e735bac4ea9",
+        "after_hash": "b50720f369b47fc4e7bf11881c73151781f3752478b3492563b517eae08a2d03"
+      },
+      {
+        "file": "tests/minute-providers.test.ts",
+        "ranges": [
+          {
+            "start": 20,
+            "end": 26
+          },
+          {
+            "start": 390,
+            "end": 390
+          },
+          {
+            "start": 392,
+            "end": 392
+          }
+        ],
+        "before_hash": "7c1d2a0a3da8f1b768b8c8f23abe22e5a34507152fb9614b3d7761e7d0a98975",
+        "after_hash": "7f36ee2ee7788831fd9938c3317413a424ff1428cf94efb00ab156c49794d16f"
+      },
+      {
+        "file": "tests/outbound-url-policy.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 44
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "54c32ef1d0359cfa87b45f1931d5c3c92dc99526a097d81eb22e1b88e6ddec35"
+      },
+      {
+        "file": "tests/token-proxy.test.ts",
+        "ranges": [
+          {
+            "start": 22,
+            "end": 24
+          },
+          {
+            "start": 26,
+            "end": 27
+          }
+        ],
+        "before_hash": "8d7fd40d3ef2ee914f6f76ab3401265dc0f35af3745d65236f4271ab5da2eb87",
+        "after_hash": "091d15919a420dc2eed3d47bd6ba3b525309a9e67b26fe7719cb1de7bb4375a2"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-31T18:56:34.440Z",
+    "completed_at": "2026-10-31T18:56:37.049Z",
+    "duration_ms": 2609,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 2609,
+    "peakMemoryBytes": 218259456,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 20,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 3,
+  "rewake_finding_count": 2,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-44a9046167d89fae67c033b7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 117,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-10-31T17:55:14.202Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "73cfba2aa30d344b54ccad36ddcf1cceb4286c5da915bca76f6e4dc75b24febb",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-44a9046167d89fae67c033b7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 117,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-10-31T17:56:02.710Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "73cfba2aa30d344b54ccad36ddcf1cceb4286c5da915bca76f6e4dc75b24febb",
+        "candidate_before_evidence_hash": "73cfba2aa30d344b54ccad36ddcf1cceb4286c5da915bca76f6e4dc75b24febb",
+        "post_change_evidence_hash_at_previous_location": "07cfeb296b5c8d9c9701b9c5aef573c78242ecdcdef46cb9a89cd92d7d4e98b7",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-44a9046167d89fae67c033b7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 117,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-10-31T17:56:02.710Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "73cfba2aa30d344b54ccad36ddcf1cceb4286c5da915bca76f6e4dc75b24febb",
+        "candidate_before_evidence_hash": "73cfba2aa30d344b54ccad36ddcf1cceb4286c5da915bca76f6e4dc75b24febb",
+        "post_change_evidence_hash_at_previous_location": "07cfeb296b5c8d9c9701b9c5aef573c78242ecdcdef46cb9a89cd92d7d4e98b7",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-b619977eb283b7e6ff4029e7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-10-31T17:58:58.738Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "a37415b42456fd265b2a877d885c6e84f0eb114e69eb4c65aa2251c493571898",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-75c5b9cf338dab32c493754d",
+      "file": "tests/minute-providers.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-10-31T17:59:01.202Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "fc6124f75499a63c661526f2de98bd4ce0024e9305e2696a23eb4bacfdb395bb",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-b619977eb283b7e6ff4029e7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-10-31T18:00:07.102Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "a37415b42456fd265b2a877d885c6e84f0eb114e69eb4c65aa2251c493571898",
+        "candidate_before_evidence_hash": "a37415b42456fd265b2a877d885c6e84f0eb114e69eb4c65aa2251c493571898",
+        "post_change_evidence_hash_at_previous_location": "8c7b3c4dcccf41d4eb84f803e492267eff8f9369b307e21e2ecb1e039499f84d",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-b619977eb283b7e6ff4029e7",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-10-31T18:00:07.102Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "a37415b42456fd265b2a877d885c6e84f0eb114e69eb4c65aa2251c493571898",
+        "candidate_before_evidence_hash": "a37415b42456fd265b2a877d885c6e84f0eb114e69eb4c65aa2251c493571898",
+        "post_change_evidence_hash_at_previous_location": "8c7b3c4dcccf41d4eb84f803e492267eff8f9369b307e21e2ecb1e039499f84d",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-dd8753c88b0ca2b0e16a24c6",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 26,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "blocked",
+      "decision": "deny",
+      "at": "2026-10-31T18:00:09.600Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-dd8753c88b0ca2b0e16a24c6",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 26,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-10-31T18:00:49.431Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "candidate_before_evidence_hash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "post_change_evidence_hash_at_previous_location": "df3982fd610173599241fca93c7c866683f58f541eced1c2098102145477164c",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-dd8753c88b0ca2b0e16a24c6",
+      "file": "tests/minute-commerce-config.test.ts",
+      "line": 26,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-10-31T18:00:49.431Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "candidate_before_evidence_hash": "13f1575ead9f6f3546e5863b4d244ea1d72b187779295d596d3b9f3e4ccc5175",
+        "post_change_evidence_hash_at_previous_location": "df3982fd610173599241fca93c7c866683f58f541eced1c2098102145477164c",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-75c5b9cf338dab32c493754d",
+      "file": "tests/minute-providers.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "fixed_candidate",
+      "decision": "repair_observed",
+      "at": "2026-10-31T18:01:15.266Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "fc6124f75499a63c661526f2de98bd4ce0024e9305e2696a23eb4bacfdb395bb",
+        "candidate_before_evidence_hash": "fc6124f75499a63c661526f2de98bd4ce0024e9305e2696a23eb4bacfdb395bb",
+        "post_change_evidence_hash_at_previous_location": "8c7b3c4dcccf41d4eb84f803e492267eff8f9369b307e21e2ecb1e039499f84d",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-75c5b9cf338dab32c493754d",
+      "file": "tests/minute-providers.test.ts",
+      "line": 1,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "硬编码凭据",
+      "status": "static_verified",
+      "decision": "static_rescan_passed",
+      "at": "2026-10-31T18:01:15.266Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "observed",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "fc6124f75499a63c661526f2de98bd4ce0024e9305e2696a23eb4bacfdb395bb",
+        "candidate_before_evidence_hash": "fc6124f75499a63c661526f2de98bd4ce0024e9305e2696a23eb4bacfdb395bb",
+        "post_change_evidence_hash_at_previous_location": "8c7b3c4dcccf41d4eb84f803e492267eff8f9369b307e21e2ecb1e039499f84d",
+        "runtime_oracle": false,
+        "verification": {
+          "method": "mimosa-posttool-static-rescan",
+          "finding_absent": true,
+          "runtime_oracle": false
+        }
+      }
+    },
+    {
+      "finding_id": "mimosa-9a61240f5105f93280f91a5d",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 22,
+      "severity": "high",
+      "category": "SQL 注入",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-10-31T18:56:37.049Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-7903d34691bba5bb5c59b488",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 23,
+      "severity": "high",
+      "category": "SQL 注入",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-10-31T18:56:37.049Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "8d58ebb316b9c80442dbd026cd84b77009837426b1f218b3e6cc653908e72e9b",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-9a61240f5105f93280f91a5d",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 27,
+      "severity": "high",
+      "category": "SQL 注入",
+      "status": "blocked",
+      "decision": "stop_rewake",
+      "at": "2026-10-31T18:56:37.049Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-9a61240f5105f93280f91a5d",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 22,
+      "end_line": 22,
+      "severity": "high",
+      "category": "SQL 注入",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "tests/free-drip-fast-path.test.ts",
+          "line": 22,
+          "evidence_hash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-7903d34691bba5bb5c59b488",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 23,
+      "end_line": 23,
+      "severity": "high",
+      "category": "SQL 注入",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "tests/free-drip-fast-path.test.ts",
+          "line": 23,
+          "evidence_hash": "8d58ebb316b9c80442dbd026cd84b77009837426b1f218b3e6cc653908e72e9b",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    },
+    {
+      "finding_id": "mimosa-9a61240f5105f93280f91a5d",
+      "file": "tests/free-drip-fast-path.test.ts",
+      "line": 27,
+      "end_line": 27,
+      "severity": "high",
+      "category": "SQL 注入",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "blocked",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "tests/free-drip-fast-path.test.ts",
+          "line": 27,
+          "evidence_hash": "8208d0aaf5aad4c51f50fbf5e2729a7dc4f88501ece44f6891897b562bce79d4",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": true
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_570faca5-117d-495f-917c-d144c86e2ac7-20261031T185637049Z-3431319-b7edfcbf2503.json",
+    "latest_report": ".mimosa/reports/task-review-sess_570faca5-117d-495f-917c-d144c86e2ac7.json",
+    "history_summary": ".mimosa/history/run-20261031T185637049Z-3431319-b7edfcbf2503.json"
+  }
+}

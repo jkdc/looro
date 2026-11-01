@@ -49,7 +49,15 @@ test('webhooks and public routes answer without proxy headers while client route
     if (text.startsWith('SELECT 1')) return { rows: [{ ok: 1 }], rowCount: 1 };
     if (text.includes('ai_pricing_policy')) return { rows: [{ version: 1, service_fee_basis_points: 1500 }], rowCount: 1 };
     throw new Error('Unexpected database query');
-  } } as unknown as Database;
+  },
+  // Public reads without an authenticated identity share the durable global
+  // admission cap; this fixture always reports a window below its maximum.
+  connect: async () => ({ query: async (text: string) => {
+    if (text.includes('auth_rate_limits')) return { rows: [{ hits: 1 }], rowCount: 1 };
+    if (text.startsWith('SELECT now()')) return { rows: [{ now: new Date() }], rowCount: 1 };
+    if (['BEGIN', 'COMMIT', 'ROLLBACK'].includes(text.trim())) return { rows: [], rowCount: 0 };
+    throw new Error('Unexpected admission query');
+  }, release: () => {} }) } as unknown as Database;
   const proxy = { hmacKey: 'a'.repeat(64), proxyToken: 'b'.repeat(64), allowLocalLoopback: false };
   const payments = new SandboxPayments('sk_test_example_not_a_real_key', 'whsec_example_not_a_real_secret', new Map(), 'http://localhost:8080');
   const app = createApp({ db, auth: {}, payments, accounts: { admission: new AuthAdmission(db, proxy) } });
@@ -83,8 +91,8 @@ test('webhooks and public routes answer without proxy headers while client route
       const response = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH, payload: {} });
       assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'minute_purchases_unavailable');
     }
-    // Proxy-exempt public routes share the proxy's single socket address, so a storm past the
-    // 120/minute boundary on one of them must not 429 them or the other exempt routes.
+    // Public reads stay open through a storm: without an authenticated network
+    // identity they share only the durable global cap, never a per-address bucket.
     for (let count = 0; count < 150; count++) {
       const response = await app.inject({ url: '/v1/pricing' });
       assert.equal(response.statusCode, 200);

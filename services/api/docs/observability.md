@@ -176,6 +176,10 @@ producción solo Caddy expone 80/443; el acceso a estas UIs es por túnel SSH.
 | 5001 | `webhook-logger` | sumidero local: cada payload de alerta va a stdout |
 | 3003 | `grafana` | dashboards (admin / `GRAFANA_PASSWORD` o `palique-local`) |
 
+El default `palique-local` existe para desarrollo local; todos estos puertos
+publican solo en `127.0.0.1`. Un despliegue de producción debe fijar
+`GRAFANA_PASSWORD` explícitamente en su entorno y no depender del default.
+
 El volumen `tempo_data` se chown-ea a `10001` una vez mediante el servicio
 `tempo-init` (contenedor efímero), porque Tempo no puede crear su block store
 en un volumen nuevo propiedad de root. `make up` lo hace solo.

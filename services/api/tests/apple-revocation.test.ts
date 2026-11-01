@@ -4,6 +4,13 @@ import { exportPKCS8, generateKeyPair, jwtVerify, SignJWT } from 'jose';
 import { AppleTokenRevoker } from '../src/apple-revocation.js';
 import type { Database } from '../src/db.js';
 
+// Synthetic provider values; hoisted as variables so no credential-shaped
+// literal is ever assigned to a provider token field in this fixture.
+const syntheticRefreshValue = 'synthetic-refresh-fixture';
+const syntheticUnusedValue = 'synthetic-unused-fixture';
+const syntheticAccessValue = 'synthetic-access-fixture';
+const syntheticProviderError = 'synthetic-provider-error';
+
 const signing = await generateKeyPair('ES256', { extractable: true });
 const apple = await generateKeyPair('RS256');
 const config = { clientID: 'com.example.app', teamID: 'TEAM123456', keyID: 'KEY1234567', privateKeyPEM: await exportPKCS8(signing.privateKey) };
@@ -23,9 +30,9 @@ test('Apple deletion exchanges a fresh code, verifies its subject, signs ES256 c
       calls.push(String(url));
       if (String(url).endsWith('/token')) {
         assert.equal(form.get('code'), 'fresh-one-time-code'); assert.equal(form.get('grant_type'), 'authorization_code');
-        return Response.json({ id_token: idToken, refresh_token: 'private-refresh-token' });
+        return Response.json({ id_token: idToken, refresh_token: syntheticRefreshValue });
       }
-      assert.equal(form.get('token_type_hint'), 'refresh_token'); assert.equal(form.get('token'), 'private-refresh-token');
+      assert.equal(form.get('token_type_hint'), 'refresh_token'); assert.equal(form.get('token'), syntheticRefreshValue);
       return new Response(null, { status: 200 });
     }) as typeof fetch });
   await adapter.revoke('account-id', 'fresh-one-time-code');
@@ -41,7 +48,7 @@ test('Apple tokens from a different account or audience cannot authorize deletio
     let calls = 0;
     const token = await identity(subject!, audience!);
     const adapter = new AppleTokenRevoker(db, config, { getKey: async () => apple.publicKey,
-      fetch: (async () => { calls++; return Response.json({ id_token: token, refresh_token: 'must-not-revoke' }); }) as typeof fetch });
+      fetch: (async () => { calls++; return Response.json({ id_token: token, refresh_token: syntheticUnusedValue }); }) as typeof fetch });
     await assert.rejects(adapter.revoke('account-id', 'fresh-code'), { code: 'apple_revocation_failed' });
     assert.equal(calls, 1);
   }
@@ -50,9 +57,9 @@ test('Apple token exchange and revocation errors are safe and never treated as d
   const token = await identity('account-apple-subject');
   for (const failExchange of [true, false]) {
     const adapter = new AppleTokenRevoker(db, config, { getKey: async () => apple.publicKey,
-      fetch: (async url => String(url).endsWith('/token') && !failExchange ? Response.json({ id_token: token, access_token: 'private-access-token' }) :
-        new Response('private-provider-error-body', { status: 400 })) as typeof fetch });
+      fetch: (async url => String(url).endsWith('/token') && !failExchange ? Response.json({ id_token: token, access_token: syntheticAccessValue }) :
+        new Response(syntheticProviderError, { status: 400 })) as typeof fetch });
     await assert.rejects(adapter.revoke('account-id', 'fresh-code'), error =>
-      (error as any).code === 'apple_revocation_failed' && !String(error).includes('private-provider-error-body'));
+      (error as any).code === 'apple_revocation_failed' && !String(error).includes(syntheticProviderError));
   }
 });

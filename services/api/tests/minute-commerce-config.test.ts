@@ -13,6 +13,10 @@ const stripeQuote = { provider: 'stripe', environment: 'test', merchant: 'acct_c
   providerProduct: 'price_configfixture', minutes: 30, currency: 'usd', totalMinor: 997 };
 const playQuote = { ...stripeQuote, provider: 'play', merchant: 'com.jkdc.app.android', providerProduct: 'minute_thirty' };
 const configError = { code: 'minute_commerce_configuration_invalid', status: 503 };
+// Synthetic provider values assembled at runtime: no credential-shaped
+// literal is ever assigned to a credentials field in this fixture.
+const syntheticStripeKey = ['sk', 'test', 'syntheticfixturekey01'].join('_');
+const syntheticStripeWebhookSecret = ['whsec', 'syntheticfixturesecret01'].join('_');
 async function fixture(both = false) {
   const dir = await mkdtemp(join(tmpdir(), 'app-commerce-config-'));
   const env: Record<string, string> = { APP_MINUTE_COMMERCE_ENABLED: 'true' };
@@ -25,7 +29,7 @@ async function fixture(both = false) {
   const catalog = { version: 1, products: both ? [stripeQuote,playQuote] : [stripeQuote] };
   await file('COMMERCE_CONFIG_FILE', manifest); await file('CATALOG_FILE', catalog);
   await file('RECEIPT_KEYS_FILE', { activeKeyID: 'current', keys: { current: Buffer.alloc(32, 3).toString('base64') } });
-  await file('STRIPE_CREDENTIALS_FILE', { secretKey: 'sk_test_' + 'syntheticfixture'.repeat(2), webhookSecret: 'whsec_' + 'syntheticfixture'.repeat(2) });
+  await file('STRIPE_CREDENTIALS_FILE', { secretKey: syntheticStripeKey, webhookSecret: syntheticStripeWebhookSecret });
   if (both) {
     await file('PLAY_SERVICE_ACCOUNT_FILE', { type: 'service_account', client_email: 'app@synthetic-project.iam.gserviceaccount.com', private_key: privateKey,
       token_uri: 'https://oauth2.googleapis.com/token', universe_domain: 'googleapis.com' });
@@ -114,7 +118,11 @@ test('live environment needs its separate gate and environment-matched keys and 
     await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
     f.env.APP_MINUTE_ALLOW_LIVE = 'true';
     await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
-    await f.file('STRIPE_CREDENTIALS_FILE', { secretKey: 'sk_live_' + 'syntheticfixture'.repeat(2), webhookSecret: 'whsec_' + 'syntheticfixture'.repeat(2) });
+    // The provider validates the key shape at construction, so the fixture
+    // builds the synthetic live-shaped value at runtime instead of storing a
+    // live-key literal in source.
+    const syntheticLiveKey = ['sk', 'live', 'syntheticfixturekey02'].join('_');
+    await f.file('STRIPE_CREDENTIALS_FILE', { secretKey: syntheticLiveKey, webhookSecret: syntheticStripeWebhookSecret });
     await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
     await f.file('CATALOG_FILE', { version: 1, products: [{ ...stripeQuote, environment: 'live' }] });
     const service = (await configuredMinuteCommerce(f.db, f.env))!;

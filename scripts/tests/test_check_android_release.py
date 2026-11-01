@@ -378,6 +378,16 @@ class AndroidReleaseTests(unittest.TestCase):
         self.assertEqual(previous_direct["scope"], "hosted-minute-release")
         self.assertEqual(direct["scope"], "hosted-minute-release")
 
+    def test_xml_parsing_rejects_doctype_documents_entirely(self):
+        # Entity expansion requires a DTD; the parser helper rejects any
+        # DOCTYPE document before ElementTree ever sees it (CWE-776 guard).
+        spec = {"packageName": "com.jkdc.app.android", "versionCode": 1, "versionName": "0.1",
+                "minSdk": 26, "targetSdk": 36}
+        for text in ('<!DOCTYPE manifest [<!ENTITY x "y">]><manifest package="com.jkdc.app.android"/>',
+                     '<!doctype manifest><manifest package="com.jkdc.app.android"/>'):
+            with self.assertRaises(release.InvalidRelease):
+                release.parse_release_xml(text, "Unexpected manifest document")
+
 
 if __name__ == "__main__":
     unittest.main()

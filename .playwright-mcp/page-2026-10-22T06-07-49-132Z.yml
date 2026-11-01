@@ -1,0 +1,26 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: 
+    - heading "Palique · Admin" [level=1] [ref=e7]
+  - generic [ref=e9]:
+    - heading "Inicio de sesión de operador" [level=2] [ref=e10]
+    - generic [ref=e11]: Acceso reservado; cada entrada queda registrada.
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: Usuario
+        - textbox "Usuario" [ref=e15]
+      - generic [ref=e16]:
+        - generic [ref=e17]: Contraseña
+        - textbox "Contraseña" [ref=e18]
+      - button " Entrar" [ref=e19] [cursor=pointer]:
+        - generic [ref=e20]: 
+        - text: Entrar
+    - generic [ref=e21]: o
+    - generic [ref=e22]:
+      - generic [ref=e23]: Sesión existente (token bearer)
+      - textbox "Sesión existente (token bearer)" [ref=e24]:
+        - /placeholder: 43 caracteres
+      - generic [ref=e25]: Convierte un token emitido previamente en cookie de sesión. Útil para acceso no interactivo.
+    - button " Crear sesión" [ref=e26] [cursor=pointer]:
+      - generic [ref=e27]: 
+      - text: Crear sesión

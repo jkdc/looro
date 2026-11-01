@@ -95,8 +95,9 @@ class EngineOverridesStore(
     private fun entry(engineId: String) = "custom_key_$engineId"
 }
 
-private val keyEnvBindings = listOf(RemoteEngineConfig.DEEPSEEK, RemoteEngineConfig.GLM, RemoteEngineConfig.GLM_45)
-    .map { it.keyEnvVar to it.id }
+private val keyEnvBindings = listOf(
+    RemoteEngineConfig.DEEPSEEK, RemoteEngineConfig.GLM, RemoteEngineConfig.GLM_45, RemoteEngineConfig.OPENCODE,
+).map { it.keyEnvVar to it.id }
 
 /** Maps a provider's key environment variable to its engine ids; empty when
     the env var does not belong to a local provider (e.g. the OpenAI

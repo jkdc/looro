@@ -5,6 +5,7 @@ import { readBoundedJSON, ProxyResponseError } from './proxy-transport.js';
 import { paliqueMetrics } from './metrics.js';
 import { log } from './log.js';
 import { ServiceError } from './errors.js';
+import { assertOutboundUrl } from './outbound-url.js';
 
 /** Token billing proxy: relays a non-streaming OpenAI-compatible completion
     call (v1 contract; `stream: true` is rejected) to the configured provider
@@ -29,7 +30,9 @@ const boundedInteger=(value:string|undefined,fallback:number,max:number,name:str
 export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig | undefined => {
   const providerURL = env.PROXY_PROVIDER_URL, providerKey = env.PROXY_PROVIDER_KEY;
   if (!providerURL || !providerKey) return undefined;
-  try { new URL(providerURL); } catch { throw new Error('PROXY_PROVIDER_URL must be an absolute URL.'); }
+  // The Authorization header carries the server key: plain http is only
+  // acceptable for loopback lab transports.
+  assertOutboundUrl(providerURL, 'PROXY_PROVIDER_URL');
   const maxConcurrentPerAccount = Number(env.PROXY_MAX_CONCURRENT ?? 2);
   if (!Number.isSafeInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
     throw new Error('PROXY_MAX_CONCURRENT must be a positive integer.');

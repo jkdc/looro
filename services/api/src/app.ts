@@ -67,9 +67,10 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
-// These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
-// and behind a proxy they all share one socket address, so they also skip the shared limiter.
-const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current', '/v1/level-tests/generated', '/v1/level-tests/hybrid']);
+// Cacheable public content: carries no session, but is now durably admitted —
+// per visitor network when the proxy authenticates the address, global-only
+// otherwise (see the admission block in the request hook).
+const publicContentPaths = new Set(['/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current', '/v1/level-tests/generated', '/v1/level-tests/hybrid']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -169,10 +170,35 @@ export function createApp(services: Services) {
     // headers, and proxy headers would 503 them. They also stay outside the shared in-memory
     // limiter so a client 429 storm cannot delay payment confirmation.
     if (path === STRIPE_WEBHOOK_PATH || path === STRIPE_MINUTES_WEBHOOK_PATH) return;
-    // Proxy-exempt public routes share the proxy's single socket address, so they stay outside
-    // the shared limiter too: readiness probes, the catalog and payment return must not be
-    // strangled by one abusive client. A durable per-client limiter remains follow-up work.
-    if (proxyExemptPaths.has(path)) return;
+    // Readiness probes and the sandbox payment return page: never throttled.
+    if (path === '/readyz' || path === '/payment-return') return;
+    // Public content reads get the durable admission they previously lacked
+    // (a known gap): per visitor network when the proxy authenticates the
+    // address, global-only otherwise. They never enter the shared in-memory
+    // limiter — behind a proxy all visitors share one socket address, and a
+    // per-address bucket would let one visitor strangle everyone.
+    if (publicContentPaths.has(path)) {
+      const admission = services.accounts?.admission;
+      if (!admission) return;
+      const remoteAddress = request.raw.socket.remoteAddress ?? request.ip;
+      try {
+        await admission.enter('public', request.headers, remoteAddress);
+        return;
+      } catch (error) {
+        if (error instanceof ServiceError && error.status === 429) { reply.header('Retry-After', '3600'); throw error; }
+        // Without an authenticated network identity the request cannot be
+        // attributed to a visitor; failing closed would 503 every visitor of a
+        // deployment whose proxy does not forward the headers. The global
+        // durable cap still applies.
+        if (!(error instanceof ServiceError && error.code === 'accounts_proxy_not_ready')) throw error;
+      }
+      try { await admission.enterGlobal('public'); }
+      catch (globalError) {
+        if (globalError instanceof ServiceError && globalError.status === 429) { reply.header('Retry-After', '3600'); throw globalError; }
+        throw globalError;
+      }
+      return;
+    }
     let networkKey = request.ip;
     const proxy = services.accounts?.admission.config ?? services.accessRequests?.config;
     if (proxy) {

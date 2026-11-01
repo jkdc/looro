@@ -1,0 +1,202 @@
+import type { Database } from './db.js';
+import { ServiceError } from './errors.js';
+
+// Fixed read-only analytics. No client text ever becomes SQL: only the set name
+// (validated) and the clamped day count reach the queries.
+export const TIMESERIES_SETS = ['overview', 'growth', 'voice', 'economy', 'usage', 'tokens'] as const;
+export type TimeseriesSet = (typeof TIMESERIES_SETS)[number];
+
+interface SeriesMetric { name: string; label: string; unit: 'count' | 'minor' | 'milliseconds' | 'nano'; sql: string }
+
+// $1 is the clamped day count; every metric returns one row per UTC day, zero-filled.
+// The label is emitted as calendar text from the database: a JS Date round-trip
+// shifts every label a day back on hosts east of UTC (pg parses DATE as local
+// midnight, toISOString then lands on the previous day).
+const daily = (inner: string, value = 'count(*)::int') =>
+  `SELECT to_char(d, 'YYYY-MM-DD') AS day, COALESCE(m.value, 0) AS value
+   FROM generate_series(now()::date - ($1::int - 1), now()::date, interval '1 day') d
+   LEFT JOIN (SELECT ${inner} GROUP BY 1) m ON m.day = d::date ORDER BY d::date`;
+
+const SERIES: Record<TimeseriesSet, SeriesMetric[]> = {
+  overview: [
+    { name: 'signups', label: 'Nuevas cuentas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM accounts WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'sessions', label: 'Sesiones de voz', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM hosted_sessions WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'orders', label: 'Órdenes de compra', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM minute_purchase_orders WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'revenue_minor', label: 'Volumen de órdenes (céntimos)', unit: 'minor',
+      sql: daily(`created_at::date AS day, COALESCE(sum(total_minor), 0)::bigint AS value FROM minute_purchase_orders WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'waitlist', label: 'Peticiones de waitlist', unit: 'count',
+      sql: daily(`requested_at::date AS day, count(*)::int AS value FROM access_requests WHERE requested_at >= now()::date - ($1::int - 1)`) }
+  ],
+  growth: [
+    { name: 'signups', label: 'Nuevas cuentas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM accounts WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'guests', label: 'Nuevas cuentas invitado', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM accounts WHERE is_guest AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'waitlist', label: 'Peticiones de waitlist', unit: 'count',
+      sql: daily(`requested_at::date AS day, count(*)::int AS value FROM access_requests WHERE requested_at >= now()::date - ($1::int - 1)`) },
+    { name: 'welcome_claims', label: 'Minutos de bienvenida concedidos', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM minute_entries WHERE kind = 'welcome' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'ai_reports', label: 'Informes de IA', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM ai_feedback_reports WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'active_accounts', label: 'Cuentas con actividad en el ledger', unit: 'count',
+      sql: daily(`created_at::date AS day, count(DISTINCT account_id)::int AS value FROM minute_entries WHERE created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  voice: [
+    { name: 'sessions', label: 'Sesiones de voz creadas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM hosted_sessions WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'closed', label: 'Sesiones de voz cerradas', unit: 'count',
+      sql: daily(`close_requested_at::date AS day, count(*)::int AS value FROM hosted_sessions WHERE close_requested_at >= now()::date - ($1::int - 1)`) },
+    { name: 'charged_ms', label: 'Tiempo de conversación cobrado (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(sum(charged_ms), 0)::bigint AS value FROM hosted_sessions WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'helpers', label: 'Peticiones de helpers', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM hosted_helper_requests WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'helper_cost_nano', label: 'Coste de helpers (nanoUSD)', unit: 'nano',
+      sql: daily(`created_at::date AS day, COALESCE(sum(cost_nano), 0)::bigint AS value FROM hosted_helper_requests WHERE created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  economy: [
+    { name: 'orders', label: 'Órdenes de compra', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM minute_purchase_orders WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'revenue_minor', label: 'Volumen de órdenes (céntimos)', unit: 'minor',
+      sql: daily(`created_at::date AS day, COALESCE(sum(total_minor), 0)::bigint AS value FROM minute_purchase_orders WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'minutes_granted_ms', label: 'Minutos concedidos (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE balance_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'minutes_consumed_ms', label: 'Minutos consumidos (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(-sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE balance_delta_ms < 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'sandbox_grants_ms', label: 'Concesiones sandbox antiguas (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(sum(sandbox_delta_ms), 0)::bigint AS value FROM minute_entries WHERE sandbox_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'subscription_granted_ms', label: 'Minutos de suscripción concedidos (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE kind = 'subscription' AND balance_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'new_subscriptions', label: 'Nuevas suscripciones', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM subscriptions WHERE created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  usage: [
+    { name: 'dau', label: 'Usuarios activos (DAU)', unit: 'count',
+      sql: daily(`created_at::date AS day, count(DISTINCT account_id)::int AS value FROM usage_events WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'sessions', label: 'Sesiones iniciadas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'session_started' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'lessons', label: 'Lecciones completadas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'lesson_completed' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'practice', label: 'Rondas de repaso', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'practice_completed' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'lookups', label: 'Búsquedas de palabras', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'word_lookup' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'replays', label: 'Repeticiones en voz alta', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'replay_used' AND created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  tokens: [
+    { name: 'proxy_calls', label: 'Llamadas al proxy de tokens', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'input_tokens', label: 'Tokens de entrada', unit: 'count',
+      sql: daily(`created_at::date AS day, COALESCE(sum(input_tokens), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'output_tokens', label: 'Tokens de salida', unit: 'count',
+      sql: daily(`created_at::date AS day, COALESCE(sum(output_tokens), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'settled_nano', label: 'nanoUSD liquidados', unit: 'nano',
+      sql: daily(`created_at::date AS day, COALESCE(sum(settled_nano), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) }
+  ]
+};
+
+export interface TimeseriesPoint { day: string; value: number }
+export interface Timeseries { set: TimeseriesSet; days: number; series: Array<{ name: string; label: string; unit: string; points: TimeseriesPoint[] }> }
+
+export async function timeseries(db: Database, set: string, requestedDays: number): Promise<Timeseries> {
+  if (!(SERIES as Record<string, unknown>)[set]) throw new ServiceError('invalid_request');
+  const days = Number.isSafeInteger(requestedDays) ? Math.min(Math.max(requestedDays, 1), 90) : 30;
+  const metrics = SERIES[set as TimeseriesSet]!;
+  const results = await Promise.all(metrics.map(async metric => ({
+    ...metric, points: (await db.query(metric.sql, [days])).rows.map(row => ({
+      day: String(row.day), value: Number(row.value)
+    }))
+  })));
+  return { set: set as TimeseriesSet, days, series: results.map(({ name, label, unit, points }) => ({ name, label, unit, points })) };
+}
+
+export interface AdminSnapshot { generatedAt: string; accounts: { total: number; guests: number; deleted: number };  liveAppSessions: number; minuteWallets: { balanceMs: number; reservedMs: number };
+  activeAccounts30d: number; hostedSessions: Record<string, number>; helperRequests: { total: number; cost30dNano: number };
+  orders: Array<{ provider: string; environment: string; entitlementKind: string; count: number; totalMinor: number }>;
+  waitlist: number; aiReports: { total: number; last30d: number }; campaigns: { applied: number; prepared: number };
+  subscriptions: { active: number; trialing: number; pastDue: number; canceled: number; grantsTotal: number };
+  adminActions: number }
+
+export async function snapshot(db: Database): Promise<AdminSnapshot> {
+  const [accounts, sessions, minutes, active, hosted, helpers, orders, waitlist, reports, campaigns, actions, subscriptions] =
+    await Promise.all([
+      db.query(`SELECT count(*) AS total, count(*) FILTER (WHERE is_guest) AS guests,
+        count(*) FILTER (WHERE deleted_at IS NOT NULL) AS deleted FROM accounts`),
+      db.query('SELECT count(*) AS count FROM auth_sessions WHERE expires_at > now() AND revoked_at IS NULL'),
+      db.query('SELECT COALESCE(sum(balance_ms), 0) AS balance, COALESCE(sum(reserved_ms), 0) AS reserved FROM minute_wallets'),
+      db.query(`SELECT count(DISTINCT account_id) AS count FROM minute_entries WHERE created_at >= now() - interval '30 days'`),
+      db.query('SELECT state, count(*) AS count FROM hosted_sessions GROUP BY state'),
+      db.query(`SELECT count(*) AS total, COALESCE(sum(cost_nano) FILTER (WHERE created_at >= now() - interval '30 days'), 0) AS cost30
+        FROM hosted_helper_requests`),
+      db.query(`SELECT provider, environment, entitlement_kind, count(*) AS count, COALESCE(sum(total_minor), 0) AS total_minor
+        FROM minute_purchase_orders GROUP BY 1, 2, 3`),
+      db.query('SELECT count(*) AS count FROM access_requests'),
+      db.query(`SELECT count(*) AS total, count(*) FILTER (WHERE created_at >= now() - interval '30 days') AS last30
+        FROM ai_feedback_reports`),
+      db.query(`SELECT count(*) FILTER (WHERE state = 'applied') AS applied,
+        count(*) FILTER (WHERE state <> 'applied') AS prepared FROM minute_campaigns`),
+      db.query('SELECT count(*) AS count FROM admin_actions'),
+      db.query(`SELECT count(*) FILTER (WHERE status='active') AS active, count(*) FILTER (WHERE status='trialing') AS trialing,
+        count(*) FILTER (WHERE status='past_due') AS past_due, count(*) FILTER (WHERE status='canceled') AS canceled,
+        (SELECT count(*) FROM subscription_grants) AS grants_total FROM subscriptions`)
+    ]);
+  const hostedStates: Record<string, number> = {};
+  for (const row of hosted.rows) hostedStates[String(row.state)] = Number(row.count);
+  return {
+    generatedAt: new Date().toISOString(),
+    accounts: { total: Number(accounts.rows[0]!.total), guests: Number(accounts.rows[0]!.guests), deleted: Number(accounts.rows[0]!.deleted) },
+    liveAppSessions: Number(sessions.rows[0]!.count),
+    minuteWallets: { balanceMs: Number(minutes.rows[0]!.balance), reservedMs: Number(minutes.rows[0]!.reserved) },
+    activeAccounts30d: Number(active.rows[0]!.count),
+    hostedSessions: hostedStates,
+    helperRequests: { total: Number(helpers.rows[0]!.total), cost30dNano: Number(helpers.rows[0]!.cost30) },
+    orders: orders.rows.map(row => ({ provider: String(row.provider), environment: String(row.environment),
+      entitlementKind: String(row.entitlement_kind), count: Number(row.count), totalMinor: Number(row.total_minor) })),
+    waitlist: Number(waitlist.rows[0]!.count),
+    aiReports: { total: Number(reports.rows[0]!.total), last30d: Number(reports.rows[0]!.last30) },
+    campaigns: { applied: Number(campaigns.rows[0]!.applied), prepared: Number(campaigns.rows[0]!.prepared) },
+    subscriptions: { active: Number(subscriptions.rows[0]!.active), trialing: Number(subscriptions.rows[0]!.trialing),
+      pastDue: Number(subscriptions.rows[0]!.past_due), canceled: Number(subscriptions.rows[0]!.canceled),
+      grantsTotal: Number(subscriptions.rows[0]!.grants_total) },
+    adminActions: Number(actions.rows[0]!.count)
+  };
+}
+
+export interface UsageRetentionRow { day: string; size: number; d1: number; d7: number; d30: number }
+export interface UsageOverview { generatedAt: string; dau: number; wau: number; mau: number; events7d: number;
+  topFeatures: Array<{ name: string; count: number }>; retention: UsageRetentionRow[] }
+
+// Retention cohorts: accounts grouped by signup day, active = any usage event in
+// the window after signup (D1 = day 1, D7 = days 1..7, D30 = days 1..30).
+export async function usageOverview(db: Database, requestedDays: number): Promise<UsageOverview> {
+  const days = Number.isSafeInteger(requestedDays) ? Math.min(Math.max(requestedDays, 7), 90) : 30;
+  const [kpis, features, retention] = await Promise.all([
+    db.query(`SELECT count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '1 day') AS dau,
+      count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '7 days') AS wau,
+      count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '30 days') AS mau,
+      count(*) FILTER (WHERE created_at >= now() - interval '7 days') AS events7d FROM usage_events`),
+    db.query(`SELECT name, count(*)::int AS count FROM usage_events
+      WHERE created_at >= now() - interval '7 days' GROUP BY name ORDER BY count DESC`),
+    db.query(`WITH cohorts AS (
+        SELECT id, created_at::date AS signup FROM accounts WHERE created_at >= now()::date - ($1::int - 1))
+      SELECT c.signup::text AS day, count(*)::int AS size,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '2 day'))::int AS d1,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '8 day'))::int AS d7,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '31 day'))::int AS d30
+      FROM cohorts c GROUP BY c.signup ORDER BY c.signup`, [days])
+  ]);
+  return {
+    generatedAt: new Date().toISOString(),
+    dau: Number(kpis.rows[0]!.dau), wau: Number(kpis.rows[0]!.wau), mau: Number(kpis.rows[0]!.mau),
+    events7d: Number(kpis.rows[0]!.events7d),
+    topFeatures: features.rows.map(row => ({ name: String(row.name), count: Number(row.count) })),
+    retention: retention.rows.map(row => ({ day: String(row.day), size: Number(row.size),
+      d1: Number(row.d1), d7: Number(row.d7), d30: Number(row.d30) }))
+  };
+}

@@ -24,6 +24,9 @@ class ConversationEngineDeps(
     /** Reads the signed-in app account session (the same AccountSessionStore the
         hosted client uses); the hosted-proxy engine authenticates with it. */
     val readSession: (suspend () -> AccountSession?)? = null,
+    /** Resolves an engine id to its selected model id (Settings model picker,
+        backed by EngineModelsStore); null keeps the engine's default model. */
+    val modelLookup: ((String) -> String?)? = null,
 ) {
     companion object {
         /** Default key lookup: environment first, then JVM system properties (unit tests). */

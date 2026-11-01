@@ -1,0 +1,234 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - complementary [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - heading " Palique · Admin" [level=1] [ref=f1e5]:
+          - generic [ref=f1e6]: 
+          - generic [ref=f1e8]: Palique · Admin
+        - generic [ref=f1e9]:
+          - list [ref=f1e10]:
+            - listitem [ref=f1e11]:
+              - link " Resumen" [ref=f1e12] [cursor=pointer]:
+                - /url: "#overview"
+                - generic [ref=f1e13]: 
+                - generic [ref=f1e15]: Resumen
+            - listitem [ref=f1e16]:
+              - link " Crecimiento" [ref=f1e17] [cursor=pointer]:
+                - /url: "#growth"
+                - generic [ref=f1e18]: 
+                - generic [ref=f1e20]: Crecimiento
+            - listitem [ref=f1e21]:
+              - link " Voz" [ref=f1e22] [cursor=pointer]:
+                - /url: "#voice"
+                - generic [ref=f1e23]: 
+                - generic [ref=f1e25]: Voz
+            - listitem [ref=f1e26]:
+              - link " Economía" [ref=f1e27] [cursor=pointer]:
+                - /url: "#economy"
+                - generic [ref=f1e28]: 
+                - generic [ref=f1e30]: Economía
+            - listitem [ref=f1e31]:
+              - link " Uso" [ref=f1e32] [cursor=pointer]:
+                - /url: "#usage"
+                - generic [ref=f1e33]: 
+                - generic [ref=f1e35]: Uso
+            - listitem [ref=f1e36]:
+              - link " Tablas" [ref=f1e37] [cursor=pointer]:
+                - /url: "#browse"
+                - generic [ref=f1e38]: 
+                - generic [ref=f1e40]: Tablas
+            - listitem [ref=f1e41]:
+              - link " Política bienvenida" [ref=f1e42] [cursor=pointer]:
+                - /url: "#policy"
+                - generic [ref=f1e43]: 
+                - generic [ref=f1e45]: Política bienvenida
+            - listitem [ref=f1e46]:
+              - link " Generación de exámenes" [ref=f1e47] [cursor=pointer]:
+                - /url: "#level-tests"
+                - generic [ref=f1e48]: 
+                - generic [ref=f1e50]: Generación de exámenes
+            - listitem [ref=f1e51]:
+              - link " Resultados de exámenes" [ref=f1e52] [cursor=pointer]:
+                - /url: "#exam-results"
+                - generic [ref=f1e53]: 
+                - generic [ref=f1e55]: Resultados de exámenes
+            - listitem [ref=f1e56]:
+              - link " Planes" [ref=f1e57] [cursor=pointer]:
+                - /url: "#plans"
+                - generic [ref=f1e58]: 
+                - generic [ref=f1e60]: Planes
+            - listitem [ref=f1e61]:
+              - link " Campañas" [ref=f1e62] [cursor=pointer]:
+                - /url: "#campaigns"
+                - generic [ref=f1e63]: 
+                - generic [ref=f1e65]: Campañas
+            - listitem [ref=f1e66]:
+              - link " Auditoría" [ref=f1e67] [cursor=pointer]:
+                - /url: "#audit"
+                - generic [ref=f1e68]: 
+                - generic [ref=f1e70]: Auditoría
+          - generic [ref=f1e71]: API
+    - generic [ref=f1e73]:
+      - banner [ref=f1e74]:
+        - generic [ref=f1e75]:
+          - heading "Generación de exámenes" [level=2] [ref=f1e77]
+          - generic [ref=f1e78]:
+            - generic [ref=f1e79]: probe-agent@palique.local
+            - generic [ref=f1e80]: P
+            - button " Salir" [ref=f1e81] [cursor=pointer]:
+              - generic [ref=f1e82]: 
+              - text: Salir
+      - generic [ref=f1e85]:
+        - generic [ref=f1e87]:
+          - heading "Configuración efectiva" [level=3] [ref=f1e89]
+          - generic [ref=f1e90]:
+            - generic [ref=f1e91]: Los valores proceden del servidor. La prueba usa solo la configuración guardada.
+            - generic [ref=f1e92]:
+              - generic [ref=f1e93]:
+                - generic [ref=f1e94]: Proveedor
+                - combobox "Proveedor" [ref=f1e95]:
+                  - option "openai"
+                  - option "glm"
+                  - option "opencode" [selected]
+              - generic [ref=f1e96]:
+                - generic [ref=f1e97]: Modelo
+                - combobox "Modelo" [ref=f1e99]:
+                  - option "glm-5.3-flash" [selected]
+                  - option "glm-5.3"
+                  - option "glm-5.2"
+                  - option "kimi-k3"
+                  - option "kimi-k2.7-code"
+                  - option "deepseek-v4.1-flash"
+                  - option "deepseek-v4-pro"
+                  - option "mimo-v2.6-pro"
+                  - option "longcat-2.0"
+              - generic [ref=f1e100]:
+                - generic [ref=f1e101]: URL base
+                - textbox "URL base" [ref=f1e102]: https://opencode.ai/zen/go/v1
+              - generic [ref=f1e103]:
+                - generic [ref=f1e104]: Clave API
+                - textbox "Clave API" [ref=f1e105]:
+                  - /placeholder: "Guardada: oc_s…MTzT · vacío conserva la clave"
+              - generic [ref=f1e106]:
+                - generic [ref=f1e107]: Publicación
+                - combobox "Publicación" [ref=f1e108]:
+                  - option "Revisión" [selected]
+                  - option "Automática"
+              - generic [ref=f1e109]:
+                - generic [ref=f1e110]: Verificación
+                - combobox "Verificación" [ref=f1e111]:
+                  - option "Estricta"
+                  - option "Marcar" [selected]
+                  - option "Desactivada"
+              - generic [ref=f1e112]:
+                - generic [ref=f1e113]: Variantes
+                - spinbutton "Variantes" [ref=f1e114]: "3"
+            - generic [ref=f1e115]:
+              - button "Guardar y recargar" [ref=f1e116] [cursor=pointer]
+              - button "Probar conexión guardada" [ref=f1e117] [cursor=pointer]
+              - generic [ref=f1e118]: La prueba solo utiliza la configuración guardada.
+        - generic [ref=f1e120]:
+          - heading "Scheduler y última generación" [level=3] [ref=f1e122]
+          - generic [ref=f1e123]:
+            - generic [ref=f1e124]:
+              - generic [ref=f1e125]: Configurado
+              - strong [ref=f1e126]: "No"
+            - generic [ref=f1e127]:
+              - generic [ref=f1e128]: Scheduler activo en este proceso
+              - strong [ref=f1e129]: "No"
+            - generic [ref=f1e130]: La actividad local no indica el estado de otras réplicas.
+            - separator [ref=f1e131]
+            - generic [ref=f1e132]: Todavía no hay jobs registrados.
+            - generic [ref=f1e133]:
+              - generic [ref=f1e134]:
+                - generic [ref=f1e135]:
+                  - generic [ref=f1e136]: Idioma
+                  - combobox "Idioma" [ref=f1e137]:
+                    - option "en" [selected]
+                    - option "es"
+                    - option "fr"
+                    - option "de"
+                    - option "it"
+                    - option "pt"
+                    - option "nb"
+                    - option "zh"
+                - generic [ref=f1e138]:
+                  - generic [ref=f1e139]: Niveles
+                  - combobox "Niveles" [ref=f1e140]:
+                    - option "Todos los niveles" [selected]
+                    - option "A1"
+                    - option "A2"
+                    - option "B1"
+                    - option "B2"
+                    - option "C1"
+                - button "Lanzar generación" [active] [ref=f1e142] [cursor=pointer]
+              - generic [ref=f1e143]: Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.
+            - generic [ref=f1e144]: Sin jobs registrados.
+        - generic [ref=f1e147]:
+          - heading "Exámenes generados" [level=3] [ref=f1e149]
+          - generic [ref=f1e150]:
+            - generic [ref=f1e151]:
+              - combobox [ref=f1e153]:
+                - 'option "Estado: todos" [selected]'
+                - option "draft"
+                - option "approved"
+                - option "rejected"
+                - option "retired"
+              - combobox [ref=f1e155]:
+                - 'option "Idioma: todos" [selected]'
+                - option "en"
+                - option "es"
+                - option "fr"
+                - option "de"
+                - option "it"
+                - option "pt"
+                - option "nb"
+                - option "zh"
+              - combobox [ref=f1e157]:
+                - 'option "Nivel: todos" [selected]'
+                - option "A1"
+                - option "A2"
+                - option "B1"
+                - option "B2"
+                - option "C1"
+              - textbox "Semana ≥" [ref=f1e159]
+              - textbox "Semana ≤" [ref=f1e161]
+              - textbox "Creado ≥ AAAA-MM-DD" [ref=f1e163]
+              - textbox "Creado ≤ AAAA-MM-DD" [ref=f1e165]
+              - button "Filtrar" [ref=f1e167] [cursor=pointer]
+            - table [ref=f1e169]:
+              - rowgroup [ref=f1e170]:
+                - row [ref=f1e171]:
+                  - columnheader "Semana" [ref=f1e172]
+                  - columnheader "Idioma" [ref=f1e173]
+                  - columnheader "Nivel" [ref=f1e174]
+                  - columnheader "Estado" [ref=f1e175]
+                  - columnheader "Variantes" [ref=f1e176]
+                  - columnheader "Modelo" [ref=f1e177]
+                  - columnheader "Creado" [ref=f1e178]
+                  - columnheader "Aprobado" [ref=f1e179]
+                  - columnheader [ref=f1e180]
+              - rowgroup [ref=f1e181]:
+                - row [ref=f1e182]:
+                  - cell "No hay exámenes para este filtro." [ref=f1e183]
+          - generic [ref=f1e184]:
+            - button "Anterior" [disabled]
+            - generic [ref=f1e185]: Exámenes 0–0 de 0
+            - button "Siguiente" [disabled]
+      - contentinfo [ref=f1e186]:
+        - generic [ref=f1e187]: Palique Admin · panel de operador · todas las acciones quedan auditadas
+  - generic [ref=f1e188]:
+    - document:
+      - generic [ref=f1e189]:
+        - heading "Generar exámenes" [level=5] [ref=f1e191]
+        - generic [ref=f1e192]:
+          - generic [ref=f1e193]:
+            - generic [ref=f1e194]: Objetivo
+            - textbox [ref=f1e195]: en · todos los niveles
+          - generic [ref=f1e196]: Motivo (obligatorio, auditado)
+          - textbox [ref=f1e197]
+        - generic [ref=f1e198]:
+          - button "Cancelar" [ref=f1e199] [cursor=pointer]
+          - button " Confirmar" [ref=f1e200] [cursor=pointer]:
+            - generic [ref=f1e201]: 
+            - text: Confirmar
