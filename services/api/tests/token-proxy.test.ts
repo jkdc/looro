@@ -8,6 +8,7 @@ import { appendEntry } from '../src/ledger.js';
 import { transaction } from '../src/db.js';
 import { ServiceError } from '../src/errors.js';
 import { TokenProxy, tokenProxyConfig } from '../src/token-proxy.js';
+import { canonicalProxyRequest } from '../src/proxy-policy.js';
 import { timeseries } from '../src/admin-metrics.js';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
@@ -112,11 +113,14 @@ integration('a zero-cost usage report records usage without a ledger entry', asy
     const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
     assert.equal(result.status, 200);
     assert.equal((result.payload.metering as { nanoUSDSettled: string }).nanoUSDSettled, '0');
-    const wallet = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+    const wallet = (await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
     assert.equal(BigInt(wallet.balance_nano), 10_000_000n);
-    // The ledger only carries the seed purchase: no settle entry for a zero cost.
-    const ledger = (await db.query('SELECT kind FROM ledger WHERE account_id=$1', [account])).rows;
-    assert.equal(ledger.length, 1); assert.equal(ledger[0].kind, 'purchase');
+    // The only balance-moving entry is the seed purchase: the settle entry
+    // releases the reservation without debiting anything for a zero cost.
+    const ledger = (await db.query('SELECT kind,balance_delta_nano FROM ledger WHERE account_id=$1 ORDER BY created_at, id', [account])).rows;
+    assert.deepEqual(ledger.map(row => [row.kind, BigInt(row.balance_delta_nano)]),
+      [['purchase', 10_000_000n], ['reserve', 0n], ['settle', 0n]]);
+    assert.equal(BigInt(wallet.reserved_nano), 0n);
     const usage = (await db.query('SELECT input_tokens,output_tokens,settled_nano,ledger_reference FROM proxy_usage WHERE account_id=$1', [account])).rows[0];
     assert.equal(BigInt(usage.input_tokens), 0n); assert.equal(BigInt(usage.output_tokens), 0n);
     assert.equal(BigInt(usage.settled_nano), 0n); assert.equal(usage.ledger_reference, null);
@@ -159,10 +163,13 @@ integration('a success reply whose usage cannot be metered is refused with nothi
         (error: ServiceError) => error.code === 'provider_error' && error.status === 502,
       );
     }
-    const wallet = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+    const wallet = (await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
     assert.equal(BigInt(wallet.balance_nano), 10_000_000n);
-    assert.equal((await db.query('SELECT count(*)::int AS n FROM ledger WHERE account_id=$1 AND kind=\'settle\'', [account])).rows[0].n, 0);
+    // Uncertain outcomes keep their holds: no debit, no usage, but the
+    // reserved funds stay locked for reconciliation.
+    assert.equal((await db.query(`SELECT count(*)::int AS n FROM ledger WHERE account_id=$1 AND kind='settle'`, [account])).rows[0].n, 0);
     assert.equal((await db.query('SELECT count(*)::int AS n FROM proxy_usage WHERE account_id=$1', [account])).rows[0].n, 0);
+    assert.equal(BigInt(wallet.reserved_nano) > 0n, true);
   } finally { await new Promise<void>(resolve => provider.close(() => resolve())); }
 });
 
@@ -262,6 +269,107 @@ integration('estimate refuses calls the balance cannot plausibly cover', async (
     proxy.relay(account, { messages: [{ role: 'user', content: 'x'.repeat(4000) }] }),
     /token_balance_exhausted/,
   );
+});
+
+test('the request policy builds a canonical, server-owned forwarded request', () => {
+  const route = { purpose: 'meaning', model: 'free-model', displayName: 'Free', outputCap: 512 };
+  const out = canonicalProxyRequest(
+    { messages: [{ role: 'user', content: 'x' }], temperature: 0.5, response_format: { type: 'json_object' } }, route);
+  assert.deepEqual(out.body, { messages: [{ role: 'user', content: 'x' }], model: 'free-model', max_tokens: 512,
+    stream: false, temperature: 0.5, response_format: { type: 'json_object' } });
+  assert.equal(out.outputCap, 512);
+  // Client work controls are accepted but never survive: the model, the cap
+  // and streaming are the server's decision.
+  assert.deepEqual(canonicalProxyRequest({ messages: [{ role: 'user' }], model: 'gpt-9', max_tokens: 99, stream: false }, route).body,
+    { messages: [{ role: 'user' }], model: 'free-model', max_tokens: 512, stream: false });
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], tools: [] }, route), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [] }, route), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], temperature: 9 }, route), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], response_format: { type: 'json_schema' } }, route), /request_policy_violation/);
+});
+
+integration('purpose routing forwards the server-owned model and output cap', async () => {
+  const schema = `token_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  const account = randomUUID();
+  await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
+  await db.query('INSERT INTO wallets(account_id) VALUES($1)', [account]);
+  await transaction(db, sql => appendEntry(sql, account, `seed:${account}`, 'purchase', 10_000_000n, 0n));
+  let forwarded: Record<string, unknown> | undefined;
+  const provider = createServer((request, response) => {
+    let raw = '';
+    request.on('data', chunk => { raw += chunk; });
+    request.on('end', () => {
+      forwarded = JSON.parse(raw);
+      response.setHeader('content-type', 'application/json');
+      response.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'ok' } }], usage: { prompt_tokens: 10, completion_tokens: 5 } }));
+    });
+  });
+  await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+  const port = (provider.address() as { port: number }).port;
+  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  try {
+    // The client asks for its own model and cap; the route wins on both.
+    const result = await proxy.relay(account,
+      { model: 'client-model', max_tokens: 999_999, stream: false, messages: [{ role: 'user', content: 'Hi' }] },
+      {}, 'meaning');
+    assert.equal(result.status, 200);
+    assert.deepEqual(forwarded, { messages: [{ role: 'user', content: 'Hi' }], model: 'MiniMax-M2', max_tokens: 2048, stream: false });
+    // An unknown purpose is rejected before any dispatch.
+    await assert.rejects(
+      proxy.relay(account, { messages: [{ role: 'user' }] }, {}, 'bogus_purpose'),
+      (error: ServiceError) => error.code === 'unknown_purpose' && error.status === 400);
+    // A policy violation never dispatches: the provider sees nothing extra.
+    const before = forwarded;
+    await assert.rejects(
+      proxy.relay(account, { messages: [{ role: 'user' }], tools: [] }, {}, 'meaning'),
+      (error: ServiceError) => error.code === 'request_policy_violation' && error.status === 400);
+    assert.equal(forwarded, before);
+    // A disabled route fails closed instead of silently serving the legacy path.
+    await db.query(`UPDATE proxy_purpose_routes SET enabled=false WHERE purpose='assessment'`);
+    await assert.rejects(
+      proxy.relay(account, { messages: [{ role: 'user' }] }, {}, 'assessment'),
+      (error: ServiceError) => error.code === 'proxy_unavailable' && error.status === 503);
+  } finally {
+    await new Promise<void>(resolve => provider.close(() => resolve()));
+    await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end();
+  }
+});
+
+integration('funded admission refuses concurrent relays whose combined estimates exceed the balance', async () => {
+  const schema = `token_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  const account = randomUUID();
+  await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
+  await db.query('INSERT INTO wallets(account_id, balance_nano) VALUES($1,$2)', [account, '1000']);
+  let calls = 0;
+  const provider = createServer((_request, response) => {
+    calls++;
+    response.setHeader('content-type', 'application/json');
+    response.end(JSON.stringify({ choices: [], usage: { prompt_tokens: 10, completion_tokens: 5 } }));
+  });
+  await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
+  const port = (provider.address() as { port: number }).port;
+  const proxy = new TokenProxy(db, { ...CONFIG, maxConcurrentPerAccount: 2, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  try {
+    // Each estimate is ~530n against a 1000n balance: an unlocked read would
+    // admit both; the wallet-locked reservation admits exactly one.
+    const body = { messages: [{ role: 'user', content: 'x'.repeat(4000) }] };
+    const results = await Promise.allSettled([proxy.relay(account, body), proxy.relay(account, body)]);
+    const admitted = results.filter(r => r.status === 'fulfilled').length;
+    const refused = results.filter(r => r.status === 'rejected' &&
+      (r.reason as ServiceError).code === 'token_balance_exhausted').length;
+    assert.equal(admitted, 1);
+    assert.equal(refused, 1);
+    assert.equal(calls, 1);
+    const wallet = (await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+    assert.equal(BigInt(wallet.reserved_nano) + BigInt(wallet.balance_nano) >= 0n, true);
+  } finally {
+    await new Promise<void>(resolve => provider.close(() => resolve()));
+    await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end();
+  }
 });
 
 integration('the tokens timeseries set aggregates daily calls, token counts and settled nanoUSD', async () => {

@@ -4,6 +4,9 @@ import type { PoolClient } from 'pg';
 import { connectDatabase, transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { appendEntry, lockWallet } from './ledger.js';
+import { isProxyPurpose } from './proxy-policy.js';
+import { releaseProxyHold } from './proxy-attempts.js';
+import { setSubscription } from './proxy-quota.js';
 
 // Local operator process only (same standing as minutes-admin): assignment of
 // proxy unlock and wallet credit without a store purchase. There is
@@ -26,8 +29,8 @@ async function memberAccount(sql: PoolClient, accountID: string) {
   if (wallet.isGuest) throw new ServiceError('campaign_grant_requires_member', 403);
   return wallet;
 }
-async function audit(sql: PoolClient, action: 'grant_unlock' | 'revoke_unlock' | 'grant_balance',
-  accountID: string, actor: string, reason: string, reference: string | null, detail: unknown) {
+async function audit(sql: PoolClient, action: 'grant_unlock' | 'revoke_unlock' | 'grant_balance' | 'set_purpose_route' | 'grant_quota' | 'release_hold',
+  accountID: string | null, actor: string, reason: string, reference: string | null, detail: unknown) {
   await sql.query(`INSERT INTO token_admin_audit(id,actor,reason,action,account_id,reference,detail) VALUES($1,$2,$3,$4,$5,$6,$7)`,
     [randomUUID(), actor, reason, action, accountID, reference, JSON.stringify(detail ?? {})]);
 }
@@ -130,16 +133,77 @@ export async function tokenAccountSummary(db: Database, accountID: string): Prom
   };
 }
 
+// --- Purpose routing, subscription quota and hold reconciliation (proxy-api-provider) ---
+
+export interface RouteUpdateInput { actor: string; reason: string; purpose: string; model: string; cap: number }
+
+/** Operator routing decision: which model (and output cap) serves a purpose.
+ * Audited; no HTTP route mutates routing. */
+export async function setPurposeRoute(db: Database, input: RouteUpdateInput) {
+  auditText(input.actor); auditText(input.reason);
+  if (!isProxyPurpose(input.purpose) || typeof input.model !== 'string' || input.model.trim().length === 0 ||
+      input.model.length > 128 || !Number.isSafeInteger(input.cap) || input.cap < 64 || input.cap > 65536)
+    throw new ServiceError('invalid_request');
+  return transaction(db, async sql => {
+    const updated = await sql.query(`UPDATE proxy_purpose_routes SET model=$2,output_cap=$3,updated_at=now()
+      WHERE purpose=$1`, [input.purpose, input.model.trim(), input.cap]);
+    if (!updated.rowCount) throw new ServiceError('purpose_route_not_found', 404);
+    await audit(sql, 'set_purpose_route', null, input.actor, input.reason, null,
+      { purpose: input.purpose, model: input.model.trim(), outputCap: input.cap });
+    return { purpose: input.purpose, model: input.model.trim(), outputCap: input.cap };
+  });
+}
+
+export async function listPurposeRoutes(db: Database) {
+  const rows = (await db.query(`SELECT purpose,model,display_name,output_cap,enabled FROM proxy_purpose_routes ORDER BY purpose`)).rows;
+  return { routes: rows };
+}
+
+export interface QuotaGrantInput extends TokenGrantInput {
+  plan: string; days: number | null; dailyInputTokens: string; dailyOutputTokens: string;
+}
+
+/** Pilot subscription assignment: plan window + daily token allowance. The
+ * daily job converts the allowance to ledger credit; this only sets the
+ * plan. */
+export async function grantQuota(db: Database, input: QuotaGrantInput) {
+  auditText(input.actor); auditText(input.reason);
+  if (!isUUID(input.accountID) || !/^\d+$/.test(input.dailyInputTokens) || !/^\d+$/.test(input.dailyOutputTokens) ||
+    (input.days !== null && (!Number.isSafeInteger(input.days) || input.days < 1 || input.days > 3650)))
+    throw new ServiceError('invalid_request');
+  const applied = await setSubscription(db, { accountID: input.accountID, plan: input.plan, days: input.days,
+    dailyInputTokens: BigInt(input.dailyInputTokens), dailyOutputTokens: BigInt(input.dailyOutputTokens) });
+  await transaction(db, async sql => {
+    await memberAccount(sql, input.accountID);
+    await audit(sql, 'grant_quota', input.accountID, input.actor, input.reason, null,
+      { plan: input.plan, days: input.days, dailyInputTokens: input.dailyInputTokens, dailyOutputTokens: input.dailyOutputTokens });
+  });
+  return applied;
+}
+
+/** Reconciliation: releases the hold of an attempt whose outcome stayed
+ * unknown. Audited; never settles a guess. */
+export async function reconcileHold(db: Database, input: { attemptID: string; actor: string; reason: string }) {
+  auditText(input.actor); auditText(input.reason);
+  if (!isUUID(input.attemptID)) throw new ServiceError('invalid_request');
+  const result = await releaseProxyHold(db, input.attemptID);
+  await transaction(db, async sql => {
+    await audit(sql, 'release_hold', null, input.actor, input.reason, `proxy:${input.attemptID}`, { attemptID: input.attemptID });
+  });
+  return result;
+}
+
 // Local operator process only. No administrative HTTP routes or client admin key.
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const command = process.argv[2], url = process.env.DATABASE_URL;
-  const usage = 'Use tokens-admin show <accountID> | grant-unlock | revoke-unlock | grant-balance. Mutations read JSON from stdin: {"accountID","actor","reason"} and, for grant-balance, {"grantID","creditNanoUSD"}.';
-  const known = command === 'show' ? process.argv.length === 4 : ['grant-unlock', 'revoke-unlock', 'grant-balance'].includes(command ?? '') && process.argv.length === 3;
+  const usage = 'Use tokens-admin show <accountID> | grant-unlock | revoke-unlock | grant-balance | grant-quota | release-hold | routes | set-route. Mutations read JSON from stdin: {"accountID","actor","reason"} and, for grant-balance, {"grantID","creditNanoUSD"}; set-route: {"actor","reason","purpose","model","cap"}; grant-quota: {"accountID","actor","reason","plan","days","dailyInputTokens","dailyOutputTokens"}; release-hold: {"attemptID","actor","reason"}.';
+  const known = command === 'show' ? process.argv.length === 4 : ['grant-unlock', 'revoke-unlock', 'grant-balance', 'grant-quota', 'release-hold', 'set-route'].includes(command ?? '') && process.argv.length === 3
+    || command === 'routes' && process.argv.length === 3;
   if (!url || !known) { console.error(usage); process.exitCode = 1; } else {
     const db = connectDatabase(url);
     try {
       let input: any;
-      if (command !== 'show') {
+      if (command !== 'show' && command !== 'routes') {
         let data = '';
         for await (const chunk of process.stdin) { data += chunk.toString(); if (data.length > 1_000_000) throw new ServiceError('invalid_request'); }
         input = JSON.parse(data);
@@ -148,7 +212,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       if (command === 'show') result = await tokenAccountSummary(db, process.argv[3]!);
       else if (command === 'grant-unlock') result = await grantUnlock(db, input);
       else if (command === 'revoke-unlock') result = await revokeUnlock(db, input);
-      else result = await grantBalance(db, input);
+      else if (command === 'grant-balance') result = await grantBalance(db, input);
+      else if (command === 'routes') result = await listPurposeRoutes(db);
+      else if (command === 'set-route') result = await setPurposeRoute(db, input);
+      else if (command === 'grant-quota') result = await grantQuota(db, input);
+      else result = await reconcileHold(db, input);
       console.info(JSON.stringify(result));
     } catch (error) {
       console.error(error instanceof ServiceError ? error.code : 'token_operation_failed'); process.exitCode = 1;

@@ -14,6 +14,8 @@ import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './tr
 import type { HostedVoice } from './hosted-voice.js';
 import { ACCESS_REQUEST_PATH, isPrivateAddress, trustedClientNetwork, type AccessRequests } from './access-requests.js';
 import { TokenProxy } from './token-proxy.js';
+import { conversationPolicy } from './conversation-policy.js';
+import type { QuotaAllowance } from './proxy-quota.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
 import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, type GuestMinuteAttestor } from './guest-minutes.js';
@@ -59,12 +61,13 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
   tokenProxy?: TokenProxy,
+  proxyQuotaAllowance?: QuotaAllowance,
   subscriptions?: SubscriptionBilling,
   admin?: { services: AdminAuthServices; admission: AuthAdmission };
   generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };
   llmTestTimeoutMs?: number;
   environment?: NodeJS.ProcessEnv }
-const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
+const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/conversation-policy', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
 // Cacheable public content: carries no session, but is now durably admitted —
@@ -607,7 +610,14 @@ export function createApp(services: Services) {
       if (!unlock) throw new ServiceError('unlock_required', 403);
       const body = objectBody(request);
       checkClosed();
-      const {status,payload}=await proxy.relay(account,body,{signal:controller.signal});
+      // Purpose is routing advice for cost control, never a security
+      // boundary; the proxy validates it against the closed enum.
+      const rawPurpose = request.headers['x-palique-purpose'];
+      const purpose = typeof rawPurpose === 'string' ? rawPurpose : undefined;
+      // Fleet-contract flag: once legacy clients are gone, the purpose
+      // header becomes mandatory instead of falling back to the legacy route.
+      if (!purpose && services.environment?.PROXY_REQUIRE_PURPOSE === 'true') throw new ServiceError('purpose_required', 400);
+      const {status,payload}=await proxy.relay(account,body,{signal:controller.signal},purpose);
       reply.code(status);return payload;
     } catch(error) {
       if(error instanceof ServiceError && error.code==='proxy_busy')reply.header('Retry-After','1');
@@ -763,6 +773,12 @@ export function createApp(services: Services) {
     return { currency: 'USD', balanceNanoUSD: wallet.balance_nano, reservedNanoUSD: wallet.reserved_nano,
       availableNanoUSD: (BigInt(wallet.balance_nano) - BigInt(wallet.reserved_nano)).toString(),
       unlocked: Boolean(wallet.unlocked_at), unlockSource: wallet.unlocked_at ? wallet.unlock_source ?? null : null };
+  });
+  // Display-only policy for the first-party api provider: quota state and
+  // model labels per purpose. It never authorizes anything.
+  app.get('/v1/conversation-policy', async request => {
+    const account = await authenticate(db, request.headers.authorization);
+    return conversationPolicy(db, account, services.proxyQuotaAllowance ?? null);
   });
   app.post('/v1/auth/sign-out', { bodyLimit: 1024 }, async request => {
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');

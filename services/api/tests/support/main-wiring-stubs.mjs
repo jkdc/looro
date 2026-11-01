@@ -48,6 +48,8 @@ export class AuthAdmission {}
 export function accountAdmissionConfig() { return undefined; }
 export class TokenProxy {}
 export function tokenProxyConfig() { return undefined; }
+export function proxyQuotaConfig() { return { dailyInputTokens: 0, dailyOutputTokens: 0 }; }
+export async function runDailyQuotaGrants() { return { granted: 0 }; }
 export function adminAuthConfig() { return undefined; }
 export function pruneAdminRecords() { record('prune_admin_records'); }
 export class AIReports {}

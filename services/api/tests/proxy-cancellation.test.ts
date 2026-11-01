@@ -64,22 +64,30 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
    } finally {await proxy.stop();await app.close();}
   });
   await t.test('usage known before cancellation still settles while wallet lock delays SQL',async()=>{
-   const lock=await db.connect();await lock.query('BEGIN');await lock.query('SELECT id FROM accounts WHERE id=$1 FOR NO KEY UPDATE',[account]);
+   // Funded admission reserves (and locks the wallet) BEFORE dispatch, so the
+   // lock is now free during the provider call: park the provider, take the
+   // wallet lock, and only then let the settle transaction race for it —
+   // observing the real lock wait, never a timing assumption.
    const controller=new AbortController();let entered!:()=>void;const gate=new Promise<void>(r=>entered=r);
-   const proxy=new TokenProxy(db,config,(async()=>{entered();return Response.json({choices:[],usage:{prompt_tokens:1000000,completion_tokens:0}});}) as typeof fetch);
+   let releaseProvider!:()=>void;const providerHold=new Promise<void>(r=>releaseProvider=r);
+   const proxy=new TokenProxy(db,config,(async()=>{entered();await providerHold;return Response.json({choices:[],usage:{prompt_tokens:1000000,completion_tokens:0}});}) as typeof fetch);
    const before=(await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano;
    const result=proxy.relay(account,{}, {signal:controller.signal});
    void result.catch(()=>{});
+   let lock: { query:(sql:string,values?:unknown[])=>Promise<unknown>; release:()=>void }|undefined;
    try {
     await gate;
-    // Observe the real account lock wait, not a timing assumption about when usage was parsed.
+    lock=await db.connect();await lock.query('BEGIN');await lock.query('SELECT id FROM accounts WHERE id=$1 FOR NO KEY UPDATE',[account]);
+    releaseProvider();
+    // The settle transaction is now blocked on the wallet lock: cancellation
+    // during SQL must not prevent the known-usage settlement.
     let waiting=false;
-    for(let i=0;i<100&&!waiting;i++) {
+    for(let i=0;i<200&&!waiting;i++) {
       waiting=!!(await db.query("SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query LIKE 'SELECT%accounts%FOR UPDATE' AND pid<>pg_backend_pid() LIMIT 1")).rowCount;
       if(!waiting)await new Promise(r=>setTimeout(r,5));
     }
     assert.equal(waiting,true);controller.abort();
-   } finally {await lock.query('ROLLBACK');lock.release();}
+   } finally {releaseProvider();if(lock){await lock.query('ROLLBACK');lock.release();}}
    assert.equal((await result).status,200);await proxy.stop();
    assert.ok(BigInt((await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano)<BigInt(before));
   });

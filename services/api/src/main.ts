@@ -12,6 +12,7 @@ import { OpenAILiveProvider } from './live-provider.js';
 import { AccessRequests, accessRequestConfig, pruneAccessRequests } from './access-requests.js';
 import { AuthAdmission, accountAdmissionConfig } from './auth-admission.js';
 import { TokenProxy, tokenProxyConfig } from './token-proxy.js';
+import { proxyQuotaConfig, runDailyQuotaGrants } from './proxy-quota.js';
 import { adminAuthConfig, pruneAdminRecords, type AdminAuthServices } from './admin-auth.js';
 import { AIReports, aiReportConfig, pruneAIReports } from './feedback.js';
 import { pruneUsageEvents } from './usage.js';
@@ -39,6 +40,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
   let app: ReturnType<typeof createApp> | undefined;
   let cleanup: ReturnType<typeof setInterval> | undefined;
   let guestLinkCleanup: ReturnType<typeof setInterval> | undefined;
+  let quotaCleanup: ReturnType<typeof setInterval> | undefined;
   let guestLinkFlight: Promise<unknown> | undefined;
 
   const lifecycle = createApiLifecycle({
@@ -55,6 +57,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
       () => {
         if (cleanup) clearInterval(cleanup);
         if (guestLinkCleanup) clearInterval(guestLinkCleanup);
+        if (quotaCleanup) clearInterval(quotaCleanup);
         stopGenerationMetricsRefresh?.();
       },
       async () => { await generationScheduler?.stop(); },
@@ -170,7 +173,9 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     } });
     const proxyConfig=tokenProxyConfig(env);
     tokenProxy=proxyConfig?new TokenProxy(db,proxyConfig):undefined;
+    const proxyQuota=proxyQuotaConfig(env);
     app = createApp({ db, environment: env,
+      proxyQuotaAllowance: proxyQuota,
       generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false },
       auth: { googleClientID: env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
         googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
@@ -195,6 +200,20 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     guestLinkCleanup = setInterval(retryGuestLinks, 60_000);
     guestLinkCleanup.unref();
     retryGuestLinks();
+    // Daily subscription-quota grants: at most once per UTC day, idempotent
+    // by ledger reference, so restarts and reruns add nothing.
+    if (tokenProxy || proxyQuota.dailyInputTokens > 0 || proxyQuota.dailyOutputTokens > 0) {
+      let lastQuotaDay = '';
+      const runQuota = () => {
+        const day = new Date().toISOString().slice(0, 10);
+        if (day === lastQuotaDay) return;
+        lastQuotaDay = day;
+        void runDailyQuotaGrants(db, proxyQuota).catch(() => { log.error('quota_grant_failed'); });
+      };
+      runQuota();
+      quotaCleanup = setInterval(runQuota, 60_000);
+      quotaCleanup.unref();
+    }
     process.on('SIGTERM', closeOnSignal);
     process.on('SIGINT', closeOnSignal);
     await lifecycle.start();

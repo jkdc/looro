@@ -9,6 +9,7 @@ export interface PaliqueMetrics {
   proxyRejected: Counter;
   proxyProviderDuration: Histogram;
   proxyUnknownAttempts: Counter;
+  proxyPolicyRejected: Counter;
   requestDuration: Histogram;
   requestsRejected: Counter;
   dbPoolConnections: ObservableGauge;
@@ -31,6 +32,7 @@ function build(meter: Meter): PaliqueMetrics {
     proxyRejected: meter.createCounter('palique.proxy.rejected'),
     proxyProviderDuration: meter.createHistogram('palique.proxy.provider.duration', { unit: 's' }),
     proxyUnknownAttempts: meter.createCounter('palique.proxy.unknown_attempts'),
+    proxyPolicyRejected: meter.createCounter('palique.proxy.request_policy_rejected', { description: 'Proxy calls refused by the request policy, by allowlist field.' }),
     // RED of every HTTP request. Prometheus series:
     // http_server_request_duration_seconds_{count,sum,bucket}.
     requestDuration: meter.createHistogram('http.server.request.duration', { unit: 's',

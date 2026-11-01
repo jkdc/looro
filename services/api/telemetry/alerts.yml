@@ -116,3 +116,35 @@ groups:
             window. Look for long
             queries, statement_timeout hits and waiting connections.
           runbook: docs/observability.md#pool-de-bd-saturado
+
+      - alert: ProxyUnknownAttemptsGrowing
+        expr: |
+          (sum(increase(palique_proxy_unknown_attempts_total{job="otel-collector", exported_job="palique-api"}[1h])) or vector(0)) > 3
+        for: 1m
+        labels:
+          severity: warning
+          component: tokens
+        annotations:
+          summary: "More than 3 uncertain proxy attempts in the last hour"
+          description: >-
+            Provider relays ended with an unknown outcome (timeout, client
+            disconnect, oversize or unmeasurable usage). Their wallet holds
+            stay reserved until reconciliation: run the proxy_attempts
+            unknown-attempts query and reconcile holds with tokens-admin.
+          runbook: services/api/docs/api-capacity.md#intentos-y-conciliación
+
+      - alert: ProxyPolicyViolationsSpike
+        expr: |
+          (sum(increase(palique_proxy_request_policy_rejected_total{job="otel-collector", exported_job="palique-api"}[1h])) or vector(0)) > 10
+        for: 1m
+        labels:
+          severity: warning
+          component: tokens
+        annotations:
+          summary: "More than 10 request-policy rejections in the last hour"
+          description: >-
+            Clients are sending fields the proxy policy does not allow. A
+            spike usually means an app build predates the current v1 contract
+            (check the field label distribution) or someone probing the
+            relay.
+          runbook: docs/token-billing.md

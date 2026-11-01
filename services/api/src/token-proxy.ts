@@ -6,6 +6,7 @@ import { paliqueMetrics } from './metrics.js';
 import { log } from './log.js';
 import { ServiceError } from './errors.js';
 import { assertOutboundUrl } from './outbound-url.js';
+import { canonicalProxyRequest, isProxyPurpose, purposeRoute, type PurposeRoute } from './proxy-policy.js';
 
 /** Token billing proxy: relays a non-streaming OpenAI-compatible completion
     call (v1 contract; `stream: true` is rejected) to the configured provider
@@ -13,9 +14,13 @@ import { assertOutboundUrl } from './outbound-url.js';
     nanoUSD wallet at the active rate version, refuses accounts without the
     BYOK unlock, and caps concurrent relays per account
     (`PROXY_MAX_CONCURRENT`, default 2) so one account cannot monopolise the
-    server key. Grace is bounded: a single call whose real cost exceeds the
-    balance settles at the real cost (floor zero) so the reply is never
-    wasted, but a zero balance refuses the next call. A success reply whose
+    server key. Admission reserves the call's conservative estimate under the
+    wallet lock, so concurrent or multi-process calls cannot spend the same
+    funds twice; settlement debits actual usage and releases the hold, and an
+    uncertain outcome keeps the hold for audited reconciliation. The forwarded
+    request is built server-side: with a purpose route, the model and output
+    cap are the server's decision (the client's are ignored); without one, the
+    body is forwarded verbatim as the legacy contract. A success reply whose
     usage cannot be metered is refused rather than served free, and every
     successful relay leaves a durable `proxy_usage` row with the token counts
     and what they cost. */
@@ -91,9 +96,15 @@ export class TokenProxy {
     await Promise.allSettled([...this.#active]);
     this.#instrument.removeCallback(this.#observe);
   }
-  async relay(accountID:string,body:Record<string,unknown>,options:{signal?:AbortSignal}={}):Promise<{status:number;payload:Record<string,unknown>}> {
+  async relay(accountID:string,body:Record<string,unknown>,options:{signal?:AbortSignal}={},purpose?:string):Promise<{status:number;payload:Record<string,unknown>}> {
     if(body.stream===true)throw new ServiceError('streaming_unsupported_v1',400);
     if(this.#stopping)throw new ServiceError('proxy_unavailable',503);
+    const requested=purpose?.trim().toLowerCase();
+    if(requested!==undefined && requested!=='' && !isProxyPurpose(requested))throw new ServiceError('unknown_purpose',400);
+    const purposeID=requested||undefined;
+    const route=purposeID?await purposeRoute(this.db,purposeID):undefined;
+    if(purposeID&&!route)throw new ServiceError('proxy_unavailable',503);
+    const forward=route?canonicalProxyRequest(body,route):{body,outputCap:this.config.maxTokens};
     const count=this.#inFlight.get(accountID)??0;
     if(count>=this.config.maxConcurrentPerAccount){paliqueMetrics.proxyRejected.add(1,{reason:'account'});throw new ServiceError('account_busy',429);}
     if(this.#controllers.size>=(this.config.maxInFlight??10)){paliqueMetrics.proxyRejected.add(1,{reason:'global'});throw new ServiceError('proxy_busy',503);}
@@ -102,24 +113,23 @@ export class TokenProxy {
     options.signal?.addEventListener('abort',cancel,{once:true});if(options.signal?.aborted)cancel();
     let timeout=false;
     const timer=setTimeout(()=>{timeout=true;controller.abort(new Error('deadline'));},this.config.timeoutMs??30000);
-    const work=this.#meteredRelay(accountID,body,controller.signal,()=>timeout).finally(()=>{
+    const work=this.#meteredRelay(accountID,forward.body,forward.outputCap,purposeID??'legacy',controller.signal,()=>timeout).finally(()=>{
       clearTimeout(timer);options.signal?.removeEventListener('abort',cancel);this.#controllers.delete(controller);
       const n=(this.#inFlight.get(accountID)??1)-1;if(n)this.#inFlight.set(accountID,n);else this.#inFlight.delete(accountID);
       this.#active.delete(work);
     });
     this.#active.add(work);return work;
   }
-  async #meteredRelay(accountID:string,body:Record<string,unknown>,signal:AbortSignal,timedOut:()=>boolean):Promise<{status:number;payload:Record<string,unknown>}> {
+  async #meteredRelay(accountID:string,body:Record<string,unknown>,outputCap:number,purpose:string,signal:AbortSignal,timedOut:()=>boolean):Promise<{status:number;payload:Record<string,unknown>}> {
     let id:string|undefined,dispatched=false,settling=false,terminal=false;
     let outcome='transport_error', began:number|undefined;
     try {
       signal.throwIfAborted();
-      const balance=await this.availableBalance(accountID);signal.throwIfAborted();
-      if(balance<=0n)throw new ServiceError('token_balance_exhausted',402);
       const rate=await activeRateVersion(this.db);signal.throwIfAborted();
-      const estimate=BigInt(inputEstimate(body))*rate.nanoPerMillionInput/1_000_000n+BigInt(this.config.maxTokens)*rate.nanoPerMillionOutput/1_000_000n;
-      if(estimate>balance)throw new ServiceError('token_balance_exhausted',402);
-      id=randomUUID();await prepareProxyAttempt(this.db,{id,accountID,rateVersionID:rate.id});signal.throwIfAborted();
+      // Funded admission: the estimate is reserved under the wallet lock, so
+      // concurrent or multi-process calls cannot spend the same funds twice.
+      const estimate=BigInt(inputEstimate(body))*rate.nanoPerMillionInput/1_000_000n+BigInt(outputCap)*rate.nanoPerMillionOutput/1_000_000n;
+      id=randomUUID();await prepareProxyAttempt(this.db,{id,accountID,rateVersionID:rate.id,estimateNano:estimate});signal.throwIfAborted();
       await markProxyDispatched(this.db,id);dispatched=true;signal.throwIfAborted();
       began=performance.now();
       const response=await this.fetchFn(this.config.providerURL,{method:'POST',signal,
@@ -137,7 +147,7 @@ export class TokenProxy {
       // Known usage must be settled even if cancellation arrives while SQL is committing.
       settling=true;outcome='ok';
       const cost=usage.inputTokens*rate.nanoPerMillionInput/1_000_000n+usage.outputTokens*rate.nanoPerMillionOutput/1_000_000n;
-      const metering=await settleProxyAttempt(this.db,{id,usage,estimateNano:estimate,costNano:cost,settledNano:cost>balance?balance:cost});
+      const metering=await settleProxyAttempt(this.db,{id,usage,estimateNano:estimate,costNano:cost});
       terminal=true;
       return {status:200,payload:{...(payload as Record<string,unknown>),metering}};
     } catch(error) {
@@ -151,6 +161,6 @@ export class TokenProxy {
       if(error instanceof ServiceError)throw error;
       if(settling) {outcome='transport_error';throw error;}
       throw new ServiceError('provider_error',502);
-    } finally {if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome});}
+    } finally {if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome,purpose});}
   }
 }
