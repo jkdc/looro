@@ -1,5 +1,30 @@
 # Verify report: proxy-api-provider
 
+Fecha: 2026-11-01 (rev. 5, tras la cuarta revisión de `2ed4286`) · Rama: `feat/proxy-api-provider`.
+
+## Rev. 5 — cuarta ronda de auditoría
+
+Tres hallazgos sobre `2ed4286`, confirmados y corregidos test-first:
+
+| Hallazgo | Corrección | Prueba versionada |
+|---|---|---|
+| **Alta** — sobreacreditación concurrente: el total del día se sumaba **antes** de adquirir el lock de wallet (dos paths concurrentes veían el mismo total: 90 → +810 +1710 = 2610) | `grantSubscriptionDayInTransaction` toma el lock de wallet (`lockWallet`) **antes** de leer el total; los paths quedan serializados y el perdedor recalcula tras el commit del ganador | `the day-grant takes the wallet lock before reading the day total` (orden lock→suma pinzado con un cliente SQL grabador, determinista) |
+| **Media** — el total del día omitía las identidades históricas `subscription-upgrade:` escritas por `8de65cb` (reacreditaba 810 sobre datos previos) | La suma incluye `subscription-upgrade:<día>:<cuenta>` junto a grant y top-ups; el ledger inmutable no se toca | `a top-up counts the historical upgrade identities of the previous build` (PG) |
+| **Media** — ajustes Android incoherentes: no se podía volver a OpenAI desde Ajustes, y los controles de voz local dependían del flag crudo | La fila "OpenAI (personal key)" se ofrece cuando es la opción realtime del build (`defaultEngineId == "openai"`); `AppViewModel.effectiveEngineId` expone el motor ejecutado y `SettingsScreen` deriva de él los controles de voz/STT | (wiring UI; la política subyacente ya pinzada por `EngineSelectionPolicyTest`) |
+
+Nota de verificación: un intento de test de carrera con dos paths reales
+resultó no discriminatorio (el path de asignación ya serializaba vía
+`memberAccount`); la regresión del lock se pinza con el orden
+lock→suma sobre un cliente determinista, que sí falla en la versión previa.
+
+**Pendientes reconocidos (sin cambio)**: wiring App de iOS (gate macOS),
+perfil de carga con propósitos (Task 8.1), sonda manual
+`set-route` → policy → llamada, E2E con proveedor real.
+
+---
+
+## Rev. 4 — tercera ronda de auditoría
+
 Fecha: 2026-11-01 (rev. 4, tras la tercera revisión de `8de65cb`) · Rama: `feat/proxy-api-provider`.
 
 ## Rev. 4 — tercera ronda de auditoría

@@ -70,7 +70,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogWindowProvider
-import com.jkdc.app.BuildConfig
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.data.SearchHit
@@ -180,9 +179,10 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
                     }
                     SettingsDivider()
-                    // On-device voice controls: inert in the WebRTC build, where
-                    // turn-taking is server-side — never render them there.
-                    if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+                    // On-device voice controls: inert while the engine actually
+                    // executed is the OpenAI realtime path (build flag or the
+                    // persisted debug pick) — turn-taking is server-side there.
+                    if (vm.effectiveEngineId != "openai") {
                         val sttValue = prefs.sttEngine ?: "local"
                         SettingsChoiceRow(stringResource(R.string.settings_stt_title),
                             stringResource(when (sttValue) {

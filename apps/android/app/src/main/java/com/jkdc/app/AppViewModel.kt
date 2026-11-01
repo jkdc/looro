@@ -639,6 +639,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         com.jkdc.app.core.engines.EngineSelectionPolicy.effectiveSelection(
             engineSelection.selected(defaultEngineId), defaultEngineId, BuildConfig.DEBUG)
 
+    /** The engine actually executed right now — the single source UI
+        visibility (voice controls, STT choice) must derive from, instead of
+        the raw build flag (audit rev.5, finding 3). */
+    val effectiveEngineId: String
+        get() = resolveEngineSelection()
+
     private val conversationEngine: TeachingClient =
         if (defaultEngineId == "openai" && !BuildConfig.DEBUG) {
             // Release BYOK build: a fixed OpenAI realtime engine, no selector.
@@ -1874,14 +1880,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Local engines for the Settings selector; recomputed after each mutation.
         Release builds only offer the proxy-backed providers: the BYOK engines
-        stay a debug/benchmarking surface (their keys must never ship). */
+        stay a debug/benchmarking surface (their keys must never ship). The
+        OpenAI realtime engine is offered **when it is the build's realtime
+        option** (debug build, flag openai), so switching away and back is
+        reversible from Settings (audit rev.5, finding 3). */
     val localEngines: List<LocalEngineStatus>
         get() {
             @Suppress("UNUSED_EXPRESSION") enginesVersion
             val selected = engineSelection.selected(defaultEngineId)
             val visible = if (BuildConfig.DEBUG) ConversationEngineFactory.available
                 else ConversationEngineFactory.available.filter { it.id == "api" || it.id == "hosted-proxy" }
-            return visible.filter { it.id != "openai" }.map { info ->
+            return visible.filter { it.id != "openai" || defaultEngineId == "openai" }.map { info ->
                 val hasCustom = engineOverrides.hasCustomKey(info.id)
                 val env = com.jkdc.app.core.engines.localEngineKeyEnv(info.id)
                 LocalEngineStatus(info.id, info.label, selected = selected == info.id,

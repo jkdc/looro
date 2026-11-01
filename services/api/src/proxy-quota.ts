@@ -1,6 +1,6 @@
 import type { Database } from './db.js';
 import { transaction } from './db.js';
-import { appendEntry } from './ledger.js';
+import { appendEntry, lockWallet } from './ledger.js';
 import { ServiceError } from './errors.js';
 import { activeRateVersion } from './token-proxy.js';
 
@@ -36,27 +36,31 @@ export const tokenCreditNano = (input: bigint, output: bigint, rate: { nanoPerMi
   (input * rate.nanoPerMillionInput + output * rate.nanoPerMillionOutput) / 1_000_000n;
 
 /** Funds today's allowance for one account inside a caller transaction.
- * The pending amount is computed from the **total already credited today**
- * across every subscription identity (grant + top-ups) while the caller
- * holds the wallet lock — so successive plan changes in one day each top up
- * only their remaining difference and never reuse another amount's
- * idempotent identity (audit rev.4): the first grant lands under the
- * standard `subscription-grant:<date>:<accountID>` reference, and every
- * increment uses `subscription-topup:<date>:<accountID>:<credit>` where the
- * target amount is part of the identity, making a retry of the same top-up a
- * no-op and a different plan a fresh one. Already funded at or above the
- * allowance → 0n (credit is never clawed back). Returns the granted amount. */
+ * The wallet lock is taken **before** the day total is read (audit rev.5,
+ * finding 1: summing before the lock let two concurrent grant paths both see
+ * the same total and overcredit). The total covers every subscription
+ * identity ever written for this day — the standard grant, the
+ * `subscription-topup` increments, and the historical `subscription-upgrade`
+ * entries of the previous build (rev.4) — so the pending difference is
+ * always right against committed history. Identities: the first grant lands
+ * under `subscription-grant:<date>:<accountID>`; every increment uses
+ * `subscription-topup:<date>:<accountID>:<credit>` where the target amount
+ * is part of the identity, making a retry of the same top-up a no-op and a
+ * different plan a fresh one. Already funded at or above the allowance → 0n
+ * (credit is never clawed back). Returns the granted amount. */
 export async function grantSubscriptionDayInTransaction(
   sql: Parameters<Parameters<typeof transaction>[1]>[0],
   accountID: string, credit: bigint, rate: { id: string; nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint },
   day: string,
 ): Promise<bigint> {
   if (credit <= 0n) return 0n;
+  await lockWallet(sql, accountID, true);
   const total = BigInt((await sql.query(
     `SELECT COALESCE(SUM(balance_delta_nano),0)::bigint AS total FROM ledger
       WHERE account_id=$1 AND kind='purchase'
-        AND (reference LIKE $2 OR reference LIKE $3)`,
-    [accountID, `subscription-grant:${day}:${accountID}`, `subscription-topup:${day}:${accountID}:%`])).rows[0].total);
+        AND (reference LIKE $2 OR reference LIKE $3 OR reference LIKE $4)`,
+    [accountID, `subscription-grant:${day}:${accountID}`, `subscription-upgrade:${day}:${accountID}`,
+      `subscription-topup:${day}:${accountID}:%`])).rows[0].total);
   const pending = credit - total;
   if (pending <= 0n) return 0n;
   if (total === 0n) {

@@ -4,10 +4,13 @@ import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
 import { connectDatabase, transaction } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
+import { appendEntry } from '../src/ledger.js';
 import { conversationPolicy } from '../src/conversation-policy.js';
-import { proxyQuotaConfig, runDailyQuotaGrants, setSubscription } from '../src/proxy-quota.js';
+import { grantSubscriptionDayInTransaction, proxyQuotaConfig, runDailyQuotaGrants, setSubscription } from '../src/proxy-quota.js';
 import { grantQuota, reconcileHold } from '../src/tokens-admin.js';
 import { TokenProxy } from '../src/token-proxy.js';
+
+const assertTrue = (message: string, condition: boolean) => assert.ok(condition, message);
 
 const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Dedicated test database required.');
@@ -266,6 +269,57 @@ integration('a downgrade after a bigger same-day allowance adds nothing and neve
     assert.equal(applied.firstGrantNanoUSD, '0');
     assert.equal(await balance(), '900');
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('a top-up counts the historical upgrade identities of the previous build', async () => {
+  const schema = `quota_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  try {
+    const member = randomUUID();
+    await db.query('INSERT INTO accounts(id) VALUES($1)', [member]);
+    await db.query('INSERT INTO wallets(account_id) VALUES($1)', [member]);
+    const day = new Date().toISOString().slice(0, 10);
+    // Data written by the previous build (8de65cb): a standard grant plus a
+    // `subscription-upgrade` supplement. The day total must include it, so a
+    // plan assignment for the same allowance is a no-op instead of a second
+    // credit (audit rev.5, finding 2).
+    await transaction(db, sql => appendEntry(sql, member, `subscription-grant:${day}:${member}`, 'purchase', 90n, 0n, '2026-09-minimax-m'));
+    await transaction(db, sql => appendEntry(sql, member, `subscription-upgrade:${day}:${member}`, 'purchase', 810n, 0n, '2026-09-minimax-m'));
+    const applied = await grantQuota(db, { accountID: member, actor: 'ops', reason: 'reassignment on historical data',
+      plan: 'standard', days: 30, dailyInputTokens: '1000', dailyOutputTokens: '500' });
+    assert.equal(applied.firstGrantNanoUSD, '0');
+    const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [member])).rows[0].balance_nano;
+    assert.equal(balance, '900');
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+test('the day-grant takes the wallet lock before reading the day total', async () => {
+  // Audit rev.5, finding 1: the previous build summed the day total BEFORE
+  // acquiring the wallet lock, so two concurrent grant paths both saw the
+  // same total (90) and credited 810 + 1710 over it. The sum must be
+  // serialized — observable as the accounts FOR UPDATE (lockWallet) query
+  // preceding the SUM query on the same client.
+  const queries: string[] = [];
+  const answer = (query: string): { rows: unknown[] } => {
+    if (query.includes('FROM accounts WHERE')) return { rows: [{ deleted_at: null, is_guest: false }] };
+    if (query.includes('FROM wallets WHERE')) return { rows: [{ balance_nano: '0', reserved_nano: '0',
+      sandbox_balance_nano: '0', cash_provenance_verified: false }] };
+    if (query.includes('SUM(balance_delta_nano)')) return { rows: [{ total: '0' }] };
+    if (query.includes('FROM ledger WHERE reference=')) return { rows: [] };
+    return { rows: [] };
+  };
+  const sql = { query: async (query: string) => { queries.push(query); return answer(query); } } as unknown as Parameters<
+    typeof grantSubscriptionDayInTransaction>[0];
+  const granted = await grantSubscriptionDayInTransaction(sql, randomUUID(), 900n,
+    { id: '2026-09-minimax-m', nanoPerMillionInput: 300_000n, nanoPerMillionOutput: 1_200_000n },
+    new Date().toISOString().slice(0, 10));
+  assert.equal(granted, 900n);
+  const lockIndex = queries.findIndex(query => query.includes('FROM accounts WHERE') && query.includes('FOR UPDATE'));
+  const sumIndex = queries.findIndex(query => query.includes('SUM(balance_delta_nano)'));
+  assertTrue(`wallet lock must be acquired (queries: ${queries.join(' | ')})`, lockIndex >= 0);
+  assertTrue(`the day-total sum must run after the wallet lock (lock at ${lockIndex}, sum at ${sumIndex})`,
+    sumIndex > lockIndex);
 });
 
 integration('quota exhaustion refuses a proxied call before the provider is contacted', async () => {
