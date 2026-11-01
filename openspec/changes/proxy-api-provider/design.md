@@ -87,7 +87,7 @@ estimate uses **the routed model's** output cap and the active rate version.
 ## 4. Daily quota (subscription seam)
 
 ```sql
-CREATE TABLE subscriptions (
+CREATE TABLE token_subscriptions (
   account_id bigint PRIMARY KEY REFERENCES accounts(id),
   plan text NOT NULL,
   daily_input_tokens bigint NOT NULL CHECK (daily_input_tokens > 0),
@@ -98,8 +98,8 @@ CREATE TABLE subscriptions (
 ```
 
 - A daily job (server boot-strapped interval, UTC midnight, same pattern as
-  the funding resets) grants each active subscription its allowance as a
-  ledger `purchase` entry with reference
+  the funding resets) grants each active `token_subscriptions` row its
+  allowance as a ledger `purchase` entry with reference
   `subscription-grant:<YYYY-MM-DD>:<accountID>` (idempotent by the unique
   ledger reference; retried safely). Tokens ≤ the free daily allowance come
   from the same mechanism with the allowance constants in config — one code

@@ -33,13 +33,10 @@ client must too. A later change may add SSE pass-through.
 
 ## Metering
 
-After the stream gate and the cap above, two wallet checks run before the provider:
-
-1. Available balance = `balance_nano - reserved_nano`; `<= 0` →
-   `402 token_balance_exhausted`.
-2. Pre-call estimate = input estimate (body size / 4 chars + 256 tokens) at the
-   input rate, plus `PROXY_MAX_TOKENS` (default 4,000) output tokens at the
-   output rate; estimate above balance → `402 token_balance_exhausted`.
+After the stream gate and the cap above, admission **reserves** the call's
+conservative estimate under the wallet lock (see [Reservation](#reservation-and-funded-admission)):
+available balance = `balance_nano - reserved_nano`; below the estimate →
+`402 token_balance_exhausted` before the provider is called.
 
 After the provider replies, its reported usage is **validated strictly** — both
 counts present, integers within the safe range, non-negative — and then settled
@@ -52,9 +49,7 @@ unbilled usage channel. Every successful relay — including a zero-cost report 
 also writes a durable `proxy_usage` row (token counts, the admission estimate,
 computed cost, settled amount) tied to its settle ledger entry when there was
 one; the admin timeseries set `tokens` and the `proxy_usage` browse table
-aggregate it per day and per account. Grace is bounded: a single call costing
-more than the balance still returns the reply and settles at the balance
-(never negative) — but a zero balance refuses the next call.
+aggregate it per day and per account.
 
 Rate versions: settlement always converts usage at the rate version **active at
 call time**, so a new `rate_versions` row changes what existing balances buy
@@ -82,39 +77,83 @@ purchase provenance for audit; it does not freeze the tariff for the balance.
   in-flight relays per account; excess → `429 account_busy`. The slot frees on
   settle or error, so one account cannot monopolise the shared server key.
 
-## Metering
+## Reservation and funded admission
 
-After the stream gate and the cap above, two wallet checks run before the provider:
+Admission no longer trusts an unlocked balance snapshot: the attempt row and a
+**wallet hold** are written in one transaction under the wallet lock
+(`reservations` row + immutable ledger `reserve` entry, `wallets.reserved_nano`).
+A call whose estimate exceeds the available balance is refused before any
+provider work, so concurrent calls — or two API processes — cannot spend the
+same funds twice.
 
-1. Available balance = `balance_nano - reserved_nano`; `<= 0` →
-   `402 token_balance_exhausted`.
-2. Pre-call estimate = input estimate (body size / 4 chars + 256 tokens) at the
-   input rate, plus `PROXY_MAX_TOKENS` (default 4,000) output tokens at the
-   output rate; estimate above balance → `402 token_balance_exhausted`.
+- **Settled success**: one combined ledger entry debits the actual usage and
+  releases the hold. An overrun above the estimate is still bounded by what
+  the wallet holds today (never negative).
+- **Rejected upstream** (provider 400/401/403/429 — proven not-dispatched
+  work): the hold is released.
+- **Unknown outcome** (timeout, client disconnect, oversize, unmeasurable
+  usage): the hold is **kept** and reconciled by the operator with
+  `tokens-admin release-hold` (audited); nothing is ever guessed or
+  auto-released.
 
-After the provider replies, usage is settled at the **active rate version**
-(`rate_versions`, latest `valid_from`): usage × rate, debited through the
-ledger (`settle` entry, `rate_version` column) so every balance stays
-auditable. Grace is bounded: a single call costing more than the balance still
-returns the reply and settles at the balance (never negative) — but a zero
-balance refuses the next call.
+Estimates use the routed model's output cap (see below); `PROXY_MAX_TOKENS`
+is the legacy-route cap. The estimate covers the forwarded request, so what
+is priced is what is forwarded.
 
 Rate pinning: a pack purchase pins the then-active rate version on its ledger
 entries, so a later rate change never reinterprets an already-paid balance.
 Seeded rate `2026-09-minimax-m`: 300,000 nano per million input tokens
 ($0.30/M), 1,200,000 per million output ($1.20/M).
 
+## Purpose routing and request policy
+
+First-party clients send `x-palique-purpose` with the call purpose
+(`typed_reply`, `meaning`, `assessment`, `lookup`, `topic`, `help`,
+`scenario_review`, `delegation`). The purpose is **routing advice for cost
+control, never a security boundary**: the proxy resolves the model and output
+cap from the `proxy_purpose_routes` table (operator-editable via
+`tokens-admin routes` / `set-route`, audited) and builds the forwarded
+request server-side:
+
+- Allowed caller fields: `messages` (required), `response_format`
+  (`{type:"json_object"}` only), `temperature` (0–2).
+- `model`, `max_tokens` and `stream` are accepted but always overridden by
+  the server decision; any other field → `400 request_policy_violation`.
+- Unknown purpose → `400 unknown_purpose`; a purpose without an enabled
+  route → `503 proxy_unavailable` (fail closed, no silent legacy fallback).
+- **Legacy clients without the header** keep the pre-routing contract
+  (verbatim forwarding, `PROXY_MAX_TOKENS` cap) until
+  `PROXY_REQUIRE_PURPOSE=true` makes the header mandatory.
+
+`GET /v1/conversation-policy` (session auth) reports the model label per
+purpose and the account's quota state — display only; it never authorizes.
+
+## Subscription quota (daily grants)
+
+`token_subscriptions` holds each account's plan (`free`/`pilot`/`standard`)
+and daily token allowance. A daily UTC job converts the allowance at the
+**active rate version** into one idempotent ledger `purchase` entry
+(`subscription-grant:<date>:<accountID>`), so quota exhaustion surfaces
+through the same balance admission as any other refusal (`402
+token_balance_exhausted`) and the immutable ledger stays the single money
+path. The free daily allowance (`PROXY_FREE_DAILY_*_TOKENS`, default 0 =
+off) covers every non-guest account without a plan; grants are also
+assignable per pilot with `tokens-admin grant-quota`.
+
 ## Error matrix
 
 | Status | Code | Meaning |
 | --- | --- | --- |
 | 400 | `streaming_unsupported_v1` | `"stream": true` — v1 is non-streaming |
+| 400 | `unknown_purpose` | `x-palique-purpose` outside the known enum |
+| 400 | `request_policy_violation` | Body field outside the allowlist (routed calls) |
+| 400 | `purpose_required` | Header missing with `PROXY_REQUIRE_PURPOSE=true` |
 | 401 | auth codes | Missing/invalid session token |
-| 402 | `token_balance_exhausted` | Zero balance, or estimate above balance |
+| 402 | `token_balance_exhausted` | Balance below the reservation estimate (incl. exhausted daily quota) |
 | 403 | `unlock_required` | Account has no verified BYOK unlock |
 | 502 | `provider_error` | Provider returned 4xx/5xx, or a success reply whose usage cannot be metered (missing/malformed/negative counts — refused before settlement, nothing debits) |
 | 429 | `account_busy` | Per-account in-flight cap (`PROXY_MAX_CONCURRENT`) exceeded |
-| 503 | `proxy_unavailable` | `PROXY_PROVIDER_URL`/`KEY` not configured, or `rate_versions` empty (no active rate) |
+| 503 | `proxy_unavailable` | `PROXY_PROVIDER_URL`/`KEY` not configured, `rate_versions` empty, or no enabled route for the requested purpose |
 
 Error bodies carry a safe `error.code` only.
 
@@ -124,17 +163,21 @@ Error bodies carry a safe `error.code` only.
 | --- | --- |
 | `PROXY_PROVIDER_URL` | Absolute URL of an OpenAI-compatible completions endpoint (MiniMax or an aggregator) |
 | `PROXY_PROVIDER_KEY` | Server-side provider key; never sent to clients |
-| `PROXY_MAX_TOKENS` | Output-token estimate cap for admission (default 4,000) |
+| `PROXY_MAX_TOKENS` | Output-token estimate cap for legacy (purpose-less) admission (default 4,000) |
 | `PROXY_MAX_CONCURRENT` | Per-account in-flight relay cap (default 2) |
+| `PROXY_REQUIRE_PURPOSE` | `true` once the fleet sends `x-palique-purpose`: header becomes mandatory |
+| `PROXY_FREE_DAILY_INPUT_TOKENS` | Free daily input-token allowance for every member account (default 0 = off) |
+| `PROXY_FREE_DAILY_OUTPUT_TOKENS` | Free daily output-token allowance (default 0 = off) |
 
 Both URL and key must be set or the proxy stays off. Compose forwards both
 from the environment; keep the key out of the repository.
 
-**Client model contract:** the apps' `hosted-proxy` engines hardcode
-`model: "MiniMax-M2"` in the relayed body and the proxy forwards the body
-verbatim, so `PROXY_PROVIDER_URL` must serve an OpenAI-compatible endpoint
-exposing a model with that id (MiniMax, or an aggregator that maps it) — a
-mismatch surfaces to clients as `502 provider_error`. Billing is unaffected:
+**Client model contract:** the `hosted-proxy` engine (prepaid packs) keeps
+hardcoding `model: "MiniMax-M2"` and the proxy forwards that body verbatim,
+so `PROXY_PROVIDER_URL` must serve an OpenAI-compatible endpoint exposing a
+model with that id — a mismatch surfaces to clients as `502 provider_error`.
+The `api` engine (change `proxy-api-provider`) never pins a model: it sends
+`x-palique-purpose` and the proxy decides. Billing is unaffected either way:
 provider failures are rejected before settlement, so nothing ever debits.
 
 ## Packs and pricing
@@ -182,6 +225,17 @@ echo '{"accountID":"<uuid>","actor":"joaquin","reason":"campaign pilot","grantID
   are refused.
 - **`show`** prints the wallet, unlock state and 30-day proxy usage for one
   account.
+- **`routes`** / **`set-route`** list and edit the per-purpose model routing
+  (`{"actor","reason","purpose","model","cap"}` on stdin; audited as
+  `set_purpose_route`).
+- **`grant-quota`** assigns a pilot subscription window
+  (`{"accountID","actor","reason","plan","days","dailyInputTokens","dailyOutputTokens"}`);
+  the daily job converts the allowance to ledger credit.
+- **`release-hold`** reconciliation: releases the reservation of an attempt
+  whose outcome stayed unknown
+  (`{"attemptID","actor","reason"}`; audited as `release_hold`). Review the
+  provider evidence first — the hold is the only record that provider work
+  may have been spent.
 
 ## Load signal
 
