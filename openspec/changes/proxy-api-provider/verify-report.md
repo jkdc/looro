@@ -2,6 +2,16 @@
 
 Fecha: 2026-11-01 (rev. 5, tras la cuarta revisión de `2ed4286`) · Rama: `feat/proxy-api-provider`.
 
+**Cierre de la ronda (confirmación externa):** la re-revisión de `38168bc`
+verificó las tres correcciones de la rev. 5 — concurrencia (sonda con dos
+transacciones PG: saldo final 1800, no 2610), compatibilidad histórica
+(conserva 900 sin reacreditar) y reversibilidad/controles Android (por
+inspección) — **sin nuevos defectos bloqueantes**. Ejecutó 29/29 tests proxy
+PG, 7/7 Android focalizados y typecheck. Los hallazgos de las cuatro rondas
+quedan cerrados; esto **no certifica** la funcionalidad completa: siguen
+abiertos los pendientes listados abajo (iOS wiring, pruebas UI/asíncronas,
+carga por propósito, piloto con proveedor real).
+
 ## Rev. 5 — cuarta ronda de auditoría
 
 Tres hallazgos sobre `2ed4286`, confirmados y corregidos test-first:
