@@ -26,7 +26,7 @@ object ConversationEngineFactory {
 
     /** Rows that are available in this build. Kept explicit for discoverability. */
     private val registry: Map<String, (ConversationEngineDeps) -> TeachingClient> = mapOf(
-        "openai" to { deps -> OpenAIEngineAdapter(deps.openai) },
+        "openai" to { deps -> OpenAIEngineAdapter(deps.openai ?: error("openai engine needs the OpenAI client")) },
         "deepseek" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.DEEPSEEK, deps) },
         "glm" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM, deps) },
         "glm-4.5" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM_45, deps) },
@@ -84,10 +84,9 @@ object ConversationEngineFactory {
         )
     }
 
-    /** The production first-party path (change proxy-api-provider): the same
-        relay as hosted-proxy, but the model is the server's per-purpose
-        decision (resolved from the conversation policy) and every call
-        carries its purpose. No key material, no client-pinned model. */
+    /** The production first-party path: the same relay as hosted-proxy, but
+        the server resolves provider/model/credentials per call from the panel
+        LLM config. No key material, no client model, no policy round-trip. */
     private fun apiProxy(deps: ConversationEngineDeps): TeachingClient {
         val readSession = deps.readSession
             ?: throw EngineException("api engine needs the app account session source")
@@ -99,7 +98,6 @@ object ConversationEngineFactory {
             baseUrl = origin,
             completionsPath = "v1/proxy/responses",
             credential = { readSession()?.takeIf { it.isValid(System.currentTimeMillis()) }?.accessToken },
-            modelOverride = { purpose -> deps.policyModel?.invoke(purpose) },
             proxyErrorMessages = true,
         )
     }

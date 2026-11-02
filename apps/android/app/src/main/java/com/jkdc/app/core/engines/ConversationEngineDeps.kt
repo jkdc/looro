@@ -16,8 +16,10 @@ import kotlinx.serialization.json.Json
  */
 class ConversationEngineDeps(
     val appContext: Context?,
-    /** The existing BYOK OpenAI client; reused by the default engine. */
-    val openai: APIClient,
+    /** The existing BYOK OpenAI client; reused by the default engine. Nullable
+        so JVM tests can build deps without the OpenAI client — only the
+        `openai` engine's registry row consumes it. */
+    val openai: APIClient? = null,
     /** Resolves provider key environment variable names to key material, or null. */
     val keyLookup: (String) -> String?,
     val json: Json,

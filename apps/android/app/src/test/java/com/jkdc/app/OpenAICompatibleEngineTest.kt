@@ -270,48 +270,39 @@ class OpenAICompatibleEngineTest {
     }
 
     @Test
-    fun `api engine sends the purpose header and the policy model`() = runTest {
+    fun `model override replaces the config default model in the body`() = runTest {
         server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
-        server.enqueue(MockResponse().setBody("""{"choices":[{"message":{"content":"ok"}}]}"""))
-        val api = OpenAICompatibleEngine(
-            config = RemoteEngineConfig.API,
-            deps = deps(),
+        // BYOK engines resolve the model client-side (Settings model picker);
+        // the proxy-backed api engine instead omits the model entirely and is
+        // covered by OpenAICompatibleEngineApiTest.
+        val overridden = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.DEEPSEEK,
+            deps = deps(mapOf("DEEPSEEK_API_KEY" to "test-key-123")),
             client = OkHttpClient(),
-            baseUrl = server.url("/"),
-            completionsPath = "v1/proxy/responses",
-            credential = { "session-token" },
-            modelOverride = { purpose -> if (purpose == HelperPurpose.MEANING) "free-m" else "strong-m" },
-            proxyErrorMessages = true,
+            baseUrl = server.url("/v1/"),
+            modelOverride = { _ -> "picked-m" },
         )
 
-        api.respond("i", "in", purpose = HelperPurpose.MEANING)
-        val meaning = server.takeRequest()
-        assertEquals("free-m", Json.parseToJsonElement(meaning.body.readUtf8()).jsonObject["model"]!!.jsonPrimitive.content)
-        assertEquals("meaning", meaning.getHeader("x-palique-purpose"))
-        assertEquals("Bearer session-token", meaning.getHeader("Authorization"))
+        overridden.respond("i", "in")
 
-        // A null purpose maps to the dominant conversation case.
-        api.respond("i", "in")
-        val typed = server.takeRequest()
-        assertEquals("strong-m", Json.parseToJsonElement(typed.body.readUtf8()).jsonObject["model"]!!.jsonPrimitive.content)
-        assertEquals("typed_reply", typed.getHeader("x-palique-purpose"))
+        val recorded = server.takeRequest()
+        assertEquals("picked-m", Json.parseToJsonElement(recorded.body.readUtf8()).jsonObject["model"]!!.jsonPrimitive.content)
     }
 
     @Test
-    fun `api engine refuses to guess a model when the policy is unavailable`() = runTest {
+    fun `api engine without a session credential refuses before any request`() = runTest {
         val api = OpenAICompatibleEngine(
             config = RemoteEngineConfig.API,
             deps = deps(),
             client = OkHttpClient(),
             baseUrl = server.url("/"),
             completionsPath = "v1/proxy/responses",
-            credential = { "session-token" },
         )
         try {
             api.respond("i", "in")
             fail("expected EngineException")
         } catch (e: EngineException) {
-            assertTrue(e.message!!.contains("conversation policy"))
+            assertTrue(e.message!!.contains("environment variable"))
         }
         assertEquals(0, server.requestCount)
     }
