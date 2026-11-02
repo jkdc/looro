@@ -29,10 +29,6 @@ class ConversationEngineDeps(
     /** Resolves an engine id to its selected model id (Settings model picker,
         backed by EngineModelsStore); null keeps the engine's default model. */
     val modelLookup: ((String) -> String?)? = null,
-    /** Resolves the server-chosen model for a call purpose (the Palique API
-        provider, backed by ConversationPolicyStore); null means the policy
-        is unavailable and the engine must refuse to guess. */
-    val policyModel: ((com.jkdc.app.network.HelperPurpose?) -> String?)? = null,
 ) {
     companion object {
         /** Default key lookup: environment first, then JVM system properties (unit tests). */

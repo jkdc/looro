@@ -63,10 +63,10 @@ data class RemoteEngineConfig(
             keyEnvVar = "ZHIPUAI_API_KEY",
             extraBody = buildJsonObject { put("thinking", buildJsonObject { put("type", "disabled") }) },
         )
-        // The Palique token proxy relays the body verbatim to the operator's
-        // provider (`PROXY_PROVIDER_URL`), so the model must match that provider;
-        // the seeded rate version 2026-09-minimax-m pins MiniMax M as the launch
-        // provider. Auth is the app session bearer, never an environment key.
+        // The Palique token proxy forwards to the provider configured in the
+        // panel ("Configuración de IA") and overrides any client-sent model,
+        // so this default is a placeholder, never a routing decision. Auth is
+        // the app session bearer, never an environment key.
         val HOSTED_PROXY = RemoteEngineConfig("hosted-proxy", "", "MiniMax-M2", "")
         // The production first-party path: all calls ride the backend proxy with
         // the session bearer and no client model — the server resolves provider,

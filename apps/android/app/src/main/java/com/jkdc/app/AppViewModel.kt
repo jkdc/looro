@@ -596,11 +596,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val engineSelection = com.jkdc.app.core.engines.LocalEngineSelectionStore(application)
     // Backs the opencode model picker; consulted per request through modelLookup.
     private val engineModelsStore = EngineModelsStore(application)
-    // Display-only conversation policy for the api provider (models per
-    // purpose, quota state). The backend proxy is the real decision point.
-    private val conversationPolicyStore = com.jkdc.app.core.engines.ConversationPolicyStore()
-    private val policyCommerceClient = com.jkdc.app.network.MinuteCommerceConfiguration
-        .parse(BuildConfig.MANAGED_API_ORIGIN)?.let { com.jkdc.app.network.MinuteCommerceClient(it) }
     // Declared before engineDeps: the hosted-proxy engine resolves its bearer
     // from this store — the same one the hosted client authenticates with.
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
@@ -623,7 +618,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         json = json,
         readSession = memberSessions?.let { it::read },
         modelLookup = { engineModelsStore.selectedRaw(it) },
-        policyModel = { purpose -> conversationPolicyStore.modelFor(purpose) },
     )
     // Release builds ship the proxy-backed api provider as the default: the
     // BYOK engines are a debug/benchmarking surface, not a deployment choice.
@@ -658,52 +652,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 resolveEngineSelection()
             }
         }
-
-    /** Refreshes the display-only conversation policy for the api provider.
-        Bounded retries run **inside one coroutine** (audit rev.3: recursive
-        re-entry returned because the same job was still active); `force`
-        cancels the in-flight fetch and clears the previous account's state
-        before fetching (A3/A4), and a late reply is discarded unless the
-        account revision still matches. Best effort: a stale map only
-        degrades the label display — the proxy enforces the real routing
-        decision per call. */
-    private var policyFetchJob: kotlinx.coroutines.Job? = null
-
-    fun refreshConversationPolicy(force: Boolean = false) {
-        val client = policyCommerceClient ?: return
-        if (force) {
-            policyFetchJob?.cancel()
-            conversationPolicyStore.clear()
-        }
-        if (policyFetchJob?.isActive == true) return
-        val revision = accountRevision
-        policyFetchJob = viewModelScope.launch {
-            var attempts = 0
-            while (true) {
-                try {
-                    val session = memberSessions?.read() ?: return@launch
-                    val state = client.conversationPolicy(session)
-                    if (revision == accountRevision) conversationPolicyStore.update(state)
-                    return@launch
-                } catch (cancelled: kotlinx.coroutines.CancellationException) {
-                    throw cancelled
-                } catch (_: Exception) {
-                    attempts++
-                    if (attempts >= 5 || revision != accountRevision) return@launch
-                    delay(15_000L * attempts)
-                }
-            }
-        }
-    }
-
-    /** Starts a policy refresh when the api engine is about to run without a
-        cached policy (audit rev.4, finding 2): exhausting the retry budget
-        must not leave the engine blocked until the next account change — the
-        next conversation attempt re-queries. The very first attempt may still
-        fail while the fetch is in flight; the retry then finds the cache. */
-    private fun ensureConversationPolicy() {
-        if (resolveEngineSelection() == "api" && conversationPolicyStore.current() == null) refreshConversationPolicy()
-    }
 
     /** Compose-observable mirror of the transport's turnInFlight: the flag
         flips from the IO loop, so a plain getter would never recompose the
@@ -2014,9 +1962,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onAccountChanged(account: AccountState) {
         accountRevision++
-        // A new identity invalidates any in-flight policy fetch (A4) and
-        // resets the retry budget (A3).
-        refreshConversationPolicy(force = true)
         topicTransition.invalidate()
         val previousOwnerIdentity = examOwnerIdentity.value.ownerAccountID
         setExamOwner(account.accountID)
@@ -2671,7 +2616,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
         }
         val localVoice = resolveEngineSelection() != "openai"
-        if (resolveEngineSelection() == "api") ensureConversationPolicy()
         if (!localVoice) {
             if (!cloudReady()) return
         } else {
@@ -3284,7 +3228,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun sendTyped(text: String) {
         val localOnly = resolveEngineSelection() != "openai"
-        if (resolveEngineSelection() == "api") ensureConversationPolicy()
         val clean = text.trim().take(2000)
         if (clean.isEmpty() || working || state in listOf("connecting", "closing")) return
         if (!localOnly && !cloudReady()) return
