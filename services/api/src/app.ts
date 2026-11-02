@@ -14,7 +14,6 @@ import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './tr
 import type { HostedVoice } from './hosted-voice.js';
 import { ACCESS_REQUEST_PATH, isPrivateAddress, trustedClientNetwork, type AccessRequests } from './access-requests.js';
 import { TokenProxy } from './token-proxy.js';
-import { conversationPolicy } from './conversation-policy.js';
 import type { QuotaAllowance } from './proxy-quota.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
@@ -67,7 +66,7 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };
   llmTestTimeoutMs?: number;
   environment?: NodeJS.ProcessEnv }
-const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/conversation-policy', '/v1/minutes/welcome', '/v1/minutes/link-guest',
+const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
 // Cacheable public content: carries no session, but is now durably admitted —
@@ -766,12 +765,6 @@ export function createApp(services: Services) {
     return { currency: 'USD', balanceNanoUSD: wallet.balance_nano, reservedNanoUSD: wallet.reserved_nano,
       availableNanoUSD: (BigInt(wallet.balance_nano) - BigInt(wallet.reserved_nano)).toString(),
       unlocked: Boolean(wallet.unlocked_at), unlockSource: wallet.unlocked_at ? wallet.unlock_source ?? null : null };
-  });
-  // Display-only policy for the first-party api provider: quota state and
-  // model labels per purpose. It never authorizes anything.
-  app.get('/v1/conversation-policy', async request => {
-    const account = await authenticate(db, request.headers.authorization);
-    return conversationPolicy(db, account, services.proxyQuotaAllowance ?? null);
   });
   app.post('/v1/auth/sign-out', { bodyLimit: 1024 }, async request => {
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');

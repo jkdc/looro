@@ -30,15 +30,14 @@ services:
       # Accounts admission (trusted-proxy caps for sign-in and account routes).
       ACCOUNTS_HMAC_KEY: ${ACCOUNTS_HMAC_KEY:-}
       ACCOUNTS_PROXY_TOKEN: ${ACCOUNTS_PROXY_TOKEN:-}
-      # Token billing proxy (token-billing F2): disabled unless a provider is set.
-      PROXY_PROVIDER_URL: ${PROXY_PROVIDER_URL:-}
-      PROXY_PROVIDER_KEY: ${PROXY_PROVIDER_KEY:-}
+      # Token billing proxy (docs/token-billing.md): provider, model and API
+      # key come from the admin panel LLM config (llm_provider_configs); the
+      # env fallback is LEVELTEST_LLM_PROVIDER / LEVELTEST_LLM_API_KEY.
       PROXY_MAX_TOKENS: ${PROXY_MAX_TOKENS:-4000}
       PROXY_MAX_CONCURRENT: ${PROXY_MAX_CONCURRENT:-2}
       PROXY_MAX_IN_FLIGHT: ${PROXY_MAX_IN_FLIGHT:-10}
       PROXY_TIMEOUT_MS: ${PROXY_TIMEOUT_MS:-30000}
       PROXY_MAX_RESPONSE_BYTES: ${PROXY_MAX_RESPONSE_BYTES:-1048576}
-      PROXY_REQUIRE_PURPOSE: ${PROXY_REQUIRE_PURPOSE:-}
       PROXY_FREE_DAILY_INPUT_TOKENS: ${PROXY_FREE_DAILY_INPUT_TOKENS:-}
       PROXY_FREE_DAILY_OUTPUT_TOKENS: ${PROXY_FREE_DAILY_OUTPUT_TOKENS:-}
       GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-}

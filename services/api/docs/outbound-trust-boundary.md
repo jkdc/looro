@@ -6,7 +6,7 @@ endpoints. Every one of them carries a server-side credential in its
 
 | Target | Source | Rule |
 |---|---|---|
-| Token-billing provider | `PROXY_PROVIDER_URL` | `assertOutboundUrl`: https required; plain http only for loopback transports (`127.0.0.1`, `::1`, `localhost`) |
+| Token-billing provider | panel `llm_provider_configs` base URL (`assertOutboundUrl` applied inside `resolveLlmConfig`); env fallback `LEVELTEST_LLM_URL` | `assertOutboundUrl`: https required; plain http only for loopback transports (`127.0.0.1`, `::1`, `localhost`) |
 | Level-test LLM | `LEVELTEST_LLM_URL` (env) or `llm_provider_configs.base_url` (operator row) | same rule; an operator row that violates it is skipped, an env value that violates it fails startup |
 | Voice sessions | `LiveProvider` origin | production origin is fixed to https (`api.openai.com`); test transports must be loopback http |
 | Identity providers | `googleapis.com` / `appleid.apple.com` | hardcoded JWKS endpoints |

@@ -4,7 +4,7 @@ This backend prepares accounts, a credit ledger, and **Stripe sandbox** payments
 
 Consumer pricing is moving to **conversation minutes**. The time ledger, configurable welcome allowance, guest-to-account transfer and audited grants are implemented separately from provider cost accounting. They do not activate hosted calls or real purchases. Read [conversation minutes](../../docs/conversation-minutes.md) and [how to manage free minutes](../../docs/manage-free-minutes.md) before configuring the operator controls.
 
-Token billing (the "Palique (tokens)" proxy) is documented separately: the non-streaming v1 contract, `stream: false` operator requirement, unlock/metering semantics and pack pricing live in [token billing](../../docs/token-billing.md). Read it before setting `PROXY_PROVIDER_URL`/`PROXY_PROVIDER_KEY`.
+Token billing (the "Palique (tokens)" proxy) is documented separately: the non-streaming v1 contract, `stream: false` operator requirement, unlock/metering semantics and pack pricing live in [token billing](../../docs/token-billing.md). Read it before enabling the proxy (admin panel LLM config, with the `LEVELTEST_LLM_*` env fallback).
 
 ## Run locally
 

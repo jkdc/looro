@@ -5,7 +5,6 @@ import { createServer } from 'node:http';
 import { connectDatabase, transaction } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { appendEntry } from '../src/ledger.js';
-import { conversationPolicy } from '../src/conversation-policy.js';
 import { grantSubscriptionDayInTransaction, proxyQuotaConfig, runDailyQuotaGrants, setSubscription } from '../src/proxy-quota.js';
 import { grantQuota, reconcileHold } from '../src/tokens-admin.js';
 import { TokenProxy } from '../src/token-proxy.js';
@@ -58,16 +57,6 @@ integration('daily quota grants are idempotent and cover subscriptions plus the 
     const grants = (await db.query(`SELECT account_id,reference FROM ledger WHERE kind='purchase' AND reference LIKE 'subscription-grant:%' ORDER BY reference`)).rows;
     assert.equal(grants.length, 2);
     assert.ok(grants.every(row => (row.reference as string).startsWith('subscription-grant:')));
-
-    // Policy: display-only quota state per account (model labels are gone
-    // with the purpose routes).
-    const subscriberPolicy = await conversationPolicy(db, subscriber, allowance);
-    assert.equal(subscriberPolicy.quota.limitTokens, 1500);
-    assert.equal(subscriberPolicy.quota.usedTokensToday, 0);
-    assert.equal(subscriberPolicy.quota.exhausted, false);
-    assert.deepEqual(subscriberPolicy.models, {});
-    const memberPolicy = await conversationPolicy(db, member, allowance);
-    assert.equal(memberPolicy.quota.limitTokens, 150);
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
 
@@ -333,12 +322,12 @@ integration('quota exhaustion refuses a proxied call before the provider is cont
     await db.query('INSERT INTO wallets(account_id) VALUES($1)', [account]);
     // A tiny allowance: 1 in + 1 out = 1.5 nano → 1n credit (truncating),
     // below any plausible estimate, so the proxy must refuse with 402.
-    await setSubscription(db, { accountID: account, plan: 'pilot', days: 1, dailyInputTokens: 1n, dailyOutputTokens: 1n });
+    const plan = await setSubscription(db, { accountID: account, plan: 'pilot', days: 1, dailyInputTokens: 1n, dailyOutputTokens: 1n });
+    assert.equal(plan.dailyInputTokens, '1');
+    assert.equal(plan.dailyOutputTokens, '1');
     await runDailyQuotaGrants(db, { dailyInputTokens: 1, dailyOutputTokens: 1 });
     const wallet = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
     assert.equal(wallet.balance_nano, '1');
-    const policy = await conversationPolicy(db, account, null);
-    assert.equal(policy.quota.limitTokens, 2);
     // Through the real proxy this time: the provider is never contacted.
     let calls = 0;
     const provider = createServer((_request, response) => {

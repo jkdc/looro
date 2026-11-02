@@ -64,7 +64,9 @@ purchase provenance for audit; it does not freeze the tariff for the balance.
   record state but never unlock); a campaign grant can also set it (see
   [Operator grants](#operator-grants-no-store-purchase)). Clients read the
   current state from `GET /v1/wallet` (`unlocked`, `unlockSource`).
-- Without `PROXY_PROVIDER_URL`/`PROXY_PROVIDER_KEY` configured the route
+- Without a resolvable provider configuration (admin panel
+  `llm_provider_configs`, env fallback `LEVELTEST_LLM_PROVIDER` /
+  `LEVELTEST_LLM_API_KEY` with optional `LEVELTEST_LLM_URL`) the route
   answers `503 proxy_unavailable` — the proxy is disabled, not degraded.
 
 ## Admission
@@ -96,37 +98,25 @@ same funds twice.
   `tokens-admin release-hold` (audited); nothing is ever guessed or
   auto-released.
 
-Estimates use the routed model's output cap (see below); `PROXY_MAX_TOKENS`
-is the legacy-route cap. The estimate covers the forwarded request, so what
-is priced is what is forwarded.
+Estimates use the resolved model's output cap (`PROXY_MAX_TOKENS`). The
+estimate covers the forwarded request, so what is priced is what is forwarded.
 
 Rate pinning: a pack purchase pins the then-active rate version on its ledger
 entries, so a later rate change never reinterprets an already-paid balance.
 Seeded rate `2026-09-minimax-m`: 300,000 nano per million input tokens
 ($0.30/M), 1,200,000 per million output ($1.20/M).
 
-## Purpose routing and request policy
+## Request policy
 
-First-party clients send `x-palique-purpose` with the call purpose
-(`typed_reply`, `meaning`, `assessment`, `lookup`, `topic`, `help`,
-`scenario_review`, `delegation`). The purpose is **routing advice for cost
-control, never a security boundary**: the proxy resolves the model and output
-cap from the `proxy_purpose_routes` table (operator-editable via
-`tokens-admin routes` / `set-route`, audited) and builds the forwarded
-request server-side:
+The proxy builds the forwarded request server-side: the model, the output cap
+and `stream: false` are server decisions — the provider/model/key come from
+the admin panel's LLM configuration (`llm_provider_configs`), resolved per
+call. The policy only decides which caller fields may ride along:
 
 - Allowed caller fields: `messages` (required), `response_format`
   (`{type:"json_object"}` only), `temperature` (0–2).
 - `model`, `max_tokens` and `stream` are accepted but always overridden by
   the server decision; any other field → `400 request_policy_violation`.
-- Unknown purpose → `400 unknown_purpose`; a purpose without an enabled
-  route → `503 proxy_unavailable` (fail closed, no silent legacy fallback).
-- **Legacy clients without the header** keep the pre-routing contract
-  (verbatim forwarding, `PROXY_MAX_TOKENS` cap) until
-  `PROXY_REQUIRE_PURPOSE=true` makes the header mandatory.
-
-`GET /v1/conversation-policy` (session auth) reports the model label per
-purpose and the account's quota state — display only; it never authorizes.
 
 ## Subscription quota (daily grants)
 
@@ -145,15 +135,13 @@ assignable per pilot with `tokens-admin grant-quota`.
 | Status | Code | Meaning |
 | --- | --- | --- |
 | 400 | `streaming_unsupported_v1` | `"stream": true` — v1 is non-streaming |
-| 400 | `unknown_purpose` | `x-palique-purpose` outside the known enum |
-| 400 | `request_policy_violation` | Body field outside the allowlist (routed calls) |
-| 400 | `purpose_required` | Header missing with `PROXY_REQUIRE_PURPOSE=true` |
+| 400 | `request_policy_violation` | Body field outside the allowlist |
 | 401 | auth codes | Missing/invalid session token |
 | 402 | `token_balance_exhausted` | Balance below the reservation estimate (incl. exhausted daily quota) |
 | 403 | `unlock_required` | Account has no verified BYOK unlock |
 | 502 | `provider_error` | Provider returned 4xx/5xx, or a success reply whose usage cannot be metered (missing/malformed/negative counts — refused before settlement, nothing debits) |
 | 429 | `account_busy` | Per-account in-flight cap (`PROXY_MAX_CONCURRENT`) exceeded |
-| 503 | `proxy_unavailable` | `PROXY_PROVIDER_URL`/`KEY` not configured, `rate_versions` empty, or no enabled route for the requested purpose |
+| 503 | `proxy_unavailable` | No resolvable provider configuration (panel LLM config + `LEVELTEST_LLM_*` fallback), or `rate_versions` empty |
 
 Error bodies carry a safe `error.code` only.
 
@@ -161,24 +149,25 @@ Error bodies carry a safe `error.code` only.
 
 | Variable | Meaning |
 | --- | --- |
-| `PROXY_PROVIDER_URL` | Absolute URL of an OpenAI-compatible completions endpoint (MiniMax or an aggregator) |
-| `PROXY_PROVIDER_KEY` | Server-side provider key; never sent to clients |
-| `PROXY_MAX_TOKENS` | Output-token estimate cap for legacy (purpose-less) admission (default 4,000) |
+| `PROXY_MAX_TOKENS` | Output-token estimate cap for admission (default 4,000) |
 | `PROXY_MAX_CONCURRENT` | Per-account in-flight relay cap (default 2) |
-| `PROXY_REQUIRE_PURPOSE` | `true` once the fleet sends `x-palique-purpose`: header becomes mandatory |
 | `PROXY_FREE_DAILY_INPUT_TOKENS` | Free daily input-token allowance for every member account (default 0 = off) |
 | `PROXY_FREE_DAILY_OUTPUT_TOKENS` | Free daily output-token allowance (default 0 = off) |
 
-Both URL and key must be set or the proxy stays off. Compose forwards both
-from the environment; keep the key out of the repository.
+Provider, model and API key come from the admin panel's LLM configuration
+(`llm_provider_configs`, edited in the panel, keys AES-256-GCM-encrypted);
+without an active panel row the proxy falls back to `LEVELTEST_LLM_PROVIDER`
+/ `LEVELTEST_LLM_API_KEY` (optional `LEVELTEST_LLM_URL`). Without either the
+proxy stays off. The provider key is server-side only; never send it to
+clients or commit it.
 
-**Client model contract:** the `hosted-proxy` engine (prepaid packs) keeps
-hardcoding `model: "MiniMax-M2"` and the proxy forwards that body verbatim,
-so `PROXY_PROVIDER_URL` must serve an OpenAI-compatible endpoint exposing a
-model with that id — a mismatch surfaces to clients as `502 provider_error`.
-The `api` engine (change `proxy-api-provider`) never pins a model: it sends
-`x-palique-purpose` and the proxy decides. Billing is unaffected either way:
-provider failures are rejected before settlement, so nothing ever debits.
+**Client model contract:** the proxy takes provider, model and key from the
+panel LLM config per call; clients send no purpose header and no model that
+is honored — any client-supplied `model`/`max_tokens` are overridden
+server-side, so a panel re-route never needs a client release. A configured
+model the provider does not actually serve surfaces to clients as `502
+provider_error`. Billing is unaffected either way: provider failures are
+rejected before settlement, so nothing ever debits.
 
 ## Packs and pricing
 
@@ -225,9 +214,6 @@ echo '{"accountID":"<uuid>","actor":"joaquin","reason":"campaign pilot","grantID
   are refused.
 - **`show`** prints the wallet, unlock state and 30-day proxy usage for one
   account.
-- **`routes`** / **`set-route`** list and edit the per-purpose model routing
-  (`{"actor","reason","purpose","model","cap"}` on stdin; audited as
-  `set_purpose_route`).
 - **`grant-quota`** assigns a pilot subscription window
   (`{"accountID","actor","reason","plan","days","dailyInputTokens","dailyOutputTokens"}`);
   the daily job converts the allowance to ledger credit.
@@ -241,5 +227,6 @@ echo '{"accountID":"<uuid>","actor":"joaquin","reason":"campaign pilot","grantID
 
 `services/api/load/loadtest.mjs` has a `proxy-completions` phase: paced
 authorized non-streaming calls recording latency percentiles plus separate
-402/403/429 counters. It must target a **stub provider** (start the API with
-`PROXY_PROVIDER_URL` pointed at a local stub) — never a real provider.
+402/403/429 counters. It must target a **stub provider** (point the API's
+LLM configuration at a local stub — panel row or `LEVELTEST_LLM_URL`
+fallback) — never a real provider.

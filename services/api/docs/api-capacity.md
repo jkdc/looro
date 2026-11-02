@@ -34,7 +34,14 @@ Crash antes/después del envío puede dejar dispatched incluso si no llegó a ej
 
 **Reserva de fondos (change `proxy-api-provider`)**: la admisión ya no lee el saldo sin lock; el intento y una **retención de wallet** (`reservations`, entrada inmutable `reserve`, `wallets.reserved_nano`) se escriben en una transacción bajo lock de wallet con la estimación como techo. Dos llamadas concurrentes (o dos procesos) no pueden gastar los mismos fondos. El settle debita el usage real y libera la retención en una única entrada combinada; un rechazo del proveedor (400/401/403/429) la libera; un outcome `unknown` **la conserva** hasta que el operador la concilie con `tokens-admin release-hold` (auditado). La política histórica de grace queda sustituida por este techo de reserva: la llamada nunca se despacha sin fondos para su estimación, y el sobrecoste sobre la estimación queda acotado por el saldo total que la cuenta tenga en el momento del settle.
 
-**Routing por propósito y política de petición**: con `x-palique-purpose`, el modelo y el tope de salida los fija el servidor (`proxy_purpose_routes`) y la petición se reconstruye desde una allowlist (`400 request_policy_violation` en caso contrario; `400 unknown_purpose` para propósitos desconocidos). Sin header, la ruta legacy conserva el contrato anterior hasta activar `PROXY_REQUIRE_PURPOSE`. La cuota diaria de suscripción se acredita como entrada idempotente de ledger (`subscription-grant:<fecha>:<cuenta>`), así que el agotamiento de cuota usa la misma admisión por saldo.
+**Política de petición**: el modelo, el proveedor y la clave salen de la
+configuración LLM del panel (`llm_provider_configs`, resuelta por llamada, con
+fallback a `LEVELTEST_LLM_*`); la petición se reconstruye desde una allowlist
+(`400 request_policy_violation` en caso contrario) y el cliente nunca elige
+modelo ni precio. Sin configuración resoluble, `503 proxy_unavailable`. La
+cuota diaria de suscripción se acredita como entrada idempotente de ledger
+(`subscription-grant:<fecha>:<cuenta>`), así que el agotamiento de cuota usa
+la misma admisión por saldo.
 
 Consulta operativa (solo consola autorizada; no enviar resultados identificables a telemetría):
 
