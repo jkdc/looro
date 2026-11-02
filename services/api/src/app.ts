@@ -610,14 +610,7 @@ export function createApp(services: Services) {
       if (!unlock) throw new ServiceError('unlock_required', 403);
       const body = objectBody(request);
       checkClosed();
-      // Purpose is routing advice for cost control, never a security
-      // boundary; the proxy validates it against the closed enum.
-      const rawPurpose = request.headers['x-palique-purpose'];
-      const purpose = typeof rawPurpose === 'string' ? rawPurpose : undefined;
-      // Fleet-contract flag: once legacy clients are gone, the purpose
-      // header becomes mandatory instead of falling back to the legacy route.
-      if (!purpose && ['true', '1'].includes(services.environment?.PROXY_REQUIRE_PURPOSE ?? '')) throw new ServiceError('purpose_required', 400);
-      const {status,payload}=await proxy.relay(account,body,{signal:controller.signal},purpose);
+      const {status,payload}=await proxy.relay(account,body,{signal:controller.signal});
       reply.code(status);return payload;
     } catch(error) {
       if(error instanceof ServiceError && error.code==='proxy_busy')reply.header('Retry-After','1');

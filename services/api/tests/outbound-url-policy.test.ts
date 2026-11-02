@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { assertOutboundUrl } from '../src/outbound-url.js';
-import { tokenProxyConfig } from '../src/token-proxy.js';
 import { resolveLlmConfig } from '../src/llm-config.js';
 import type { Database } from '../src/db.js';
 
@@ -16,14 +15,6 @@ test('outbound URLs require https except loopback transports', () => {
   assert.throws(() => assertOutboundUrl('ftp://provider.example/v1', 'TEST_URL'), /must be https/);
   assert.throws(() => assertOutboundUrl('https://user:pass@provider.example/v1', 'TEST_URL'), /credentials/);
   assert.throws(() => assertOutboundUrl('not a url', 'TEST_URL'), /absolute/);
-});
-
-test('token proxy config rejects plain http provider URLs outside loopback', () => {
-  const env = { PROXY_PROVIDER_KEY: 'k' };
-  assert.throws(() => tokenProxyConfig({ ...env, PROXY_PROVIDER_URL: 'http://provider.example/v1' }), /must be https/);
-  assert.equal(tokenProxyConfig({ ...env, PROXY_PROVIDER_URL: 'https://provider.example/v1' })?.providerKey, 'k');
-  // Local lab transports stay allowed.
-  assert.ok(tokenProxyConfig({ ...env, PROXY_PROVIDER_URL: 'http://127.0.0.1:8081/v1' }));
 });
 
 test('resolved LLM configuration skips or rejects non-https provider URLs', async () => {

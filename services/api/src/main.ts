@@ -12,6 +12,7 @@ import { OpenAILiveProvider } from './live-provider.js';
 import { AccessRequests, accessRequestConfig, pruneAccessRequests } from './access-requests.js';
 import { AuthAdmission, accountAdmissionConfig } from './auth-admission.js';
 import { TokenProxy, tokenProxyConfig } from './token-proxy.js';
+import { resolveLlmConfig } from './llm-config.js';
 import { proxyQuotaConfig, runDailyQuotaGrants } from './proxy-quota.js';
 import { adminAuthConfig, pruneAdminRecords, type AdminAuthServices } from './admin-auth.js';
 import { AIReports, aiReportConfig, pruneAIReports } from './feedback.js';
@@ -171,8 +172,7 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
       }, (languageID, level, code) => log.warn('level_test_generation_job', { language: languageID, level, week: weekId,
         status: 'failed', error_code: code }), undefined, timeoutMs);
     } });
-    const proxyConfig=tokenProxyConfig(env);
-    tokenProxy=proxyConfig?new TokenProxy(db,proxyConfig):undefined;
+    tokenProxy = new TokenProxy(db, tokenProxyConfig(env), () => resolveLlmConfig(db, env));
     const proxyQuota=proxyQuotaConfig(env);
     app = createApp({ db, environment: env,
       proxyQuotaAllowance: proxyQuota,

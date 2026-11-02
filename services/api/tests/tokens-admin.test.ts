@@ -16,7 +16,7 @@ if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new E
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !databaseURL && 'Set TEST_DATABASE_URL.' }, fn);
 
 const ACTOR = 'operator:test', REASON = 'campaign pilot';
-const CONFIG = { providerURL: 'http://provider.internal/v1/chat/completions', providerKey: 'server-key', maxTokens: 128, maxConcurrentPerAccount: 2 };
+const CONFIG = { maxTokens: 128, maxConcurrentPerAccount: 2, maxInFlight: 10, timeoutMs: 30000, maxResponseBytes: 1048576 };
 
 async function withSchema(fn: (db: Database, account: string) => Promise<void>) {
   const schema = `token_admin_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
@@ -160,7 +160,8 @@ integration('assigned unlock and balance open the HTTP proxy route end to end', 
     const admission = { hmacKey: 'c'.repeat(64), proxyToken: 'd'.repeat(64), allowLocalLoopback: true };
     const app = createApp({ db, auth: { googleClientID: 'tokens-admin-test' },
       accounts: { admission: new AuthAdmission(db, admission) },
-      tokenProxy: new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` }) });
+      tokenProxy: new TokenProxy(db, CONFIG, async () =>
+        ({ provider: 'openai', baseUrl: `http://127.0.0.1:${port}`, model: 'test-model', apiKey: 'server-key' })) });
     try {
       const bearer = 'a'.repeat(43);
       await db.query(`INSERT INTO auth_sessions(id,account_id,token_hash,expires_at)

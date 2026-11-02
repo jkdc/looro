@@ -5,26 +5,27 @@ import { readBoundedJSON, ProxyResponseError } from './proxy-transport.js';
 import { paliqueMetrics } from './metrics.js';
 import { log } from './log.js';
 import { ServiceError } from './errors.js';
-import { assertOutboundUrl } from './outbound-url.js';
-import { canonicalProxyRequest, isProxyPurpose, purposeRoute, type PurposeRoute } from './proxy-policy.js';
+import { canonicalProxyRequest } from './proxy-policy.js';
+import { providerExtraHeaders, type ResolvedLlmConfig } from './llm-config.js';
 
 /** Token billing proxy: relays a non-streaming OpenAI-compatible completion
-    call (v1 contract; `stream: true` is rejected) to the configured provider
-    using the server key, meters provider-reported usage against the caller's
-    nanoUSD wallet at the active rate version, refuses accounts without the
-    BYOK unlock, and caps concurrent relays per account
-    (`PROXY_MAX_CONCURRENT`, default 2) so one account cannot monopolise the
-    server key. Admission reserves the call's conservative estimate under the
-    wallet lock, so concurrent or multi-process calls cannot spend the same
-    funds twice; settlement debits actual usage and releases the hold, and an
-    uncertain outcome keeps the hold for audited reconciliation. The forwarded
-    request is built server-side: with a purpose route, the model and output
-    cap are the server's decision (the client's are ignored); without one, the
-    body is forwarded verbatim as the legacy contract. A success reply whose
-    usage cannot be metered is refused rather than served free, and every
-    successful relay leaves a durable `proxy_usage` row with the token counts
-    and what they cost. */
-export interface TokenProxyConfig { providerURL: string; providerKey: string; maxTokens: number; maxConcurrentPerAccount: number; maxInFlight?:number; timeoutMs?:number; maxResponseBytes?:number }
+    call (v1 contract; `stream: true` is rejected) to the provider resolved
+    per call from the panel-managed LLM config, meters provider-reported
+    usage against the caller's nanoUSD wallet at the active rate version,
+    refuses accounts without the BYOK unlock, and caps concurrent relays per
+    account (`PROXY_MAX_CONCURRENT`, default 2) so one account cannot
+    monopolise the server key. Admission reserves the call's conservative
+    estimate under the wallet lock, so concurrent or multi-process calls
+    cannot spend the same funds twice; settlement debits actual usage and
+    releases the hold, and an uncertain outcome keeps the hold for audited
+    reconciliation. The forwarded request is built server-side: the model
+    and output cap are the resolved config's and `PROXY_MAX_TOKENS`'s
+    decision (the client's are ignored). A success reply whose usage cannot
+    be metered is refused rather than served free, and every successful
+    relay leaves a durable `proxy_usage` row with the token counts and what
+    they cost. */
+export interface TokenProxyConfig { maxTokens: number; maxConcurrentPerAccount: number;
+  maxInFlight: number; timeoutMs: number; maxResponseBytes: number }
 
 const boundedInteger=(value:string|undefined,fallback:number,max:number,name:string,min=1):number=>{
   const n=value===undefined?fallback:Number(value);
@@ -32,19 +33,15 @@ const boundedInteger=(value:string|undefined,fallback:number,max:number,name:str
   return n;
 };
 
-export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig | undefined => {
-  const providerURL = env.PROXY_PROVIDER_URL, providerKey = env.PROXY_PROVIDER_KEY;
-  if (!providerURL || !providerKey) return undefined;
-  // The Authorization header carries the server key: plain http is only
-  // acceptable for loopback lab transports.
-  assertOutboundUrl(providerURL, 'PROXY_PROVIDER_URL');
+export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig => {
   const maxConcurrentPerAccount = Number(env.PROXY_MAX_CONCURRENT ?? 2);
-  if (!Number.isSafeInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
+  if (!Number.isInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
     throw new Error('PROXY_MAX_CONCURRENT must be a positive integer.');
-  return { providerURL, providerKey, maxTokens: boundedInteger(env.PROXY_MAX_TOKENS,4000,Number.MAX_SAFE_INTEGER,'PROXY_MAX_TOKENS'), maxConcurrentPerAccount,
-    maxInFlight:boundedInteger(env.PROXY_MAX_IN_FLIGHT,10,1000,'PROXY_MAX_IN_FLIGHT'),
-    timeoutMs:boundedInteger(env.PROXY_TIMEOUT_MS,30000,300000,'PROXY_TIMEOUT_MS'),
-    maxResponseBytes:boundedInteger(env.PROXY_MAX_RESPONSE_BYTES,1048576,16777216,'PROXY_MAX_RESPONSE_BYTES',1024) };
+  return { maxTokens: boundedInteger(env.PROXY_MAX_TOKENS, 4000, Number.MAX_SAFE_INTEGER, 'PROXY_MAX_TOKENS'),
+    maxConcurrentPerAccount,
+    maxInFlight: boundedInteger(env.PROXY_MAX_IN_FLIGHT, 10, 1000, 'PROXY_MAX_IN_FLIGHT'),
+    timeoutMs: boundedInteger(env.PROXY_TIMEOUT_MS, 30000, 300000, 'PROXY_TIMEOUT_MS'),
+    maxResponseBytes: boundedInteger(env.PROXY_MAX_RESPONSE_BYTES, 1048576, 16777216, 'PROXY_MAX_RESPONSE_BYTES', 1024) };
 };
 
 const inputEstimate = (body: { messages?: unknown[]; input?: unknown }) => {
@@ -83,7 +80,8 @@ export class TokenProxy {
   readonly #instrument=paliqueMetrics.proxyInFlight;
   readonly #observe:Parameters<typeof paliqueMetrics.proxyInFlight.addCallback>[0]=o=>o.observe(this.#controllers.size);
 
-  constructor(readonly db:Database,readonly config:TokenProxyConfig,readonly fetchFn:typeof fetch=fetch) {
+  constructor(readonly db:Database,readonly config:TokenProxyConfig,
+              private readonly resolveProvider:()=>Promise<ResolvedLlmConfig|undefined>,readonly fetchFn:typeof fetch=fetch) {
     this.#instrument.addCallback(this.#observe);
   }
   async availableBalance(accountID:string):Promise<bigint> {
@@ -96,31 +94,30 @@ export class TokenProxy {
     await Promise.allSettled([...this.#active]);
     this.#instrument.removeCallback(this.#observe);
   }
-  async relay(accountID:string,body:Record<string,unknown>,options:{signal?:AbortSignal}={},purpose?:string):Promise<{status:number;payload:Record<string,unknown>}> {
+  async relay(accountID:string,body:Record<string,unknown>,options:{signal?:AbortSignal}={}):Promise<{status:number;payload:Record<string,unknown>}> {
     if(body.stream===true)throw new ServiceError('streaming_unsupported_v1',400);
     if(this.#stopping)throw new ServiceError('proxy_unavailable',503);
-    const requested=purpose?.trim().toLowerCase();
-    if(requested!==undefined && requested!=='' && !isProxyPurpose(requested))throw new ServiceError('unknown_purpose',400);
-    const purposeID=requested||undefined;
-    const route=purposeID?await purposeRoute(this.db,purposeID):undefined;
-    if(purposeID&&!route)throw new ServiceError('proxy_unavailable',503);
-    const forward=route?canonicalProxyRequest(body,route):{body,outputCap:this.config.maxTokens};
+    // The provider comes from the panel-managed config, resolved per call:
+    // without one the relay fails closed before any wallet work.
+    const provider=await this.resolveProvider();
+    if(!provider)throw new ServiceError('proxy_unavailable',503);
+    const forward=canonicalProxyRequest(body,provider.model,this.config.maxTokens);
     const count=this.#inFlight.get(accountID)??0;
     if(count>=this.config.maxConcurrentPerAccount){paliqueMetrics.proxyRejected.add(1,{reason:'account'});throw new ServiceError('account_busy',429);}
-    if(this.#controllers.size>=(this.config.maxInFlight??10)){paliqueMetrics.proxyRejected.add(1,{reason:'global'});throw new ServiceError('proxy_busy',503);}
+    if(this.#controllers.size>=this.config.maxInFlight){paliqueMetrics.proxyRejected.add(1,{reason:'global'});throw new ServiceError('proxy_busy',503);}
     const controller=new AbortController();this.#controllers.add(controller);this.#inFlight.set(accountID,count+1);
     const cancel=()=>controller.abort(new Error('client_cancelled'));
     options.signal?.addEventListener('abort',cancel,{once:true});if(options.signal?.aborted)cancel();
     let timeout=false;
-    const timer=setTimeout(()=>{timeout=true;controller.abort(new Error('deadline'));},this.config.timeoutMs??30000);
-    const work=this.#meteredRelay(accountID,forward.body,forward.outputCap,purposeID??'legacy',controller.signal,()=>timeout).finally(()=>{
+    const timer=setTimeout(()=>{timeout=true;controller.abort(new Error('deadline'));},this.config.timeoutMs);
+    const work=this.#meteredRelay(accountID,provider,forward.body,controller.signal,()=>timeout).finally(()=>{
       clearTimeout(timer);options.signal?.removeEventListener('abort',cancel);this.#controllers.delete(controller);
       const n=(this.#inFlight.get(accountID)??1)-1;if(n)this.#inFlight.set(accountID,n);else this.#inFlight.delete(accountID);
       this.#active.delete(work);
     });
     this.#active.add(work);return work;
   }
-  async #meteredRelay(accountID:string,body:Record<string,unknown>,outputCap:number,purpose:string,signal:AbortSignal,timedOut:()=>boolean):Promise<{status:number;payload:Record<string,unknown>}> {
+  async #meteredRelay(accountID:string,provider:ResolvedLlmConfig,body:Record<string,unknown>,signal:AbortSignal,timedOut:()=>boolean):Promise<{status:number;payload:Record<string,unknown>}> {
     let id:string|undefined,dispatched=false,settling=false,terminal=false;
     let outcome='transport_error', began:number|undefined;
     try {
@@ -128,15 +125,16 @@ export class TokenProxy {
       const rate=await activeRateVersion(this.db);signal.throwIfAborted();
       // Funded admission: the estimate is reserved under the wallet lock, so
       // concurrent or multi-process calls cannot spend the same funds twice.
-      const estimate=BigInt(inputEstimate(body))*rate.nanoPerMillionInput/1_000_000n+BigInt(outputCap)*rate.nanoPerMillionOutput/1_000_000n;
+      const estimate=BigInt(inputEstimate(body))*rate.nanoPerMillionInput/1_000_000n+BigInt(this.config.maxTokens)*rate.nanoPerMillionOutput/1_000_000n;
       id=randomUUID();await prepareProxyAttempt(this.db,{id,accountID,rateVersionID:rate.id,estimateNano:estimate});signal.throwIfAborted();
       await markProxyDispatched(this.db,id);dispatched=true;signal.throwIfAborted();
       began=performance.now();
-      const response=await this.fetchFn(this.config.providerURL,{method:'POST',signal,
-        headers:{'content-type':'application/json',authorization:`Bearer ${this.config.providerKey}`},body:JSON.stringify(body)});
+      const response=await this.fetchFn(`${provider.baseUrl.replace(/\/$/, '')}/chat/completions`,{method:'POST',signal,
+        headers:{'content-type':'application/json',authorization:`Bearer ${provider.apiKey}`,
+          ...providerExtraHeaders(provider.provider,provider.sessionID)},body:JSON.stringify(body)});
       // Always consume under the same byte/time limit, including error responses.
       let payload:unknown;
-      try {payload=await readBoundedJSON(response,{signal,maxBytes:this.config.maxResponseBytes??1048576});}
+      try {payload=await readBoundedJSON(response,{signal,maxBytes:this.config.maxResponseBytes});}
       catch(error){if(response.status>=400 && !(error instanceof ProxyResponseError && error.outcome==='oversize') && !signal.aborted)outcome='http_error';throw error;}
       if(response.status>=400){outcome='http_error';
         if([400,401,403,429].includes(response.status)){await finishProxyAttempt(this.db,id,'rejected');terminal=true;}
@@ -161,6 +159,6 @@ export class TokenProxy {
       if(error instanceof ServiceError)throw error;
       if(settling) {outcome='transport_error';throw error;}
       throw new ServiceError('provider_error',502);
-    } finally {if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome,purpose});}
+    } finally {if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome});}
   }
 }

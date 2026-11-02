@@ -1,31 +1,42 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createServer } from 'node:http';
+import { createServer, type IncomingHttpHeaders } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { connectDatabase } from '../src/db.js';
+import { connectDatabase, transaction, type Database } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { appendEntry } from '../src/ledger.js';
-import { transaction } from '../src/db.js';
 import { ServiceError } from '../src/errors.js';
 import { TokenProxy, tokenProxyConfig } from '../src/token-proxy.js';
 import { canonicalProxyRequest } from '../src/proxy-policy.js';
+import type { ResolvedLlmConfig } from '../src/llm-config.js';
 import { timeseries } from '../src/admin-metrics.js';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Dedicated test database required.');
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !databaseURL && 'Set TEST_DATABASE_URL.' }, fn);
 
-const CONFIG = { providerURL: 'http://provider.internal/v1/chat/completions', providerKey: 'server-key', maxTokens: 128, maxConcurrentPerAccount: 2 };
+const CONFIG = { maxTokens: 128, maxConcurrentPerAccount: 2, maxInFlight: 10, timeoutMs: 30000, maxResponseBytes: 1048576 };
 
-integration('tokenProxyConfig requires both URL and key', async () => {
-  assert.equal(tokenProxyConfig({}), undefined);
-  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'not a url', PROXY_PROVIDER_KEY: 'k' }), /absolute URL/);
-  // The provider URL carries the server key: plain http is loopback-only.
-  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k' }), /must be https/);
-  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k' })?.providerKey, 'k');
-  // Concurrency cap knob: defaults to 2, must be a positive integer when set.
-  assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k' })?.maxConcurrentPerAccount, 2);
-  assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'https://p/v1', PROXY_PROVIDER_KEY: 'k', PROXY_MAX_CONCURRENT: '0' }), /positive integer/);
+/** The stub provider the way the panel would resolve it: the proxy calls this
+    resolver once per relay, so every relay picks up the current config. */
+const openaiProvider = (port: number): ResolvedLlmConfig =>
+  ({ provider: 'openai', baseUrl: `http://127.0.0.1:${port}`, model: 'test-model', apiKey: 'server-key' });
+
+/** A funded account: wallet plus a 10 nanoUSD seed purchase, mirroring the
+    seeding the other integration cases inline. */
+const seededAccount = async (db: Database) => {
+  const accountID = randomUUID();
+  await db.query('INSERT INTO accounts(id) VALUES($1)', [accountID]);
+  await db.query('INSERT INTO wallets(account_id) VALUES($1)', [accountID]);
+  await transaction(db, sql => appendEntry(sql, accountID, `seed:${accountID}`, 'purchase', 10_000_000n, 0n));
+  return { accountID };
+};
+
+integration('tokenProxyConfig keeps only the relay knobs', async () => {
+  const config = tokenProxyConfig({});
+  assert.equal(config?.maxTokens, 4000);
+  assert.equal(config?.maxConcurrentPerAccount, 2);
+  assert.throws(() => tokenProxyConfig({ PROXY_MAX_CONCURRENT: '0' }), /positive integer/);
 });
 
 integration('relay meters provider usage at the active rate version and debits the wallet', async () => {
@@ -38,22 +49,34 @@ integration('relay meters provider usage at the active rate version and debits t
   await transaction(db, sql => appendEntry(sql, account, `seed:${account}`, 'purchase', 10_000_000n, 0n));
 
   let calls = 0;
+  const requests: { path: string; body: Record<string, unknown> }[] = [];
   const provider = createServer((request, response) => {
-    calls++;
-    response.setHeader('content-type', 'application/json');
-    // First call: 1M input + 1M output tokens = 1_500_000 nano at the seeded rate.
-    // Second call: 30M input + 30M output = 45_000_000 nano — beyond the remaining balance.
-    const usage = calls === 1 ? { prompt_tokens: 1_000_000, completion_tokens: 1_000_000 }
-      : { prompt_tokens: 30_000_000, completion_tokens: 30_000_000 };
-    response.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Hello!' } }], usage }));
+    let raw = '';
+    request.on('data', chunk => { raw += chunk; });
+    request.on('end', () => {
+      calls++;
+      requests.push({ path: request.url ?? '', body: JSON.parse(raw) as Record<string, unknown> });
+      response.setHeader('content-type', 'application/json');
+      // First call: 1M input + 1M output tokens = 1_500_000 nano at the seeded rate.
+      // Second call: 30M input + 30M output = 45_000_000 nano — beyond the remaining balance.
+      const usage = calls === 1 ? { prompt_tokens: 1_000_000, completion_tokens: 1_000_000 }
+        : { prompt_tokens: 30_000_000, completion_tokens: 30_000_000 };
+      response.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Hello!' } }], usage }));
+    });
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(port));
 
   const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
   const metering = result.payload.metering as { rateVersion: string; nanoUSDSettled: string };
   assert.equal(result.status, 200);
+  // Per-call resolution: the stub is addressed by base URL, and the canonical
+  // body carries the panel model plus the configured output cap.
+  const first = requests[0];
+  assert.equal(first?.path, '/chat/completions');
+  assert.equal(first?.body.model, 'test-model');
+  assert.equal(first?.body.max_tokens, CONFIG.maxTokens);
   assert.equal(metering.rateVersion, '2026-09-minimax-m');
   assert.equal(metering.nanoUSDSettled, '1500000');
   const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
@@ -108,7 +131,7 @@ integration('a zero-cost usage report records usage without a ledger entry', asy
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(port));
   try {
     const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
     assert.equal(result.status, 200);
@@ -155,7 +178,7 @@ integration('a success reply whose usage cannot be metered is refused with nothi
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(port));
   try {
     for (let index = 0; index < bodies.length; index++) {
       await assert.rejects(
@@ -183,7 +206,7 @@ integration('relay rejects streaming requests before wallet admission, the provi
   // No provider server is started on purpose: the v1 contract refuses
   // `stream: true` before wallet admission, so a provider must never be
   // contacted.
-  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: 'http://127.0.0.1:9/v1/chat/completions' });
+  const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(9));
   await assert.rejects(
     proxy.relay(account, { model: 'stub', stream: true, messages: [{ role: 'user', content: 'Hi' }] }),
     (error: ServiceError) => error.code === 'streaming_unsupported_v1' && error.status === 400,
@@ -231,7 +254,7 @@ integration('per-account cap refuses a second concurrent call for one account wh
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, maxConcurrentPerAccount: 1, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const proxy = new TokenProxy(db, { ...CONFIG, maxConcurrentPerAccount: 1 }, async () => openaiProvider(port));
 
   const held = proxy.relay(accountA, { messages: [{ role: 'user', content: 'hold' }] });
   await reached;
@@ -264,7 +287,7 @@ integration('estimate refuses calls the balance cannot plausibly cover', async (
   const account = randomUUID();
   await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
   await db.query('INSERT INTO wallets(account_id, balance_nano) VALUES($1,$2)', [account, '100']);
-  const proxy = new TokenProxy(db, CONFIG);
+  const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(9));
   await assert.rejects(
     proxy.relay(account, { messages: [{ role: 'user', content: 'x'.repeat(4000) }] }),
     /token_balance_exhausted/,
@@ -272,65 +295,60 @@ integration('estimate refuses calls the balance cannot plausibly cover', async (
 });
 
 test('the request policy builds a canonical, server-owned forwarded request', () => {
-  const route = { purpose: 'meaning', model: 'free-model', displayName: 'Free', outputCap: 512 };
-  const out = canonicalProxyRequest(
-    { messages: [{ role: 'user', content: 'x' }], temperature: 0.5, response_format: { type: 'json_object' } }, route);
-  assert.deepEqual(out.body, { messages: [{ role: 'user', content: 'x' }], model: 'free-model', max_tokens: 512,
-    stream: false, temperature: 0.5, response_format: { type: 'json_object' } });
-  assert.equal(out.outputCap, 512);
-  // Client work controls are accepted but never survive: the model, the cap
-  // and streaming are the server's decision.
-  assert.deepEqual(canonicalProxyRequest({ messages: [{ role: 'user' }], model: 'gpt-9', max_tokens: 99, stream: false }, route).body,
-    { messages: [{ role: 'user' }], model: 'free-model', max_tokens: 512, stream: false });
-  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], tools: [] }, route), /request_policy_violation/);
-  assert.throws(() => canonicalProxyRequest({ messages: [] }, route), /request_policy_violation/);
-  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], temperature: 9 }, route), /request_policy_violation/);
-  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], response_format: { type: 'json_schema' } }, route), /request_policy_violation/);
+  const { body, outputCap } = canonicalProxyRequest(
+    { messages: [{ role: 'user' }], model: 'gpt-9', max_tokens: 99, stream: true }, 'panel-model', 128);
+  assert.deepEqual(body, { messages: [{ role: 'user' }], model: 'panel-model', max_tokens: 128, stream: false });
+  assert.equal(outputCap, 128);
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], tools: [] }, 'm', 128), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [] }, 'm', 128), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], temperature: 9 }, 'm', 128), /request_policy_violation/);
+  assert.throws(() => canonicalProxyRequest({ messages: [{ role: 'user' }], response_format: { type: 'json_schema' } }, 'm', 128), /request_policy_violation/);
 });
 
-integration('purpose routing forwards the server-owned model and output cap', async () => {
+integration('relay without resolvable provider returns proxy_unavailable and reserves nothing', async () => {
   const schema = `token_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
   url.searchParams.set('options', `-c search_path=${schema}`);
   const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
-  const account = randomUUID();
-  await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
-  await db.query('INSERT INTO wallets(account_id) VALUES($1)', [account]);
-  await transaction(db, sql => appendEntry(sql, account, `seed:${account}`, 'purchase', 10_000_000n, 0n));
-  let forwarded: Record<string, unknown> | undefined;
+  const { accountID } = await seededAccount(db);
+  // No panel config resolves: the relay fails closed before any wallet or
+  // attempt work, even though the account is funded.
+  const proxy = new TokenProxy(db, CONFIG, async () => undefined);
+  try {
+    await assert.rejects(() => proxy.relay(accountID, { messages: [{ role: 'user', content: 'hi' }] }),
+      (error: ServiceError) => error.code === 'proxy_unavailable' && error.status === 503);
+    // No attempt row, no wallet reservation:
+    const attempts = await db.query('SELECT count(*)::int AS n FROM proxy_attempts');
+    assert.equal(attempts.rows[0].n, 0);
+    const wallet = (await db.query('SELECT balance_nano,reserved_nano FROM wallets WHERE account_id=$1', [accountID])).rows[0];
+    assert.equal(BigInt(wallet.balance_nano), 10_000_000n);
+    assert.equal(BigInt(wallet.reserved_nano), 0n);
+  } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
+});
+
+integration('opencode provider rides the session header helper', async () => {
+  const schema = `token_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  const { accountID } = await seededAccount(db);
+  let headers: IncomingHttpHeaders = {};
   const provider = createServer((request, response) => {
-    let raw = '';
-    request.on('data', chunk => { raw += chunk; });
-    request.on('end', () => {
-      forwarded = JSON.parse(raw);
-      response.setHeader('content-type', 'application/json');
-      response.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'ok' } }], usage: { prompt_tokens: 10, completion_tokens: 5 } }));
-    });
+    headers = request.headers;
+    response.setHeader('content-type', 'application/json');
+    response.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'ok' } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5 } }));
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const opencodeProvider: ResolvedLlmConfig = { ...openaiProvider(port), provider: 'opencode', sessionID: 'session-7' };
+  const proxy = new TokenProxy(db, CONFIG, async () => opencodeProvider);
   try {
-    // The client asks for its own model and cap; the route wins on both.
-    const result = await proxy.relay(account,
-      { model: 'client-model', max_tokens: 999_999, stream: false, messages: [{ role: 'user', content: 'Hi' }] },
-      {}, 'meaning');
+    const result = await proxy.relay(accountID, { messages: [{ role: 'user', content: 'Hi' }] });
     assert.equal(result.status, 200);
-    assert.deepEqual(forwarded, { messages: [{ role: 'user', content: 'Hi' }], model: 'MiniMax-M2', max_tokens: 2048, stream: false });
-    // An unknown purpose is rejected before any dispatch.
-    await assert.rejects(
-      proxy.relay(account, { messages: [{ role: 'user' }] }, {}, 'bogus_purpose'),
-      (error: ServiceError) => error.code === 'unknown_purpose' && error.status === 400);
-    // A policy violation never dispatches: the provider sees nothing extra.
-    const before = forwarded;
-    await assert.rejects(
-      proxy.relay(account, { messages: [{ role: 'user' }], tools: [] }, {}, 'meaning'),
-      (error: ServiceError) => error.code === 'request_policy_violation' && error.status === 400);
-    assert.equal(forwarded, before);
-    // A disabled route fails closed instead of silently serving the legacy path.
-    await db.query(`UPDATE proxy_purpose_routes SET enabled=false WHERE purpose='assessment'`);
-    await assert.rejects(
-      proxy.relay(account, { messages: [{ role: 'user' }] }, {}, 'assessment'),
-      (error: ServiceError) => error.code === 'proxy_unavailable' && error.status === 503);
+    // The session header helper rides on the relayed request alongside the
+    // server key authorization.
+    assert.equal(headers['x-opencode-session'], 'session-7');
+    assert.equal(headers['user-agent'], 'palique-api/1.0');
+    assert.equal(headers.authorization, 'Bearer server-key');
   } finally {
     await new Promise<void>(resolve => provider.close(() => resolve()));
     await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end();
@@ -355,8 +373,8 @@ integration('funded admission refuses concurrent relays whose combined estimates
   // The output cap is part of the conservative estimate. Use 500 output
   // tokens (600 nano at the seeded rate) so each request individually fits
   // the 1000-nano balance but both reservations cannot fit together.
-  const proxy = new TokenProxy(db, { ...CONFIG, maxTokens: 500, maxConcurrentPerAccount: 2,
-    providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  const proxy = new TokenProxy(db, { ...CONFIG, maxTokens: 500, maxConcurrentPerAccount: 2 },
+    async () => openaiProvider(port));
   try {
     // Each estimate is just over 600n against a 1000n balance: an unlocked
     // read would admit both; the wallet-locked reservation admits exactly one.

@@ -19,15 +19,17 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
   await db.query('INSERT INTO entitlements(account_id,unlocked_at) VALUES($1,now())',[account]);
   await db.query("INSERT INTO auth_sessions(id,account_id,token_hash,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')",[randomUUID(),account,createHash('sha256').update(token).digest('hex')]);
   await transaction(db,sql=>appendEntry(sql,account,`seed:${account}`,'purchase',100000n,0n));
-  const config={providerURL:'http://stub',providerKey:'test',maxTokens:128,maxConcurrentPerAccount:2};
+  const config={maxTokens:128,maxConcurrentPerAccount:2,maxInFlight:10,timeoutMs:30000,maxResponseBytes:1048576};
+  const provider={provider:'openai' as const,baseUrl:'http://stub',model:'test-model',apiKey:'test'};
+  const resolveProvider=async()=>provider;
   await t.test('full incoming request completion does not abort normal replies and busy carries Retry-After',async()=>{
    let release!:()=>void,entered!:()=>void;const gate=new Promise<void>(r=>entered=r);let calls=0;
-   const proxy=new TokenProxy(db,{...config,maxInFlight:1},(async()=>{calls++;if(calls===1){entered();await new Promise<void>(r=>release=r);}return Response.json({choices:[],usage:{prompt_tokens:10,completion_tokens:5}});}) as typeof fetch);
+   const proxy=new TokenProxy(db,{...config,maxInFlight:1},resolveProvider,(async()=>{calls++;if(calls===1){entered();await new Promise<void>(r=>release=r);}return Response.json({choices:[],usage:{prompt_tokens:10,completion_tokens:5}});}) as typeof fetch);
    const app=createApp({db,auth:{},tokenProxy:proxy});await app.listen({port:0,host:'127.0.0.1'});
    const base=`http://127.0.0.1:${(app.server.address() as any).port}`;
    try {
-    const first=fetch(base+'/v1/proxy/responses',{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:'{}'});await gate;
-    try {const busy=await fetch(base+'/v1/proxy/responses',{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:'{}'});assert.equal(busy.status,503);assert.equal(busy.headers.get('retry-after'),'1');}
+    const first=fetch(base+'/v1/proxy/responses',{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:'hi'}]})});await gate;
+    try {const busy=await fetch(base+'/v1/proxy/responses',{method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:'hi'}]})});assert.equal(busy.status,503);assert.equal(busy.headers.get('retry-after'),'1');}
     finally {release();}
     assert.equal((await first).status,200);
    } finally {await proxy.stop();await app.close();}
@@ -40,13 +42,13 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
     const value=(target as any)[key];return typeof value==='function'?value.bind(target):value;
    }});
    let calls=0;
-   const proxy=new TokenProxy(db,config,(async()=>{calls++;return Response.json({choices:[],usage:{prompt_tokens:10,completion_tokens:5}});}) as typeof fetch);
+   const proxy=new TokenProxy(db,config,resolveProvider,(async()=>{calls++;return Response.json({choices:[],usage:{prompt_tokens:10,completion_tokens:5}});}) as typeof fetch);
    const relay=proxy.relay.bind(proxy);proxy.relay=async(...args)=>{try{return await relay(...args);}finally{finished();}};
    const app=createApp({db:delayed,auth:{},tokenProxy:proxy});app.addHook('onRequest',async(_req,reply)=>{reply.raw.once('close',closed);});
    await app.listen({port:0,host:'127.0.0.1'});
    const balance=(await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano;
    try {
-    const req=httpRequest({hostname:'127.0.0.1',port:(app.server.address() as any).port,path:'/v1/proxy/responses',method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'}});req.on('error',()=>{});req.end('{}');
+    const req=httpRequest({hostname:'127.0.0.1',port:(app.server.address() as any).port,path:'/v1/proxy/responses',method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'}});req.on('error',()=>{});req.end('{"messages":[{"role":"user","content":"hi"}]}');
     await gate;req.destroy();await closeGate;release();await done;
     assert.equal(calls,0);
     assert.equal((await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano,balance);
@@ -54,11 +56,11 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
   });
   await t.test('closing an actual socket during transport persists unknown and releases capacity',async()=>{
    let entered!:()=>void,aborted!:()=>void;const gate=new Promise<void>(r=>entered=r),abortGate=new Promise<void>(r=>aborted=r);
-   const proxy=new TokenProxy(db,config,(async(_url:any,o:any)=>{entered();return new Promise((_resolve,reject)=>{o.signal.addEventListener('abort',()=>{aborted();reject(o.signal.reason);},{once:true});});}) as typeof fetch);
+   const proxy=new TokenProxy(db,config,resolveProvider,(async(_url:any,o:any)=>{entered();return new Promise((_resolve,reject)=>{o.signal.addEventListener('abort',()=>{aborted();reject(o.signal.reason);},{once:true});});}) as typeof fetch);
    const app=createApp({db,auth:{},tokenProxy:proxy});await app.listen({port:0,host:'127.0.0.1'});
    const before=(await db.query('SELECT count(*) FROM proxy_attempts WHERE state=\'unknown\'')).rows[0].count;
    try {
-    const req=httpRequest({hostname:'127.0.0.1',port:(app.server.address() as any).port,path:'/v1/proxy/responses',method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'} });req.on('error',()=>{});req.end('{}');
+    const req=httpRequest({hostname:'127.0.0.1',port:(app.server.address() as any).port,path:'/v1/proxy/responses',method:'POST',headers:{authorization:`Bearer ${token}`,'content-type':'application/json'} });req.on('error',()=>{});req.end('{"messages":[{"role":"user","content":"hi"}]}');
     await gate;req.destroy();await abortGate;await proxy.stop();
     assert.equal(Number((await db.query("SELECT count(*) FROM proxy_attempts WHERE state='unknown'")).rows[0].count),Number(before)+1);
    } finally {await proxy.stop();await app.close();}
@@ -70,9 +72,9 @@ test('real HTTP disconnect cancels unknown usage but never cancels known settlem
    // observing the real lock wait, never a timing assumption.
    const controller=new AbortController();let entered!:()=>void;const gate=new Promise<void>(r=>entered=r);
    let releaseProvider!:()=>void;const providerHold=new Promise<void>(r=>releaseProvider=r);
-   const proxy=new TokenProxy(db,config,(async()=>{entered();await providerHold;return Response.json({choices:[],usage:{prompt_tokens:1000000,completion_tokens:0}});}) as typeof fetch);
+   const proxy=new TokenProxy(db,config,resolveProvider,(async()=>{entered();await providerHold;return Response.json({choices:[],usage:{prompt_tokens:1000000,completion_tokens:0}});}) as typeof fetch);
    const before=(await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1',[account])).rows[0].balance_nano;
-   const result=proxy.relay(account,{}, {signal:controller.signal});
+   const result=proxy.relay(account,{messages:[{role:'user',content:'hi'}]}, {signal:controller.signal});
    void result.catch(()=>{});
    let lock: { query:(sql:string,values?:unknown[])=>Promise<unknown>; release:()=>void }|undefined;
    try {

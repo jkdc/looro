@@ -59,12 +59,13 @@ integration('daily quota grants are idempotent and cover subscriptions plus the 
     assert.equal(grants.length, 2);
     assert.ok(grants.every(row => (row.reference as string).startsWith('subscription-grant:')));
 
-    // Policy: display-only quota state per account, model labels from the routes.
+    // Policy: display-only quota state per account (model labels are gone
+    // with the purpose routes).
     const subscriberPolicy = await conversationPolicy(db, subscriber, allowance);
     assert.equal(subscriberPolicy.quota.limitTokens, 1500);
     assert.equal(subscriberPolicy.quota.usedTokensToday, 0);
     assert.equal(subscriberPolicy.quota.exhausted, false);
-    assert.ok(subscriberPolicy.models.typed_reply);
+    assert.deepEqual(subscriberPolicy.models, {});
     const memberPolicy = await conversationPolicy(db, member, allowance);
     assert.equal(memberPolicy.quota.limitTokens, 150);
   } finally { await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
@@ -347,8 +348,8 @@ integration('quota exhaustion refuses a proxied call before the provider is cont
     });
     await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
     const port = (provider.address() as { port: number }).port;
-    const proxy = new TokenProxy(db, { providerURL: `http://127.0.0.1:${port}/v1/chat/completions`,
-      providerKey: 'k', maxTokens: 128, maxConcurrentPerAccount: 2 });
+    const proxy = new TokenProxy(db, { maxTokens: 128, maxConcurrentPerAccount: 2, maxInFlight: 10, timeoutMs: 30000, maxResponseBytes: 1048576 },
+      async () => ({ provider: 'openai', baseUrl: `http://127.0.0.1:${port}`, model: 'test-model', apiKey: 'k' }));
     try {
       await assert.rejects(
         proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] }),
