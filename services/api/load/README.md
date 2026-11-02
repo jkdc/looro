@@ -14,6 +14,8 @@ Pruebas sin PostgreSQL: `cd services/api && npm run test:load-driver`.
 
 Desde la raíz: `make load-api-smoke` o `make load-api-baseline`. Se necesita Docker local y las imágenes/dependencias de build disponibles; la red del runtime es interna. Cada ejecución genera un proyecto único y elimina solo sus recursos al salir. No hay `KEEP` ni destino remoto. `run.mjs` admite únicamente smoke/baseline, no tokens o URL externa por argv.
 
+El proveedor del proxy es el stub local: la API resuelve proveedor/modelo/clave por llamada (`resolveLlmConfig`) y su fallback de entorno (`LEVELTEST_LLM_URL`) apunta a `http://127.0.0.1:8081/v1`, destino que la política de salida solo permite por ser loopback. Para que 127.0.0.1 llegue al stub, `api-load` comparte el namespace de red de `stub-load`; por eso la API no tiene nombre DNS propio y el driver la alcanza en `stub-load:8080`.
+
 Seed crea 200 cuentas sintéticas con wallet, unlock y sesión y escribe manifest privado en volumen efímero. Preflight comprueba UUID compartido con stub, lectura autenticada y completion metered de identidad, antes de ofrecer carga. El client ID Google de fixtures es una audiencia sintética de configuración; no se realiza intercambio de identidad ni llamada a Google.
 
 El entrypoint interno admite NETWORKS (200), MAX_IN_FLIGHT (100), TIMEOUT_MS (5000), DURATION_S (smoke2/baseline30) y TARGET_RPS (smoke4/baseline60). Proxy usa deadline35000ms. El runner usa configuración controlada; no reenvía estas variables del host. Fallos de preflight salen2; una fase sin éxitos o con fallos de transporte sale1 tras resumen. Rechazos y dropped siempre aparecen aunque no causen por sí mismos fallo del baseline exploratorio.

@@ -175,7 +175,6 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     tokenProxy = new TokenProxy(db, tokenProxyConfig(env), () => resolveLlmConfig(db, env));
     const proxyQuota=proxyQuotaConfig(env);
     app = createApp({ db, environment: env,
-      proxyQuotaAllowance: proxyQuota,
       generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false },
       auth: { googleClientID: env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
         googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,

@@ -14,7 +14,6 @@ import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './tr
 import type { HostedVoice } from './hosted-voice.js';
 import { ACCESS_REQUEST_PATH, isPrivateAddress, trustedClientNetwork, type AccessRequests } from './access-requests.js';
 import { TokenProxy } from './token-proxy.js';
-import type { QuotaAllowance } from './proxy-quota.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
 import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, type GuestMinuteAttestor } from './guest-minutes.js';
@@ -60,7 +59,6 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
   tokenProxy?: TokenProxy,
-  proxyQuotaAllowance?: QuotaAllowance,
   subscriptions?: SubscriptionBilling,
   admin?: { services: AdminAuthServices; admission: AuthAdmission };
   generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };

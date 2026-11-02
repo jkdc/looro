@@ -70,6 +70,9 @@ test('external targets and unsafe URL forms fail before workload', async () => {
     assert.throws(()=>d.validateTarget({BASE:base,LOAD_ISOLATED:'true'}));
   assert.throws(()=>d.validateTarget({BASE:'http://localhost'}));
   assert.equal(d.validateTarget({BASE:'http://api-load:8080',LOAD_ISOLATED:'true'}).hostname,'api-load');
+  // The api shares the stub's network namespace in the load fixture, so the
+  // driver reaches it under the stub's service name.
+  assert.equal(d.validateTarget({BASE:'http://stub-load:8080',LOAD_ISOLATED:'true'}).hostname,'stub-load');
 });
 test('invalid and missing fixture identities fail closed', async () => {
   // @ts-ignore Native JS module.

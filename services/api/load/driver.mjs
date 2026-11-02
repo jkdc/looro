@@ -125,7 +125,10 @@ export async function sampleRequest(task,index,{base,timeoutMs=5000,networks=200
 export function validateTarget(env) {
   if(env.LOAD_ISOLATED!=='true' || !env.BASE) throw Error('Explicit isolated target required');
   const u=new URL(env.BASE);
-  const allowed=u.protocol==='http:' && ['localhost','127.0.0.1','[::1]','api-load'].includes(u.hostname) || u.protocol==='https:' && u.hostname==='caddy-load';
+  // Closed set of fixture-internal names only. stub-load is listed because
+  // the api shares the stub's network namespace in compose.load.yaml, so the
+  // api's 8080 is exposed under the stub's service name.
+  const allowed=u.protocol==='http:' && ['localhost','127.0.0.1','[::1]','api-load','stub-load'].includes(u.hostname) || u.protocol==='https:' && u.hostname==='caddy-load';
   if(!allowed || u.username || u.password || u.pathname!=='/' || u.search || u.hash) throw Error('Unsafe target');
   return u;
 }

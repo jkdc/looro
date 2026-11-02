@@ -39,6 +39,12 @@ services:
     command: [node, load/stub.mjs]
   api-load:
     image: palique-capacity:local
+    # Shares the stub's network namespace: the outbound URL policy allows
+    # plain http only on loopback, so the stub provider is reached as
+    # 127.0.0.1:8081 (stub-load starts first via the depends_on below). The
+    # api therefore has no DNS name of its own — the driver reaches its 8080
+    # through the stub's service name.
+    network_mode: 'service:stub-load'
     environment:
       <<: *db
       PUBLIC_ORIGIN: http://localhost:8080
@@ -46,11 +52,15 @@ services:
       GOOGLE_CLIENT_ID: synthetic-load.apps.googleusercontent.com
       ACCOUNTS_HMAC_KEY: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
       ACCOUNTS_PROXY_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-      PROXY_PROVIDER_URL: http://stub-load:8081/v1/chat/completions
-      PROXY_PROVIDER_KEY: synthetic-only
+      # Provider, model and key resolve per call (resolveLlmConfig): the env
+      # fallback points at the stub sharing this namespace. /v1 because the
+      # relay appends /chat/completions to the base URL.
+      LEVELTEST_LLM_PROVIDER: openai
+      LEVELTEST_LLM_URL: http://127.0.0.1:8081/v1
+      LEVELTEST_LLM_API_KEY: synthetic-only
       PROXY_TIMEOUT_MS: ${PROXY_TIMEOUT_MS:-30000}
       OTEL_ENABLED: 'true'
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://stub-load:8081
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:8081
     healthcheck:
       test: [CMD-SHELL, "node -e \"fetch('http://127.0.0.1:8080/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
       interval: 2s
@@ -62,7 +72,9 @@ services:
   driver-load:
     image: palique-capacity:local
     environment:
-      BASE: http://api-load:8080
+      # The api shares the stub's network namespace, so its 8080 is exposed
+      # under the stub's service name.
+      BASE: http://stub-load:8080
       LOAD_ISOLATED: 'true'
       LOAD_MODE: ${LOAD_MODE:-smoke}
       LOAD_SCENARIO: ${LOAD_SCENARIO:-fast}

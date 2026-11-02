@@ -30,7 +30,8 @@ try {
     `]);
     if(persistence!==0)result=persistence;
     // OTLP JSON contains closed labels only; no fixture tokens or request bodies.
-    if(mode==='baseline') await run(['exec','-T','api-load','node','-e',"fetch('http://stub-load:8081/fixture/telemetry').then(r=>r.text()).then(console.log)"]);
+    // The api shares the stub's network namespace, so the stub is on loopback.
+    if(mode==='baseline') await run(['exec','-T','api-load','node','-e',"fetch('http://127.0.0.1:8081/fixture/telemetry').then(r=>r.text()).then(console.log)"]);
   }
 } finally {const cleanup=await run(['down','--volumes','--remove-orphans']);if(cleanup!==0)result=cleanup;}
 process.exitCode=interrupted?130:result;
