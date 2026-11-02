@@ -109,6 +109,13 @@ export interface ChatReply { content: string; tokensIn?: number; tokensOut?: num
 // Long generations with reasoning models can take >5 min to first byte.
 const llmAgent = new Agent({ headersTimeout: 900_000, bodyTimeout: 900_000 });
 
+/** Provider-specific outbound headers. OpenCode Go routes per conversation
+    and rejects session-less requests; other providers take none. */
+export const providerExtraHeaders = (provider: LlmProvider, sessionID?: string): Record<string, string> =>
+  provider === 'opencode'
+    ? { 'x-opencode-session': sessionID ?? randomUUID(), 'user-agent': 'palique-api/1.0' }
+    : {};
+
 export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMessage[],
                                      fetchFn: typeof fetch = fetch, signal?: AbortSignal): Promise<ChatReply> {
   const started = performance.now();
@@ -120,9 +127,7 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
         method: 'POST',
         signal,
         headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
-          // OpenCode Go routes per conversation and rejects session-less requests.
-          ...(config.provider === 'opencode' ? { 'x-opencode-session': config.sessionID ?? randomUUID(),
-            'user-agent': 'palique-api/1.0' } : {}) },
+          ...providerExtraHeaders(config.provider, config.sessionID) },
         body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
         dispatcher: llmAgent,
       } as RequestInit & { dispatcher: Agent });
