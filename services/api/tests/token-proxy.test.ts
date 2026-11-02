@@ -67,54 +67,60 @@ integration('relay meters provider usage at the active rate version and debits t
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
   const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(port));
+  try {
+    const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
+    const metering = result.payload.metering as { rateVersion: string; nanoUSDSettled: string };
+    assert.equal(result.status, 200);
+    // Per-call resolution: the stub is addressed by base URL, and the canonical
+    // body carries the panel model plus the configured output cap.
+    const first = requests[0];
+    assert.equal(first?.path, '/chat/completions');
+    assert.equal(first?.body.model, 'test-model');
+    assert.equal(first?.body.max_tokens, CONFIG.maxTokens);
+    assert.equal(metering.rateVersion, '2026-09-minimax-m');
+    assert.equal(metering.nanoUSDSettled, '1500000');
+    const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+    assert.equal(BigInt(balance.balance_nano), 8_500_000n);
+    // ledger.id is a random UUID: order chronologically, never by id.
+    const ledger = (await db.query('SELECT kind,balance_delta_nano,reference FROM ledger WHERE account_id=$1 ORDER BY created_at, id', [account])).rows;
+    assert.equal(ledger.at(-1).kind, 'settle');
+    assert.equal(BigInt(ledger.at(-1).balance_delta_nano), -1_500_000n);
+    // Durable usage record: the token counts, the admission estimate and the
+    // settled cost, tied to the settle ledger entry.
+    const usageRows = (await db.query(`SELECT input_tokens,output_tokens,estimate_nano,cost_nano,settled_nano,ledger_reference
+      FROM proxy_usage WHERE account_id=$1 ORDER BY created_at, id`, [account])).rows;
+    assert.equal(usageRows.length, 1);
+    assert.equal(BigInt(usageRows[0].input_tokens), 1_000_000n);
+    assert.equal(BigInt(usageRows[0].output_tokens), 1_000_000n);
+    assert.equal(BigInt(usageRows[0].cost_nano), 1_500_000n);
+    assert.equal(BigInt(usageRows[0].settled_nano), 1_500_000n);
+    assert.equal(BigInt(usageRows[0].estimate_nano) > 0n, true);
+    assert.equal(usageRows[0].ledger_reference, ledger.at(-1).reference);
 
-  const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
-  const metering = result.payload.metering as { rateVersion: string; nanoUSDSettled: string };
-  assert.equal(result.status, 200);
-  // Per-call resolution: the stub is addressed by base URL, and the canonical
-  // body carries the panel model plus the configured output cap.
-  const first = requests[0];
-  assert.equal(first?.path, '/chat/completions');
-  assert.equal(first?.body.model, 'test-model');
-  assert.equal(first?.body.max_tokens, CONFIG.maxTokens);
-  assert.equal(metering.rateVersion, '2026-09-minimax-m');
-  assert.equal(metering.nanoUSDSettled, '1500000');
-  const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
-  assert.equal(BigInt(balance.balance_nano), 8_500_000n);
-  // ledger.id is a random UUID: order chronologically, never by id.
-  const ledger = (await db.query('SELECT kind,balance_delta_nano,reference FROM ledger WHERE account_id=$1 ORDER BY created_at, id', [account])).rows;
-  assert.equal(ledger.at(-1).kind, 'settle');
-  assert.equal(BigInt(ledger.at(-1).balance_delta_nano), -1_500_000n);
-  // Durable usage record: the token counts, the admission estimate and the
-  // settled cost, tied to the settle ledger entry.
-  const usageRows = (await db.query(`SELECT input_tokens,output_tokens,estimate_nano,cost_nano,settled_nano,ledger_reference
-    FROM proxy_usage WHERE account_id=$1 ORDER BY created_at, id`, [account])).rows;
-  assert.equal(usageRows.length, 1);
-  assert.equal(BigInt(usageRows[0].input_tokens), 1_000_000n);
-  assert.equal(BigInt(usageRows[0].output_tokens), 1_000_000n);
-  assert.equal(BigInt(usageRows[0].cost_nano), 1_500_000n);
-  assert.equal(BigInt(usageRows[0].settled_nano), 1_500_000n);
-  assert.equal(BigInt(usageRows[0].estimate_nano) > 0n, true);
-  assert.equal(usageRows[0].ledger_reference, ledger.at(-1).reference);
+    // Balance floor: a call costing more than the balance settles at the balance (bounded grace), never negative.
+    const second = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi again' }] });
+    const secondMetering = second.payload.metering as { nanoUSDSettled: string };
+    assert.equal(secondMetering.nanoUSDSettled, '8500000');
+    const after = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+    assert.equal(BigInt(after.balance_nano), 0n);
+    const grace = (await db.query(`SELECT cost_nano,settled_nano,ledger_reference FROM proxy_usage WHERE account_id=$1
+      ORDER BY created_at, id`, [account])).rows[1];
+    assert.equal(BigInt(grace.cost_nano), 45_000_000n);
+    assert.equal(BigInt(grace.settled_nano), 8_500_000n);
+    assert.ok(grace.ledger_reference);
 
-  // Balance floor: a call costing more than the balance settles at the balance (bounded grace), never negative.
-  const second = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi again' }] });
-  const secondMetering = second.payload.metering as { nanoUSDSettled: string };
-  assert.equal(secondMetering.nanoUSDSettled, '8500000');
-  const after = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
-  assert.equal(BigInt(after.balance_nano), 0n);
-  const grace = (await db.query(`SELECT cost_nano,settled_nano,ledger_reference FROM proxy_usage WHERE account_id=$1
-    ORDER BY created_at, id`, [account])).rows[1];
-  assert.equal(BigInt(grace.cost_nano), 45_000_000n);
-  assert.equal(BigInt(grace.settled_nano), 8_500_000n);
-  assert.ok(grace.ledger_reference);
-
-  // Zero balance refuses the next call before the provider is called.
-  const before = calls;
-  await assert.rejects(proxy.relay(account, { messages: [] }), /token_balance_exhausted/);
-  assert.equal(calls, before);
-  assert.equal((await db.query('SELECT count(*)::int AS n FROM proxy_usage WHERE account_id=$1', [account])).rows[0].n, 2);
-  await new Promise<void>(resolve => provider.close(() => resolve()));
+    // The request policy validates before admission: empty messages are a
+    // 400 request_policy_violation, never an admission outcome.
+    const before = calls;
+    await assert.rejects(proxy.relay(account, { messages: [] }),
+      (error: ServiceError) => error.code === 'request_policy_violation' && error.status === 400);
+    // A well-formed request from the drained wallet still reaches admission:
+    // token_balance_exhausted fires before the provider is called.
+    await assert.rejects(proxy.relay(account, { messages: [{ role: 'user', content: 'Hi again' }] }),
+      (error: ServiceError) => error.code === 'token_balance_exhausted' && error.status === 402);
+    assert.equal(calls, before);
+    assert.equal((await db.query('SELECT count(*)::int AS n FROM proxy_usage WHERE account_id=$1', [account])).rows[0].n, 2);
+  } finally { await new Promise<void>(resolve => provider.close(() => resolve())); }
 });
 
 integration('a zero-cost usage report records usage without a ledger entry', async () => {
