@@ -1,113 +1,76 @@
 # Verify report: proxy-model-from-panel
 
-Fecha: 2026-11-03 · Rama: `develop` · Alcance del change: `9ba7403..40e98ed`
-(7 commits de servidor/Android/documentación).
+Fecha: 2026-11-03 (rev. 2, tras la ronda de corrección `abf62e2`) · Rama:
+`develop` · Alcance del change: `9ba7403..abf62e2` (8 commits de
+servidor/Android/documentación/pruebas).
 
-## Veredicto: **BLOCKED**
+## Veredicto: **pass en suites** (server, contratos, Android) — **E2E de
+laboratorio pendiente** (sin dispositivo en esta sesión)
 
-Verde en typecheck, contratos multiplataforma y suite Android. La suite de
-integración del servidor (`make test-api`) está **en rojo**: 7 fallos reales
-(6 del mismo defecto + 1 de otro) y una prueba posterior quedó colgada, por lo
-que la ejecución se abortó antes del final. El E2E de laboratorio no se
-ejecutó (no hay dispositivo). Detalle completo abajo; ningún código se tocó
-en esta verificación.
+Todas las suites automatizadas están en verde, incluida la de integración
+completa del servidor tras corregir los dos defectos que su primera pasada
+destapó (commit `abf62e2`). Lo único que queda para cerrar el change es el
+E2E manual de laboratorio con dispositivo (comandos pendientes más abajo).
 
 ## Qué se ejecutó y pasó
 
 | Verificación | Resultado |
 |---|---|
 | `cd services/api && npx tsc --noEmit` | **Verde** (exit 0, sin errores) |
+| `make test-api` (stack efímero PG aislado) | **Verde tras el fix `abf62e2`**: **871 tests / 871 pass / 0 fail / 0 skipped / 0 todo**, 0 líneas `not ok`, teardown limpio del stack de humo |
 | `make check` (exporters `--check`, cross-platform, db schema) | **Verde**: 150 tests Python OK en 2,4 s; schema SQLite sincronizado (152 statements, `user_version 7`) |
 | `cd apps/android && ./gradlew :app:testDebugUnitTest :app:lintDebug` | **Verde**: `BUILD SUCCESSFUL in 4m 21s`; **865 tests unitarios de `:app`, 0 fallidos, 0 omitidos**; lint 0 errores (75 warnings y 22 hints preexistentes) |
 
-Notas de ejecución: `make test-api` y la build Android se lanzaron en
-paralelo con salida a log y sondeo (`nohup`); la suite de integración corre
-sobre el stack efímero `looro-smoke` (PG 17 aislado), que se destruyó al
-terminar. El stack de laboratorio del usuario (`api-api-1`, API publicada en
-0.0.0.0:8080) quedó en marcha y **no** se tocó ni se reconstruyó.
+Evidencia del re-run de `make test-api`: registro completo en
+`/tmp/task3-fix1-test-api.log` (tally final re-verificado: `# tests 871 /
+# pass 871 / # fail 0 / # cancelled 0 / # skipped 0 / # todo 0`, cero `not
+ok`, y el `tail` del log muestra la destrucción del volumen y red de
+`looro-smoke` al terminar). Resumen de la ronda de corrección y de los
+pasos de verificación intermedios: `.zuperpowers/sdd/2026-11-02-proxy-model-from-panel/task-3-report.md`
+(sección "Fix round 1 (Task 8 full-suite verification reopen)").
 
-## Qué falló: `make test-api` (primera ejecución de la suite completa)
+Notas de ejecución: la primera pasada de `make test-api` y la build Android
+se lanzaron en paralelo con salida a log y sondeo (`nohup`); la suite de
+integración corre sobre el stack efímero `looro-smoke` (PG 17 aislado), que
+se destruye al terminar. El stack de laboratorio del usuario (`api-api-1`,
+API publicada en 0.0.0.0:8080) quedó en marcha y **no** se tocó ni se
+reconstruyó.
 
-Las tareas 3–5 aplazaron explícitamente `make test-api` a esta tarea, así que
-esta es la **primera pasada de la suite completa** del change: los dos
-defectos siguientes fueron introducidos por el change y no se habían
-manifestado en ninguna verificación previa.
+## Ronda de corrección `abf62e2` — defectos que destapó la primera pasada
 
-Recuento antes del aborto: **832 tests OK / 7 fallidos** (las líneas finales
-`# tests/# pass/# fail` de TAP no llegaron a imprimirse porque la ejecución
-se abortó colgada; recuento derivado de las líneas `ok`/`not ok` del log).
+Las tareas 3–5 aplazaron explícitamente `make test-api` a la verificación
+final, así que la primera pasada de la suite completa (832 OK / 7 fallos +
+colgado, abortada) fue el primer contacto real con las integration cases.
+Los dos defectos, ambos de pruebas y corregidos test-first en
+`abf62e2` (`test(proxy): fix main-wiring stubs and admission-ordering
+expectations`):
 
-### Defecto 1 — stubs de main-wiring sin `resolveLlmConfig` (6 fallos, bloqueante)
+1. **Stubs de main-wiring sin `resolveLlmConfig`** (6 fallos): `src/main.ts:15`
+   importa `resolveLlmConfig`, y el loader
+   (`tests/support/main-wiring-loader.mjs`) redirige todas las importaciones
+   relativas del entry principal a un único módulo stub
+   (`tests/support/main-wiring-stubs.mjs`) que no lo exportaba → el hijo
+   moría en la instanciación ESM
+   (`SyntaxError: ... does not provide an export named 'resolveLlmConfig'`).
+   Corrección: los stubs ganan `export async function resolveLlmConfig() {
+   return undefined; }` (inerte, convención del fichero); auditoría mecánica
+   del resto de imports de `main.ts` (solo quedaban `Database` y
+   `AdminAuthServices`, tipos inline borrados en runtime).
+2. **`token_balance_exhausted` vs. política canónica + fuga del servidor
+   stub** (1 fallo + colgado de >12 min): el test esperaba que
+   `{messages: []}` con saldo a cero rechazara por saldo, pero la política
+   canónica valida `messages` antes de la admisión
+   (`request_policy_violation`, 400). Además el test abortado dejaba su
+   proveedor stub sin cerrar y el fichero colgaba el runner secuencial
+   (5 ficheros posteriores sin ejecutar). Corrección: la aserción de
+   mensajes vacíos ahora espera `request_policy_violation` y se añadió una
+   petición bien formada desde la cartera drenada que mantiene cubierta la
+   denegación por saldo (`token_balance_exhausted`, 402, sin llamada al
+   proveedor); todo el cuerpo post-listen queda envuelto en
+   `try/finally { provider.close(...) }`.
 
-`main-wiring.test.js`: los 6 tests (581–586: "main composition starts
-configured workers…", "…closes initialized resources…", "…stops metrics
-refresh…", "…registers signal handlers…") fallan igual al lanzar la sonda:
-
-```
-SyntaxError: The requested module './llm-config.js' does not provide an
-export named 'resolveLlmConfig'
-    at file:///app/dist/src/main.js:15
-```
-
-Causa raíz confirmada (no es un artefacto de build: se reprodujo
-determinísticamente en un contenedor efímero de la imagen actual, y el
-import dinámico directo de `dist/src/llm-config.js` resuelve la exportación
-correctamente):
-
-- `src/main.ts:15` importa `resolveLlmConfig` de `./llm-config.js` (añadido
-  por el commit `01225a3` de este change).
-- `tests/support/main-wiring-loader.mjs` intercepta **todas** las importaciones
-  relativas del entry principal y las redirige a un único módulo,
-  `tests/support/main-wiring-stubs.mjs`, cuyas exportaciones deben cubrir cada
-  import nombrado de `main.ts`.
-- `main-wiring-stubs.mjs` **no exporta `resolveLlmConfig`** → la
-  instanciación ESM del hijo revienta y los 6 tests fallan por la misma razón.
-
-Dirección de corrección (no aplicada): añadir a los stubs una exportación
-`resolveLlmConfig` coherente con lo que la sonda espera registrar (la sonda
-debe seguir sin tocar BD: los tests usan `DATABASE_URL=postgres://probe.invalid/test`).
-
-### Defecto 2 — política de petición vs. expectativa de saldo a cero (1 fallo, bloqueante)
-
-`token-proxy.test.js`, test 829 "relay meters provider usage at the active
-rate version and debits the wallet":
-
-```
-The input did not match the regular expression /token_balance_exhausted/.
-Input: 'Error: request_policy_violation'
-  rejectField (dist/src/proxy-policy.js:17)
-  canonicalProxyRequest (dist/src/proxy-policy.js:32)
-  TokenProxy.relay (dist/src/token-proxy.js:87)
-```
-
-La aserción en `tests/token-proxy.test.ts:114`:
-
-```ts
-await assert.rejects(proxy.relay(account, { messages: [] }), /token_balance_exhausted/);
-```
-
-Con la nueva política de petición, `canonicalProxyRequest` rechaza
-`messages` vacío con `400 request_policy_violation` **antes** de cualquier
-trabajo de wallet/admisión, así que el test ya no ve
-`token_balance_exhausted`. Es un desacuerdo test/código introducido por el
-change; la corrección es decidir cuál de los dos lados manda (cuerpo del test
-con `messages` no vacío, u orden saldo-antes-de-política en `relay`) y
-versionar la prueba que falle sin el ajuste. No se decidió ni aplicó nada.
-
-A raíz de este fallo, el propio fichero `token-proxy.test.js` quedó **colgado
-más de 12 minutos** (el test abortado deja su proveedor stub sin cerrar;
-runner secuencial `--test-concurrency=1`) y la ejecución se detuvo. Como
-consecuencia no llegaron a ejecutarse: los tests restantes de
-`token-proxy.test.js` y los 5 ficheros posteriores del orden alfabético
-(`tokens-admin.test.js`, `trial.test.js`, `usage-http.test.js`,
-`usage.test.js`, `welcome-funding.test.js`). El veredicto de la suite no
-puede ser verde hasta reejecutarla completa tras corregir.
-
-Descartado: imagen Docker desfasada. La imagen del stack efímero se construyó
-(22:21) antes del commit `893b939` (22:44, solo migraciones), pero ambos
-defectos se reprodujeron/verificaron contra fuente actual (`tsc` verde,
-`main.ts`/`llm-config.ts` coherentes en host y contenedor, reproducción en
-contenedor efímero limpio), y `893b939` no toca `src/` ni `tests/`.
+Tras el fix, el re-run completo (`make test-api`) llegó a término verde con
+el tally de arriba y teardown limpio.
 
 ## Qué no se ejecutó (explícito)
 
@@ -178,11 +141,18 @@ ficheros sucios existentes no se han tocado ni staged.
 
 ## Para cerrar el change
 
-1. Corregir el defecto 1 (exportar `resolveLlmConfig` en
-   `tests/support/main-wiring-stubs.mjs`) con prueba que falle sin el fix.
-2. Resolver el defecto 2 (orden política/saldo o cuerpo del test en
-   `tests/token-proxy.test.ts:114`) igualmente test-first.
-3. Reejecutar `make test-api` completo hasta verde con recuento final, y
-   confirmar que `token-proxy.test.js` ya no cuelga.
+1. ~~Corregir el defecto 1 (stubs de main-wiring)~~ — hecho en `abf62e2`.
+2. ~~Resolver el defecto 2 (política vs. saldo + fuga del stub)~~ — hecho en
+   `abf62e2`, cubriendo también la denegación por saldo con petición bien
+   formada.
+3. ~~Reejecutar `make test-api` completo hasta verde con recuento final~~ —
+   hecho: 871/871, teardown limpio.
 4. Ejecutar el E2E de laboratorio (comandos de arriba) con dispositivo y
-   adjuntar evidencia.
+   adjuntar evidencia — **único pendiente**.
+
+Nota residual de la ronda de fix (para una futura pasada de pruebas):
+`per-account cap refuses a second concurrent call…` en
+`tests/token-proxy.test.ts` conserva el patrón sin `try/finally` alrededor
+de `provider.close()`; quedó fuera del alcance de `abf62e2` y es el único
+test del fichero que podría colgar la suite si su aserción falla (ver
+task-3-report.md).
