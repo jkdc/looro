@@ -352,10 +352,14 @@ integration('funded admission refuses concurrent relays whose combined estimates
   });
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
-  const proxy = new TokenProxy(db, { ...CONFIG, maxConcurrentPerAccount: 2, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
+  // The output cap is part of the conservative estimate. Use 500 output
+  // tokens (600 nano at the seeded rate) so each request individually fits
+  // the 1000-nano balance but both reservations cannot fit together.
+  const proxy = new TokenProxy(db, { ...CONFIG, maxTokens: 500, maxConcurrentPerAccount: 2,
+    providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
   try {
-    // Each estimate is ~530n against a 1000n balance: an unlocked read would
-    // admit both; the wallet-locked reservation admits exactly one.
+    // Each estimate is just over 600n against a 1000n balance: an unlocked
+    // read would admit both; the wallet-locked reservation admits exactly one.
     const body = { messages: [{ role: 'user', content: 'x'.repeat(4000) }] };
     const results = await Promise.allSettled([proxy.relay(account, body), proxy.relay(account, body)]);
     const admitted = results.filter(r => r.status === 'fulfilled').length;
