@@ -37,6 +37,8 @@ integration('tokenProxyConfig keeps only the relay knobs', async () => {
   assert.equal(config?.maxTokens, 4000);
   assert.equal(config?.maxConcurrentPerAccount, 2);
   assert.throws(() => tokenProxyConfig({ PROXY_MAX_CONCURRENT: '0' }), /positive integer/);
+  // Beyond Number.MAX_SAFE_INTEGER (`1e21`) must be rejected, not truncated.
+  assert.throws(() => tokenProxyConfig({ PROXY_MAX_CONCURRENT: '1e21' }), /positive integer|safe integer/);
 });
 
 integration('relay meters provider usage at the active rate version and debits the wallet', async () => {
@@ -261,29 +263,29 @@ integration('per-account cap refuses a second concurrent call for one account wh
   await new Promise<void>(resolve => provider.listen(0, '127.0.0.1', resolve));
   const port = (provider.address() as { port: number }).port;
   const proxy = new TokenProxy(db, { ...CONFIG, maxConcurrentPerAccount: 1 }, async () => openaiProvider(port));
-
-  const held = proxy.relay(accountA, { messages: [{ role: 'user', content: 'hold' }] });
-  await reached;
-  // Same account at the cap: refused 429 account_busy before any wallet or
-  // provider work (the provider call count does not move).
-  await assert.rejects(
-    proxy.relay(accountA, { messages: [{ role: 'user', content: 'quick' }] }),
-    (error: ServiceError) => error.code === 'account_busy' && error.status === 429,
-  );
-  assert.equal(calls, 1);
-  // A different account is unaffected by the first account's in-flight call.
-  assert.equal((await proxy.relay(accountB, { messages: [{ role: 'user', content: 'quick' }] })).status, 200);
-  assert.equal(calls, 2);
-  // Settling the held call frees the slot: the next same-account call succeeds.
-  release();
-  assert.equal((await held).status, 200);
-  assert.equal((await proxy.relay(accountA, { messages: [{ role: 'user', content: 'quick' }] })).status, 200);
-  assert.equal(calls, 3);
-  const paid = async (account: string) =>
-    BigInt((await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0].balance_nano);
-  assert.equal(await paid(accountA), 7_000_000n); // held + quick, 1_500_000 each
-  assert.equal(await paid(accountB), 8_500_000n);
-  await new Promise<void>(resolve => provider.close(() => resolve()));
+  try {
+    const held = proxy.relay(accountA, { messages: [{ role: 'user', content: 'hold' }] });
+    await reached;
+    // Same account at the cap: refused 429 account_busy before any wallet or
+    // provider work (the provider call count does not move).
+    await assert.rejects(
+      proxy.relay(accountA, { messages: [{ role: 'user', content: 'quick' }] }),
+      (error: ServiceError) => error.code === 'account_busy' && error.status === 429,
+    );
+    assert.equal(calls, 1);
+    // A different account is unaffected by the first account's in-flight call.
+    assert.equal((await proxy.relay(accountB, { messages: [{ role: 'user', content: 'quick' }] })).status, 200);
+    assert.equal(calls, 2);
+    // Settling the held call frees the slot: the next same-account call succeeds.
+    release();
+    assert.equal((await held).status, 200);
+    assert.equal((await proxy.relay(accountA, { messages: [{ role: 'user', content: 'quick' }] })).status, 200);
+    assert.equal(calls, 3);
+    const paid = async (account: string) =>
+      BigInt((await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0].balance_nano);
+    assert.equal(await paid(accountA), 7_000_000n); // held + quick, 1_500_000 each
+    assert.equal(await paid(accountB), 8_500_000n);
+  } finally { await new Promise<void>(resolve => provider.close(() => resolve())); }
 });
 
 integration('estimate refuses calls the balance cannot plausibly cover', async () => {

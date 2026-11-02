@@ -44,9 +44,11 @@ public struct HostedProxyEngine: Sendable {
         }
     }
 
-    /// Must match the provider behind the operator's `PROXY_PROVIDER_URL`; the
-    /// seeded rate version `2026-09-minimax-m` pins MiniMax M as the launch
-    /// provider. Same constant as Kotlin's `RemoteEngineConfig.HOSTED_PROXY`.
+    /// The Palique token proxy forwards to the provider configured in the
+    /// panel ("Configuración de IA") and overrides any client-sent model, so
+    /// this constant is a placeholder, never a routing decision; the seeded
+    /// rate version `2026-09-minimax-m` pins MiniMax M as the launch provider.
+    /// Same constant as Kotlin's `RemoteEngineConfig.HOSTED_PROXY`.
     public static let model = "MiniMax-M2"
     /// v1 contract: `POST /v1/proxy/responses`, always `stream: false`.
     static let path = "/v1/proxy/responses"

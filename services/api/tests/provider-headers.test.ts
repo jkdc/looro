@@ -4,7 +4,8 @@ import { providerExtraHeaders } from '../src/llm-config.js';
 
 test('opencode transport sends the session header the gateway requires', () => {
   const headers = providerExtraHeaders('opencode');
-  assert.match(headers['x-opencode-session'] ?? '', /^[0-9a-f-]{36}$/);
+  assert.match(headers['x-opencode-session'] ?? '',
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
   assert.equal(headers['user-agent'], 'palique-api/1.0');
 });
 

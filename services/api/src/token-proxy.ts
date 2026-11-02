@@ -35,7 +35,7 @@ const boundedInteger=(value:string|undefined,fallback:number,max:number,name:str
 
 export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig => {
   const maxConcurrentPerAccount = Number(env.PROXY_MAX_CONCURRENT ?? 2);
-  if (!Number.isInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
+  if (!Number.isSafeInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
     throw new Error('PROXY_MAX_CONCURRENT must be a positive integer.');
   return { maxTokens: boundedInteger(env.PROXY_MAX_TOKENS, 4000, Number.MAX_SAFE_INTEGER, 'PROXY_MAX_TOKENS'),
     maxConcurrentPerAccount,

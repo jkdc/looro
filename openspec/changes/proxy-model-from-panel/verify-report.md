@@ -156,3 +156,50 @@ Nota residual de la ronda de fix (para una futura pasada de pruebas):
 de `provider.close()`; quedó fuera del alcance de `abf62e2` y es el único
 test del fichero que podría colgar la suite si su aserción falla (ver
 task-3-report.md).
+
+## Final review (2026-11-03)
+
+La revisión final del change destapó cuatro defectos residuales, corregidos
+en el commit único de esta ronda
+(`fix(proxy): final-review fixes — test teardown, cap validation, ios
+mirror contract`):
+
+1. **Teardown del test de cap por cuenta** (`tests/token-proxy.test.ts`):
+   el cuerpo posterior a `provider.listen` de `per-account cap refuses a
+   second concurrent call…` no estaba envuelto en
+   `try/finally { provider.close() }` — una aserción fallida habría dejado
+   el proveedor stub abierto y colgado el runner secuencial (>12 min
+   demostrados). Envuelto con el mismo patrón aplicado al test de metering
+   en `abf62e2`; la nota residual de la sección anterior queda resuelta.
+2. **`PROXY_MAX_CONCURRENT` vuelve a exigir entero seguro**
+   (`src/token-proxy.ts`): la validación había quedado relajada a
+   `Number.isInteger` en `01225a3`, aceptando `1e21`. Restaurado el
+   `Number.isSafeInteger` original (revert exacto de la relajación) y el
+   test de validación cubre ahora `PROXY_MAX_CONCURRENT: '1e21'` → rechazo
+   (también verificado directo: `2^53+1` rechazado, `3` y el default `2`
+   intactos).
+3. **Aserción UUID exacta** (`tests/provider-headers.test.ts`):
+   `x-opencode-session` se valida contra la forma completa
+   `/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/` en
+   vez del laxo `^[0-9a-f-]{36}$`.
+4. **Espejo iOS** (mecánico, sin compilación posible en Linux):
+   `apps/ios/Core/ApiProxyEngine.swift` deja de exigir el closure `modelFor`
+   (y su caso `Failure.missingModel`), deja de enviar el header
+   `x-palique-purpose` y deja de enviar el campo `model` — el servidor
+   resuelve proveedor, modelo y credenciales por llamada desde la
+   configuración LLM del panel, espejando el motor `api` de Android tras
+   `831cd87`; `apps/ios/Core/HostedProxyEngine.swift` corrige en comentario
+   la referencia caducada a `PROXY_PROVIDER_URL` (solo comentario).
+
+Verificación de esta ronda: `cd services/api && npx tsc --noEmit` verde;
+`npx tsx --test tests/token-proxy.test.ts tests/provider-headers.test.ts`
+verde (15 tests: 4 pass, 11 SKIP por falta de `TEST_DATABASE_URL`, 0 fail —
+los casos de integración se omiten en local, como es de esperar). No se
+re-ejecutan `make test-api` ni las suites Android: esta ronda solo toca
+`token-proxy.ts` y dos ficheros de test, y ambas suites siguen verdes tal
+como quedaron registradas en `7020182`.
+
+**Seguimiento explícito**: el espejo iOS se actualizó solo en código y
+sigue **sin verificar** — pendiente de una pasada en macOS
+(`swift test --package-path apps/ios`) antes de dar el change por cerrado
+en plataforma Apple.
