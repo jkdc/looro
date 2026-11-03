@@ -97,9 +97,15 @@ export class TokenProxy {
   async relay(accountID:string,body:Record<string,unknown>,options:{signal?:AbortSignal}={}):Promise<{status:number;payload:Record<string,unknown>}> {
     if(body.stream===true)throw new ServiceError('streaming_unsupported_v1',400);
     if(this.#stopping)throw new ServiceError('proxy_unavailable',503);
+    // Phase timing for one relay (scalar-only log fields, no identifiers):
+    // where the wall clock goes per call — config resolution, admission,
+    // provider round-trip, settlement — without waiting on the RED histogram.
+    const relayStarted=performance.now();
+    const resolveStarted=performance.now();
     // The provider comes from the panel-managed config, resolved per call:
     // without one the relay fails closed before any wallet work.
     const provider=await this.resolveProvider();
+    const configMs=performance.now()-resolveStarted;
     if(!provider)throw new ServiceError('proxy_unavailable',503);
     const forward=canonicalProxyRequest(body,provider.model,this.config.maxTokens);
     const count=this.#inFlight.get(accountID)??0;
@@ -110,24 +116,27 @@ export class TokenProxy {
     options.signal?.addEventListener('abort',cancel,{once:true});if(options.signal?.aborted)cancel();
     let timeout=false;
     const timer=setTimeout(()=>{timeout=true;controller.abort(new Error('deadline'));},this.config.timeoutMs);
-    const work=this.#meteredRelay(accountID,provider,forward.body,controller.signal,()=>timeout).finally(()=>{
+    const work=this.#meteredRelay(accountID,provider,forward.body,controller.signal,()=>timeout,{configMs,relayStarted}).finally(()=>{
       clearTimeout(timer);options.signal?.removeEventListener('abort',cancel);this.#controllers.delete(controller);
       const n=(this.#inFlight.get(accountID)??1)-1;if(n)this.#inFlight.set(accountID,n);else this.#inFlight.delete(accountID);
       this.#active.delete(work);
     });
     this.#active.add(work);return work;
   }
-  async #meteredRelay(accountID:string,provider:ResolvedLlmConfig,body:Record<string,unknown>,signal:AbortSignal,timedOut:()=>boolean):Promise<{status:number;payload:Record<string,unknown>}> {
+  async #meteredRelay(accountID:string,provider:ResolvedLlmConfig,body:Record<string,unknown>,signal:AbortSignal,timedOut:()=>boolean,timing:{configMs:number,relayStarted:number}):Promise<{status:number;payload:Record<string,unknown>}> {
     let id:string|undefined,dispatched=false,settling=false,terminal=false;
     let outcome='transport_error', began:number|undefined;
+    let admissionMs:number|undefined,providerMs:number|undefined,settleMs:number|undefined;
     try {
       signal.throwIfAborted();
+      const admissionStarted=performance.now();
       const rate=await activeRateVersion(this.db);signal.throwIfAborted();
       // Funded admission: the estimate is reserved under the wallet lock, so
       // concurrent or multi-process calls cannot spend the same funds twice.
       const estimate=BigInt(inputEstimate(body))*rate.nanoPerMillionInput/1_000_000n+BigInt(this.config.maxTokens)*rate.nanoPerMillionOutput/1_000_000n;
       id=randomUUID();await prepareProxyAttempt(this.db,{id,accountID,rateVersionID:rate.id,estimateNano:estimate});signal.throwIfAborted();
       await markProxyDispatched(this.db,id);dispatched=true;signal.throwIfAborted();
+      admissionMs=performance.now()-admissionStarted;
       began=performance.now();
       const response=await this.fetchFn(`${provider.baseUrl.replace(/\/$/, '')}/chat/completions`,{method:'POST',signal,
         headers:{'content-type':'application/json',authorization:`Bearer ${provider.apiKey}`,
@@ -136,6 +145,7 @@ export class TokenProxy {
       let payload:unknown;
       try {payload=await readBoundedJSON(response,{signal,maxBytes:this.config.maxResponseBytes});}
       catch(error){if(response.status>=400 && !(error instanceof ProxyResponseError && error.outcome==='oversize') && !signal.aborted)outcome='http_error';throw error;}
+      providerMs=performance.now()-(began??performance.now());
       if(response.status>=400){outcome='http_error';
         if([400,401,403,429].includes(response.status)){await finishProxyAttempt(this.db,id,'rejected');terminal=true;}
         throw new ServiceError('provider_error',502);
@@ -145,7 +155,9 @@ export class TokenProxy {
       // Known usage must be settled even if cancellation arrives while SQL is committing.
       settling=true;outcome='ok';
       const cost=usage.inputTokens*rate.nanoPerMillionInput/1_000_000n+usage.outputTokens*rate.nanoPerMillionOutput/1_000_000n;
+      const settleStarted=performance.now();
       const metering=await settleProxyAttempt(this.db,{id,usage,estimateNano:estimate,costNano:cost});
+      settleMs=performance.now()-settleStarted;
       terminal=true;
       return {status:200,payload:{...(payload as Record<string,unknown>),metering}};
     } catch(error) {
@@ -159,6 +171,13 @@ export class TokenProxy {
       if(error instanceof ServiceError)throw error;
       if(settling) {outcome='transport_error';throw error;}
       throw new ServiceError('provider_error',502);
-    } finally {if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome});}
+    } finally {
+      if(began!==undefined)paliqueMetrics.proxyProviderDuration.record((performance.now()-began)/1000,{outcome});
+      // One timing event per relayed attempt (settled or failed): the undefined
+      // phases of a failed early attempt are dropped by the logger.
+      log.info('proxy_relay_timing',{config_ms:Math.round(timing.configMs),admission_ms:admissionMs===undefined?undefined:Math.round(admissionMs),
+        provider_ms:providerMs===undefined?undefined:Math.round(providerMs),settle_ms:settleMs===undefined?undefined:Math.round(settleMs),
+        total_ms:Math.round(performance.now()-timing.relayStarted),outcome});
+    }
   }
 }

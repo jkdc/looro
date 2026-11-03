@@ -70,7 +70,15 @@ integration('relay meters provider usage at the active rate version and debits t
   const port = (provider.address() as { port: number }).port;
   const proxy = new TokenProxy(db, CONFIG, async () => openaiProvider(port));
   try {
-    const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
+    // Capture the structured log stream for the first relay: the phase-timing
+    // event must be emitted exactly once per settled call.
+    const logLines: string[] = [];
+    const originalInfo = console.info;
+    console.info = (...args: unknown[]) => { logLines.push(args.map(String).join(' ')); };
+    let result: Awaited<ReturnType<TokenProxy['relay']>>;
+    try {
+      result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
+    } finally { console.info = originalInfo; }
     const metering = result.payload.metering as { rateVersion: string; nanoUSDSettled: string };
     assert.equal(result.status, 200);
     // Per-call resolution: the stub is addressed by base URL, and the canonical
@@ -98,6 +106,19 @@ integration('relay meters provider usage at the active rate version and debits t
     assert.equal(BigInt(usageRows[0].settled_nano), 1_500_000n);
     assert.equal(BigInt(usageRows[0].estimate_nano) > 0n, true);
     assert.equal(usageRows[0].ledger_reference, ledger.at(-1).reference);
+
+    // Phase-timing telemetry: exactly one scalar-only event per settled relay,
+    // with a numeric millisecond value per phase and the outcome label.
+    const timingLine = logLines.find(line => line.includes('"event":"proxy_relay_timing"'));
+    assert.ok(timingLine, 'expected a proxy_relay_timing log event for the settled relay');
+    assert.equal(logLines.filter(line => line.includes('"event":"proxy_relay_timing"')).length, 1);
+    const timing = JSON.parse(timingLine) as Record<string, unknown>;
+    for (const field of ['config_ms', 'admission_ms', 'provider_ms', 'settle_ms', 'total_ms']) {
+      assert.equal(typeof timing[field], 'number', `${field} must be a numeric ms value`);
+      assert.ok((timing[field] as number) >= 0, `${field} must be non-negative`);
+    }
+    assert.ok((timing.total_ms as number) >= (timing.provider_ms as number), 'total covers the provider phase');
+    assert.equal(timing.outcome, 'ok');
 
     // Balance floor: a call costing more than the balance settles at the balance (bounded grace), never negative.
     const second = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi again' }] });
