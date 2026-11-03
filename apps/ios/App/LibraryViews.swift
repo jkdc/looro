@@ -588,6 +588,7 @@ struct SettingsView: View {
     @State private var deleteLanguageTarget = ""
     @State private var notices = false
     @State private var showingAPIKey = false
+    @AppStorage("app_ui_language") private var uiLanguageRaw: String = UiLanguage.system.rawValue
     @State private var tokens = TokensCommerceModel(configuration: ManagedAccountConfiguration.load())
     private var store: LearningStore { coordinator.store }
     private var deleteLanguageName: String {
@@ -613,6 +614,16 @@ struct SettingsView: View {
             Form {
                 Section {
                     LearningLanguagePicker(coordinator: coordinator)
+                    // App UI language: decouples the interface from the device
+                    // language. System = follow the device, today's behaviour.
+                    Picker("App language", selection: Binding(
+                        get: { UiLanguage(rawValue: uiLanguageRaw) ?? .system },
+                        set: { uiLanguageRaw = $0.rawValue })) {
+                        ForEach(UiLanguage.allCases) { language in
+                            Text(language.label).tag(language)
+                        }
+                    }
+                    .accessibilityIdentifier("settings-app-language")
                     Toggle("Meaning subtitles", isOn: Binding(get: { store.preferences.meaningVisible }, set: { value in
                         if value != store.preferences.meaningVisible { coordinator.toggleMeaning() }
                     }))

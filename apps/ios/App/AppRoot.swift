@@ -28,7 +28,7 @@ import SwiftUI
     }
     var body: some Scene {
         WindowGroup {
-            if let store { RootView(store: store).preferredColorScheme(.light) }
+            if let store { RootView(store: store).preferredColorScheme(.light).appUiLanguage() }
             else {
                 ContentUnavailableView {
                     Label("Let’s try again", systemImage: "externaldrive.badge.exclamationmark")
@@ -39,6 +39,7 @@ import SwiftUI
                     Button("Erase learning data and start fresh", role: .destructive) { confirmingErase = true }
                 }
                 .preferredColorScheme(.light)
+                .appUiLanguage()
                 .confirmationDialog("Erase all learning data on this iPhone?", isPresented: $confirmingErase, titleVisibility: .visible) {
                     Button("Erase learning data", role: .destructive) { eraseAndRestart() }
                 } message: {

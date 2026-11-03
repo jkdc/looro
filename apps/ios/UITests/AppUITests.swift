@@ -14,7 +14,11 @@ final class AppUITests: XCTestCase {
 
     private func checkNewOnboarding(id: String, greeting: String) {
         let app = XCUIApplication()
-        app.launchArguments = ["--preview", "--preview-onboarding"]
+        // Pin the launch language to English: the app now ships a Spanish
+        // string catalog, and these assertions match English UI copy. The
+        // stored per-app language override ("app_ui_language") stays unset.
+        app.launchArguments = ["--preview", "--preview-onboarding",
+                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         let choice = app.buttons["onboarding-language-\(id)"]
         XCTAssertTrue(choice.waitForExistence(timeout: 10))
