@@ -40,9 +40,12 @@ privacy = add('privacy','PBXFileReference',lastKnownFileType='text.xml',path='Ap
 refs.append(privacy)
 catalog = add('catalog','PBXFileReference',lastKnownFileType='text.json.xcstrings',path='App/Localizable.xcstrings',sourceTree='<group>')
 refs.append(catalog)
-infoplistEn = add('infoplist.en','PBXFileReference',lastKnownFileType='text.plist.strings',name='en',path='App/en.lproj/InfoPlist.strings',sourceTree='<group>')
-infoplistEs = add('infoplist.es','PBXFileReference',lastKnownFileType='text.plist.strings',name='es',path='App/es.lproj/InfoPlist.strings',sourceTree='<group>')
-infoplistVariant = add('infoplist.variant','PBXVariantGroup',children=[infoplistEn,infoplistEs],name='InfoPlist.strings',sourceTree='<group>')
+# InfoPlist.strings variant group: one localization per App/*.lproj folder.
+lprojs = sorted((root/'App').glob('*.lproj/InfoPlist.strings'))
+infoplistRefs = [add('infoplist.'+p.parent.name,'PBXFileReference',lastKnownFileType='text.plist.strings',
+                     name=p.parent.name[:-6], path=f'App/{p.parent.name}/InfoPlist.strings', sourceTree='<group>')
+                 for p in lprojs]
+infoplistVariant = add('infoplist.variant','PBXVariantGroup',children=infoplistRefs,name='InfoPlist.strings',sourceTree='<group>')
 refs.append(infoplistVariant)
 signing = add('signing','PBXFileReference',lastKnownFileType='text.xcconfig',path='Config/Signing.xcconfig',sourceTree='<group>')
 refs.append(signing)
@@ -92,7 +95,8 @@ testTarget=add('testTarget','PBXNativeTarget',buildConfigurationList=configs('te
 appTestsProxy = add('appTestsProxy','PBXContainerItemProxy',containerPortal=uid('project'),proxyType=1,remoteGlobalIDString=target,remoteInfo='App')
 appTestsDependency = add('appTestsDependency','PBXTargetDependency',target=target,targetProxy=appTestsProxy)
 appTestsTarget=add('appTestsTarget','PBXNativeTarget',buildConfigurationList=configs('tests',{'PRODUCT_BUNDLE_IDENTIFIER':bundle + '.tests','PRODUCT_NAME':'$(TARGET_NAME)','GENERATE_INFOPLIST_FILE':'YES','TEST_TARGET_NAME':'App','TEST_HOST':'$(BUILT_PRODUCTS_DIR)/App.app/App','BUNDLE_LOADER':'$(TEST_HOST)','TARGETED_DEVICE_FAMILY':'1','CODE_SIGN_STYLE':'Automatic','SWIFT_VERSION':'5.0'}),buildPhases=[appTestsSourcesPhase,appTestsFrameworks],buildRules=[],dependencies=[appTestsDependency],name='AppTests',productName='AppTests',productReference=appTestsProduct,productType='com.apple.product-type.bundle.unit-test',packageProductDependencies=[core])
-project=add('project','PBXProject',attributes={'BuildIndependentTargetsInParallel':'YES','LastUpgradeCheck':'2640','TargetAttributes':{target:{'CreatedOnToolsVersion':'26.4'},testTarget:{'CreatedOnToolsVersion':'26.4','TestTargetID':target},appTestsTarget:{'CreatedOnToolsVersion':'26.4','TestTargetID':target}}},buildConfigurationList=configs('project',common),compatibilityVersion='Xcode 14.0',developmentRegion='en',hasScannedForEncodings=0,knownRegions=['en','es','Base'],mainGroup=group,packageReferences=[corePackage,rtcPackage],productRefGroup=products,projectDirPath='',projectRoot='',targets=[target,testTarget,appTestsTarget])
+regions = ['en'] + sorted({p.parent.name[:-6] for p in lprojs} - {'en'}) + ['Base']
+project=add('project','PBXProject',attributes={'BuildIndependentTargetsInParallel':'YES','LastUpgradeCheck':'2640','TargetAttributes':{target:{'CreatedOnToolsVersion':'26.4'},testTarget:{'CreatedOnToolsVersion':'26.4','TestTargetID':target},appTestsTarget:{'CreatedOnToolsVersion':'26.4','TestTargetID':target}}},buildConfigurationList=configs('project',common),compatibilityVersion='Xcode 14.0',developmentRegion='en',hasScannedForEncodings=0,knownRegions=regions,mainGroup=group,packageReferences=[corePackage,rtcPackage],productRefGroup=products,projectDirPath='',projectRoot='',targets=[target,testTarget,appTestsTarget])
 folder=root/'App.xcodeproj';folder.mkdir(exist_ok=True)
 folder.joinpath('project.pbxproj').write_text('// !$*UTF8*$!\n'+encode({'archiveVersion':1,'classes':{},'objectVersion':60,'objects':objects,'rootObject':project})+'\n')
 scheme=folder/'xcshareddata'/'xcschemes';scheme.mkdir(parents=True,exist_ok=True)

@@ -141,14 +141,11 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                     val appLanguage = AppLanguage.fromTags(
                         AppCompatDelegate.getApplicationLocales().toLanguageTags()
                             .split(",").map { it.trim() }.filter { it.isNotEmpty() })
-                    val appLanguageValue = when (appLanguage) {
-                        AppLanguage.ENGLISH -> "English"
-                        AppLanguage.SPANISH -> "Español"
-                        else -> stringResource(R.string.settings_app_language_system)
-                    }
+                    val appLanguageValue = AppLanguage.NATIVE_LABELS[appLanguage]
+                        ?: stringResource(R.string.settings_app_language_system)
                     SettingsChoiceRow(stringResource(R.string.settings_app_language), appLanguageValue, appLanguage,
-                        listOf(AppLanguage.SYSTEM to stringResource(R.string.settings_app_language_system),
-                            AppLanguage.ENGLISH to "English", AppLanguage.SPANISH to "Español"),
+                        listOf(AppLanguage.SYSTEM to stringResource(R.string.settings_app_language_system)) +
+                            AppLanguage.OPTIONS.drop(1).map { id -> id to AppLanguage.NATIVE_LABELS.getValue(id) },
                         "settings-app-language", !vm.isRunning) { id ->
                             val tag = AppLanguage.tag(id)
                             AppCompatDelegate.setApplicationLocales(

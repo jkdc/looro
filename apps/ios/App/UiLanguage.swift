@@ -8,6 +8,12 @@ enum UiLanguage: String, CaseIterable, Identifiable {
     case system
     case english = "en"
     case spanish = "es"
+    case french = "fr"
+    case german = "de"
+    case italian = "it"
+    case portuguese = "pt"
+    case norwegian = "nb"
+    case chinese = "zh"
 
     var id: String { rawValue }
 
@@ -17,6 +23,12 @@ enum UiLanguage: String, CaseIterable, Identifiable {
         case .system: nil
         case .english: Locale(identifier: "en")
         case .spanish: Locale(identifier: "es")
+        case .french: Locale(identifier: "fr")
+        case .german: Locale(identifier: "de")
+        case .italian: Locale(identifier: "it")
+        case .portuguese: Locale(identifier: "pt")
+        case .norwegian: Locale(identifier: "nb")
+        case .chinese: Locale(identifier: "zh")
         }
     }
 
@@ -26,6 +38,12 @@ enum UiLanguage: String, CaseIterable, Identifiable {
         case .system: "System"
         case .english: "English"
         case .spanish: "Español"
+        case .french: "Français"
+        case .german: "Deutsch"
+        case .italian: "Italiano"
+        case .portuguese: "Português"
+        case .norwegian: "Norsk"
+        case .chinese: "中文"
         }
     }
 }

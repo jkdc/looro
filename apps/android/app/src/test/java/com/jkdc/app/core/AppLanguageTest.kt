@@ -1,6 +1,7 @@
 package com.jkdc.app.core
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppLanguageTest {
@@ -29,7 +30,14 @@ class AppLanguageTest {
         assertEquals(null, AppLanguage.tag("klingon"))
     }
 
-    @Test fun selectorOptionsAreTheThreeSupportedChoices() {
-        assertEquals(listOf("system", "en", "es"), AppLanguage.OPTIONS)
+    @Test fun selectorOptionsAreTheNineSupportedChoices() {
+        assertEquals(listOf("system", "en", "es", "fr", "de", "it", "pt", "nb", "zh"), AppLanguage.OPTIONS)
+    }
+
+    @Test fun everyConcreteOptionHasANativeLabelAndAStableTag() {
+        for (id in AppLanguage.OPTIONS.filter { it != AppLanguage.SYSTEM }) {
+            assertEquals(id, AppLanguage.tag(id))
+            assertTrue(AppLanguage.NATIVE_LABELS.containsKey(id))
+        }
     }
 }
