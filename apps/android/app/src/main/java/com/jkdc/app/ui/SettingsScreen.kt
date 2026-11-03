@@ -150,11 +150,11 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                         listOf(AppLanguage.SYSTEM to stringResource(R.string.settings_app_language_system),
                             AppLanguage.ENGLISH to "English", AppLanguage.SPANISH to "Español"),
                         "settings-app-language", !vm.isRunning) { id ->
-                        val tag = AppLanguage.tag(id)
-                        AppCompatDelegate.setApplicationLocales(
-                            if (tag == null) LocaleListCompat.getEmptyLocaleList()
-                            else LocaleListCompat.forLanguageTags(tag))
-                    }
+                            val tag = AppLanguage.tag(id)
+                            AppCompatDelegate.setApplicationLocales(
+                                if (tag == null) LocaleListCompat.getEmptyLocaleList()
+                                else LocaleListCompat.forLanguageTags(tag))
+                        }
                     SettingsDivider()
                     val rate = prefs.speechRate ?: 1.0
                     SettingsChoiceRow(stringResource(R.string.settings_speech_rate),
