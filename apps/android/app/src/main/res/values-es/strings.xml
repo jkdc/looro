@@ -467,6 +467,10 @@
     <string name="skill_category_pron">Pronunciación</string>
     <string name="common_back">Atrás</string>
     <string name="settings_conversation_provider">Proveedor de conversación</string>
+    <string name="settings_provider_personal_key">Tu propia clave</string>
+    <string name="settings_provider_hosted_minutes">Minutos hospedados</string>
+    <string name="settings_app_language">Idioma de la app</string>
+    <string name="settings_app_language_system">Sistema</string>
     <string name="engine_key_included">Clave incluida</string>
     <string name="engine_key_custom">Tu propia clave</string>
     <string name="engine_key_missing">Aún sin clave — añade una abajo</string>

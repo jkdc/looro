@@ -1,5 +1,9 @@
 package com.jkdc.app
 
+import android.app.LocaleManager
+import android.os.Build
+import android.os.LocaleList
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -11,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jkdc.app.core.Preferences
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -52,4 +57,21 @@ class SettingsDetailsTest {
         settings.performScrollToNode(hasText(activity.getString(R.string.settings_models_footer)))
         settings.performScrollToNode(hasText(activity.getString(R.string.settings_app_version_footer, version)))
     }
+
+    @Test fun providerButtonsResolveLocalizedResources() {
+        // Per-app locale only exists as a platform API from Android 13. The
+        // live render under Spanish is covered by the selector test below
+        // (which recreates the activity); here we pin the resource values.
+        assumeTrue(Build.VERSION.SDK_INT >= 33)
+        val activity = compose.activity
+        val spanish = activity.createConfigurationContext(android.content.res.Configuration().apply {
+            setLocale(java.util.Locale("es"))
+        })
+        compose.onNodeWithTag("tab-settings").performClick()
+        compose.onNodeWithTag("settings-screen")
+            .performScrollToNode(hasTestTag("provider-personal-key"))
+        assertEquals("Tu propia clave", spanish.getString(R.string.settings_provider_personal_key))
+        assertEquals("Minutos hospedados", spanish.getString(R.string.settings_provider_hosted_minutes))
+    }
+
 }

@@ -241,7 +241,7 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                                         containerColor = if (vm.conversationProvider == ConversationProvider.PERSONAL_KEY) AppColors.Secondary else AppColors.Cream,
                                         contentColor = if (vm.conversationProvider == ConversationProvider.PERSONAL_KEY) AppColors.Cream else AppColors.Ink
                                     )
-                                ) { Text("Your own key", style = MaterialTheme.typography.labelSmall) }
+                                ) { Text(stringResource(R.string.settings_provider_personal_key), style = MaterialTheme.typography.labelSmall) }
                                 OutlinedButton(
                                     onClick = { vm.selectConversationProvider(ConversationProvider.HOSTED_MINUTES) },
                                     enabled = !vm.isRunning,
@@ -250,7 +250,7 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                                         containerColor = if (vm.conversationProvider == ConversationProvider.HOSTED_MINUTES) AppColors.Secondary else AppColors.Cream,
                                         contentColor = if (vm.conversationProvider == ConversationProvider.HOSTED_MINUTES) AppColors.Cream else AppColors.Ink
                                     )
-                                ) { Text("Hosted minutes", style = MaterialTheme.typography.labelSmall) }
+                                ) { Text(stringResource(R.string.settings_provider_hosted_minutes), style = MaterialTheme.typography.labelSmall) }
                             }
                             SettingsDivider()
                             vm.localEngines.forEach { engine ->

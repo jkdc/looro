@@ -467,6 +467,10 @@
     <string name="skill_category_pron">Pronunciation</string>
     <string name="common_back">Back</string>
     <string name="settings_conversation_provider">Conversation provider</string>
+    <string name="settings_provider_personal_key">Your own key</string>
+    <string name="settings_provider_hosted_minutes">Hosted minutes</string>
+    <string name="settings_app_language">App language</string>
+    <string name="settings_app_language_system">System</string>
     <string name="engine_key_included">Included key</string>
     <string name="engine_key_custom">Your own key</string>
     <string name="engine_key_missing">No key yet — add one below</string>
