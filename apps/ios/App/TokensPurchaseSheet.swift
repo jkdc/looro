@@ -58,7 +58,7 @@ struct TokensPurchaseSheet: View {
                     .accessibilityIdentifier("tokens-credit-disclosure")
                 VStack(spacing: 12) {
                     if model.packs.isEmpty {
-                        Text(model.checking ? "Checking token packs…" : "Token packs aren’t available right now. Please check again later.")
+                        Text(model.checking ? String(localized: "Checking token packs…") : String(localized: "Token packs aren’t available right now. Please check again later."))
                             .font(.subheadline).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity).padding(24)
                             .background(.white.opacity(0.72), in: RoundedRectangle(cornerRadius: 26))

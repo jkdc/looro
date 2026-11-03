@@ -51,7 +51,8 @@ struct ListeningView: View {
         }.padding(.horizontal, 24).padding(.vertical, 10)
     }
 
-    private func shelfChip(_ label: String, selected: Bool, action: @escaping () -> Void) -> some View {
+    // LocalizedStringKey so the chip labels resolve through the string catalog.
+    private func shelfChip(_ label: LocalizedStringKey, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label).font(.subheadline.weight(selected ? .semibold : .regular))
                 .frame(maxWidth: .infinity).padding(.vertical, 10)
@@ -128,8 +129,8 @@ struct ListeningView: View {
     /// "Theme 3 · <unit title> · N questions" for unit-linked texts;
     /// "A2 · <topic> · N questions" for topic-only extras.
     private func shelfSubtitle(unitRank: Int?, unitTitle: String?, level: String, topic: String, count: Int) -> String {
-        if let unitRank, let unitTitle { return "Theme \(unitRank + 1) · \(unitTitle) · \(count) questions" }
-        return "\(level) · \(topic) · \(count) questions"
+        if let unitRank, let unitTitle { return String(localized: "Theme \(unitRank + 1) · \(unitTitle) · \(count) questions") }
+        return String(localized: "\(level) · \(topic) · \(count) questions")
     }
 
     private func bestScore(for id: String) -> Int? {
@@ -195,9 +196,9 @@ private struct ReadingDetailView: View {
 
     private var subtitle: String {
         if let unitID = item.unitID, let rank = unitOrder.firstIndex(where: { $0.id == unitID }) {
-            return "Theme \(rank + 1) · \(unitOrder[rank].title) · \(item.level) · \(item.questions.count) questions"
+            return String(localized: "Theme \(rank + 1) · \(unitOrder[rank].title) · \(item.level) · \(item.questions.count) questions")
         }
-        return "\(item.level) · \(item.topic) · \(item.questions.count) questions"
+        return String(localized: "\(item.level) · \(item.topic) · \(item.questions.count) questions")
     }
 
     @ViewBuilder
@@ -237,7 +238,7 @@ private struct ReadingDetailView: View {
                         : answer.trimmingCharacters(in: .whitespaces).isEmpty)
                     .accessibilityIdentifier("reading-check")
             } else {
-                Text(verdict == true ? "Correct!" : "Not yet — here is why:")
+                Text(verdict == true ? String(localized: "Correct!") : String(localized: "Not yet — here is why:"))
                     .font(.title3.weight(.semibold)).foregroundStyle(verdict == true ? AppColor.secondary : .red)
                 Text(question.explain).font(.subheadline).foregroundStyle(AppColor.secondary)
                 Button {
@@ -329,9 +330,9 @@ private struct ListeningDetailView: View {
 
     private var subtitle: String {
         if let unitID = item.unitID, let rank = unitOrder.firstIndex(where: { $0.id == unitID }) {
-            return "Theme \(rank + 1) · \(unitOrder[rank].title) · \(item.level) · \(item.questions.count) questions"
+            return String(localized: "Theme \(rank + 1) · \(unitOrder[rank].title) · \(item.level) · \(item.questions.count) questions")
         }
-        return "\(item.level) · \(item.topic) · \(item.questions.count) questions"
+        return String(localized: "\(item.level) · \(item.topic) · \(item.questions.count) questions")
     }
 
     @ViewBuilder
@@ -371,7 +372,7 @@ private struct ListeningDetailView: View {
                         : answer.trimmingCharacters(in: .whitespaces).isEmpty)
                     .accessibilityIdentifier("listening-check")
             } else {
-                Text(verdict == true ? "Correct!" : "Not yet — here is why:")
+                Text(verdict == true ? String(localized: "Correct!") : String(localized: "Not yet — here is why:"))
                     .font(.title3.weight(.semibold)).foregroundStyle(verdict == true ? AppColor.secondary : .red)
                 Text(question.explain).font(.subheadline).foregroundStyle(AppColor.secondary)
                 Button {

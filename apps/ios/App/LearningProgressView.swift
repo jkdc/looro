@@ -128,10 +128,13 @@ struct LearningProgressView: View {
     }
 
     private var timeText: String {
-        stats.totalVoiceMinutes >= 60 ? "\(stats.totalVoiceMinutes / 60) h \(stats.totalVoiceMinutes % 60) min" : "\(stats.totalVoiceMinutes) min"
+        stats.totalVoiceMinutes >= 60
+            ? String(localized: "\(stats.totalVoiceMinutes / 60) h \(stats.totalVoiceMinutes % 60) min")
+            : String(localized: "\(stats.totalVoiceMinutes) min")
     }
 
-    private func row(_ label: String, _ value: String) -> some View {
-        LabeledContent(label, value: value)
+    // LocalizedStringKey label so row titles resolve through the string catalog.
+    private func row(_ label: LocalizedStringKey, _ value: String) -> some View {
+        LabeledContent { Text(value) } label: { Text(label) }
     }
 }

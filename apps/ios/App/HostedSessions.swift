@@ -62,10 +62,10 @@ enum HostedFailure: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .unavailable: "Hosted conversations aren’t available right now. Please try again later."
-        case .signInRequired: "Sign in to your Palique account to use included minutes."
-        case .insufficientMinutes: "You’ve used all your included minutes for now."
-        case .rateLimited: "Too many requests. Please try again in a moment."
+        case .unavailable: String(localized: "Hosted conversations aren’t available right now. Please try again later.")
+        case .signInRequired: String(localized: "Sign in to your Palique account to use included minutes.")
+        case .insufficientMinutes: String(localized: "You’ve used all your included minutes for now.")
+        case .rateLimited: String(localized: "Too many requests. Please try again in a moment.")
         }
     }
 

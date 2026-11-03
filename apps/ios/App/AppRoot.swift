@@ -6,7 +6,7 @@ import SwiftUI
     @State private var confirmingErase = false
     init() {
         do { _store = State(initialValue: try makeStore()) }
-        catch { _startupError = State(initialValue: "Palique couldn’t open its learning record. Your existing data has not been replaced.") }
+        catch { _startupError = State(initialValue: String(localized: "Palique couldn’t open its learning record. Your existing data has not been replaced.")) }
     }
     private func makeStore() throws -> LearningStore {
         #if DEBUG
@@ -17,14 +17,14 @@ import SwiftUI
     }
     private func retryOpeningStore() {
         do { store = try makeStore(); startupError = nil }
-        catch { startupError = "Palique still couldn’t open your learning data. Nothing was erased. Please try again." }
+        catch { startupError = String(localized: "Palique still couldn’t open your learning data. Nothing was erased. Please try again.") }
     }
     /// Reachable only through the confirmation dialog below; the damaged record is the one thing erased.
     private func eraseAndRestart() {
         do { try LearningStore.eraseStore() }
-        catch { startupError = "Palique couldn’t erase its learning data. Please try again."; return }
+        catch { startupError = String(localized: "Palique couldn’t erase its learning data. Please try again."); return }
         do { store = try makeStore(); startupError = nil }
-        catch { startupError = "Palique couldn’t open a fresh learning record. Please try again." }
+        catch { startupError = String(localized: "Palique couldn’t open a fresh learning record. Please try again.") }
     }
     var body: some Scene {
         WindowGroup {
@@ -33,7 +33,7 @@ import SwiftUI
                 ContentUnavailableView {
                     Label("Let’s try again", systemImage: "externaldrive.badge.exclamationmark")
                 } description: {
-                    Text(startupError ?? "The learning record is unavailable.")
+                    Text(startupError ?? String(localized: "The learning record is unavailable."))
                 } actions: {
                     Button("Retry without deleting data") { retryOpeningStore() }
                     Button("Erase learning data and start fresh", role: .destructive) { confirmingErase = true }

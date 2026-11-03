@@ -156,7 +156,7 @@ struct CurrentTopicView: View {
                             .accessibilityIdentifier("topic-search-capability-explanation")
                     }
                     Button { find() } label: {
-                        HStack { Text(loading ? "Finding something interesting…" : "Find a topic"); Spacer(); if loading { ProgressView() } else { Image(systemName: "sparkle.magnifyingglass") } }.padding(18).background(AppColor.peach, in: Capsule())
+                        HStack { Text(loading ? String(localized: "Finding something interesting…") : String(localized: "Find a topic")); Spacer(); if loading { ProgressView() } else { Image(systemName: "sparkle.magnifyingglass") } }.padding(18).background(AppColor.peach, in: Capsule())
                     }.disabled(loading || query.trimmingCharacters(in: .whitespaces).isEmpty)
                     if let error { Text(error).font(.footnote).foregroundStyle(AppColor.secondary) }
                     if let brief {
@@ -213,8 +213,8 @@ struct WordsView: View {
                 if words.isEmpty {
                     VStack(alignment: .leading, spacing: 18) {
                         Image(systemName: "leaf").font(.system(size: 34, weight: .light))
-                        Text(search.isEmpty ? "They’ll grow from here." : "No matching words yet.").font(.system(.title2, design: .rounded, weight: .medium))
-                        Text(search.isEmpty ? "As we talk, useful words and phrases find a home here. Their strength grows when you recall them over time." : "Try another \(coordinator.language.name) word or English meaning.").font(.subheadline).foregroundStyle(AppColor.secondary)
+                        Text(search.isEmpty ? String(localized: "They’ll grow from here.") : String(localized: "No matching words yet.")).font(.system(.title2, design: .rounded, weight: .medium))
+                        Text(search.isEmpty ? String(localized: "As we talk, useful words and phrases find a home here. Their strength grows when you recall them over time.") : String(localized: "Try another \(coordinator.language.name) word or English meaning.")).font(.subheadline).foregroundStyle(AppColor.secondary)
                     }.padding(26).frame(maxWidth: .infinity, alignment: .leading).background(AppColor.sage, in: RoundedRectangle(cornerRadius: 28))
                 } else {
                     LazyVStack(spacing: 0) {
@@ -373,7 +373,7 @@ struct RemoveLanguagesSheet: View {
                         _ = store.removeExpressionLanguages(stats.filter { checked.contains($0.languageID) }.map { $0.languageID })
                         dismiss()
                     } label: {
-                        Text(checked.isEmpty ? "Remove" : "Remove \(selectedNames)").foregroundStyle(.red)
+                        Text(checked.isEmpty ? String(localized: "Remove") : String(localized: "Remove \(selectedNames)")).foregroundStyle(.red)
                     }
                     .disabled(checked.isEmpty)
                     .accessibilityIdentifier("remove-languages-confirm")
@@ -533,7 +533,7 @@ struct EditableTranscriptView: View {
                     ForEach(session?.passages ?? []) { passage in
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(passage.speaker == .user ? "YOU" : "PALIQUE").font(.caption).tracking(1)
+                                Text(passage.speaker == .user ? String(localized: "YOU") : String(localized: "PALIQUE")).font(.caption).tracking(1)
                                 Spacer()
                                 if passage.speaker == .user && session?.endedAt != nil {
                                     Button("Edit") { editedText = passage.text; editingID = passage.id }.font(.caption)
@@ -605,8 +605,8 @@ struct SettingsView: View {
     /// out or the read failed — never a cached balance.
     private var tokensChip: String? {
         guard !tokens.showSignIn, let wallet = tokens.wallet, let nano = Int64(wallet.availableNanoUSD) else { return nil }
-        return nano > 0 ? String(format: "%@ of prepaid tokens available", tokenCreditText(nano) ?? "")
-                        : "No prepaid tokens left"
+        return nano > 0 ? String(format: String(localized: "%@ of prepaid tokens available"), tokenCreditText(nano) ?? "")
+                        : String(localized: "No prepaid tokens left")
     }
     var body: some View {
         NavigationStack {
@@ -641,9 +641,9 @@ struct SettingsView: View {
                     Toggle("Share anonymous usage metrics", isOn: Binding(get: { store.preferences.usageMetricsEnabled != false }, set: { value in
                         coordinator.setUsageMetrics(enabled: value)
                     }))
-                    LabeledContent("Corrections", value: "Gently, as we talk")
+                    LabeledContent { Text(String(localized: "Gently, as we talk")) } label: { Text("Corrections") }
                     TextField("A few things you enjoy", text: Binding(get: { store.preferences.interests }, set: { value in store.updatePreferences { $0.interests = String(value.prefix(500)) } }), axis: .vertical)
-                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Palique finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }
+                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? String(localized: "End this conversation to switch languages. Each language keeps its own words and progress.") : String(localized: "Each language keeps its own words and progress. Palique finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.")) }
                 if ManagedAccountConfiguration.load() != nil {
                     Section {
                         NavigationLink { ManagedAccountView(store: accountStore) } label: {
@@ -660,9 +660,9 @@ struct SettingsView: View {
                             }.disabled(coordinator.isRunning).accessibilityIdentifier("conversation-provider")
                             if coordinator.prefersHostedMinutes {
                                 let balance = coordinator.hostedBalance
-                                Text(balance == nil ? "Included minutes: sign in to check your balance."
-                                     : balance!.canStartConversation ? "Included minutes available."
-                                     : "No included minutes left.")
+                                Text(balance == nil ? String(localized: "Included minutes: sign in to check your balance.")
+                                     : balance!.canStartConversation ? String(localized: "Included minutes available.")
+                                     : String(localized: "No included minutes left."))
                                     .font(.footnote).foregroundStyle(AppColor.secondary)
                             }
                         }
@@ -698,16 +698,16 @@ struct SettingsView: View {
                 Section {
                     DisclosureGroup(isExpanded: $showingAPIKey) {
                         if hasKey { Label("Your key is saved on this iPhone", systemImage: "checkmark.shield") }
-                        SecureField(hasKey ? "Replace OpenAI key" : "OpenAI API key", text: $key)
+                        SecureField(hasKey ? String(localized: "Replace OpenAI key") : String(localized: "OpenAI API key"), text: $key)
                             .textInputAutocapitalization(.never).autocorrectionDisabled().privacySensitive().accessibilityIdentifier("api-key")
-                        Button(hasKey ? "Save replacement key" : "Save key") {
-                            do { try CredentialStore.save(key); key = ""; hasKey = true; message = "Saved securely. Start a conversation to connect." }
+                        Button(hasKey ? String(localized: "Save replacement key") : String(localized: "Save key")) {
+                            do { try CredentialStore.save(key); key = ""; hasKey = true; message = String(localized: "Saved securely. Start a conversation to connect.") }
                             catch { message = error.localizedDescription }
                         }.disabled(key.isEmpty || coordinator.isRunning)
                         Link("Open OpenAI API keys", destination: URL(string: "https://platform.openai.com/api-keys")!)
                         if hasKey {
                             Button("Remove key", role: .destructive) {
-                                do { try CredentialStore.delete(); hasKey = false; message = "Your key has been removed." }
+                                do { try CredentialStore.delete(); hasKey = false; message = String(localized: "Your key has been removed.") }
                                 catch { message = error.localizedDescription }
                             }.disabled(coordinator.isRunning)
                         }
@@ -780,7 +780,7 @@ struct SettingsView: View {
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {
                 let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }
-                try store.importData(Archive.readImportData(from: url)); message = "Your backup has been imported."
+                try store.importData(Archive.readImportData(from: url)); message = String(localized: "Your backup has been imported.")
             } catch { message = error.localizedDescription }
         }
         .fileExporter(isPresented: $exportingDb, document: dbBackup,
@@ -790,7 +790,7 @@ struct SettingsView: View {
             do {
                 let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }
                 if coordinator.importDb(from: url) {
-                    message = "Backup restored: your learning data was replaced with the imported copy."
+                    message = String(localized: "Backup restored: your learning data was replaced with the imported copy.")
                 } else {
                     message = store.error ?? "The database backup couldn’t be restored."
                     store.error = nil
@@ -819,7 +819,7 @@ struct SettingsView: View {
         .confirmationDialog("Delete \(deleteLanguageName) learning data?", isPresented: $confirmingLanguageDelete, titleVisibility: .visible) {
             Button("Delete \(deleteLanguageName) data", role: .destructive) {
                 if coordinator.deleteLearningDataForLanguage(deleteLanguageTarget) {
-                    message = "\(deleteLanguageName) learning data deleted."
+                    message = String(localized: "\(deleteLanguageName) learning data deleted.")
                 } else {
                     message = coordinator.store.error ?? coordinator.error
                         ?? "The learning data couldn’t be deleted."

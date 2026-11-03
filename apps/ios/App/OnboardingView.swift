@@ -65,13 +65,13 @@ struct OnboardingView: View {
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 12) {
                 if step == 1 && !typeSize.isAccessibilitySize { consentDetails }
-                Button(step == 0 ? "Continue" : "Agree and continue") { advance() }
+                Button(step == 0 ? String(localized: "Continue") : String(localized: "Agree and continue")) { advance() }
                     .font(.system(.headline, design: .rounded)).multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity).padding(.vertical, 19)
                     .background(AppColor.orange, in: Capsule())
                     .accessibilityIdentifier("onboarding-continue")
                 if !typeSize.isAccessibilitySize {
-                    Text(step == 0 ? "We’ll find your pace through conversation." : "You can change both languages in Settings.")
+                    Text(step == 0 ? String(localized: "We’ll find your pace through conversation.") : String(localized: "You can change both languages in Settings."))
                         .font(.caption).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
                 }
             }.padding(.horizontal, 26).padding(.top, 16).padding(.bottom, 16)
@@ -185,10 +185,10 @@ struct OnboardingView: View {
 
 enum AIProcessingConsent {
     static let version = 1
-    static let summary = "With your permission, Palique sends audio and selected text to OpenAI to provide conversations and meanings. Provider retention rules apply."
+    static let summary = String(localized: "With your permission, Palique sends audio and selected text to OpenAI to provide conversations and meanings. Provider retention rules apply.")
     enum ConsentError: LocalizedError {
         case required
-        var errorDescription: String? { "Before using AI features, open Talk and tap the microphone to review how OpenAI processes your audio and text." }
+        var errorDescription: String? { String(localized: "Before using AI features, open Talk and tap the microphone to review how OpenAI processes your audio and text.") }
     }
 }
 

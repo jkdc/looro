@@ -784,7 +784,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // again, then surface.
             reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: expression-language removal failed — \(error)")
-            self.error = "Palique couldn’t remove the selected expressions. Please try again."
+            self.error = String(localized: "Palique couldn’t remove the selected expressions. Please try again.")
             return false
         }
     }
@@ -808,7 +808,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             do { try FileManager.default.removeItem(at: migrationBackupURL) }
             catch CocoaError.fileNoSuchFile { /* Most installations have no migration backup. */ }
             catch {
-                self.error = "Palique couldn’t delete the older learning backup. Your conversations are still here. Please try again."
+                self.error = String(localized: "Palique couldn’t delete the older learning backup. Your conversations are still here. Please try again.")
                 return
             }
         }
@@ -1101,7 +1101,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // export(DB) == archive holds again, then surface.
             reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: per-language delete failed — \(error)")
-            self.error = "Palique couldn’t delete the language’s learning data. Please try again."
+            self.error = String(localized: "Palique couldn’t delete the language’s learning data. Please try again.")
             return false
         }
     }
@@ -1126,7 +1126,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             // per-language delete.
             reloadWorkingArchiveAfterWriteFailure()
             print("LearningStore: directed write failed — \(error)")
-            self.error = "Palique couldn’t save your progress. Please export a backup and try again."
+            self.error = String(localized: "Palique couldn’t save your progress. Please export a backup and try again.")
         }
     }
     private func persist() {
@@ -1151,7 +1151,7 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             }
             document.payload = payload; try container.mainContext.save(); error = nil
         }
-        catch { self.error = "Palique couldn’t save your progress. Please export a backup and try again." }
+        catch { self.error = String(localized: "Palique couldn’t save your progress. Please export a backup and try again.") }
     }
 }
 
@@ -1184,9 +1184,9 @@ enum CredentialStore {
         case invalid, save, remove
         var errorDescription: String? {
             switch self {
-            case .invalid: "Enter a valid OpenAI API key."
-            case .save: "The key couldn’t be saved to this device’s Keychain."
-            case .remove: "The key couldn’t be removed. Unlock this iPhone and try again."
+            case .invalid: String(localized: "Enter a valid OpenAI API key.")
+            case .save: String(localized: "The key couldn’t be saved to this device’s Keychain.")
+            case .remove: String(localized: "The key couldn’t be removed. Unlock this iPhone and try again.")
             }
         }
     }

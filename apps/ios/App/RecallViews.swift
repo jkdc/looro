@@ -67,7 +67,7 @@ struct RecallSessionView: View {
                     if let correct {
                         VStack(alignment: .leading, spacing: 10) {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text(correct ? "Correct!" : "It was: \(item.text)")
+                                Text(correct ? String(localized: "Correct!") : String(localized: "It was: \(item.text)"))
                                     .font(.subheadline.weight(.semibold))
                                 Text(item.meaning).font(.caption).foregroundStyle(AppColor.secondary)
                             }.padding(16).frame(maxWidth: .infinity, alignment: .leading)

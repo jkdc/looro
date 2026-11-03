@@ -69,13 +69,13 @@ struct APIResult { var text: String; var sources: [SourceLink]; var usage: APIUs
         case missingKey, invalidResponse, incomplete, refused, http(Int)
         var errorDescription: String? {
             switch self {
-            case .missingKey: "Add your OpenAI key in Settings to begin."
-            case .invalidResponse, .incomplete: "OpenAI returned an incomplete response. Please try again."
-            case .refused: "Palique couldn’t complete that request. Try a different topic."
-            case .http(401): "Your OpenAI key wasn’t accepted. Check it in Settings."
-            case .http(403), .http(404): "This API key may not have access to the requested model. Check your OpenAI project."
-            case .http(429): "OpenAI’s usage or rate limit was reached. Check your project’s billing and limits."
-            case .http(let status): "OpenAI couldn’t complete the request (HTTP \(status)). Please try again."
+            case .missingKey: String(localized: "Add your OpenAI key in Settings to begin.")
+            case .invalidResponse, .incomplete: String(localized: "OpenAI returned an incomplete response. Please try again.")
+            case .refused: String(localized: "Palique couldn’t complete that request. Try a different topic.")
+            case .http(401): String(localized: "Your OpenAI key wasn’t accepted. Check it in Settings.")
+            case .http(403), .http(404): String(localized: "This API key may not have access to the requested model. Check your OpenAI project.")
+            case .http(429): String(localized: "OpenAI’s usage or rate limit was reached. Check your project’s billing and limits.")
+            case .http(let status): String(localized: "OpenAI couldn’t complete the request (HTTP \(status)). Please try again.")
             }
         }
     }

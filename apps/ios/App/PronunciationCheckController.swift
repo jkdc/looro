@@ -209,7 +209,7 @@ enum PronunciationCheckState: Equatable {
 
 enum AudioSessionLeaseError: LocalizedError {
     case busy
-    var errorDescription: String? { "Audio is already in use. Please finish the current audio activity and try again." }
+    var errorDescription: String? { String(localized: "Audio is already in use. Please finish the current audio activity and try again.") }
 }
 
 /// Captures speech to a request-unique temporary file and scores only when the

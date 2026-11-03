@@ -11,10 +11,10 @@ struct AIReportSubmission: Encodable, Equatable {
         var id: String { rawValue }
         var label: String {
             switch self {
-            case .offensive: "Offensive or hurtful"
-            case .incorrect: "Incorrect or misleading"
-            case .wrongLanguage: "Wrong language"
-            case .other: "Something else"
+            case .offensive: String(localized: "Offensive or hurtful")
+            case .incorrect: String(localized: "Incorrect or misleading")
+            case .wrongLanguage: String(localized: "Wrong language")
+            case .other: String(localized: "Something else")
             }
         }
     }
@@ -79,7 +79,7 @@ struct ReportClient {
         case notAccepted
         var errorDescription: String? {
             switch self {
-            case .notAccepted: "The report couldn’t be submitted right now. Please try again later."
+            case .notAccepted: String(localized: "The report couldn’t be submitted right now. Please try again later.")
             }
         }
     }
@@ -119,7 +119,7 @@ struct ReportSheet: View {
                     }
                     Section {
                         Toggle("I agree to send this excerpt for review", isOn: $consented)
-                        Button(submitting ? "Sending…" : "Send report") { submit() }
+                        Button(submitting ? String(localized: "Sending…") : String(localized: "Send report")) { submit() }
                             .disabled(!consented || submitting || excerpt.trimmingCharacters(in: .whitespaces).isEmpty)
                         if let message { Text(message).font(.footnote).foregroundStyle(AppColor.secondary) }
                     }

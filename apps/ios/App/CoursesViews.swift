@@ -110,7 +110,7 @@ struct CoursesView: View {
                                 Text(course.description).font(.subheadline)
                                 if let progress = coordinator.store.progressStats.courses.first(where: { $0.courseID == course.id }),
                                    progress.lessonsTotal > 0 {
-                                    Text("Completed: \(progress.percent)%").font(.caption2).foregroundStyle(AppColor.secondary)
+                                    Text(String(format: String(localized: "Completed: %lld%%"), progress.percent)).font(.caption2).foregroundStyle(AppColor.secondary)
                                 }
                                 LevelCardView(level: projection.level)
                                 ForEach(course.units) { unit in
@@ -159,9 +159,9 @@ private struct ProgressSyncStatusCard: View {
 
     private var message: String {
         switch status.phase {
-        case .pending: "Syncing your learning progress…"
-        case .failed: "Sync couldn’t complete. Your learning data remains on this device."
-        case .synced: "Your learning progress is up to date."
+        case .pending: String(localized: "Syncing your learning progress…")
+        case .failed: String(localized: "Sync couldn’t complete. Your learning data remains on this device.")
+        case .synced: String(localized: "Your learning progress is up to date.")
         }
     }
 }
@@ -192,8 +192,8 @@ private struct WeeklyExamHistoryView: View {
                         .accessibilityIdentifier("weekly-exams-back")
                     Text("Weekly exams").font(.largeTitle.bold()).accessibilityIdentifier("weekly-exam-title")
                     Text(accountStore.session == nil
-                         ? "These attempts are saved on this device. Sign in to view account-synced exam history."
-                         : "Exam history is scoped to the signed-in account. Pending attempts stay on this device until synchronization succeeds.")
+                         ? String(localized: "These attempts are saved on this device. Sign in to view account-synced exam history.")
+                         : String(localized: "Exam history is scoped to the signed-in account. Pending attempts stay on this device until synchronization succeeds."))
                         .font(.subheadline).foregroundStyle(AppColor.secondary)
                     if let loadError {
                         ContentUnavailableView("History unavailable", systemImage: "externaldrive.badge.exclamationmark",
@@ -268,7 +268,7 @@ private struct WeeklyExamHistoryView: View {
                                                         loadHistory()
                                                         accountStore.syncExamHistory(using: store) { loadHistory() }
                                                     } catch {
-                                                        loadError = "The exam versions could not be separated. Neither version was discarded."
+                                                        loadError = String(localized: "The exam versions could not be separated. Neither version was discarded.")
                                                     }
                                                 }
                                                 .accessibilityIdentifier("exam-conflict-fork-\(attemptID)")
@@ -280,7 +280,7 @@ private struct WeeklyExamHistoryView: View {
                                                         }
                                                         loadHistory()
                                                     } catch {
-                                                        loadError = "The account version could not be applied. Your saved version was not changed."
+                                                        loadError = String(localized: "The account version could not be applied. Your saved version was not changed.")
                                                     }
                                                 }
                                                 .accessibilityIdentifier("exam-conflict-takeover-\(attemptID)")
@@ -306,18 +306,18 @@ private struct WeeklyExamHistoryView: View {
 
     private func loadHistory() {
         do { attempts = try store.examHistory(ownerAccountID: accountStore.session?.accountID) }
-        catch { loadError = "Your saved exam data is still on this device, but couldn’t be opened." }
+        catch { loadError = String(localized: "Your saved exam data is still on this device, but couldn’t be opened.") }
     }
 
     private func historyStatus(_ history: ExamHistory) -> String {
         let state = history.attempt["state"] as? String ?? "in_progress"
         let syncState = history.attempt["sync_state"] as? String ?? "local_only"
-        let progress = state == "completed" ? "Completed · original result saved" : "In progress"
+        let progress = state == "completed" ? String(localized: "Completed · original result saved") : String(localized: "In progress")
         switch syncState {
-        case "synced": return "\(progress) · synced to account"
-        case "pending": return "\(progress) · waiting to sync"
-        case "conflict": return "\(progress) · sync conflict needs review"
-        default: return "\(progress) · on this device only"
+        case "synced": return String(localized: "\(progress) · synced to account")
+        case "pending": return String(localized: "\(progress) · waiting to sync")
+        case "conflict": return String(localized: "\(progress) · sync conflict needs review")
+        default: return String(localized: "\(progress) · on this device only")
         }
     }
 
@@ -349,7 +349,7 @@ private struct WeeklyExamHistoryView: View {
                 activeExam = ActiveLocalExam(history: history, level: prepared.level, exam: prepared.exam,
                                              answers: [:], position: 0, completion: nil)
             } catch {
-                loadError = "The exam couldn’t be validated or saved, so it hasn’t started. Please try again."
+                loadError = String(localized: "The exam couldn’t be validated or saved, so it hasn’t started. Please try again.")
             }
         }
     }
@@ -379,7 +379,7 @@ private struct WeeklyExamHistoryView: View {
             }
             activeExam = ActiveLocalExam(history: history, level: restored.level, exam: restored.exam,
                                          answers: answers, position: position, completion: completion)
-        } catch { loadError = "This saved exam couldn’t be opened. Its original data has not been changed." }
+        } catch { loadError = String(localized: "This saved exam couldn’t be opened. Its original data has not been changed.") }
     }
 }
 
@@ -416,7 +416,8 @@ private struct LocalExamRunView: View {
                 .accessibilityIdentifier("weekly-exam-attempt-back")
             if let completion = run.completion {
                 Text("Original exam result").font(.title2.bold())
-                Text("Score: \(completion.result.overall)% · \(completion.result.passed ? "Passed" : "Keep practising")")
+                Text(String(format: String(localized: "Score: %lld%% · %@"), completion.result.overall,
+                            completion.result.passed ? String(localized: "Passed") : String(localized: "Keep practising")))
                     .font(.headline).accessibilityIdentifier("weekly-exam-result")
                 ScrollView {
                     ForEach(run.exam.items, id: \.id) { item in
@@ -428,7 +429,8 @@ private struct LocalExamRunView: View {
                             }
                             Text(item.exercise.prompt).font(.headline)
                             Text("Your answer: \(completion.answers[item.id] ?? "—")")
-                            Text(correct ? "Correct" : "Incorrect · \(item.exercise.answers.joined(separator: ", "))")
+                            Text(correct ? String(localized: "Correct")
+                                 : String(format: String(localized: "Incorrect · %@"), item.exercise.answers.joined(separator: ", ")))
                                 .foregroundStyle(correct ? AppColor.ink : AppColor.secondary)
                             if !item.exercise.explain.isEmpty { Text(item.exercise.explain).font(.caption) }
                         }.padding(.vertical, 8)
@@ -455,7 +457,7 @@ private struct LocalExamRunView: View {
                     }
                 }
                 if let saveError { Text(saveError).foregroundStyle(AppColor.secondary).font(.caption) }
-                Button(run.position + 1 == run.exam.items.count ? "Finish exam" : "Save and continue") {
+                Button(run.position + 1 == run.exam.items.count ? String(localized: "Finish exam") : String(localized: "Save and continue")) {
                     saveCurrentAnswer()
                 }.buttonStyle(.borderedProminent).accessibilityIdentifier("weekly-exam-save")
             } else {
@@ -548,13 +550,13 @@ private struct LevelCardView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle().fill(AppColor.sage).frame(width: 46, height: 46)
-                    Text("\(level.level)").font(.headline)
+                    Text(String(level.level)).font(.headline)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Level \(level.level) · \(levelTitle(level.level))").font(.subheadline.weight(.semibold))
                     if let toNext = level.pointsToNext {
-                        Text(toNext == 1 ? "1 point to Level \(level.level + 1)"
-                                : "\(toNext) points to Level \(level.level + 1)")
+                        Text(toNext == 1 ? String(localized: "1 point to Level \(level.level + 1)")
+                                : String(localized: "\(toNext) points to Level \(level.level + 1)"))
                             .font(.caption).foregroundStyle(AppColor.secondary)
                     } else {
                         Text("Course complete!").font(.caption).foregroundStyle(AppColor.secondary)
@@ -601,7 +603,7 @@ private struct UnitSection: View {
                 Spacer()
                 if !unit.lessons.isEmpty {
                     let done = unit.lessons.filter { coordinator.store.completedLessonIDs.contains($0.id) }.count
-                    Text("Completed: \(done * 100 / unit.lessons.count)%")
+                    Text(String(format: String(localized: "Completed: %lld%%"), done * 100 / unit.lessons.count))
                         .font(.caption2).foregroundStyle(AppColor.secondary)
                 }
             }
@@ -704,7 +706,7 @@ private struct LessonDetailView: View {
                                     Text(expression.text).font(.subheadline.weight(.semibold))
                                     Spacer()
                                     if drill.state.isBusy {
-                                        Text(drill.state == .recognizing ? "Checking…" : "Listening…")
+                                        Text(drill.state == .recognizing ? String(localized: "Checking…") : String(localized: "Listening…"))
                                             .font(.caption).foregroundStyle(AppColor.secondary)
                                     } else {
                                         Button {
@@ -726,8 +728,8 @@ private struct LessonDetailView: View {
                                 }
                                 if let hit = drill.result, hit.target == expression.text {
                                     Text(PronunciationEngine.passed(hit.score)
-                                         ? "Pronunciation: \(hit.score)% — passed, well said!"
-                                         : "Pronunciation: \(hit.score)% — not quite, listen again and try once more")
+                                         ? String(format: String(localized: "Pronunciation: %lld%% — passed, well said!"), hit.score)
+                                         : String(format: String(localized: "Pronunciation: %lld%% — not quite, listen again and try once more"), hit.score))
                                         .font(.caption).foregroundStyle(AppColor.secondary)
                                 }
                             }
@@ -873,7 +875,7 @@ struct ExerciseView: View {
                 }.buttonStyle(.plain).disabled(!canCheck(exercise))
                     .accessibilityIdentifier("exercise-check")
             } else {
-                Text(verdict == true ? "Correct!" : "Not yet — here is why:")
+                Text(verdict == true ? String(localized: "Correct!") : String(localized: "Not yet — here is why:"))
                     .font(.title3.weight(.semibold)).foregroundStyle(verdict == true ? AppColor.secondary : .red)
                 Text(exercise.explain).font(.subheadline).foregroundStyle(AppColor.secondary)
                 Button {

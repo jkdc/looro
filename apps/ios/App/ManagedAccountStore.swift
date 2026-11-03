@@ -77,7 +77,7 @@ final class ManagedAccountStore {
                 self.configuration = nil
                 client = nil
                 keychain = nil
-                message = "The exam recovery test fixture is invalid."
+                message = String(localized: "The exam recovery test fixture is invalid.")
             }
             return
         }
@@ -87,7 +87,7 @@ final class ManagedAccountStore {
             self.configuration = nil
             client = nil
             keychain = nil
-            message = "The exam recovery test fixture is unavailable."
+            message = String(localized: "The exam recovery test fixture is unavailable.")
             return
         }
         #endif
@@ -115,7 +115,7 @@ final class ManagedAccountStore {
         }
     }
     func signIn(_ provider: ManagedIdentityProvider) {
-        guard !isPreview else { message = "Sign-in isn’t available in this preview."; return }
+        guard !isPreview else { message = String(localized: "Sign-in isn’t available in this preview."); return }
         guard !isBusy, session == nil, let client, let configuration, let keychain,
               configuration.providers.contains(provider) else { return }
         run { [self] token in
@@ -348,7 +348,7 @@ final class ManagedAccountStore {
             try keychain.remove()
             self.session = nil; profile = nil
             announceSessionChange()
-            if remoteFailed { message = "Signed out on this iPhone. We couldn’t reach Palique to revoke other sessions; they expire within 24 hours." }
+            if remoteFailed { message = String(localized: "Signed out on this iPhone. We couldn’t reach Palique to revoke other sessions; they expire within 24 hours.") }
         }
     }
     func deleteAccount() {
@@ -374,10 +374,10 @@ final class ManagedAccountStore {
             announceSessionChange()
             do { try keychain.remove() }
             catch {
-                message = "Account deleted. Palique couldn’t clear its local secure sign-in record. Unlock this iPhone and reopen Account to clear it."
+                message = String(localized: "Account deleted. Palique couldn’t clear its local secure sign-in record. Unlock this iPhone and reopen Account to clear it.")
                 return
             }
-            message = "Account deleted. Your learning history remains on this iPhone."
+            message = String(localized: "Account deleted. Your learning history remains on this iPhone.")
         }
     }
     /// Close pending sign-in on dismissal. Account mutations finish so their result is not ambiguous.

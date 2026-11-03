@@ -200,10 +200,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         case microphone, connection, timeout, audioBusy
         var errorDescription: String? {
             switch self {
-            case .microphone: "Allow microphone access in iPhone Settings → Palique to start a conversation."
-            case .connection: "The voice connection couldn’t be established. Check your connection and try again."
-            case .timeout: "The voice connection took too long. Please try again."
-            case .audioBusy: "Audio is already in use. Finish the current audio activity and try again."
+            case .microphone: String(localized: "Allow microphone access in iPhone Settings → Palique to start a conversation.")
+            case .connection: String(localized: "The voice connection couldn’t be established. Check your connection and try again.")
+            case .timeout: String(localized: "The voice connection took too long. Please try again.")
+            case .audioBusy: String(localized: "Audio is already in use. Finish the current audio activity and try again.")
             }
         }
     }

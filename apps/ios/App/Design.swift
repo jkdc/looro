@@ -109,14 +109,16 @@ struct RecallBars: View {
 }
 
 struct PageHeading: View {
-    var eyebrow: String
-    var title: String
-    var subtitle: String = ""
+    // LocalizedStringKey so call-site literals resolve through the string
+    // catalog; textCase uppercases the rendered (already localized) eyebrow.
+    var eyebrow: LocalizedStringKey
+    var title: LocalizedStringKey
+    var subtitle: LocalizedStringKey? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(eyebrow.uppercased()).font(.system(.caption, design: .rounded, weight: .medium)).tracking(1.5).foregroundStyle(AppColor.secondary)
+            Text(eyebrow).textCase(.uppercase).font(.system(.caption, design: .rounded, weight: .medium)).tracking(1.5).foregroundStyle(AppColor.secondary)
             Text(title).font(.system(.largeTitle, design: .rounded, weight: .semibold)).tracking(-1).foregroundStyle(AppColor.ink)
-            if !subtitle.isEmpty { Text(subtitle).font(.subheadline).foregroundStyle(AppColor.secondary) }
+            if let subtitle { Text(subtitle).font(.subheadline).foregroundStyle(AppColor.secondary) }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }

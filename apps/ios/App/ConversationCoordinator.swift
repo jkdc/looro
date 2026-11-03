@@ -101,7 +101,7 @@ struct ConversationTopicSearchAdapter {
         case .failed(let message): error = message
         case .cancelled: break
         case .inFlight:
-            error = "A reply is still being sent. Please wait."
+            error = String(localized: "A reply is still being sent. Please wait.")
         }
     }
 
@@ -1011,7 +1011,7 @@ struct ConversationTopicSearchAdapter {
     @discardableResult
     func deleteLearningDataForLanguage(_ id: String) -> Bool {
         guard !isRunning else {
-            error = "A conversation is in progress. End it before changing your data."
+            error = String(localized: "A conversation is in progress. End it before changing your data.")
             return false
         }
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
@@ -1040,7 +1040,7 @@ struct ConversationTopicSearchAdapter {
     @discardableResult
     func importDb(from url: URL) -> Bool {
         guard !isRunning else {
-            error = "A conversation is in progress. End it before changing your data."
+            error = String(localized: "A conversation is in progress. End it before changing your data.")
             return false
         }
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
@@ -1628,8 +1628,8 @@ struct ConversationTopicSearchAdapter {
         case unsourced, unsupportedEngine
         var errorDescription: String? {
             switch self {
-            case .unsourced: "The search didn’t return verifiable sources. Try a more specific topic."
-            case .unsupportedEngine: "Source-backed topic search isn’t available with the selected conversation engine. You can still use saved topics."
+            case .unsourced: String(localized: "The search didn’t return verifiable sources. Try a more specific topic.")
+            case .unsupportedEngine: String(localized: "Source-backed topic search isn’t available with the selected conversation engine. You can still use saved topics.")
             }
         }
     }

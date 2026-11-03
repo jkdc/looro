@@ -85,14 +85,15 @@ struct ScenarioReviewSheet: View {
         }
     }
 
-    private func reviewSection(_ title: String, @ViewBuilder content: () -> some View) -> some View {
+    // LocalizedStringKey so section titles resolve through the string catalog.
+    private func reviewSection(_ title: LocalizedStringKey, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title).font(.system(.headline, design: .rounded, weight: .semibold))
             content()
         }
     }
 
-    private func reviewLine(_ marker: String, _ text: String, _ tint: Color, label: String? = nil) -> some View {
+    private func reviewLine(_ marker: String, _ text: String, _ tint: Color, label: LocalizedStringKey? = nil) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 9) {
             Text(marker).font(.system(.headline, design: .rounded)).foregroundStyle(tint)
             VStack(alignment: .leading, spacing: 3) {

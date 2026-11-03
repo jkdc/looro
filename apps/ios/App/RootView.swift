@@ -226,7 +226,7 @@ struct TalkView: View {
                     Text("Meaning").font(.caption2)
                 }.contentShape(Rectangle())
             }.buttonStyle(.plain)
-                .accessibilityLabel(coordinator.store.preferences.meaningVisible ? "Hide meaning subtitles" : "Show meaning subtitles")
+                .accessibilityLabel(coordinator.store.preferences.meaningVisible ? String(localized: "Hide meaning subtitles") : String(localized: "Show meaning subtitles"))
                 .accessibilityValue(coordinator.store.preferences.meaningVisible ? "On" : "Off")
             Button {
                 if coordinator.state == .active { coordinator.toggleMute() }
@@ -239,14 +239,14 @@ struct TalkView: View {
                 }.frame(width: 76, height: 76).shadow(color: AppColor.orange.opacity(0.25), radius: 10, y: 6)
             }.buttonStyle(.plain).padding(.bottom, 18)
                 .disabled(coordinator.state == .connecting || coordinator.state == .closing)
-                .accessibilityLabel(coordinator.state == .active ? (coordinator.isMuted ? "Unmute microphone" : "Mute microphone") : "Start conversation")
+                .accessibilityLabel(coordinator.state == .active ? (coordinator.isMuted ? String(localized: "Unmute microphone") : String(localized: "Mute microphone")) : String(localized: "Start conversation"))
                 .accessibilityIdentifier("start-conversation")
             Button { if coordinator.isRunning { coordinator.end() } else { transcript = coordinator.session } } label: {
                 VStack(spacing: 6) {
                     Image(systemName: coordinator.isRunning ? "phone.down" : "text.bubble").frame(width: 48, height: 48).modifier(SoftGlass())
                     Text(coordinator.isRunning ? "End" : "Transcript").font(.caption2)
                 }.contentShape(Rectangle())
-            }.buttonStyle(.plain).accessibilityLabel(coordinator.isRunning ? "End conversation" : "Conversation transcript")
+            }.buttonStyle(.plain).accessibilityLabel(coordinator.isRunning ? String(localized: "End conversation") : String(localized: "Conversation transcript"))
                 .disabled(coordinator.session == nil)
         }.foregroundStyle(AppColor.ink)
     }
