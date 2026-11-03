@@ -74,4 +74,28 @@ class SettingsDetailsTest {
         assertEquals("Minutos hospedados", spanish.getString(R.string.settings_provider_hosted_minutes))
     }
 
+    @Test fun appLanguageSelectorSwitchesSettingsLanguage() {
+        assumeTrue(Build.VERSION.SDK_INT >= 33)
+        val activity = compose.activity
+        val locales = activity.getSystemService(LocaleManager::class.java)
+        val original = locales.applicationLocales
+        try {
+            compose.onNodeWithTag("tab-settings").performClick()
+            val settings = compose.onNodeWithTag("settings-screen")
+            settings.performScrollToNode(hasTestTag("settings-app-language"))
+            compose.onNodeWithTag("settings-app-language").performClick()
+            compose.onNodeWithTag("settings-app-language-es").performClick()
+            // The appcompat selection recreates the activity; waitForIdle never
+            // settles across that recreation, so poll with a bounded timeout.
+            // The settings sheet (rememberSaveable) stays open and the whole
+            // hierarchy — including the provider buttons — re-renders Spanish.
+            compose.waitUntil(timeoutMillis = 20_000) {
+                compose.onAllNodes(hasText("Listo")).fetchSemanticsNodes().isNotEmpty() &&
+                    compose.onAllNodes(hasText("Tu propia clave")).fetchSemanticsNodes().isNotEmpty()
+            }
+        } finally {
+            locales.applicationLocales = original
+            compose.waitForIdle()
+        }
+    }
 }

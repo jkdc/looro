@@ -2,6 +2,8 @@ package com.jkdc.app.ui
 
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -74,6 +76,7 @@ import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.data.SearchHit
 import com.jkdc.app.core.LanguageRegistry
+import com.jkdc.app.core.AppLanguage
 import com.jkdc.app.core.ConversationProvider
 import com.jkdc.app.core.MeaningLanguages
 import com.jkdc.app.core.Passage
@@ -131,6 +134,26 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                         listOf(com.jkdc.app.core.InstructionsLanguageStore.SUBTITLES to stringResource(R.string.placement_instructions_subtitles),
                             "en" to "English", "es" to "Español"), "settings-instructions-language", !vm.isRunning) {
                         vm.chooseInstructionsLanguage(it)
+                    }
+                    SettingsDivider()
+                    // App UI language: decouples the interface from the device
+                    // language. System = follow the device, today's behaviour.
+                    val appLanguage = AppLanguage.fromTags(
+                        AppCompatDelegate.getApplicationLocales().toLanguageTags()
+                            .split(",").map { it.trim() }.filter { it.isNotEmpty() })
+                    val appLanguageValue = when (appLanguage) {
+                        AppLanguage.ENGLISH -> "English"
+                        AppLanguage.SPANISH -> "Español"
+                        else -> stringResource(R.string.settings_app_language_system)
+                    }
+                    SettingsChoiceRow(stringResource(R.string.settings_app_language), appLanguageValue, appLanguage,
+                        listOf(AppLanguage.SYSTEM to stringResource(R.string.settings_app_language_system),
+                            AppLanguage.ENGLISH to "English", AppLanguage.SPANISH to "Español"),
+                        "settings-app-language", !vm.isRunning) { id ->
+                        val tag = AppLanguage.tag(id)
+                        AppCompatDelegate.setApplicationLocales(
+                            if (tag == null) LocaleListCompat.getEmptyLocaleList()
+                            else LocaleListCompat.forLanguageTags(tag))
                     }
                     SettingsDivider()
                     val rate = prefs.speechRate ?: 1.0
