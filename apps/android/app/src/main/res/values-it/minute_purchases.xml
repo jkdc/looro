@@ -1,0 +1,29 @@
+<resources>
+    <string name="minute_purchases_title">Più tempo per parlare</string>
+    <string name="minute_purchases_intro">Continua ad allenarti, una conversazione alla volta.</string>
+    <plurals name="minute_purchases_pack_minutes">
+        <item quantity="one">%1$s minuto</item>
+        <item quantity="other">%1$s minuti</item>
+    </plurals>
+    <string name="minute_purchases_pack_action">Aggiungi %1$s per %2$s</string>
+    <string name="minute_purchases_one_time">Acquisto una tantum · Nessun abbonamento</string>
+    <string name="minute_purchases_balance">%1$s minuti disponibili</string>
+    <string name="minute_purchases_balance_small">Meno di un minuto disponibile</string>
+    <string name="minute_purchases_balance_empty">Nessun minuto disponibile</string>
+    <string name="minute_purchases_sign_in">Accedi per aggiungere minuti</string>
+    <string name="minute_purchases_sign_in_detail">I tuoi minuti restano nel tuo account. Le tue conversazioni restano su questo dispositivo.</string>
+    <string name="minute_purchases_unavailable">I pacchetti di minuti non sono disponibili al momento. Riprova più tardi.</string>
+    <string name="minute_purchases_loading">Cerco i tuoi pacchetti di minuti…</string>
+    <string name="minute_purchases_check">Controlla gli acquisti</string>
+    <string name="minute_purchases_checking">Controllo del tuo acquisto…</string>
+    <string name="minute_purchases_pending">Il tuo pagamento è in sospeso. I tuoi minuti appariranno quando sarà completato.</string>
+    <string name="minute_purchases_opened">Completa l\'acquisto in Google Play.</string>
+    <string name="minute_purchases_canceled">Acquisto annullato. Puoi scegliere un pacchetto quando vuoi.</string>
+    <string name="minute_purchases_price_changed">Il prezzo di questo pacchetto è cambiato. Rivedi il prezzo aggiornato prima di sceglierlo di nuovo.</string>
+    <string name="minute_purchases_added">I tuoi minuti sono pronti. Continuiamo a parlare.</string>
+    <string name="minute_purchases_reversed">Un acquisto è stato rimborsato o stornato. Il tuo saldo è stato aggiornato.</string>
+    <string name="minute_purchases_verification_failed">Non siamo riusciti a confermare un acquisto. Ricontrolla, oppure accedi con l\'account Palique usato per acquistarlo.</string>
+    <string name="minute_purchases_sign_in_again">Accedi per confermare i tuoi acquisti e vedere i tuoi minuti.</string>
+    <string name="minute_purchases_play_terms">Google Play mostra il totale finale prima di confermare.</string>
+    <string name="minute_purchases_stripe_terms">Il pagamento si apre in sicurezza su Stripe. Dopo aver pagato, torna su Palique e controlla i tuoi acquisti.</string>
+</resources>

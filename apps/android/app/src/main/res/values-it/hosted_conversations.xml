@@ -1,0 +1,27 @@
+<resources>
+    <string name="hosted_checking_previous">Palique sta controllando la tua conversazione precedente. Riprova tra poco.</string>
+    <string name="hosted_typed_start">Inizia una conversazione vocale prima di inviare una risposta scritta con i minuti Palique.</string>
+    <string name="provider_preference_save_failed">Impossibile salvare la tua preferenza di conversazione.</string>
+    <string name="hosted_sign_in">Accedi per usare i tuoi minuti Palique.</string>
+    <string name="hosted_unconfirmed">Palique non ha potuto confermare quella richiesta. Non verrà inviata di nuovo automaticamente.</string>
+    <string name="hosted_unavailable">I minuti Palique non sono disponibili per questa richiesta al momento.</string>
+    <string name="hosted_no_minutes">Non hai minuti di conversazione disponibili.</string>
+    <string name="hosted_extra_help_limit">Questa conversazione ha raggiunto il suo limite di spiegazioni extra.</string>
+    <string name="hosted_window_closed">Inizia una nuova conversazione per ricevere altro aiuto. I tuoi significati salvati restano disponibili.</string>
+    <string name="hosted_request_failed">Palique non è riuscito a completare quella richiesta. Riprova più tardi.</string>
+    <string name="hosted_sign_in_again">Accedi di nuovo per continuare con i tuoi minuti Palique.</string>
+    <string name="hosted_rate_limit">Palique ha ricevuto troppe richieste. Aspetta un minuto e riprova.</string>
+    <string name="hosted_start_rejected">Il servizio vocale non è riuscito ad avviare questa conversazione. Riprova tra poco.</string>
+    <string name="hosted_error_reference">Riferimento errore: %1$s</string>
+    <string name="hosted_minimum_charge_disclosure">Minimo di 15 secondi per conversazione. Le conversazioni più lunghe usano il tempo in cui resti connesso. Il tuo saldo rimasto limita l\'addebito.</string>
+    <string name="sub_plan_label">Piano %1$s %2$s</string>
+    <string name="sub_tier_free">Gratuito</string>
+    <string name="sub_tier_standard">Standard</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(prova)</string>
+    <string name="sub_drip_note">Il tuo piano gratuito aggiunge %1$d min ogni mese.</string>
+    <string name="minutes_remaining_estimate">Circa %1$s min rimasti</string>
+    <string name="minutes_low_warning">Restano meno di 5 minuti di conversazione.</string>
+    <string name="minutes_critical_warning">Restano meno di 2 minuti di conversazione.</string>
+    <string name="minutes_exhausted_upsell">Ricarica i minuti o passa a un piano superiore per continuare a parlare.</string>
+</resources>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">Minuti gratuiti al momento non disponibili</string>
+    <string name="guest_unavailable_detail">Ogni conversazione ha un costo di IA. Stiamo lavorando per finanziare più minuti gratuiti, così più persone possono imparare con Palique.</string>
+    <string name="guest_ready_title">La tua prossima conversazione ti aspetta</string>
+    <string name="guest_ready_detail">Inizia a parlare. Puoi accedere quando vuoi per conservare i minuti rimasti nel tuo account.</string>
+    <string name="guest_checking_title">Un attimo per prepararsi</string>
+    <string name="guest_checking_detail">Stiamo controllando i tuoi minuti di conversazione.</string>
+    <string name="guest_retry_title">Proviamo di nuovo</string>
+    <string name="guest_retry_detail">Non siamo riusciti a controllare i tuoi minuti. Controlla la connessione e riprova. La tua dotazione non è stata azzerata.</string>
+    <string name="guest_sign_in_title">Bentornato</string>
+    <string name="guest_sign_in_detail">Accedi per tornare ai tuoi minuti. Questo dispositivo ha già ricevuto la sua dotazione di benvenuto.</string>
+    <string name="guest_more_title">Continua la conversazione</string>
+    <string name="guest_more_detail">I tuoi minuti disponibili sono finiti. Aggiungine altri quando gli acquisti saranno disponibili, oppure usa la tua chiave API nelle impostazioni.</string>
+    <string name="guest_link_title">Teniamo insieme i tuoi minuti</string>
+    <string name="guest_link_detail">Dobbiamo ancora trasferire i tuoi minuti ospite rimasti al tuo account. Ricontrolla per completare. I tuoi minuti rimasti si aggiungeranno ai minuti che acquisterai.</string>
+    <string name="guest_continue">Parliamo</string>
+    <string name="guest_sign_in">Continua con Google</string>
+    <string name="guest_check_again">Ricontrolla</string>
+    <string name="guest_personal_key">Usa la mia chiave API</string>
+    <string name="guest_purchases_soon">Gli acquisti non sono ancora disponibili. Puoi usare la tua chiave API.</string>
+    <string name="guest_account_detail">Accedi per conservare i minuti ospite rimasti nel tuo account. Il tuo apprendimento resta su questo dispositivo.</string>
+    <string name="consent_adult_confirmation">Continuando, confermi di avere almeno 18 anni.</string>
+    <string name="guest_member_trial_used">Questo account ha già ricevuto i suoi minuti di benvenuto, quindi non riceverà una seconda dotazione. Il saldo del tuo account è invariato.</string>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="paid_balance_estimate">Circa %1$s minuti pagati</string>
+    <string name="paid_balance_small">Resta meno di un minuto pagato</string>
+    <string name="paid_balance_detail">Il tempo è una stima. Voce e insegnamento sottraggono dal saldo il loro costo IA effettivo.</string>
+    <string name="paid_balance_free_first">I tuoi minuti gratuiti vengono usati per primi.</string>
+    <string name="paid_pack_estimate">Circa %1$s minuti</string>
+    <string name="paid_ai_allocation">Per l\'uso dell\'IA</string>
+    <string name="paid_app_fee">Commissione Palique (%1$s%%)</string>
+    <string name="paid_processing_fee">Commissione di pagamento stimata</string>
+    <string name="paid_processing_buffer">Margine per i costi di pagamento</string>
+</resources>
