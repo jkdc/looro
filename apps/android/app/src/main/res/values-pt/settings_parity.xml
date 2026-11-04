@@ -1,0 +1,14 @@
+<resources>
+    <string name="settings_navigation_title">Fique à vontade</string>
+    <string name="settings_done">Concluído</string>
+    <string name="settings_just_your_pace">No seu ritmo</string>
+    <string name="settings_meaning_subtitles">Legendas de significado</string>
+    <string name="settings_language_footer">Cada idioma guarda suas próprias palavras e seu progresso. O Palique descobre seu ritmo por meio da conversa.</string>
+    <string name="settings_language_running_footer">Encerre esta conversa para trocar de idioma. Cada idioma guarda suas próprias palavras e seu progresso.</string>
+    <string name="settings_advanced">Avançado</string>
+    <string name="settings_use_own_key">Usar sua própria chave de API</string>
+    <string name="settings_byok_version_footer">Uma forma opcional de usar o Palique. A OpenAI cobra o uso da sua própria chave diretamente de você.</string>
+    <string name="settings_key_owner_footer">Sua conta OpenAI paga pelo uso. A chave fica criptografada neste celular e é enviada apenas para a OpenAI.</string>
+    <string name="settings_keep_comfortable">Mantenha o conforto</string>
+    <string name="settings_limit_minutes">%1$d minutos</string>
+</resources>

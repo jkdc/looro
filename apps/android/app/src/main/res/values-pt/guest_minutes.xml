@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">Minutos grátis indisponíveis no momento</string>
+    <string name="guest_unavailable_detail">Toda conversa tem um custo de IA. Estamos trabalhando para financiar mais minutos grátis e assim mais pessoas podem aprender com o Palique.</string>
+    <string name="guest_ready_title">Sua próxima conversa espera por você</string>
+    <string name="guest_ready_detail">Comece a conversar. Você pode fazer login quando quiser para guardar seus minutos restantes na sua conta.</string>
+    <string name="guest_checking_title">Um momento para nos prepararmos</string>
+    <string name="guest_checking_detail">Estamos verificando seus minutos de conversa.</string>
+    <string name="guest_retry_title">Vamos tentar de novo</string>
+    <string name="guest_retry_detail">Não foi possível verificar seus minutos. Confira sua conexão e tente novamente. Sua cota não foi redefinida.</string>
+    <string name="guest_sign_in_title">Bem-vindo de volta</string>
+    <string name="guest_sign_in_detail">Faça login para voltar aos seus minutos. Este dispositivo já recebeu sua cota de boas-vindas.</string>
+    <string name="guest_more_title">Continue a conversa</string>
+    <string name="guest_more_detail">Seus minutos disponíveis acabaram. Adicione mais quando as compras estiverem disponíveis ou use sua própria chave de API em Configurações.</string>
+    <string name="guest_link_title">Vamos reunir seus minutos</string>
+    <string name="guest_link_detail">Ainda precisamos transferir seus minutos de convidado restantes para a sua conta. Verifique novamente para concluir. Seus minutos restantes serão somados aos que você comprar.</string>
+    <string name="guest_continue">Vamos conversar</string>
+    <string name="guest_sign_in">Continuar com o Google</string>
+    <string name="guest_check_again">Verificar novamente</string>
+    <string name="guest_personal_key">Usar minha própria chave de API</string>
+    <string name="guest_purchases_soon">As compras ainda não estão disponíveis. Você pode usar sua própria chave de API.</string>
+    <string name="guest_account_detail">Faça login para guardar seus minutos de convidado restantes na sua conta. Seu aprendizado fica neste dispositivo.</string>
+    <string name="consent_adult_confirmation">Ao continuar, você confirma que tem 18 anos ou mais.</string>
+    <string name="guest_member_trial_used">Esta conta já recebeu seus minutos de boas-vindas e não receberá uma segunda cota. O saldo da sua conta permanece o mesmo.</string>
+</resources>

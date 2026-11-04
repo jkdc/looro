@@ -1,0 +1,27 @@
+<resources>
+    <string name="hosted_checking_previous">O Palique está verificando sua conversa anterior. Tente novamente em instantes.</string>
+    <string name="hosted_typed_start">Inicie uma conversa por voz antes de enviar uma resposta escrita com minutos do Palique.</string>
+    <string name="provider_preference_save_failed">Não foi possível salvar sua preferência de conversa.</string>
+    <string name="hosted_sign_in">Faça login para usar seus minutos do Palique.</string>
+    <string name="hosted_unconfirmed">O Palique não pôde confirmar essa solicitação. Ela não será reenviada automaticamente.</string>
+    <string name="hosted_unavailable">Os minutos do Palique não estão disponíveis para esta solicitação agora.</string>
+    <string name="hosted_no_minutes">Você não tem minutos de conversa disponíveis.</string>
+    <string name="hosted_extra_help_limit">Esta conversa atingiu o limite de explicações extras.</string>
+    <string name="hosted_window_closed">Inicie uma nova conversa para ter mais ajuda. Seus significados salvos continuam disponíveis.</string>
+    <string name="hosted_request_failed">O Palique não pôde concluir essa solicitação. Tente novamente mais tarde.</string>
+    <string name="hosted_sign_in_again">Faça login novamente para continuar com seus minutos do Palique.</string>
+    <string name="hosted_rate_limit">O Palique recebeu solicitações demais. Espere um minuto e tente novamente.</string>
+    <string name="hosted_start_rejected">O serviço de voz não pôde iniciar esta conversa. Tente novamente em instantes.</string>
+    <string name="hosted_error_reference">Referência do erro: %1$s</string>
+    <string name="hosted_minimum_charge_disclosure">Mínimo de 15 segundos por conversa. Conversas mais longas usam o tempo em que você está conectado. Seu saldo restante limita a cobrança.</string>
+    <string name="sub_plan_label">Plano %1$s %2$s</string>
+    <string name="sub_tier_free">Grátis</string>
+    <string name="sub_tier_standard">Padrão</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(teste)</string>
+    <string name="sub_drip_note">Seu plano grátis adiciona %1$d min todo mês.</string>
+    <string name="minutes_remaining_estimate">Cerca de %1$s min restantes</string>
+    <string name="minutes_low_warning">Restam menos de 5 minutos de conversa.</string>
+    <string name="minutes_critical_warning">Restam menos de 2 minutos de conversa.</string>
+    <string name="minutes_exhausted_upsell">Recarregue minutos ou faça upgrade do plano para continuar conversando.</string>
+</resources>

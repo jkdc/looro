@@ -1,0 +1,11 @@
+<resources>
+    <string name="paid_balance_estimate">Cerca de %1$s minutos pagos</string>
+    <string name="paid_balance_small">Menos de um minuto pago restante</string>
+    <string name="paid_balance_detail">O tempo é uma estimativa. Voz e ensino descontam do seu saldo o custo real de IA.</string>
+    <string name="paid_balance_free_first">Seus minutos grátis são usados primeiro.</string>
+    <string name="paid_pack_estimate">Cerca de %1$s minutos</string>
+    <string name="paid_ai_allocation">Para uso de IA</string>
+    <string name="paid_app_fee">Taxa do Palique (%1$s%%)</string>
+    <string name="paid_processing_fee">Taxa de pagamento estimada</string>
+    <string name="paid_processing_buffer">Margem do custo de pagamento</string>
+</resources>

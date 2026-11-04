@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "O Palique usa o microfone enquanto você pratica a pronúncia.";
+"NSSpeechRecognitionUsageDescription" = "O Palique verifica a pronúncia com reconhecimento de voz no dispositivo. O áudio da prática não é enviado a nenhum servidor.";
