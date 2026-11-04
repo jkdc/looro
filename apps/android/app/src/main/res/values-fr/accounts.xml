@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="talk_microphone_on">Microphone activé</string>
+    <string name="talk_microphone_off">Microphone coupé</string>
+    <string name="talk_reply_any_language">Réponds dans la langue qui te vient.</string>
+
+    <string name="onboarding_subtitle_language">Langue des sous-titres</string>
+    <string name="account_agreement">En te connectant, tu acceptes les Conditions et tu prends connaissance de la Politique de confidentialité.</string>
+    <string name="account_title">Ton compte</string>
+    <string name="account_welcome">Installe-toi comme à la maison.</string>
+    <string name="account_welcome_back">Ça fait plaisir de te revoir.</string>
+    <string name="account_connected">Tu es connecté à Palique.</string>
+    <string name="account_intro">Connecte-toi pour garder ton temps de conversation avec toi. Tes mots et tes conversations restent sur cet appareil.</string>
+    <string name="account_google">Se connecter avec Google</string>
+    <string name="account_time_label">Temps pour une conversation</string>
+    <string name="account_time_unavailable">Pas encore disponible</string>
+    <string name="account_minutes_value">%1$s minutes</string>
+    <string name="account_seconds_value">%1$s s</string>
+    <string name="account_add_minutes">Ajouter des minutes</string>
+    <string name="account_conversation_source">Tes conversations</string>
+    <string name="account_use">Utiliser</string>
+    <string name="account_app_minutes">Minutes Palique</string>
+    <string name="account_personal_key">Ta clé API</string>
+    <string name="account_local_data">Ton historique d\'apprentissage reste sur cet appareil. Exporte-le dans les Réglages pour le transférer vers un autre téléphone.</string>
+    <string name="account_not_ready">La connexion n\'est pas disponible pour le moment. Tu peux continuer à utiliser Palique sans compte.</string>
+    <string name="account_sign_out">Se déconnecter</string>
+    <string name="account_delete">Supprimer le compte</string>
+    <string name="account_refresh">Actualiser</string>
+    <string name="account_privacy">Confidentialité</string>
+    <string name="account_terms">Conditions</string>
+    <string name="account_sign_out_detail">Cette action te déconnecte de Palique sur tous les appareils. Tes données d\'apprentissage et ta clé API enregistrée restent sur cet appareil.</string>
+    <string name="account_delete_detail">Supprimer ton compte Palique et renoncer aux minutes gratuites restantes ? Tes données d\'apprentissage restent sur cet appareil. Les enregistrements nécessaires à la facturation ou à l\'éligibilité à l\'essai peuvent être conservés.</string>
+    <string name="account_request_deletion">Demander la suppression au support</string>
+    <string name="account_deletion_support_detail">Envoie la demande depuis l\'adresse e-mail de ton compte Palique. Le support vérifiera que le compte t\'appartient et examinera tout solde ou paiement en attente. Ton compte reste actif jusqu\'à ce que la suppression soit terminée.</string>
+    <string name="account_deletion_draft_detail">L\'ouverture de ton app e-mail prépare un brouillon. Envoie-le pour soumettre ta demande. N\'inclus ni mots de passe, ni clés API, ni exports de conversations.</string>
+    <string name="account_deletion_email">Écrire un e-mail</string>
+    <string name="account_deletion_copy_email">Copier l\'adresse e-mail</string>
+    <string name="account_deletion_email_copied">Adresse e-mail copiée</string>
+    <string name="account_deletion_web">Détails de la suppression sur le web</string>
+    <string name="account_deletion_open_failed">Impossible d\'ouvrir une app pour ce lien. Copie l\'adresse e-mail ci-dessus et envoie ta demande depuis ton service de messagerie habituel.</string>
+    <string name="account_error_connection">Impossible de joindre Palique. Réessaie.</string>
+    <string name="account_error_expired">Ta session a expiré. Reconnecte-toi pour continuer.</string>
+    <string name="account_error_response">Impossible de charger ton compte. Réessaie.</string>
+    <string name="account_error_storage">Impossible de mettre à jour ta connexion sécurisée sur cet appareil. Déverrouille-le et réessaie.</string>
+    <string name="account_error_google">La connexion avec Google n\'a pas abouti. Réessaie.</string>
+    <string name="account_error_billing">La suppression automatique n\'a pas abouti : une conversation active, un solde ou un paiement en attente de confirmation l\'en empêche. Termine toute conversation et réessaie, ou demande la suppression au support. Ton compte et ton solde sont inchangés.</string>
+    <string name="account_error_apple">Ce compte est lié à Apple. Supprime-le depuis Palique sur ton iPhone, ou demande la suppression au support.</string>
+    <string name="account_signed_out_locally">Session fermée sur cet appareil. Impossible de joindre Palique pour terminer tes autres sessions.</string>
+    <string name="account_deleted">Ton compte a été supprimé.</string>
+    <string name="account_same_account_required">Connecte-toi avec le même compte pour terminer ta conversation précédente.</string>
+</resources>

@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Palique utilise le micro pendant que tu t'entraînes à la prononciation.";
+"NSSpeechRecognitionUsageDescription" = "Palique vérifie la prononciation avec la reconnaissance vocale sur l'appareil. L'audio de ton entraînement n'est pas envoyé à un serveur.";

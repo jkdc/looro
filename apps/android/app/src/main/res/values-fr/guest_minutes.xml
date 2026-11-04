@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">Minutes gratuites indisponibles pour le moment</string>
+    <string name="guest_unavailable_detail">Chaque conversation a un coût en IA. Nous travaillons à financer davantage de minutes gratuites pour que plus de personnes apprennent avec Palique.</string>
+    <string name="guest_ready_title">Ta prochaine conversation t\'attend</string>
+    <string name="guest_ready_detail">Commence à parler. Tu peux te connecter quand tu veux pour garder tes minutes restantes sur ton compte.</string>
+    <string name="guest_checking_title">Un instant de préparation</string>
+    <string name="guest_checking_detail">Nous vérifions tes minutes de conversation.</string>
+    <string name="guest_retry_title">Réessayons</string>
+    <string name="guest_retry_detail">Impossible de vérifier tes minutes. Vérifie ta connexion et réessaie. Ton crédit n\'a pas été réinitialisé.</string>
+    <string name="guest_sign_in_title">Bon retour</string>
+    <string name="guest_sign_in_detail">Connecte-toi pour retrouver tes minutes. Cet appareil a déjà réclamé son crédit de bienvenue.</string>
+    <string name="guest_more_title">Que la conversation continue</string>
+    <string name="guest_more_detail">Tes minutes disponibles sont épuisées. Ajoute-en quand les achats seront disponibles, ou utilise ta propre clé API dans les Réglages.</string>
+    <string name="guest_link_title">Gardons tes minutes ensemble</string>
+    <string name="guest_link_detail">Nous devons encore transférer tes minutes d\'invité restantes vers ton compte. Vérifie à nouveau pour terminer. Tes minutes restantes s\'ajouteront à celles que tu achèteras.</string>
+    <string name="guest_continue">Parlons</string>
+    <string name="guest_sign_in">Continuer avec Google</string>
+    <string name="guest_check_again">Vérifier à nouveau</string>
+    <string name="guest_personal_key">Utiliser ma propre clé API</string>
+    <string name="guest_purchases_soon">Les achats ne sont pas encore disponibles. Tu peux utiliser ta propre clé API.</string>
+    <string name="guest_account_detail">Connecte-toi pour garder tes minutes d\'invité restantes sur ton compte. Ton apprentissage reste sur cet appareil.</string>
+    <string name="consent_adult_confirmation">En continuant, tu confirmes avoir 18 ans ou plus.</string>
+    <string name="guest_member_trial_used">Ce compte a déjà reçu ses minutes de bienvenue, il ne recevra donc pas de second crédit. Le solde de ton compte est inchangé.</string>
+</resources>
