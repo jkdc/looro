@@ -18,8 +18,14 @@ class AppLanguageTest {
     }
 
     @Test fun mapsUnknownTagsToSystem() {
-        assertEquals(AppLanguage.SYSTEM, AppLanguage.fromTags(listOf("fr")))
-        assertEquals(AppLanguage.SYSTEM, AppLanguage.fromTags(listOf("zh-Hans")))
+        // Languages the app does not ship UI resources for.
+        assertEquals(AppLanguage.SYSTEM, AppLanguage.fromTags(listOf("ko")))
+        assertEquals(AppLanguage.SYSTEM, AppLanguage.fromTags(listOf("ar")))
+    }
+
+    @Test fun regionalVariantsResolveToTheirBaseLanguage() {
+        assertEquals(AppLanguage.CHINESE, AppLanguage.fromTags(listOf("zh-Hans")))
+        assertEquals(AppLanguage.PORTUGUESE, AppLanguage.fromTags(listOf("pt-BR")))
     }
 
     @Test fun optionIdsMapToStableTags() {

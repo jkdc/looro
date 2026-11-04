@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jkdc.app.core.Preferences
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -96,6 +97,25 @@ class SettingsDetailsTest {
         } finally {
             locales.applicationLocales = original
             compose.waitForIdle()
+        }
+    }
+
+    @Test fun everySupportedAppLanguageResolvesItsResources() {
+        // The es test above covers the full selector click flow (recreation
+        // included); clicking another popup item races with that recreation
+        // and can deadlock the compose idle sync, so the remaining languages
+        // are verified deterministically: each values-XX folder must resolve
+        // its own localized resources and be part of the selector model.
+        val activity = compose.activity
+        val expectedDone = mapOf("fr" to "Terminé", "de" to "Fertig", "it" to "Fatto",
+            "pt" to "Concluído", "nb" to "Ferdig", "zh" to "完成")
+        for ((language, done) in expectedDone) {
+            val localized = activity.createConfigurationContext(android.content.res.Configuration().apply {
+                setLocale(java.util.Locale(language))
+            })
+            assertEquals(done, localized.getString(R.string.settings_done))
+            assertTrue(com.jkdc.app.core.AppLanguage.OPTIONS.contains(language))
+            assertTrue(com.jkdc.app.core.AppLanguage.NATIVE_LABELS.containsKey(language))
         }
     }
 }
