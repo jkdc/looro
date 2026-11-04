@@ -1,0 +1,11 @@
+<resources>
+    <string name="paid_balance_estimate">Ca. %1$s betalte minutter</string>
+    <string name="paid_balance_small">Mindre enn et betalt minutt gjenstår</string>
+    <string name="paid_balance_detail">Tiden er et anslag. Tale og undervisning trekker sin faktiske KI-kostnad fra saldoen din.</string>
+    <string name="paid_balance_free_first">Gratisminuttene dine brukes først.</string>
+    <string name="paid_pack_estimate">Ca. %1$s minutter</string>
+    <string name="paid_ai_allocation">Til KI-bruk</string>
+    <string name="paid_app_fee">Palique-gebyr (%1$s%%)</string>
+    <string name="paid_processing_fee">Anslått betalingsgebyr</string>
+    <string name="paid_processing_buffer">Buffer for betalingskostnad</string>
+</resources>

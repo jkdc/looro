@@ -1,0 +1,14 @@
+<resources>
+    <string name="settings_navigation_title">Gjør det behagelig</string>
+    <string name="settings_done">Ferdig</string>
+    <string name="settings_just_your_pace">Bare ditt tempo</string>
+    <string name="settings_meaning_subtitles">Betydningsundertekster</string>
+    <string name="settings_language_footer">Hvert språk beholder sine egne ord og sin fremdrift. Palique finner tempoet ditt gjennom samtale.</string>
+    <string name="settings_language_running_footer">Avslutt denne samtalen for å bytte språk. Hvert språk beholder sine egne ord og sin fremdrift.</string>
+    <string name="settings_advanced">Avansert</string>
+    <string name="settings_use_own_key">Bruk din egen API-nøkkel</string>
+    <string name="settings_byok_version_footer">En valgfri måte å bruke Palique på. OpenAI fakturerer bruken på din egen nøkkel direkte til deg.</string>
+    <string name="settings_key_owner_footer">OpenAI-kontoen din betaler for bruken. Nøkkelen forblir kryptert på telefonen og sendes bare til OpenAI.</string>
+    <string name="settings_keep_comfortable">Hold det behagelig</string>
+    <string name="settings_limit_minutes">%1$d minutter</string>
+</resources>

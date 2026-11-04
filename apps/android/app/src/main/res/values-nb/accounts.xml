@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="talk_microphone_on">Mikrofonen er på</string>
+    <string name="talk_microphone_off">Mikrofonen er av</string>
+    <string name="talk_reply_any_language">Svar på det språket du kommer på.</string>
+
+    <string name="onboarding_subtitle_language">Undertekstspråk</string>
+    <string name="account_agreement">Ved å logge inn godtar du vilkårene og bekrefter personvernerklæringen.</string>
+    <string name="account_title">Kontoen din</string>
+    <string name="account_welcome">Føl deg hjemme.</string>
+    <string name="account_welcome_back">Velkommen tilbake.</string>
+    <string name="account_connected">Du er logget inn i Palique.</string>
+    <string name="account_intro">Logg inn for å ha samtaletiden din med deg. Ordene og samtalene dine blir på denne enheten.</string>
+    <string name="account_google">Logg inn med Google</string>
+    <string name="account_time_label">Tid til en samtale</string>
+    <string name="account_time_unavailable">Ikke tilgjengelig ennå</string>
+    <string name="account_minutes_value">%1$s minutter</string>
+    <string name="account_seconds_value">%1$s sek</string>
+    <string name="account_add_minutes">Legg til minutter</string>
+    <string name="account_conversation_source">Samtalene dine</string>
+    <string name="account_use">Bruk</string>
+    <string name="account_app_minutes">Palique-minutter</string>
+    <string name="account_personal_key">Din API-nøkkel</string>
+    <string name="account_local_data">Læringshistorikken din blir på denne enheten. Eksporter den i Innstillinger for å flytte den til en annen telefon.</string>
+    <string name="account_not_ready">Innlogging er ikke tilgjengelig akkurat nå. Du kan fortsette å bruke Palique uten en konto.</string>
+    <string name="account_sign_out">Logg ut</string>
+    <string name="account_delete">Slett konto</string>
+    <string name="account_refresh">Oppdater</string>
+    <string name="account_privacy">Personvern</string>
+    <string name="account_terms">Vilkår</string>
+    <string name="account_sign_out_detail">Dette logger deg ut av Palique på alle enheter. Læringsdataene og den lagrede API-nøkkelen blir på denne enheten.</string>
+    <string name="account_delete_detail">Slette Palique-kontoen din og miste eventuelle ubrukte gratisminutter? Læringsdataene dine blir på denne enheten. Oppføringer som trengs for fakturering eller prøveberettigelse kan beholdes.</string>
+    <string name="account_request_deletion">Be om sletting via brukerstøtten</string>
+    <string name="account_deletion_support_detail">Send en slettingsforespørsel fra e-postadressen til Palique-kontoen din. Brukerstøtten verifiserer eierskap og går gjennom eventuell saldo eller ventende betaling. Kontoen din forblir aktiv til slettingen er fullført.</string>
+    <string name="account_deletion_draft_detail">Åpning av e-postappen forbereder et utkast. Send det for å legge inn forespørselen. Ikke ta med passord, API-nøkler eller samtaleeksporter.</string>
+    <string name="account_deletion_email">Skriv e-post</string>
+    <string name="account_deletion_copy_email">Kopier e-postadressen</string>
+    <string name="account_deletion_email_copied">E-postadressen er kopiert</string>
+    <string name="account_deletion_web">Detaljer om sletting på nettet</string>
+    <string name="account_deletion_open_failed">Vi kunne ikke åpne en app for denne lenken. Kopier e-postadressen ovenfor og send slettingsforespørselen fra e-posttjenesten du foretrekker.</string>
+    <string name="account_error_connection">Vi kunne ikke nå Palique. Prøv igjen.</string>
+    <string name="account_error_expired">Innloggingen din er utløpt. Logg inn igjen for å fortsette.</string>
+    <string name="account_error_response">Vi kunne ikke laste inn kontoen din. Prøv igjen.</string>
+    <string name="account_error_storage">Vi kunne ikke oppdatere den sikre innloggingen din på denne enheten. Lås den opp og prøv igjen.</string>
+    <string name="account_error_google">Google-innloggingen ble ikke fullført. Prøv igjen.</string>
+    <string name="account_error_billing">Automatisk sletting kunne ikke fullføres på grunn av en aktiv samtale, en saldo eller en betaling som venter på bekreftelse. Avslutt eventuelle samtaler og prøv igjen, eller be om sletting via brukerstøtten. Kontoen og saldoen din er uendret.</string>
+    <string name="account_error_apple">Denne kontoen er knyttet til Apple. Slett den fra Palique på iPhone-en din, eller be om sletting via brukerstøtten.</string>
+    <string name="account_signed_out_locally">Du er logget ut på denne enheten. Vi kunne ikke nå Palique for å avslutte de andre øktene dine.</string>
+    <string name="account_deleted">Kontoen din er slettet.</string>
+    <string name="account_same_account_required">Logg inn med samme konto for å fullføre forrige samtale.</string>
+</resources>

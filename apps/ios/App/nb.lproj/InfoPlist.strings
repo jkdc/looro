@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Palique bruker mikrofonen mens du øver på uttale.";
+"NSSpeechRecognitionUsageDescription" = "Palique sjekker uttalen med talegjenkjenning på enheten. Øvingslyden sendes ikke til noen server.";

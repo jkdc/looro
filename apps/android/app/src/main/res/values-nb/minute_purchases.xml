@@ -1,0 +1,29 @@
+<resources>
+    <string name="minute_purchases_title">Mer tid til å snakke</string>
+    <string name="minute_purchases_intro">Fortsett å øve, en samtale om gangen.</string>
+    <plurals name="minute_purchases_pack_minutes">
+        <item quantity="one">%1$s minutt</item>
+        <item quantity="other">%1$s minutter</item>
+    </plurals>
+    <string name="minute_purchases_pack_action">Legg til %1$s for %2$s</string>
+    <string name="minute_purchases_one_time">Engangskjøp · Ingen abonnement</string>
+    <string name="minute_purchases_balance">%1$s minutter tilgjengelige</string>
+    <string name="minute_purchases_balance_small">Mindre enn et minutt tilgjengelig</string>
+    <string name="minute_purchases_balance_empty">Ingen minutter tilgjengelige</string>
+    <string name="minute_purchases_sign_in">Logg inn for å legge til minutter</string>
+    <string name="minute_purchases_sign_in_detail">Minuttene dine følger kontoen din. Samtalene dine blir på denne enheten.</string>
+    <string name="minute_purchases_unavailable">Minuttpakkene er ikke tilgjengelige akkurat nå. Sjekk igjen senere.</string>
+    <string name="minute_purchases_loading">Finner minuttpakkene dine…</string>
+    <string name="minute_purchases_check">Sjekk kjøp</string>
+    <string name="minute_purchases_checking">Sjekker kjøpet ditt…</string>
+    <string name="minute_purchases_pending">Betalingen din venter. Minuttene dine vises når den er fullført.</string>
+    <string name="minute_purchases_opened">Fullfør kjøpet i Google Play.</string>
+    <string name="minute_purchases_canceled">Kjøpet ble avbrutt. Du kan velge en pakke når du er klar.</string>
+    <string name="minute_purchases_price_changed">Prisen på denne pakken har endret seg. Se gjennom den oppdaterte prisen før du velger den igjen.</string>
+    <string name="minute_purchases_added">Minuttene dine er klare. La oss fortsette å snakke.</string>
+    <string name="minute_purchases_reversed">Et kjøp ble refundert eller tilbakeført. Saldoen din er oppdatert.</string>
+    <string name="minute_purchases_verification_failed">Vi kunne ikke bekrefte et kjøp. Sjekk igjen, eller logg inn med Palique-kontoen som ble brukt til å kjøpe det.</string>
+    <string name="minute_purchases_sign_in_again">Logg inn for å bekrefte kjøpene dine og se minuttene dine.</string>
+    <string name="minute_purchases_play_terms">Google Play viser totalsummen før du bekrefter.</string>
+    <string name="minute_purchases_stripe_terms">Kassen åpnes sikkert i Stripe. Etter betaling, gå tilbake til Palique og sjekk kjøpene dine.</string>
+</resources>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">Gratisminutter utilgjengelige akkurat nå</string>
+    <string name="guest_unavailable_detail">Hver samtale har en KI-kostnad. Vi jobber med å finansiere flere gratisminutter, slik at flere kan lære med Palique.</string>
+    <string name="guest_ready_title">Neste samtale venter</string>
+    <string name="guest_ready_detail">Begynn å snakke. Du kan logge inn når du vil for å beholde de gjenværende minuttene dine på kontoen din.</string>
+    <string name="guest_checking_title">Et øyeblikk for å gjøre klar</string>
+    <string name="guest_checking_detail">Vi sjekker samtaleminuttene dine.</string>
+    <string name="guest_retry_title">La oss prøve igjen</string>
+    <string name="guest_retry_detail">Vi kunne ikke sjekke minuttene dine. Sjekk tilkoblingen og prøv igjen. Kvoten din er ikke nullstilt.</string>
+    <string name="guest_sign_in_title">Velkommen tilbake</string>
+    <string name="guest_sign_in_detail">Logg inn for å komme tilbake til minuttene dine. Denne enheten har allerede hentet velkomstkvoten sin.</string>
+    <string name="guest_more_title">Hold samtalen i gang</string>
+    <string name="guest_more_detail">De tilgjengelige minuttene dine er brukt opp. Legg til flere når kjøp blir tilgjengelige, eller bruk din egen API-nøkkel i Innstillinger.</string>
+    <string name="guest_link_title">La oss samle minuttene dine</string>
+    <string name="guest_link_detail">Vi må fortsatt flytte de gjenværende gjesteminuttene dine til kontoen din. Sjekk igjen for å fullføre. De gjenværende minuttene dine legges til minuttene du kjøper.</string>
+    <string name="guest_continue">La oss snakke</string>
+    <string name="guest_sign_in">Fortsett med Google</string>
+    <string name="guest_check_again">Sjekk igjen</string>
+    <string name="guest_personal_key">Bruk min egen API-nøkkel</string>
+    <string name="guest_purchases_soon">Kjøp er ikke tilgjengelige ennå. Du kan bruke din egen API-nøkkel.</string>
+    <string name="guest_account_detail">Logg inn for å beholde de gjenværende gjesteminuttene dine på kontoen din. Læringen din blir på denne enheten.</string>
+    <string name="consent_adult_confirmation">Ved å fortsette bekrefter du at du er 18 år eller eldre.</string>
+    <string name="guest_member_trial_used">Denne kontoen har allerede mottatt velkomstminuttene sine, så den får ikke en ny kvote. Saldoen på kontoen din er uendret.</string>
+</resources>

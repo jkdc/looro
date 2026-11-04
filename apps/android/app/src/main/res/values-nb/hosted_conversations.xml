@@ -1,0 +1,27 @@
+<resources>
+    <string name="hosted_checking_previous">Palique sjekker den forrige samtalen din. Prøv igjen om kort.</string>
+    <string name="hosted_typed_start">Start en talesamtale før du sender et skriftlig svar med Palique-minutter.</string>
+    <string name="provider_preference_save_failed">Samtalepreferansen din kunne ikke lagres.</string>
+    <string name="hosted_sign_in">Logg inn for å bruke Palique-minuttene dine.</string>
+    <string name="hosted_unconfirmed">Palique kunne ikke bekrefte den forespørselen. Den sendes ikke automatisk igjen.</string>
+    <string name="hosted_unavailable">Palique-minutter er ikke tilgjengelige for den forespørselen akkurat nå.</string>
+    <string name="hosted_no_minutes">Du har ingen samtaleminutter tilgjengelige.</string>
+    <string name="hosted_extra_help_limit">Denne samtalen har nådd grensen for ekstra forklaringer.</string>
+    <string name="hosted_window_closed">Start en ny samtale for mer hjelp. De lagrede betydningene dine er fortsatt tilgjengelige.</string>
+    <string name="hosted_request_failed">Palique kunne ikke fullføre den forespørselen. Prøv igjen senere.</string>
+    <string name="hosted_sign_in_again">Logg inn igjen for å fortsette med Palique-minuttene dine.</string>
+    <string name="hosted_rate_limit">Palique har mottatt for mange forespørsler. Vent et minutt, og prøv igjen.</string>
+    <string name="hosted_start_rejected">Taletjenesten kunne ikke starte denne samtalen. Prøv igjen om kort.</string>
+    <string name="hosted_error_reference">Feilreferanse: %1$s</string>
+    <string name="hosted_minimum_charge_disclosure">Minst 15 sekunder per samtale. Lengre samtaler bruker tiden du er tilkoblet. Gjenværende saldo setter taket for belastningen.</string>
+    <string name="sub_plan_label">Plan %1$s %2$s</string>
+    <string name="sub_tier_free">Gratis</string>
+    <string name="sub_tier_standard">Standard</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(prøve)</string>
+    <string name="sub_drip_note">Gratisplanen din legger til %1$d min hver måned.</string>
+    <string name="minutes_remaining_estimate">Ca. %1$s min igjen</string>
+    <string name="minutes_low_warning">Færre enn 5 samtaleminutter gjenstår.</string>
+    <string name="minutes_critical_warning">Færre enn 2 samtaleminutter gjenstår.</string>
+    <string name="minutes_exhausted_upsell">Fyll på minutter eller oppgrader planen din for å fortsette å snakke.</string>
+</resources>
