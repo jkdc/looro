@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="talk_microphone_on">麦克风已开启</string>
+    <string name="talk_microphone_off">麦克风已关闭</string>
+    <string name="talk_reply_any_language">用哪种语言顺口就用哪种回复。</string>
+
+    <string name="onboarding_subtitle_language">字幕语言</string>
+    <string name="account_agreement">登录即表示你同意《使用条款》并知悉《隐私政策》。</string>
+    <string name="account_title">你的账号</string>
+    <string name="account_welcome">别拘束，就像在自己家一样。</string>
+    <string name="account_welcome_back">欢迎回来。</string>
+    <string name="account_connected">你已登录 Palique。</string>
+    <string name="account_intro">登录后对话时长会随账号保存。你的词语和对话仍保留在本设备上。</string>
+    <string name="account_google">使用 Google 登录</string>
+    <string name="account_time_label">对话时长</string>
+    <string name="account_time_unavailable">暂不可用</string>
+    <string name="account_minutes_value">%1$s 分钟</string>
+    <string name="account_seconds_value">%1$s 秒</string>
+    <string name="account_add_minutes">增加分钟数</string>
+    <string name="account_conversation_source">你的对话</string>
+    <string name="account_use">使用</string>
+    <string name="account_app_minutes">Palique 分钟</string>
+    <string name="account_personal_key">你的 API 密钥</string>
+    <string name="account_local_data">你的学习历史保存在本设备上。可在设置中导出，迁移到另一部手机。</string>
+    <string name="account_not_ready">当前无法登录。你可以在不登录的情况下继续使用 Palique。</string>
+    <string name="account_sign_out">退出登录</string>
+    <string name="account_delete">删除账号</string>
+    <string name="account_refresh">刷新</string>
+    <string name="account_privacy">隐私</string>
+    <string name="account_terms">条款</string>
+    <string name="account_sign_out_detail">这会在所有设备上退出 Palique。你的学习数据和已保存的 API 密钥仍保留在本设备上。</string>
+    <string name="account_delete_detail">要删除你的 Palique 账号并放弃未使用的免费分钟数吗？你的学习数据仍保留在本设备上。计费或试用资格所需的记录可能会被保留。</string>
+    <string name="account_request_deletion">通过客服申请删除</string>
+    <string name="account_deletion_support_detail">请从你的 Palique 账号邮箱发送删除申请。客服会验证所有权，并核查余额或待确认的付款。删除完成前账号保持有效。</string>
+    <string name="account_deletion_draft_detail">打开邮件应用后会准备好草稿。发送即提交申请。请勿包含密码、API 密钥或对话导出内容。</string>
+    <string name="account_deletion_email">写邮件</string>
+    <string name="account_deletion_copy_email">复制邮箱地址</string>
+    <string name="account_deletion_email_copied">邮箱地址已复制</string>
+    <string name="account_deletion_web">在网页查看删除详情</string>
+    <string name="account_deletion_open_failed">无法用应用打开此链接。请复制上面的邮箱地址，用你常用的邮箱服务发送删除申请。</string>
+    <string name="account_error_connection">无法连接到 Palique。请重试。</string>
+    <string name="account_error_expired">登录已过期。请重新登录以继续。</string>
+    <string name="account_error_response">无法加载你的账号。请重试。</string>
+    <string name="account_error_storage">无法在本设备上更新你的安全登录信息。请解锁设备后重试。</string>
+    <string name="account_error_google">Google 登录未完成。请重试。</string>
+    <string name="account_error_billing">由于存在进行中的对话、余额或待确认的付款，自动删除未能完成。请结束对话后重试，或通过客服申请删除。你的账号和余额均未改变。</string>
+    <string name="account_error_apple">此账号通过 Apple 关联。请在 iPhone 上的 Palique 中删除，或通过客服申请删除。</string>
+    <string name="account_signed_out_locally">你已在本设备上退出登录。无法连接 Palique 来结束你的其他会话。</string>
+    <string name="account_deleted">你的账号已删除。</string>
+    <string name="account_same_account_required">请使用同一账号登录，以继续完成之前的对话。</string>
+</resources>

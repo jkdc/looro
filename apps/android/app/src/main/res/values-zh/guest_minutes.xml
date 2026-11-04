@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">免费分钟数暂不可用</string>
+    <string name="guest_unavailable_detail">每段对话都有 AI 成本。我们正在努力为更多免费分钟数筹集资金，让更多人能和 Palique 一起学习。</string>
+    <string name="guest_ready_title">下一段对话正等着你</string>
+    <string name="guest_ready_detail">开始聊吧。随时登录，就能把剩余分钟数保存在账号里。</string>
+    <string name="guest_checking_title">准备一下</string>
+    <string name="guest_checking_detail">正在查询你的对话分钟数。</string>
+    <string name="guest_retry_title">再试一次吧</string>
+    <string name="guest_retry_detail">未能查询你的分钟数。请检查网络连接后重试。你的额度没有被重置。</string>
+    <string name="guest_sign_in_title">欢迎回来</string>
+    <string name="guest_sign_in_detail">登录即可找回你的分钟数。本设备已领取过欢迎额度。</string>
+    <string name="guest_more_title">让对话继续</string>
+    <string name="guest_more_detail">你的可用分钟数已用完。购买功能开放后可以再加，或在设置中使用你自己的 API 密钥。</string>
+    <string name="guest_link_title">把你的分钟数合并起来</string>
+    <string name="guest_link_detail">还需要把你剩余的访客分钟数转移到你的账号。请再次查询以完成。剩余分钟数会加到你购买的分钟数上。</string>
+    <string name="guest_continue">开始聊吧</string>
+    <string name="guest_sign_in">使用 Google 继续</string>
+    <string name="guest_check_again">再次查询</string>
+    <string name="guest_personal_key">使用我自己的 API 密钥</string>
+    <string name="guest_purchases_soon">购买功能尚未开放。你可以使用自己的 API 密钥。</string>
+    <string name="guest_account_detail">登录即可把剩余的访客分钟数保存到账号。你的学习数据仍保留在本设备上。</string>
+    <string name="consent_adult_confirmation">继续即表示你确认自己年满 18 周岁。</string>
+    <string name="guest_member_trial_used">该账号已领取过欢迎分钟数，不会再获得第二次额度。账号余额不变。</string>
+</resources>

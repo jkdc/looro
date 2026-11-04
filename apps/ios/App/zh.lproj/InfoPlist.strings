@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Palique 在你练习发音时使用麦克风。";
+"NSSpeechRecognitionUsageDescription" = "Palique 使用设备端语音识别检查发音。练习音频不会发送到任何服务器。";

@@ -1,0 +1,29 @@
+<resources>
+    <string name="minute_purchases_title">更多聊天时间</string>
+    <string name="minute_purchases_intro">一次一段对话，坚持练习。</string>
+    <plurals name="minute_purchases_pack_minutes">
+        <item quantity="one">%1$s 分钟</item>
+        <item quantity="other">%1$s 分钟</item>
+    </plurals>
+    <string name="minute_purchases_pack_action">花 %2$s 加购 %1$s</string>
+    <string name="minute_purchases_one_time">一次性购买 · 无订阅</string>
+    <string name="minute_purchases_balance">可用 %1$s 分钟</string>
+    <string name="minute_purchases_balance_small">可用不足 1 分钟</string>
+    <string name="minute_purchases_balance_empty">没有可用分钟数</string>
+    <string name="minute_purchases_sign_in">登录以加购分钟数</string>
+    <string name="minute_purchases_sign_in_detail">分钟数跟随你的账号。对话保留在本设备上。</string>
+    <string name="minute_purchases_unavailable">目前无法购买分钟包。请稍后再来查看。</string>
+    <string name="minute_purchases_loading">正在查找你的分钟包…</string>
+    <string name="minute_purchases_check">查询购买</string>
+    <string name="minute_purchases_checking">正在查询你的购买…</string>
+    <string name="minute_purchases_pending">你的付款正在处理中。完成后分钟数就会到账。</string>
+    <string name="minute_purchases_opened">在 Google Play 中完成你的购买。</string>
+    <string name="minute_purchases_canceled">购买已取消。随时可以再选择分钟包。</string>
+    <string name="minute_purchases_price_changed">该分钟包的价格已变化。请先确认更新后的价格，再重新选择。</string>
+    <string name="minute_purchases_added">你的分钟数已到账。我们继续聊吧。</string>
+    <string name="minute_purchases_reversed">有一笔购买已退款或被撤销。你的余额已更新。</string>
+    <string name="minute_purchases_verification_failed">未能确认一笔购买。请再次查询，或使用购买时所用的 Palique 账号登录。</string>
+    <string name="minute_purchases_sign_in_again">登录以确认你的购买并查看分钟数。</string>
+    <string name="minute_purchases_play_terms">Google Play 会在你确认前显示最终总额。</string>
+    <string name="minute_purchases_stripe_terms">结账将在 Stripe 中安全打开。付款后请返回 Palique，查询你的购买。</string>
+</resources>

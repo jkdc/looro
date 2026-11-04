@@ -46,6 +46,12 @@
             "state": "translated",
             "value": "Læringsdataene for %@ er slettet."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 的学习数据已删除。"
+          }
         }
       }
     },
@@ -92,6 +98,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ i forhåndsbetalte tokens tilgjengelig"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还有 %@ 预付代币可用"
           }
         }
       }
@@ -140,6 +152,12 @@
             "state": "translated",
             "value": "%1$@ · ukens eksamen %2$@"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@ 周测"
+          }
         }
       }
     },
@@ -186,6 +204,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · %2$@ · %3$lld spørsmål"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@ · %3$lld 道题"
           }
         }
       }
@@ -234,6 +258,12 @@
             "state": "translated",
             "value": "%1$@ · kun på denne enheten"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 仅限本设备"
+          }
         }
       }
     },
@@ -280,6 +310,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · spørsmål %2$lld av %3$lld"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · 第 %2$lld/%3$lld 题"
           }
         }
       }
@@ -328,6 +364,12 @@
             "state": "translated",
             "value": "%@ · synkroniseringskonflikt trenger gjennomgang"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 同步冲突，需要复核"
+          }
         }
       }
     },
@@ -374,6 +416,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ · synkronisert med kontoen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 已同步到账号"
           }
         }
       }
@@ -422,6 +470,12 @@
             "state": "translated",
             "value": "%@ · venter på synkronisering"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · 等待同步"
+          }
         }
       }
     },
@@ -468,6 +522,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · uke %2$lld"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · 第 %2$lld 周"
           }
         }
       }
@@ -516,6 +576,12 @@
             "state": "translated",
             "value": "%lld uttrykk klare for repetisjon"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 条表达待复习"
+          }
         }
       }
     },
@@ -562,6 +628,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld uttrykk · %2$@ KB"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld 条表达 · %2$@ KB"
           }
         }
       }
@@ -610,6 +682,12 @@
             "state": "translated",
             "value": "%1$lld t %2$lld min"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld 小时 %2$lld 分钟"
+          }
         }
       }
     },
@@ -656,6 +734,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Selvstendig brukt %1$lld ganger · sist sett %2$@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld 次独立运用 · 上次见到：%2$@"
           }
         }
       }
@@ -704,6 +788,12 @@
             "state": "translated",
             "value": "%1$lld leksjonspoeng · %2$lld lyttepoeng"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld 课程分 · %2$lld 听力分"
+          }
         }
       }
     },
@@ -750,6 +840,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 分钟"
           }
         }
       }
@@ -798,6 +894,12 @@
             "state": "translated",
             "value": "%lld minutter"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 分钟"
+          }
         }
       }
     },
@@ -844,6 +946,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld av %2$lld"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld"
           }
         }
       }
@@ -892,6 +1000,12 @@
             "state": "translated",
             "value": "%1$lld av 3 hukommelsesbarer"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回忆进度条：%lld/3 格"
+          }
         }
       }
     },
@@ -939,6 +1053,12 @@
             "state": "translated",
             "value": "%1$lld poeng til nivå %2$lld"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "距离等级 %2$lld 还有 %1$lld 分"
+          }
         }
       }
     },
@@ -982,6 +1102,12 @@
           }
         },
         "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/2000"
+          }
+        },
+        "zh": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld/2000"
@@ -1033,6 +1159,12 @@
             "state": "translated",
             "value": "1 poeng til nivå %lld"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "距离等级 %lld 还有 1 分"
+          }
         }
       }
     },
@@ -1079,6 +1211,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 · Skjør"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 · 尚浅"
           }
         }
       }
@@ -1127,6 +1265,12 @@
             "state": "translated",
             "value": "2 · Vokser"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 · 渐长"
+          }
         }
       }
     },
@@ -1173,6 +1317,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "3 · Stabil"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 · 稳固"
           }
         }
       }
@@ -1221,6 +1371,12 @@
             "state": "translated",
             "value": "En samtale pågår. Avslutt den før du endrer dataene dine."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有对话正在进行。请先结束对话再更改数据。"
+          }
         }
       }
     },
@@ -1267,6 +1423,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noen ting du liker"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你喜欢的一些事"
           }
         }
       }
@@ -1315,6 +1477,12 @@
             "state": "translated",
             "value": "En fersk samtale."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一场新鲜的对话。"
+          }
         }
       }
     },
@@ -1361,6 +1529,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "En veiledet øvelse, deretter en gjennomgang av feilene dine."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先引导演练，再复盘你的错误。"
           }
         }
       }
@@ -1409,6 +1583,12 @@
             "state": "translated",
             "value": "Et jobbintervju, å be om regningen, snakke om laget ditt…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "求职面试、结账买单、聊聊你的团队…"
+          }
         }
       }
     },
@@ -1455,6 +1635,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Litt hjelp"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "小小提示"
           }
         }
       }
@@ -1503,6 +1689,12 @@
             "state": "translated",
             "value": "Litt hjelp,\npå ditt språk."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用你的语言，\n给你一点帮助。"
+          }
         }
       }
     },
@@ -1549,6 +1741,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "En liten forstyrrelse"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打扰一下"
           }
         }
       }
@@ -1597,6 +1795,12 @@
             "state": "translated",
             "value": "Litt betydning"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "词语含义"
+          }
         }
       }
     },
@@ -1643,6 +1847,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Et sted å begynne"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从这里开始"
           }
         }
       }
@@ -1691,6 +1901,12 @@
             "state": "translated",
             "value": "Et svar sendes fortsatt."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回复仍在发送中。"
+          }
         }
       }
     },
@@ -1737,6 +1953,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Et svar sendes fortsatt. Vennligst vent."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回复仍在发送中。请稍候。"
           }
         }
       }
@@ -1785,6 +2007,12 @@
             "state": "translated",
             "value": "Konto"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "账号"
+          }
         }
       }
     },
@@ -1831,6 +2059,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kontoen er slettet. Palique kunne ikke tømme den lokale sikre innloggingsoppføringen. Lås opp iPhone-en og åpne Konto på nytt for å tømme den."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "账号已删除。Palique 未能清除本机的安全登录记录。请解锁 iPhone 并重新打开“账号”页面清除。"
           }
         }
       }
@@ -1879,6 +2113,12 @@
             "state": "translated",
             "value": "Kontoen er slettet. Læringshistorikken din forblir på denne iPhone-en."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "账号已删除。你的学习历史仍保留在这台 iPhone 上。"
+          }
         }
       }
     },
@@ -1925,6 +2165,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kontoer er ikke tilgjengelige i denne versjonen ennå. Du kan fortsette å øve med din egen OpenAI API-nøkkel i Innstillinger."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本暂不支持账号。你可以在设置中使用自己的 OpenAI API 密钥继续练习。"
           }
         }
       }
@@ -1973,6 +2219,12 @@
             "state": "translated",
             "value": "Aktivitetsrekke"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "活跃天数"
+          }
         }
       }
     },
@@ -2019,6 +2271,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Legg til OpenAI-nøkkelen din i Innstillinger for å begynne."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请在设置中添加你的 OpenAI 密钥以开始。"
           }
         }
       }
@@ -2067,6 +2325,12 @@
             "state": "translated",
             "value": "Avansert"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "高级"
+          }
         }
       }
     },
@@ -2113,6 +2377,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Godta og fortsett"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同意并继续"
           }
         }
       }
@@ -2161,6 +2431,12 @@
             "state": "translated",
             "value": "Gi tilgang til mikrofonen i iPhone-innstillingene → Palique for å starte en samtale."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请在 iPhone 设置 → Palique 中允许使用麦克风，以便开始对话。"
+          }
         }
       }
     },
@@ -2207,6 +2483,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Appspråk"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用语言"
           }
         }
       }
@@ -2255,6 +2537,12 @@
             "state": "translated",
             "value": "Etter hvert som vi snakker, finner nyttige ord og uttrykk et hjem her. De blir sterkere når du husker dem over tid."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们聊天时，有用的词语和短语会安家在这里。随着时间推移反复回忆，它们会越来越牢固。"
+          }
         }
       }
     },
@@ -2301,6 +2589,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lyd og valgt tekst sendes til OpenAI mens du øver. Forespørsler slår av leverandørlagring der det støttes; oppbevaring til misbruksovervåking kan fortsatt gjelde. Rå lyd lagres ikke av Palique."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习时，音频和选定的文本会发送给 OpenAI。在受支持的范围内，请求会禁用服务商的存储；滥用监测的留存可能仍然适用。Palique 不会保存原始音频。"
           }
         }
       }
@@ -2349,6 +2643,12 @@
             "state": "translated",
             "value": "Lyden er allerede i bruk. Avslutt den pågående lydaktiviteten og prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音频正被占用。请先结束当前的音频活动，再试一次。"
+          }
         }
       }
     },
@@ -2395,6 +2695,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lyden er allerede i bruk. Vennligst avslutt den pågående lydaktiviteten og prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音频正被占用。请先结束当前的音频活动，再试一次。"
           }
         }
       }
@@ -2443,6 +2749,12 @@
             "state": "translated",
             "value": "Tilbake til Lær"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回学习"
+          }
         }
       }
     },
@@ -2489,6 +2801,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tilbake til historikken"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回历史记录"
           }
         }
       }
@@ -2537,6 +2855,12 @@
             "state": "translated",
             "value": "Tilbake til språket du lærer"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回学习语言"
+          }
         }
       }
     },
@@ -2583,6 +2907,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tilbake til leksjonene"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回课程"
           }
         }
       }
@@ -2631,6 +2961,12 @@
             "state": "translated",
             "value": "Tilbake til leksjonen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回本课"
+          }
         }
       }
     },
@@ -2677,6 +3013,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tilbake til lyttelisten"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回听力列表"
           }
         }
       }
@@ -2725,6 +3067,12 @@
             "state": "translated",
             "value": "Tilbake til leselisten"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返回阅读列表"
+          }
         }
       }
     },
@@ -2771,6 +3119,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sikkerhetskopi (database)"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备份（数据库）"
           }
         }
       }
@@ -2819,6 +3173,12 @@
             "state": "translated",
             "value": "Sikkerhetskopi gjenopprettet: læringsdataene dine ble erstattet med den importerte kopien."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备份已恢复：你的学习数据已被导入的副本替换。"
+          }
         }
       }
     },
@@ -2865,6 +3225,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sikkerhetskopiene inneholder transkripsjoner og læringsspor, aldri API-nøkkelen din. Import legger bare til samtaler denne iPhone-en ikke har, med deres opprinnelige ID-er; eksisterende samtaler forblir uendret. Det finnes ingen sky-synkronisering."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "备份包含对话文本和学习数据，但绝不包含你的 API 密钥。导入只会添加这台 iPhone 上还没有的对话，并保留其原始 ID；现有对话保持不变。没有云同步。"
           }
         }
       }
@@ -2913,6 +3279,12 @@
             "state": "translated",
             "value": "Før du bruker KI-funksjonene, åpne Snakk og trykk på mikrofonen for å se hvordan OpenAI behandler lyden og teksten din."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 AI 功能前，请打开“聊聊”并点按麦克风，了解 OpenAI 如何处理你的音频和文本。"
+          }
         }
       }
     },
@@ -2959,6 +3331,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Før vi snakker."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始之前。"
           }
         }
       }
@@ -3007,6 +3385,12 @@
             "state": "translated",
             "value": "Bedre"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更好的说法"
+          }
         }
       }
     },
@@ -3053,6 +3437,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ved å logge inn godtar du [bruksvilkårene](https://app.example/terms/) og bekrefter [personvernerklæringen](https://app.example/privacy/)."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登录即表示你同意[使用条款](https://app.example/terms/)并知悉[隐私政策](https://app.example/privacy/)。"
           }
         }
       }
@@ -3101,6 +3491,12 @@
             "state": "translated",
             "value": "Kan-milepæler: %lld"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "能力里程碑：%lld"
+          }
         }
       }
     },
@@ -3147,6 +3543,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avbryt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消"
           }
         }
       }
@@ -3195,6 +3597,12 @@
             "state": "translated",
             "value": "Sjekk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检查"
+          }
         }
       }
     },
@@ -3241,6 +3649,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sjekk kjøp"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "查询购买"
           }
         }
       }
@@ -3289,6 +3703,12 @@
             "state": "translated",
             "value": "Sjekker tokenpakker…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在查询代币包…"
+          }
         }
       }
     },
@@ -3335,6 +3755,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sjekker…"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在查询…"
           }
         }
       }
@@ -3383,6 +3809,12 @@
             "state": "translated",
             "value": "Kassen åpnes sikkert i Stripe. Etter betaling, gå tilbake til Palique og sjekk kjøpene dine."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结账将在 Stripe 中安全打开。付款后请返回 Palique，查询你的购买。"
+          }
         }
       }
     },
@@ -3429,6 +3861,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tøm"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清空"
           }
         }
       }
@@ -3477,6 +3915,12 @@
             "state": "translated",
             "value": "Lukk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关闭"
+          }
         }
       }
     },
@@ -3523,6 +3967,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fullført · opprinnelig resultat lagret"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成 · 原始结果已保存"
           }
         }
       }
@@ -3571,6 +4021,12 @@
             "state": "translated",
             "value": "Fullført: %lld%%"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成：%lld%%"
+          }
         }
       }
     },
@@ -3617,6 +4073,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fortsett"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续"
           }
         }
       }
@@ -3665,6 +4127,12 @@
             "state": "translated",
             "value": "Samtale"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对话"
+          }
         }
       }
     },
@@ -3711,6 +4179,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Samtalegrense"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对话时长上限"
           }
         }
       }
@@ -3759,6 +4233,12 @@
             "state": "translated",
             "value": "Samtaletemaer"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对话话题"
+          }
         }
       }
     },
@@ -3805,6 +4285,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Samtalens transkripsjon"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对话文本"
           }
         }
       }
@@ -3853,6 +4339,12 @@
             "state": "translated",
             "value": "Samtaler"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对话数"
+          }
         }
       }
     },
@@ -3899,6 +4391,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Riktig"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正确"
           }
         }
       }
@@ -3947,6 +4445,12 @@
             "state": "translated",
             "value": "Rett opp en mistydd frase. Læringsspor fra den gamle formuleringen fjernes; originalen forblir i sikkerhetskopihistorikken din."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "修正听错的表达。旧说法的学习记录将被移除；原始内容仍保留在你的备份历史中。"
+          }
         }
       }
     },
@@ -3993,6 +4497,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Riktig!"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答对了！"
           }
         }
       }
@@ -4041,6 +4551,12 @@
             "state": "translated",
             "value": "Rettelser"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "纠正方式"
+          }
         }
       }
     },
@@ -4087,6 +4603,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kurset er fullført!"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "课程完成！"
           }
         }
       }
@@ -4135,6 +4657,12 @@
             "state": "translated",
             "value": "Kursfremdrift"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "课程进度"
+          }
         }
       }
     },
@@ -4181,6 +4709,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kurs for dette språket er på vei. I mellomtiden er Temaer stedet å øve."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这个语言的课程马上就来。在此之前，可以先用“话题”练习。"
           }
         }
       }
@@ -4229,6 +4763,12 @@
             "state": "translated",
             "value": "Dagerekke"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "连续天数"
+          }
         }
       }
     },
@@ -4275,6 +4815,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slett"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除"
           }
         }
       }
@@ -4323,6 +4869,12 @@
             "state": "translated",
             "value": "Slett %@-data"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %@ 数据"
+          }
         }
       }
     },
@@ -4369,6 +4921,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slette læringsdataene for %@?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除 %@ 的学习数据？"
           }
         }
       }
@@ -4417,6 +4975,12 @@
             "state": "translated",
             "value": "Slett et språks læringsdata"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除某个语言的学习数据"
+          }
         }
       }
     },
@@ -4463,6 +5027,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slett konto"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除账号"
           }
         }
       }
@@ -4511,6 +5081,12 @@
             "state": "translated",
             "value": "Slett alle samtaler og læring"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除所有对话和学习数据"
+          }
         }
       }
     },
@@ -4557,6 +5133,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slett alle læringsdata"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除所有学习数据"
           }
         }
       }
@@ -4605,6 +5187,12 @@
             "state": "translated",
             "value": "Slette alle læringsdata på denne telefonen?"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除本手机上的所有学习数据？"
+          }
         }
       }
     },
@@ -4651,6 +5239,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slett samtale"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除对话"
           }
         }
       }
@@ -4699,6 +5293,12 @@
             "state": "translated",
             "value": "Slette denne samtalen og læringssporene fra den?"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除这段对话及其学习记录？"
+          }
         }
       }
     },
@@ -4745,6 +5345,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hvilket språk vil du slette?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除哪个语言？"
           }
         }
       }
@@ -4793,6 +5399,12 @@
             "state": "translated",
             "value": "Slette Palique-kontoen din?"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除你的 Palique 账号？"
+          }
         }
       }
     },
@@ -4839,6 +5451,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Beskriv den, og vi øver på den"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "描述一下，我们一起演练"
           }
         }
       }
@@ -4887,6 +5505,12 @@
             "state": "translated",
             "value": "Beskriv situasjonen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "描述这个情景"
+          }
         }
       }
     },
@@ -4933,6 +5557,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ferdig"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
           }
         }
       }
@@ -4981,6 +5611,12 @@
             "state": "translated",
             "value": "Hvert språk beholder sine egne ord og sin fremdrift. Palique finner tempoet ditt gjennom samtale. Tregere tale gjelder nye samtaler. Lytteøvelsen forteller en kort historie uten betydningsundertekster — den skriftlige historien blir på skjermen, og du kan fortsatt slå opp ord."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每种语言都有自己的词语和进度。Palique 会在对话中找到你的节奏。较慢的语速适用于新对话。听力练习会讲一个小故事，不带含义字幕——文字故事会留在屏幕上，你仍可以查词。"
+          }
         }
       }
     },
@@ -5027,6 +5663,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rediger"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑"
           }
         }
       }
@@ -5075,6 +5717,12 @@
             "state": "translated",
             "value": "Avslutt samtale"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束对话"
+          }
         }
       }
     },
@@ -5121,6 +5769,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avslutt denne samtalen for å bytte språk. Hvert språk beholder sine egne ord og sin fremdrift."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束当前对话即可切换语言。每种语言都有自己的词语和进度。"
           }
         }
       }
@@ -5169,6 +5823,12 @@
             "state": "translated",
             "value": "Skriv inn en gyldig OpenAI API-nøkkel."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入有效的 OpenAI API 密钥。"
+          }
         }
       }
     },
@@ -5215,6 +5875,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slette alle læringsdata på denne iPhone-en?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除这台 iPhone 上的所有学习数据？"
           }
         }
       }
@@ -5263,6 +5929,12 @@
             "state": "translated",
             "value": "Slett læringsdata"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除学习数据"
+          }
         }
       }
     },
@@ -5309,6 +5981,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slett læringsdataene og start på nytt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除学习数据，重新开始"
           }
         }
       }
@@ -5357,6 +6035,12 @@
             "state": "translated",
             "value": "Alt her gjelder språket du lærer nå. Bytt språk for å se deres egen fremdrift."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这里的内容都针对当前学习语言。切换语言可查看各自的进度。"
+          }
         }
       }
     },
@@ -5403,6 +6087,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eksamenshistorikken gjelder kontoen du er logget inn på. Ventende forsøk blir på denne enheten til synkroniseringen lykkes."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测验历史仅限于当前登录的账号。待同步的作答会保留在本设备上，直到同步成功。"
           }
         }
       }
@@ -5451,6 +6141,12 @@
             "state": "translated",
             "value": "Utdrag"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "节选"
+          }
         }
       }
     },
@@ -5497,6 +6193,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Øvelse %1$lld av %2$lld"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %1$lld/%2$lld 题"
           }
         }
       }
@@ -5545,6 +6247,12 @@
             "state": "translated",
             "value": "Øvelser"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习题"
+          }
         }
       }
     },
@@ -5591,6 +6299,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fullførte øvelser"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成练习"
           }
         }
       }
@@ -5639,6 +6353,12 @@
             "state": "translated",
             "value": "Eksporter databasesikkerhetskopi (.db)"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导出数据库备份（.db）"
+          }
         }
       }
     },
@@ -5685,6 +6405,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uttrykkene du lagrer, kommer tilbake hit når det gjelder."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你保存的表达会在合适的时候回到这里。"
           }
         }
       }
@@ -5733,6 +6459,12 @@
             "state": "translated",
             "value": "Kjente ord, klare for en ny samtale."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "熟悉的词语，随时开始下一段对话。"
+          }
         }
       }
     },
@@ -5779,6 +6511,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rask"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快"
           }
         }
       }
@@ -5827,6 +6565,12 @@
             "state": "translated",
             "value": "Finn et tema"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找个话题"
+          }
         }
       }
     },
@@ -5873,6 +6617,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Finner noe interessant…"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在找有趣的话题…"
           }
         }
       }
@@ -5921,6 +6671,12 @@
             "state": "translated",
             "value": "Finner stemmen din"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找到你的声音"
+          }
         }
       }
     },
@@ -5967,6 +6723,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fullfør"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完成"
           }
         }
       }
@@ -6015,6 +6777,12 @@
             "state": "translated",
             "value": "Fullfør eksamen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束测验"
+          }
         }
       }
     },
@@ -6061,6 +6829,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Til neste gang"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下次注意"
           }
         }
       }
@@ -6109,6 +6883,12 @@
             "state": "translated",
             "value": "Forsiktig, mens vi snakker"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "聊天中温柔地纠正"
+          }
         }
       }
     },
@@ -6155,6 +6935,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skaff tokens"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "获取代币"
           }
         }
       }
@@ -6203,6 +6989,12 @@
             "state": "translated",
             "value": "Hør en kort tekst, og svar på spørsmålene skriftlig."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听一段短文，然后书面回答问题。"
+          }
         }
       }
     },
@@ -6249,6 +7041,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hjelp og personvern"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "帮助与隐私"
           }
         }
       }
@@ -6297,6 +7095,12 @@
             "state": "translated",
             "value": "Skjul betydningsundertekster"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐藏含义字幕"
+          }
         }
       }
     },
@@ -6343,6 +7147,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skjul pinyin"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "隐藏拼音"
           }
         }
       }
@@ -6391,6 +7201,12 @@
             "state": "translated",
             "value": "Historikken er utilgjengelig"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "历史记录不可用"
+          }
         }
       }
     },
@@ -6437,6 +7253,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vertsbaserte samtaler er ikke tilgjengelige akkurat nå. Prøv igjen senere."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "托管对话当前不可用。请稍后重试。"
           }
         }
       }
@@ -6485,6 +7307,12 @@
             "state": "translated",
             "value": "Jeg samtykker til å sende dette utdraget til gjennomgang"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我同意发送这段节选以供审阅"
+          }
         }
       }
     },
@@ -6531,6 +7359,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jeg er klar — vis spørsmålene"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我准备好了——看题目"
           }
         }
       }
@@ -6579,6 +7413,12 @@
             "state": "translated",
             "value": "Importer sikkerhetskopi av læring"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "导入学习备份"
+          }
         }
       }
     },
@@ -6625,6 +7465,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pågår"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进行中"
           }
         }
       }
@@ -6673,6 +7519,12 @@
             "state": "translated",
             "value": "Inkluderte minutter"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内含分钟数"
+          }
         }
       }
     },
@@ -6719,6 +7571,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Inkluderte minutter tilgjengelige."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有内含分钟数可用。"
           }
         }
       }
@@ -6767,6 +7625,12 @@
             "state": "translated",
             "value": "Inkluderte minutter: logg inn for å sjekke saldoen din."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内含分钟数：登录后查看余额。"
+          }
         }
       }
     },
@@ -6813,6 +7677,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Feilaktig eller villedende"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "错误或误导"
           }
         }
       }
@@ -6861,6 +7731,12 @@
             "state": "translated",
             "value": "Feil · %@"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "错误 · %@"
+          }
         }
       }
     },
@@ -6907,6 +7783,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Det staves: %@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正确写法：%@"
           }
         }
       }
@@ -6955,6 +7837,12 @@
             "state": "translated",
             "value": "Det var: %@"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正确答案是：%@"
+          }
         }
       }
     },
@@ -7001,6 +7889,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Snakk fritt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "随便聊聊"
           }
         }
       }
@@ -7049,6 +7943,12 @@
             "state": "translated",
             "value": "Bare ditt tempo"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "只按你的节奏"
+          }
         }
       }
     },
@@ -7095,6 +7995,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Behold kontoen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保留账号"
           }
         }
       }
@@ -7143,6 +8049,12 @@
             "state": "translated",
             "value": "Behold begge versjonene"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保留两个版本"
+          }
         }
       }
     },
@@ -7189,6 +8101,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hold det behagelig"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保持舒适"
           }
         }
       }
@@ -7237,6 +8155,12 @@
             "state": "translated",
             "value": "Fortsett å øve"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续练习"
+          }
         }
       }
     },
@@ -7283,6 +8207,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nøkkeluttrykk"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "关键短语"
           }
         }
       }
@@ -7331,6 +8261,12 @@
             "state": "translated",
             "value": "Siste 14 dager"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近 14 天"
+          }
         }
       }
     },
@@ -7377,6 +8313,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siste 30 dager"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最近 30 天"
           }
         }
       }
@@ -7425,6 +8367,12 @@
             "state": "translated",
             "value": "Lær det steg for steg"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "循序渐进地学"
+          }
         }
       }
     },
@@ -7471,6 +8419,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Språket du lærer"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学习语言"
           }
         }
       }
@@ -7519,6 +8473,12 @@
             "state": "translated",
             "value": "Fullførte leksjoner"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已完成课程"
+          }
         }
       }
     },
@@ -7565,6 +8525,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La oss prøve igjen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再试一次吧"
           }
         }
       }
@@ -7613,6 +8579,12 @@
             "state": "translated",
             "value": "Nivå"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等级"
+          }
         }
       }
     },
@@ -7659,6 +8631,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nivå %1$lld · %2$@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等级 %1$lld · %2$@"
           }
         }
       }
@@ -7707,6 +8685,12 @@
             "state": "translated",
             "value": "Lytt"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听"
+          }
         }
       }
     },
@@ -7753,6 +8737,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lytt og svar"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听力问答"
           }
         }
       }
@@ -7801,6 +8791,12 @@
             "state": "translated",
             "value": "Lytt så mange ganger du trenger. Teksten forblir skjult mens du svarer — prøv å forstå den med ørene først."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想听几遍就听几遍。答题时文本保持隐藏——先试着用耳朵理解。"
+          }
         }
       }
     },
@@ -7847,6 +8843,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lyttemedaljer"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听力奖牌"
           }
         }
       }
@@ -7895,6 +8897,12 @@
             "state": "translated",
             "value": "Lytteøvelse"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听力练习"
+          }
         }
       }
     },
@@ -7941,6 +8949,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lyttetekster"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "听力文本"
           }
         }
       }
@@ -7989,6 +9003,12 @@
             "state": "translated",
             "value": "Lytter…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在听…"
+          }
         }
       }
     },
@@ -8035,6 +9055,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Litt etter litt · %@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "循序渐进 · %@"
           }
         }
       }
@@ -8083,6 +9109,12 @@
             "state": "translated",
             "value": "Lengste rekke"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "最长连续"
+          }
         }
       }
     },
@@ -8129,6 +9161,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gjør det behagelig"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "怎么舒服怎么来"
           }
         }
       }
@@ -8177,6 +9215,12 @@
             "state": "translated",
             "value": "Mestring er det beste nylige sporet per ferdighet — den falmer uten øving og kommer tilbake når du øver igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "掌握度是每项技能最近的最好表现——不练会退步，重新练习会恢复。"
+          }
         }
       }
     },
@@ -8223,6 +9267,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Betydning"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "含义"
           }
         }
       }
@@ -8271,6 +9321,12 @@
             "state": "translated",
             "value": "Betydningsspråk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "含义语言"
+          }
         }
       }
     },
@@ -8317,6 +9373,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Betydningsundertekster"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "含义字幕"
           }
         }
       }
@@ -8365,6 +9427,12 @@
             "state": "translated",
             "value": "Slå av mikrofonen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "静音麦克风"
+          }
         }
       }
     },
@@ -8411,6 +9479,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ny samtale"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新对话"
           }
         }
       }
@@ -8459,6 +9533,12 @@
             "state": "translated",
             "value": "Neste"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一题"
+          }
         }
       }
     },
@@ -8505,6 +9585,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Neste ord"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一个词"
           }
         }
       }
@@ -8553,6 +9639,12 @@
             "state": "translated",
             "value": "Ingen samtaler samsvarer med søket ditt."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "没有符合搜索的对话。"
+          }
         }
       }
     },
@@ -8599,6 +9691,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ingen kurs ennå"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有课程"
           }
         }
       }
@@ -8647,6 +9745,12 @@
             "state": "translated",
             "value": "Ingen inkluderte minutter igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内含分钟数已用完。"
+          }
         }
       }
     },
@@ -8693,6 +9797,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ingen treffende ord ennå."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有匹配的词语。"
           }
         }
       }
@@ -8741,6 +9851,12 @@
             "state": "translated",
             "value": "Ingen forhåndsbetalte tokens igjen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预付代币已用完"
+          }
         }
       }
     },
@@ -8787,6 +9903,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ingen lagrede eksamener ennå"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有保存的测验"
           }
         }
       }
@@ -8835,6 +9957,12 @@
             "state": "translated",
             "value": "Ingen ord er til repetisjon akkurat nå. Ha en samtale, så kommer ordene tilbake når de er klare."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在没有到期的词语。去聊聊天吧，词语会在合适的时候回来。"
+          }
         }
       }
     },
@@ -8881,6 +10009,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Normal"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正常"
           }
         }
       }
@@ -8929,6 +10063,12 @@
             "state": "translated",
             "value": "Ikke nå"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂不"
+          }
         }
       }
     },
@@ -8975,6 +10115,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ikke ennå — her er hvorfor:"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还不对——原因如下："
           }
         }
       }
@@ -9023,6 +10169,12 @@
             "state": "translated",
             "value": "Ingenting til repetisjon akkurat nå."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在没有到期内容。"
+          }
         }
       }
     },
@@ -9069,6 +10221,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
           }
         }
       }
@@ -9117,6 +10275,12 @@
             "state": "translated",
             "value": "Observert på tvers av samtaler. Dette er foreløpige, ikke formelle nivåsertifikater."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根据多次对话观察得出。这些只是阶段性参考，并非正式等级证书。"
+          }
         }
       }
     },
@@ -9163,6 +10327,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Krenkende eller sårende"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "冒犯或伤人"
           }
         }
       }
@@ -9211,6 +10381,12 @@
             "state": "translated",
             "value": "Én .db-fil med alt læringen din inneholder: samtaler, ord, leksjoner og fremdrift. Å gjenopprette en sikkerhetskopi erstatter det som ligger på denne enheten med filens innhold. Kun denne enheten — det finnes ingen sky-synkronisering."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一个 .db 文件包含全部学习内容：对话、词语、课程和进度。恢复备份会用文件内容替换本设备上的数据。仅限本设备——没有云同步。"
+          }
         }
       }
     },
@@ -9257,6 +10433,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Engangskjøp · Ingen abonnement"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次性购买 · 无订阅"
           }
         }
       }
@@ -9305,6 +10487,12 @@
             "state": "translated",
             "value": "Notiser for åpen kildekode"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开源声明"
+          }
         }
       }
     },
@@ -9351,6 +10539,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenAI API-nøkkel"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI API 密钥"
           }
         }
       }
@@ -9399,6 +10593,12 @@
             "state": "translated",
             "value": "OpenAI klarte ikke å utføre forespørselen (HTTP %lld). Prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI 未能完成请求（HTTP %lld）。请重试。"
+          }
         }
       }
     },
@@ -9445,6 +10645,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenAI returnerte et ufullstendig svar. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI 返回了不完整的回复。请重试。"
           }
         }
       }
@@ -9493,6 +10699,12 @@
             "state": "translated",
             "value": "OpenAIs bruks- eller hastighetsgrense er nådd. Sjekk fakturering og grenser for prosjektet ditt."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已达到 OpenAI 的用量或频率上限。请检查项目的账单与限额。"
+          }
         }
       }
     },
@@ -9539,6 +10751,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Opprinnelig eksamensresultat"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原始测验结果"
           }
         }
       }
@@ -9587,6 +10805,12 @@
             "state": "translated",
             "value": "Samtalen vår"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们的对话"
+          }
         }
       }
     },
@@ -9634,6 +10858,12 @@
             "state": "translated",
             "value": "Samlet mestring"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "综合掌握度"
+          }
         }
       }
     },
@@ -9677,6 +10907,12 @@
           }
         },
         "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PALIQUE"
+          }
+        },
+        "zh": {
           "stringUnit": {
             "state": "translated",
             "value": "PALIQUE"
@@ -9728,6 +10964,12 @@
             "state": "translated",
             "value": "Palique (tokens)"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique（代币）"
+          }
         }
       }
     },
@@ -9774,6 +11016,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique 0.1 · Personlig bygg"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 0.1 · 个人版"
           }
         }
       }
@@ -9822,6 +11070,12 @@
             "state": "translated",
             "value": "Palique klarte ikke å utføre den forespørselen. Prøv et annet tema."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能完成该请求。换个话题试试吧。"
+          }
         }
       }
     },
@@ -9868,6 +11122,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique kunne ikke slette språkets læringsdata. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能删除该语言的学习数据。请重试。"
           }
         }
       }
@@ -9916,6 +11176,12 @@
             "state": "translated",
             "value": "Palique kunne ikke slette den eldre læringskopien. Samtalene dine er fortsatt her. Prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能删除较早的学习备份。你的对话仍在。请重试。"
+          }
         }
       }
     },
@@ -9962,6 +11228,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique kunne ikke slette læringsdataene sine. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能清除学习数据。请重试。"
           }
         }
       }
@@ -10010,6 +11282,12 @@
             "state": "translated",
             "value": "Palique kunne ikke åpne en ny læringspost. Prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能打开新的学习记录。请重试。"
+          }
         }
       }
     },
@@ -10056,6 +11334,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique kunne ikke åpne læringsposten sin. De eksisterende dataene dine er ikke erstattet."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能打开学习记录。你的现有数据未被替换。"
           }
         }
       }
@@ -10104,6 +11388,12 @@
             "state": "translated",
             "value": "Palique kunne ikke fjerne de valgte uttrykkene. Prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能移除所选表达。请重试。"
+          }
         }
       }
     },
@@ -10150,6 +11440,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique kunne ikke lagre fremdriften din. Eksporter en sikkerhetskopi og prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 未能保存你的进度。请导出备份后重试。"
           }
         }
       }
@@ -10198,6 +11494,12 @@
             "state": "translated",
             "value": "Palique snakker %@. Velg språket du leser lettest på, for betydninger."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 会说 %@。请选择你读起来最轻松的含义语言。"
+          }
         }
       }
     },
@@ -10244,6 +11546,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique klarte fortsatt ikke å åpne læringsdataene dine. Ingenting ble slettet. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 仍无法打开你的学习数据。没有清除任何内容。请重试。"
           }
         }
       }
@@ -10292,6 +11600,12 @@
             "state": "translated",
             "value": "Palique lagrer innloggingsdetaljene og kontoøktene dine. Du kan øve med din egen API-nøkkel uten en konto."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 会存储你的登录信息和账号会话。不注册账号也可以用自己的 API 密钥练习。"
+          }
         }
       }
     },
@@ -10338,6 +11652,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bestått"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过"
           }
         }
       }
@@ -10386,6 +11706,12 @@
             "state": "translated",
             "value": "Tidligere samtaler"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过往对话"
+          }
         }
       }
     },
@@ -10432,6 +11758,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spill av teksten"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "播放文本"
           }
         }
       }
@@ -10480,6 +11812,12 @@
             "state": "translated",
             "value": "Øving"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习"
+          }
         }
       }
     },
@@ -10526,6 +11864,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Øvingstid"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习时长"
           }
         }
       }
@@ -10574,6 +11918,12 @@
             "state": "translated",
             "value": "Øv en leksjon"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练一课"
+          }
         }
       }
     },
@@ -10620,6 +11970,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Øv på en situasjon"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "情景练习"
           }
         }
       }
@@ -10668,6 +12024,12 @@
             "state": "translated",
             "value": "Øv igjen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再练一次"
+          }
         }
       }
     },
@@ -10714,6 +12076,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gjør øvelser"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "做练习题"
           }
         }
       }
@@ -10762,6 +12130,12 @@
             "state": "translated",
             "value": "Øv på å snakke"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习口语"
+          }
         }
       }
     },
@@ -10808,6 +12182,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Øv på dette"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "练习这个"
           }
         }
       }
@@ -10856,6 +12236,12 @@
             "state": "translated",
             "value": "Øv skriving (%lld til repetisjon)"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写作练习（%lld 个到期）"
+          }
         }
       }
     },
@@ -10902,6 +12288,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Forhåndsbetalte tokens for den vertsbaserte modellen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "托管模型的预付代币"
           }
         }
       }
@@ -10950,6 +12342,12 @@
             "state": "translated",
             "value": "Forbereder gjennomgangen din…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在准备你的复盘…"
+          }
         }
       }
     },
@@ -10996,6 +12394,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uttaleøvelse (beta)"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发音练习（Beta）"
           }
         }
       }
@@ -11044,6 +12448,12 @@
             "state": "translated",
             "value": "Uttale: %lld%% — ikke helt, lytt igjen og prøv en gang til"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发音：%lld%%——还不够准，再听一遍，再试一次"
+          }
         }
       }
     },
@@ -11090,6 +12500,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uttale: %lld%% — bestått, godt sagt!"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发音：%lld%%——通过，说得好！"
           }
         }
       }
@@ -11138,6 +12554,12 @@
             "state": "translated",
             "value": "Kjøp og vertsbaserte samtaler er ikke tilgjengelige i denne versjonen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本不支持购买和托管对话。"
+          }
         }
       }
     },
@@ -11184,6 +12606,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kjøp er ikke tilgjengelige i denne versjonen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本不支持购买。"
           }
         }
       }
@@ -11232,6 +12660,12 @@
             "state": "translated",
             "value": "Spørsmål %1$lld av %2$lld"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %1$lld/%2$lld 题"
+          }
         }
       }
     },
@@ -11278,6 +12712,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读"
           }
         }
       }
@@ -11326,6 +12766,12 @@
             "state": "translated",
             "value": "Les en kort leksjon, og øv den i en ekte samtale."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "读一节短课，然后在真实对话中练习。"
+          }
         }
       }
     },
@@ -11372,6 +12818,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les høyt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朗读"
           }
         }
       }
@@ -11420,6 +12872,12 @@
             "state": "translated",
             "value": "Les og svar"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "阅读问答"
+          }
         }
       }
     },
@@ -11466,6 +12924,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Årsak"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "原因"
           }
         }
       }
@@ -11514,6 +12978,12 @@
             "state": "translated",
             "value": "Repetisjon"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回忆"
+          }
         }
       }
     },
@@ -11560,6 +13030,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hukommelsesbarene oppsummerer gjentatt innhenting over tid; tre barer krever spredte spor på tvers av dager og sammenhenger."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回忆进度条汇总了随时间的反复提取；满三格需要跨越数天和不同场景的证据。"
           }
         }
       }
@@ -11608,6 +13084,12 @@
             "state": "translated",
             "value": "Husk uttrykket for denne betydningen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回忆表达这个含义的说法"
+          }
         }
       }
     },
@@ -11654,6 +13136,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Oppdater konto"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刷新账号"
           }
         }
       }
@@ -11702,6 +13190,12 @@
             "state": "translated",
             "value": "Fjern"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除"
+          }
         }
       }
     },
@@ -11748,6 +13242,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fjern %@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除 %@"
           }
         }
       }
@@ -11796,6 +13296,12 @@
             "state": "translated",
             "value": "Fjern fra mine ord"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从我的词语中移除"
+          }
         }
       }
     },
@@ -11842,6 +13348,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fjern nøkkel"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除密钥"
           }
         }
       }
@@ -11890,6 +13402,12 @@
             "state": "translated",
             "value": "Fjern språk…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "移除语言…"
+          }
         }
       }
     },
@@ -11936,6 +13454,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erstatt OpenAI-nøkkel"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "替换 OpenAI 密钥"
           }
         }
       }
@@ -11984,6 +13508,12 @@
             "state": "translated",
             "value": "Svar på %1$@ eller et annet språk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用 %1$@ 或其他语言回复"
+          }
         }
       }
     },
@@ -12030,6 +13560,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Svar på det språket du kommer på."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用哪种语言顺口就用哪种回复。"
           }
         }
       }
@@ -12078,6 +13614,12 @@
             "state": "translated",
             "value": "Rapporter"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "举报"
+          }
         }
       }
     },
@@ -12124,6 +13666,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rapporter dette svaret"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "举报这条回复"
           }
         }
       }
@@ -12172,6 +13720,12 @@
             "state": "translated",
             "value": "Gjenopprett databasesikkerhetskopi (.db)"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复数据库备份（.db）"
+          }
         }
       }
     },
@@ -12218,6 +13772,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gjenopprett lagrede forsøk"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复已保存的作答"
           }
         }
       }
@@ -12266,6 +13826,12 @@
             "state": "translated",
             "value": "Prøv igjen uten å slette data"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不清除数据重试"
+          }
         }
       }
     },
@@ -12312,6 +13878,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Samme venn. Et nytt sted."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同一个朋友，新的场景。"
           }
         }
       }
@@ -12360,6 +13932,12 @@
             "state": "translated",
             "value": "Lagre"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存"
+          }
         }
       }
     },
@@ -12406,6 +13984,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lagre og fortsett"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存并继续"
           }
         }
       }
@@ -12454,6 +14038,12 @@
             "state": "translated",
             "value": "Lagre uttrykk fra en leksjon eller ordboken, så kommer de tilbake til repetisjon."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从课程或词典保存表达，它们会回来供你回忆。"
+          }
         }
       }
     },
@@ -12500,6 +14090,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lagre nøkkel"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存密钥"
           }
         }
       }
@@ -12548,6 +14144,12 @@
             "state": "translated",
             "value": "Lagre erstatningsnøkkel"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存替换密钥"
+          }
         }
       }
     },
@@ -12594,6 +14196,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lagre resultat"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存结果"
           }
         }
       }
@@ -12642,6 +14250,12 @@
             "state": "translated",
             "value": "Lagret"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已保存"
+          }
         }
       }
     },
@@ -12688,6 +14302,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lagrede forsøk"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已保存的作答"
           }
         }
       }
@@ -12736,6 +14356,12 @@
             "state": "translated",
             "value": "Lagrede uttrykk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已保存的表达"
+          }
         }
       }
     },
@@ -12782,6 +14408,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lagret sikkert. Start en samtale for å koble til."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已安全保存。开始对话即可连接。"
           }
         }
       }
@@ -12830,6 +14462,12 @@
             "state": "translated",
             "value": "Si det på din måte."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用你自己的话来说。"
+          }
         }
       }
     },
@@ -12876,6 +14514,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Score: %1$lld%% · %2$@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "得分：%1$lld%% · %2$@"
           }
         }
       }
@@ -12924,6 +14568,12 @@
             "state": "translated",
             "value": "Søk krever en motor som kan returnere kilder. Kildene følger temaet."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索需要能返回来源的引擎。来源会随话题一起保存。"
+          }
         }
       }
     },
@@ -12970,6 +14620,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Velg alle"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全选"
           }
         }
       }
@@ -13018,6 +14674,12 @@
             "state": "translated",
             "value": "Send rapport"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送举报"
+          }
         }
       }
     },
@@ -13064,6 +14726,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sender…"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送中…"
           }
         }
       }
@@ -13112,6 +14780,12 @@
             "state": "translated",
             "value": "Innstillinger"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "设置"
+          }
         }
       }
     },
@@ -13158,6 +14832,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Del anonyme bruksmålinger"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享匿名使用统计"
           }
         }
       }
@@ -13206,6 +14886,12 @@
             "state": "translated",
             "value": "Vis betydningsundertekster"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示含义字幕"
+          }
         }
       }
     },
@@ -13252,6 +14938,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vis pinyin"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示拼音"
           }
         }
       }
@@ -13300,6 +14992,12 @@
             "state": "translated",
             "value": "Vis transkripsjonen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示原文"
+          }
         }
       }
     },
@@ -13346,6 +15044,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Logg inn for å kjøpe tokens"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登录以购买代币"
           }
         }
       }
@@ -13394,6 +15098,12 @@
             "state": "translated",
             "value": "Logg inn på Palique-kontoen din for å bruke inkluderte minutter."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登录你的 Palique 账号即可使用内含分钟数。"
+          }
         }
       }
     },
@@ -13440,6 +15150,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Logg inn med Google"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用 Google 登录"
           }
         }
       }
@@ -13488,6 +15204,12 @@
             "state": "translated",
             "value": "Logg ut på alle enheter"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所有设备上退出登录"
+          }
         }
       }
     },
@@ -13534,6 +15256,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Innlogging er ikke tilgjengelig i denne forhåndsvisningen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此预览版暂不支持登录。"
           }
         }
       }
@@ -13582,6 +15310,12 @@
             "state": "translated",
             "value": "Logget inn med Apple"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已通过 Apple 登录"
+          }
         }
       }
     },
@@ -13628,6 +15362,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Logget inn med Google"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已通过 Google 登录"
           }
         }
       }
@@ -13676,6 +15416,12 @@
             "state": "translated",
             "value": "Logget ut på denne iPhone-en. Vi kunne ikke nå Palique for å trekke tilbake andre økter; de utløper innen 24 timer."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你已在这台 iPhone 上退出登录。无法连接 Palique 撤销其他会话；它们将在 24 小时内过期。"
+          }
         }
       }
     },
@@ -13722,6 +15468,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Situasjon: %@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "情景：%@"
           }
         }
       }
@@ -13770,6 +15522,12 @@
             "state": "translated",
             "value": "Ferdigheter"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "技能"
+          }
         }
       }
     },
@@ -13816,6 +15574,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Treg"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "慢"
           }
         }
       }
@@ -13864,6 +15628,12 @@
             "state": "translated",
             "value": "Noe annet"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "其他原因"
+          }
         }
       }
     },
@@ -13910,6 +15680,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kildebasert temasøk er ikke tilgjengelig med den valgte samtalemotoren. Du kan fortsatt bruke lagrede temaer."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选对话引擎不支持带来源的话题检索。你仍可以使用已保存的话题。"
           }
         }
       }
@@ -13958,6 +15734,12 @@
             "state": "translated",
             "value": "Kilder"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源"
+          }
         }
       }
     },
@@ -14004,6 +15786,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kilder · %@"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "来源 · %@"
           }
         }
       }
@@ -14052,6 +15840,12 @@
             "state": "translated",
             "value": "Talehastighet"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语速"
+          }
         }
       }
     },
@@ -14098,6 +15892,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start en samtale, så vises ordene dine her."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始一段对话，你的词语就会出现在这里。"
           }
         }
       }
@@ -14146,6 +15946,12 @@
             "state": "translated",
             "value": "Start en samtale for å se fremdriften din."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始一段对话，看看你的进度。"
+          }
         }
       }
     },
@@ -14192,6 +15998,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start en eksamen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始测验"
           }
         }
       }
@@ -14240,6 +16052,12 @@
             "state": "translated",
             "value": "Start samtale"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始对话"
+          }
         }
       }
     },
@@ -14286,6 +16104,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Begynn å snakke"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始聊天"
           }
         }
       }
@@ -14334,6 +16158,12 @@
             "state": "translated",
             "value": "Steg %lld av 2"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %lld 步，共 2 步"
+          }
         }
       }
     },
@@ -14380,6 +16210,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stopp"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止"
           }
         }
       }
@@ -14428,6 +16264,12 @@
             "state": "translated",
             "value": "Undertekstspråk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字幕语言"
+          }
         }
       }
     },
@@ -14474,6 +16316,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bytt testkonto"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换测试账号"
           }
         }
       }
@@ -14522,6 +16370,12 @@
             "state": "translated",
             "value": "Synkroniseringen ble ikke fullført. Læringsdataene dine forblir på denne enheten."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步未能完成。你的学习数据仍保留在本设备上。"
+          }
         }
       }
     },
@@ -14568,6 +16422,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Synkroniser lagrede forsøk"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同步已保存的作答"
           }
         }
       }
@@ -14616,6 +16476,12 @@
             "state": "translated",
             "value": "Synkroniserer læringsfremdriften din…"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在同步你的学习进度…"
+          }
         }
       }
     },
@@ -14662,6 +16528,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "System"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "跟随系统"
           }
         }
       }
@@ -14710,6 +16582,12 @@
             "state": "translated",
             "value": "Snakk om dette"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "聊聊这个"
+          }
         }
       }
     },
@@ -14756,6 +16634,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trykk på en frase for å høre den, trykk deretter Sjekk og si den høyt."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按短语听发音，然后点“检查”并大声说出来。"
           }
         }
       }
@@ -14804,6 +16688,12 @@
             "state": "translated",
             "value": "Takk. Rapporten er sendt til gjennomgang."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "谢谢你。举报已提交审阅。"
+          }
         }
       }
     },
@@ -14850,6 +16740,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kontoversjonen kunne ikke brukes. Den lagrede versjonen din ble ikke endret."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "账号版本未能应用。你保存的版本未改变。"
           }
         }
       }
@@ -14898,6 +16794,12 @@
             "state": "translated",
             "value": "Barene anslår muntlig hukommelse, ikke varig mestring. Å bruke et ord med synlige betydninger teller som øving med støtte."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "进度条估算的是口头回忆效果，并非永久掌握。在含义可见的情况下使用词语算作有支持的练习。"
+          }
         }
       }
     },
@@ -14944,6 +16846,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Eksamenen kunne ikke valideres eller lagres, så den er ikke startet. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本次测验未能通过校验或保存，因此尚未开始。请重试。"
           }
         }
       }
@@ -14992,6 +16900,12 @@
             "state": "translated",
             "value": "Testfixturen for eksamensgjenoppretting er ugyldig."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测验恢复测试夹具无效。"
+          }
         }
       }
     },
@@ -15038,6 +16952,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Testfixturen for eksamensgjenoppretting er ikke tilgjengelig."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测验恢复测试夹具不可用。"
           }
         }
       }
@@ -15086,6 +17006,12 @@
             "state": "translated",
             "value": "Eksamensversjonene kunne ikke skilles. Ingen av versjonene ble forkastet."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "测验版本无法区分。两个版本都未丢弃。"
+          }
         }
       }
     },
@@ -15132,6 +17058,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nøkkelen kunne ikke fjernes. Lås opp denne iPhone-en og prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密钥未能移除。请解锁 iPhone 后重试。"
           }
         }
       }
@@ -15180,6 +17112,12 @@
             "state": "translated",
             "value": "Nøkkelen kunne ikke lagres i denne enhetens Keychain."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密钥未能保存到本设备的 Keychain。"
+          }
         }
       }
     },
@@ -15226,6 +17164,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Læringsposten er utilgjengelig."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "学习记录不可用。"
           }
         }
       }
@@ -15274,6 +17218,12 @@
             "state": "translated",
             "value": "Rapporten kunne ikke sendes akkurat nå. Prøv igjen senere."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "举报当前无法提交。请稍后重试。"
+          }
         }
       }
     },
@@ -15320,6 +17270,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kunne ikke forberede gjennomgangen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未能生成复盘"
           }
         }
       }
@@ -15368,6 +17324,12 @@
             "state": "translated",
             "value": "Søket ga ingen verifiserbare kilder. Prøv et mer spesifikt tema."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "检索没有返回可核实的来源。换个更具体的话题试试。"
+          }
         }
       }
     },
@@ -15414,6 +17376,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Teksten forblir synlig — les den så mange ganger du trenger, og svar på spørsmålene."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文本一直可见——想读几遍就读几遍，然后回答问题。"
           }
         }
       }
@@ -15462,6 +17430,12 @@
             "state": "translated",
             "value": "Kunne ikke opprette taleforbindelsen. Sjekk tilkoblingen din og prøv igjen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音连接未能建立。请检查网络连接后重试。"
+          }
         }
       }
     },
@@ -15508,6 +17482,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Taleforbindelsen brukte for lang tid. Prøv igjen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音连接用时过长。请重试。"
           }
         }
       }
@@ -15556,6 +17536,12 @@
             "state": "translated",
             "value": "Verden i dag"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今日世界"
+          }
         }
       }
     },
@@ -15602,6 +17588,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tema %1$lld · %2$@ · %3$@ · %4$lld spørsmål"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题 %1$lld · %2$@ · %3$@ · %4$lld 道题"
           }
         }
       }
@@ -15650,6 +17642,12 @@
             "state": "translated",
             "value": "Tema %1$lld · %2$@ · %3$lld spørsmål"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题 %1$lld · %2$@ · %3$lld 道题"
+          }
         }
       }
     },
@@ -15696,6 +17694,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Disse forsøkene er lagret på denne enheten. Logg inn for å se eksamenshistorikken synkronisert med kontoen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这些作答保存在本设备上。登录后可查看账号同步的测验历史。"
           }
         }
       }
@@ -15744,6 +17748,12 @@
             "state": "translated",
             "value": "De vokser herfra."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "词语会从这里生长。"
+          }
         }
       }
     },
@@ -15790,6 +17800,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Denne API-nøkkelen har kanskje ikke tilgang til den forespurte modellen. Sjekk OpenAI-prosjektet ditt."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此 API 密钥可能无权访问所请求的模型。请检查你的 OpenAI 项目。"
           }
         }
       }
@@ -15838,6 +17854,12 @@
             "state": "translated",
             "value": "Dette fjerner hver samtale, hvert ord og hver fremdriftsoppføring på denne iPhone-en permanent. Det kan ikke angres."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将永久删除这台 iPhone 上的所有对话、词语和进度记录。此操作无法撤销。"
+          }
         }
       }
     },
@@ -15884,6 +17906,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dette fjerner samtaler, ordforråd og fremdrift. Eksporter en sikkerhetskopi først hvis du vil beholde dem. API-nøkkelen og innstillingene dine forblir."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将删除对话、词汇和进度。如果想保留，请先导出备份。你的 API 密钥和偏好设置会保留。"
           }
         }
       }
@@ -15932,6 +17960,12 @@
             "state": "translated",
             "value": "Dette fjerner %@-samtalene, ordene og fremdriften i leksjonene. Andre språk, nøkkelen din og innstillingene dine forblir. Eksporter en sikkerhetskopi først hvis du vil beholde dem."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将删除 %@ 的对话、词语和课程进度。其他语言、你的密钥和偏好设置会保留。如果想保留，请先导出备份。"
+          }
         }
       }
     },
@@ -15978,6 +18012,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dette fjerner innloggingsdetaljene og kontoøktene dine, og du mister eventuelle ubrukte gratisminutter. Læringshistorikken forblir på denne iPhone-en; du kan fjerne den separat i Innstillinger. En betalt saldo, en ventende betaling eller en aktiv samtale må være løst før slettingen."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这将删除你的登录信息和账号会话，并放弃未使用的免费分钟数。学习历史仍保留在这台 iPhone 上；你可以稍后在设置中单独清除。删除前需先处理付费余额、待确认的付款或进行中的对话。"
           }
         }
       }
@@ -16026,6 +18066,12 @@
             "state": "translated",
             "value": "Denne lagrede eksamenen kunne ikke åpnes. De opprinnelige dataene er ikke endret."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这份已保存的测验无法打开。其原始数据未改变。"
+          }
         }
       }
     },
@@ -16072,6 +18118,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Denne versjonen bruker OpenAI API-nøkkelen din for å starte en samtale."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此版本使用你的 OpenAI API 密钥开始对话。"
           }
         }
       }
@@ -16120,6 +18172,12 @@
             "state": "translated",
             "value": "Til finpussing"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "有待改进"
+          }
         }
       }
     },
@@ -16166,6 +18224,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tokenpakkene er ikke tilgjengelige akkurat nå. Sjekk igjen senere."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目前无法购买代币包。请稍后再来查看。"
           }
         }
       }
@@ -16214,6 +18278,12 @@
             "state": "translated",
             "value": "Tokens er forhåndsbetalt tjenestekreditt for den vertsbaserte modellen. De er ikke valuta og har ingen kontantverdi. Bruken måles per samtale — det finnes ikke et ubegrenset alternativ."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "代币是托管模型的预付服务额度，不是货币，也没有现金价值。用量按次计费——没有无限量选项。"
+          }
         }
       }
     },
@@ -16260,6 +18330,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "For mange forespørsler. Prøv igjen om et øyeblikk."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请求过多。请稍等片刻再试。"
           }
         }
       }
@@ -16308,6 +18384,12 @@
             "state": "translated",
             "value": "Prøv igjen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试"
+          }
         }
       }
     },
@@ -16354,6 +18436,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prøv et annet ord på %1$@ eller en annen betydning på engelsk."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "换个 %@ 词语或英语含义试试。"
           }
         }
       }
@@ -16402,6 +18490,12 @@
             "state": "translated",
             "value": "Prøv å laste inn igjen"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新加载试试"
+          }
         }
       }
     },
@@ -16448,6 +18542,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prøv betydningen igjen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试查询含义"
           }
         }
       }
@@ -16496,6 +18596,12 @@
             "state": "translated",
             "value": "Slå på betydninger når du trenger en hånd."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "需要帮忙时随时打开含义。"
+          }
         }
       }
     },
@@ -16542,6 +18648,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skriv i stedet"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "改用打字"
           }
         }
       }
@@ -16590,6 +18702,12 @@
             "state": "translated",
             "value": "Lås opp én gang, og forhåndsbetal deretter små tokenpakker. Den vertsbaserte modellen svarer med appens nøkkel; stemmen din forlater aldri enheten."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一次性解锁，然后小额预购代币包。托管模型使用应用自己的密钥作答；你的语音不会离开设备。"
+          }
         }
       }
     },
@@ -16636,6 +18754,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Slå på mikrofonen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消麦克风静音"
           }
         }
       }
@@ -16684,6 +18808,12 @@
             "state": "translated",
             "value": "Oppdaterer konto"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在更新账号"
+          }
         }
       }
     },
@@ -16730,6 +18860,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bruk kontoversjonen"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用账号版本"
           }
         }
       }
@@ -16778,6 +18914,12 @@
             "state": "translated",
             "value": "Bruk din egen API-nøkkel"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用你自己的 API 密钥"
+          }
         }
       }
     },
@@ -16824,6 +18966,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Veldig treg"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "很慢"
           }
         }
       }
@@ -16872,6 +19020,12 @@
             "state": "translated",
             "value": "Anslaget for taletid bruker 0,05 USD/min per 11. september 2026. Oversettelse, undervisning og søk koster ekstra. Avbrutte forespørsler kan faktureres uten at bruken registreres her. OpenAI-dashbordet ditt er autoritativt. Tidsgrensen er lokal, ikke en faktureringsgrense."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音估算按 2026 年 9 月 11 日起的 $0.05/分钟计算。翻译、教学和检索另计费。被中断的请求可能会计费，但在此处没有用量记录。你的 OpenAI 控制台才是权威数据。时长上限仅在本地生效，并非计费上限。"
+          }
         }
       }
     },
@@ -16918,6 +19072,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stemme: GPT-Live-1 · Lærer: GPT-5.6 Luna"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语音：GPT-Live-1 · 教学：GPT-5.6 Luna"
           }
         }
       }
@@ -16966,6 +19126,12 @@
             "state": "translated",
             "value": "Vi lytter gjennom øvingen din."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们正在回听你的练习。"
+          }
         }
       }
     },
@@ -17012,6 +19178,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ukeseksamener"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每周测验"
           }
         }
       }
@@ -17060,6 +19232,12 @@
             "state": "translated",
             "value": "Ukeseksamener og resultater"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每周测验与成绩"
+          }
         }
       }
     },
@@ -17106,6 +19284,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Velkommen til Palique"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎来到 Palique"
           }
         }
       }
@@ -17154,6 +19338,12 @@
             "state": "translated",
             "value": "Vi finner tempoet ditt gjennom samtale."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我们会在对话中找到你的节奏。"
+          }
         }
       }
     },
@@ -17200,6 +19390,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Det som ble sagt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "刚才说了什么"
           }
         }
       }
@@ -17248,6 +19444,12 @@
             "state": "translated",
             "value": "Hva som gikk bra"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "做得好的地方"
+          }
         }
       }
     },
@@ -17294,6 +19496,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hva vil du\nsnakke?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你想\n说什么语言？"
           }
         }
       }
@@ -17342,6 +19550,12 @@
             "state": "translated",
             "value": "Hva vil du øve på?"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你想练习什么？"
+          }
         }
       }
     },
@@ -17388,6 +19602,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hva vil du snakke om?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你想聊些什么？"
           }
         }
       }
@@ -17436,6 +19656,12 @@
             "state": "translated",
             "value": "Det du sa"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你说的话"
+          }
         }
       }
     },
@@ -17482,6 +19708,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hva tenker\ndu på?"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你在想\n些什么？"
           }
         }
       }
@@ -17530,6 +19762,12 @@
             "state": "translated",
             "value": "Hvorfor rapporterer du dette?"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你为什么要举报？"
+          }
         }
       }
     },
@@ -17576,6 +19814,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Med tillatelsen din sender Palique lyd og valgt tekst til OpenAI for å gi samtaler og betydninger. Leverandørens oppbevaringsregler gjelder."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "经你同意后，Palique 会将音频和选定的文本发送给 OpenAI，以提供对话和含义。服务商的留存规则同样适用。"
           }
         }
       }
@@ -17624,6 +19868,12 @@
             "state": "translated",
             "value": "Ord %1$lld av %2$lld"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "第 %1$lld/%2$lld 个词语"
+          }
         }
       }
     },
@@ -17670,6 +19920,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ord etter hukommelse"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按回忆程度分布的词语"
           }
         }
       }
@@ -17718,6 +19974,12 @@
             "state": "translated",
             "value": "Skriv ordet som betyr:"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写出表达这个意思的词语："
+          }
         }
       }
     },
@@ -17764,6 +20026,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skriveøvelse"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "写作练习"
           }
         }
       }
@@ -17812,6 +20080,12 @@
             "state": "translated",
             "value": "Feil språk"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言不对"
+          }
         }
       }
     },
@@ -17858,6 +20132,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "DU"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我"
           }
         }
       }
@@ -17906,6 +20186,12 @@
             "state": "translated",
             "value": "Du svarte riktig på %1$lld av %2$lld."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你答对了 %1$lld/%2$lld 题。"
+          }
         }
       }
     },
@@ -17952,6 +20238,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Du kan endre begge språkene i Innstillinger."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "两种语言都可以在设置中更改。"
           }
         }
       }
@@ -18000,6 +20292,12 @@
             "state": "translated",
             "value": "Du øvde %1$lld ord og stavet %2$lld riktig."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你练习了 %1$lld 个词语，写对 %2$lld 个。"
+          }
         }
       }
     },
@@ -18046,6 +20344,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Du sa"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你说的是"
           }
         }
       }
@@ -18094,6 +20398,12 @@
             "state": "translated",
             "value": "Samtalene dine på %1$@ vises her."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 %1$@ 对话会显示在这里。"
+          }
         }
       }
     },
@@ -18140,6 +20450,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenAI-kontoen din betaler for bruken. Nøkkelen forblir i denne iPhone-ens Keychain og sendes bare til OpenAI."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "用量由你的 OpenAI 账号付费。密钥保存在这台 iPhone 的 Keychain 中，只发送给 OpenAI。"
           }
         }
       }
@@ -18188,6 +20504,12 @@
             "state": "translated",
             "value": "OpenAI-nøkkelen din"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 OpenAI 密钥"
+          }
         }
       }
     },
@@ -18234,6 +20556,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenAI-nøkkelen din ble ikke godkjent. Sjekk den i Innstillinger."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 OpenAI 密钥未被接受。请在设置中检查。"
           }
         }
       }
@@ -18282,6 +20610,12 @@
             "state": "translated",
             "value": "Palique-kontoen din"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的 Palique 账号"
+          }
         }
       }
     },
@@ -18328,6 +20662,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Svaret ditt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的答案"
           }
         }
       }
@@ -18376,6 +20716,12 @@
             "state": "translated",
             "value": "Svaret ditt: %@"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的答案：%@"
+          }
         }
       }
     },
@@ -18422,6 +20768,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Svarene dine er lagret. Resultatet må fortsatt registreres."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的答案已保存。结果仍需记录。"
           }
         }
       }
@@ -18470,6 +20822,12 @@
             "state": "translated",
             "value": "Sikkerhetskopien din er importert."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的备份已导入。"
+          }
         }
       }
     },
@@ -18516,6 +20874,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Samtalen din vises her."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的对话会显示在这里。"
           }
         }
       }
@@ -18564,6 +20928,12 @@
             "state": "translated",
             "value": "Samtalene og læringshistorikken din blir på denne iPhone-en."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的对话和学习历史都保留在这台 iPhone 上。"
+          }
         }
       }
     },
@@ -18610,6 +20980,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kurset ditt"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的课程"
           }
         }
       }
@@ -18658,6 +21034,12 @@
             "state": "translated",
             "value": "Beskrivelsen din blir på denne enheten og brukes bare til å styre øvingen."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的描述仅保存在本设备上，只用于引导练习。"
+          }
         }
       }
     },
@@ -18704,6 +21086,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ørene dine"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的耳朵"
           }
         }
       }
@@ -18752,6 +21140,12 @@
             "state": "translated",
             "value": "Øynene dine"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的眼睛"
+          }
         }
       }
     },
@@ -18798,6 +21192,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nøkkelen din er fjernet."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的密钥已移除。"
           }
         }
       }
@@ -18846,6 +21246,12 @@
             "state": "translated",
             "value": "Nøkkelen din er lagret på denne iPhone-en"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的密钥已保存在这台 iPhone 上"
+          }
         }
       }
     },
@@ -18892,6 +21298,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Læringsfremdriften din er oppdatert."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的学习进度已是最新。"
           }
         }
       }
@@ -18940,6 +21352,12 @@
             "state": "translated",
             "value": "Læringsposten din lagres på denne iPhone-en. Palique lagrer ikke rå lyd. Du kan fortsette å se på lagrede ord og samtaler uten å godta."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的学习记录保存在这台 iPhone 上。Palique 不保存原始音频。即使不同意，你也可以继续浏览已保存的词语和对话。"
+          }
         }
       }
     },
@@ -18986,6 +21404,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Din egen situasjon"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你自己的情景"
           }
         }
       }
@@ -19034,6 +21458,12 @@
             "state": "translated",
             "value": "Øvingen din er lagret. Prøv igjen etter neste forsøk."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的练习已保存。下次练习后再试一次。"
+          }
         }
       }
     },
@@ -19080,6 +21510,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fremdriften din"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的进度"
           }
         }
       }
@@ -19128,6 +21564,12 @@
             "state": "translated",
             "value": "Gjennomgangen din"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的复盘"
+          }
         }
       }
     },
@@ -19174,6 +21616,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "De lagrede eksamensdataene dine er fortsatt på denne enheten, men kunne ikke åpnes."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你已保存的测验数据仍在本设备上，但无法打开。"
           }
         }
       }
@@ -19222,6 +21670,12 @@
             "state": "translated",
             "value": "Tokensaldoen din er brukt opp. Velg en pakke nedenfor for å fortsette."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的代币余额已用完。在下方选择一个代币包继续吧。"
+          }
         }
       }
     },
@@ -19268,6 +21722,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tokensene dine følger kontoen din. Samtalene dine blir på denne enheten."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "代币跟随你的账号。对话保留在本设备上。"
           }
         }
       }
@@ -19316,6 +21776,12 @@
             "state": "translated",
             "value": "Ordene dine tilhører deg"
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的词语属于你"
+          }
         }
       }
     },
@@ -19362,6 +21828,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordene dine."
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的词语。"
           }
         }
       }
@@ -19410,6 +21882,12 @@
             "state": "translated",
             "value": "Du har brukt alle de inkluderte minuttene dine for nå."
           }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你本期的内含分钟数已用完。"
+          }
         }
       }
     },
@@ -19456,6 +21934,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "«%@»"
+          }
+        },
+        "zh": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”"
           }
         }
       }

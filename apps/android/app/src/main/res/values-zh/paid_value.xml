@@ -1,0 +1,11 @@
+<resources>
+    <string name="paid_balance_estimate">约 %1$s 付费分钟</string>
+    <string name="paid_balance_small">剩余付费分钟不足 1 分钟</string>
+    <string name="paid_balance_detail">时长为估算值。语音和教学会按实际 AI 成本从你的余额中扣除。</string>
+    <string name="paid_balance_free_first">免费分钟数会优先使用。</string>
+    <string name="paid_pack_estimate">约 %1$s 分钟</string>
+    <string name="paid_ai_allocation">用于 AI 用量</string>
+    <string name="paid_app_fee">Palique 服务费（%1$s%%）</string>
+    <string name="paid_processing_fee">预估支付手续费</string>
+    <string name="paid_processing_buffer">支付成本缓冲</string>
+</resources>

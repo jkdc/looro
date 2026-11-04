@@ -1,0 +1,14 @@
+<resources>
+    <string name="settings_navigation_title">怎么舒服怎么来</string>
+    <string name="settings_done">完成</string>
+    <string name="settings_just_your_pace">只按你的节奏</string>
+    <string name="settings_meaning_subtitles">含义字幕</string>
+    <string name="settings_language_footer">每种语言都有自己的词语和进度。Palique 会在对话中找到你的节奏。</string>
+    <string name="settings_language_running_footer">结束当前对话即可切换语言。每种语言都有自己的词语和进度。</string>
+    <string name="settings_advanced">高级</string>
+    <string name="settings_use_own_key">使用你自己的 API 密钥</string>
+    <string name="settings_byok_version_footer">这是使用 Palique 的可选方式。OpenAI 会把你密钥产生的用量直接向你计费。</string>
+    <string name="settings_key_owner_footer">用量由你的 OpenAI 账号付费。密钥在本手机上加密保存，只发送给 OpenAI。</string>
+    <string name="settings_keep_comfortable">保持舒适</string>
+    <string name="settings_limit_minutes">%1$d 分钟</string>
+</resources>
