@@ -22,6 +22,12 @@
             "state": "translated",
             "value": "Données d'apprentissage de %1$@ supprimées."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lerndaten von %1$@ gelöscht."
+          }
         }
       }
     },
@@ -44,6 +50,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ de jetons prépayés disponibles"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ an vorausbezahlten Tokens verfügbar"
           }
         }
       }
@@ -68,6 +80,12 @@
             "state": "translated",
             "value": "%1$@ · examen hebdomadaire %2$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Wochenprüfung %2$@"
+          }
         }
       }
     },
@@ -90,6 +108,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · %2$@ · %3$lld questions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@ · %3$lld Fragen"
           }
         }
       }
@@ -114,6 +138,12 @@
             "state": "translated",
             "value": "%1$@ · sur cet appareil uniquement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · nur auf diesem Gerät"
+          }
         }
       }
     },
@@ -136,6 +166,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · question %2$lld sur %3$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Frage %2$lld von %3$lld"
           }
         }
       }
@@ -160,6 +196,12 @@
             "state": "translated",
             "value": "%1$@ · conflit de synchronisation à vérifier"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Synchronisierungskonflikt — bitte prüfen"
+          }
         }
       }
     },
@@ -182,6 +224,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · synchronisé avec le compte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · mit Konto synchronisiert"
           }
         }
       }
@@ -206,6 +254,12 @@
             "state": "translated",
             "value": "%1$@ · en attente de synchronisation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · wartet auf Synchronisierung"
+          }
         }
       }
     },
@@ -228,6 +282,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · semaine %2$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · Woche %2$lld"
           }
         }
       }
@@ -252,6 +312,12 @@
             "state": "translated",
             "value": "%lld expressions prêtes à réviser"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Ausdrücke bereit zum Abfragen"
+          }
         }
       }
     },
@@ -274,6 +340,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld expressions · %2$@ Ko"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Ausdrücke · %2$@ KB"
           }
         }
       }
@@ -298,6 +370,12 @@
             "state": "translated",
             "value": "%lld h %lld min"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Std. %lld Min."
+          }
         }
       }
     },
@@ -320,6 +398,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld utilisations autonomes · Vu pour la dernière fois %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld eigenständige Verwendungen · Zuletzt gesehen: %2$@"
           }
         }
       }
@@ -344,6 +428,12 @@
             "state": "translated",
             "value": "%1$lld points de leçons · %2$lld points d'écoute"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Lektionspunkte · %2$lld Hörpunkte"
+          }
         }
       }
     },
@@ -366,6 +456,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Min."
           }
         }
       }
@@ -390,6 +486,12 @@
             "state": "translated",
             "value": "%lld minutes"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Minuten"
+          }
         }
       }
     },
@@ -412,6 +514,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld sur %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von %lld"
           }
         }
       }
@@ -436,6 +544,12 @@
             "state": "translated",
             "value": "%lld barres de rappel sur 3"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von 3 Abrufbalken"
+          }
         }
       }
     },
@@ -459,6 +573,12 @@
             "state": "translated",
             "value": "%1$lld points vers le niveau %2$lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Punkte bis Niveau %2$lld"
+          }
         }
       }
     },
@@ -478,6 +598,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/2000"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld/2000"
@@ -505,6 +631,12 @@
             "state": "translated",
             "value": "1 point vers le niveau %lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Punkt bis Niveau %lld"
+          }
         }
       }
     },
@@ -527,6 +659,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 · Fragile"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 · Fragil"
           }
         }
       }
@@ -551,6 +689,12 @@
             "state": "translated",
             "value": "2 · En croissance"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 · Wachsend"
+          }
         }
       }
     },
@@ -573,6 +717,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "3 · Solide"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 · Stabil"
           }
         }
       }
@@ -597,6 +747,12 @@
             "state": "translated",
             "value": "Une conversation est en cours. Termine-la avant de modifier tes données."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Gespräch läuft gerade. Beende es, bevor du deine Daten änderst."
+          }
         }
       }
     },
@@ -619,6 +775,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quelques choses que tu aimes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein paar Dinge, die du magst"
           }
         }
       }
@@ -643,6 +805,12 @@
             "state": "translated",
             "value": "Une conversation toute fraîche."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein frisches Gespräch."
+          }
         }
       }
     },
@@ -665,6 +833,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Une répétition guidée, puis un retour sur tes erreurs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine geführte Generalprobe, danach eine Rückschau auf deine Fehler."
           }
         }
       }
@@ -689,6 +863,12 @@
             "state": "translated",
             "value": "Un entretien d'embauche, demander l'addition, parler de ton équipe…"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Vorstellungsgespräch, die Rechnung verlangen, über dein Team reden…"
+          }
         }
       }
     },
@@ -711,6 +891,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un petit coup de main"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein kleiner Tipp"
           }
         }
       }
@@ -735,6 +921,12 @@
             "state": "translated",
             "value": "Un petit coup de main,\ndans ta langue."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine kleine Hilfe,\nin deiner Sprache."
+          }
         }
       }
     },
@@ -757,6 +949,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Une petite interruption"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine kleine Unterbrechung"
           }
         }
       }
@@ -781,6 +979,12 @@
             "state": "translated",
             "value": "Un peu de sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein bisschen Bedeutung"
+          }
         }
       }
     },
@@ -803,6 +1007,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un endroit pour commencer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Ort zum Anfangen"
           }
         }
       }
@@ -827,6 +1037,12 @@
             "state": "translated",
             "value": "Une réponse est encore en cours d'envoi."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Antwort wird noch gesendet."
+          }
         }
       }
     },
@@ -849,6 +1065,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Une réponse est encore en cours d'envoi. Patiente."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Antwort wird noch gesendet. Bitte warte kurz."
           }
         }
       }
@@ -873,6 +1095,12 @@
             "state": "translated",
             "value": "Compte"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto"
+          }
         }
       }
     },
@@ -895,6 +1123,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Compte supprimé. Palique n'a pas pu effacer son enregistrement local de connexion sécurisée. Déverrouille cet iPhone et rouvre Compte pour l'effacer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto gelöscht. Palique konnte den lokalen Eintrag der sicheren Anmeldung nicht löschen. Entsperr dieses iPhone und öffne Konto erneut, um ihn zu löschen."
           }
         }
       }
@@ -919,6 +1153,12 @@
             "state": "translated",
             "value": "Compte supprimé. Ton historique d'apprentissage reste sur cet iPhone."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto gelöscht. Dein Lernverlauf bleibt auf diesem iPhone."
+          }
         }
       }
     },
@@ -941,6 +1181,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les comptes ne sont pas encore disponibles dans cette version. Tu peux continuer à t'entraîner avec ta propre clé API OpenAI dans les Réglages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konten sind in dieser Build-Version noch nicht verfügbar. Du kannst mit deinem eigenen OpenAI-API-Schlüssel in den Einstellungen weiter üben."
           }
         }
       }
@@ -965,6 +1211,12 @@
             "state": "translated",
             "value": "Jours d'activité consécutifs"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivitäts-Streak"
+          }
         }
       }
     },
@@ -987,6 +1239,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajoute ta clé OpenAI dans les Réglages pour commencer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge deinen OpenAI-Schlüssel in den Einstellungen hinzu, um zu beginnen."
           }
         }
       }
@@ -1011,6 +1269,12 @@
             "state": "translated",
             "value": "Avancé"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erweitert"
+          }
         }
       }
     },
@@ -1033,6 +1297,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Accepter et continuer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zustimmen und weiter"
           }
         }
       }
@@ -1057,6 +1327,12 @@
             "state": "translated",
             "value": "Autorise l'accès au microphone dans Réglages de l'iPhone → Palique pour démarrer une conversation."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaube den Mikrofonzugriff in iPhone-Einstellungen → Palique, um ein Gespräch zu starten."
+          }
         }
       }
     },
@@ -1079,6 +1355,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Langue de l'app"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Sprache"
           }
         }
       }
@@ -1103,6 +1385,12 @@
             "state": "translated",
             "value": "En discutant, les mots et expressions utiles trouvent ici leur place. Leur force grandit quand tu les rappelles au fil du temps."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Während wir reden, finden nützliche Wörter und Formulierungen hier ein Zuhause. Ihre Kraft wächst, wenn du sie mit der Zeit abrufst."
+          }
         }
       }
     },
@@ -1125,6 +1413,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'audio et le texte sélectionné sont envoyés à OpenAI pendant ton entraînement. Les requêtes désactivent le stockage du fournisseur quand c'est pris en charge ; la conservation pour la surveillance des abus peut continuer de s'appliquer. Palique n'enregistre pas l'audio brut."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Audio und ausgewählter Text gehen an OpenAI, während du übst. Anfragen deaktivieren, wo unterstützt, die Speicherung durch den Anbieter; die Aufbewahrung zur Missbrauchsüberwachung kann trotzdem gelten. Rohaudio speichert Palique nicht."
           }
         }
       }
@@ -1149,6 +1443,12 @@
             "state": "translated",
             "value": "L'audio est déjà utilisé. Termine l'activité audio en cours et réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Ton wird bereits verwendet. Beende die aktuelle Audio-Aktivität und versuche es erneut."
+          }
         }
       }
     },
@@ -1171,6 +1471,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'audio est déjà utilisé. Termine l'activité audio en cours et réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Ton wird bereits verwendet. Bitte beende die aktuelle Audio-Aktivität und versuche es erneut."
           }
         }
       }
@@ -1195,6 +1501,12 @@
             "state": "translated",
             "value": "Retour à Apprendre"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zu Lernen"
+          }
         }
       }
     },
@@ -1217,6 +1529,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Retour à l'historique"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zum Verlauf"
           }
         }
       }
@@ -1241,6 +1559,12 @@
             "state": "translated",
             "value": "Retour à la langue d'apprentissage"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zur Lernsprache"
+          }
         }
       }
     },
@@ -1263,6 +1587,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Retour aux leçons"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zu den Lektionen"
           }
         }
       }
@@ -1287,6 +1617,12 @@
             "state": "translated",
             "value": "Retour à la leçon"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zur Lektion"
+          }
         }
       }
     },
@@ -1309,6 +1645,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Retour à la liste d'écoute"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zur Hörliste"
           }
         }
       }
@@ -1333,6 +1675,12 @@
             "state": "translated",
             "value": "Retour à la liste de lectures"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück zur Leseliste"
+          }
         }
       }
     },
@@ -1355,6 +1703,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sauvegarde (base de données)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup (Datenbank)"
           }
         }
       }
@@ -1379,6 +1733,12 @@
             "state": "translated",
             "value": "Sauvegarde restaurée : tes données d'apprentissage ont été remplacées par la copie importée."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup wiederhergestellt: Deine Lerndaten wurden durch die importierte Kopie ersetzt."
+          }
         }
       }
     },
@@ -1401,6 +1761,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les sauvegardes incluent les transcriptions et les preuves d'apprentissage, jamais ta clé API. L'importation ajoute uniquement les conversations que cet iPhone n'a pas, en conservant leurs identifiants d'origine ; les conversations existantes restent inchangées. Pas de synchronisation cloud."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backups enthalten Transkripte und Lernnachweise, niemals deinen API-Schlüssel. Beim Import werden nur Gespräche hinzugefügt, die dieses iPhone noch nicht hat, mit ihren ursprünglichen IDs; bestehende Gespräche bleiben unverändert. Es gibt keine Cloud-Synchronisierung."
           }
         }
       }
@@ -1425,6 +1791,12 @@
             "state": "translated",
             "value": "Avant d'utiliser les fonctions IA, ouvre Parler et touche le microphone pour voir comment OpenAI traite ton audio et ton texte."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bevor du KI-Funktionen nutzt, öffne Sprechen und tippe auf das Mikrofon, um zu sehen, wie OpenAI dein Audio und deinen Text verarbeitet."
+          }
         }
       }
     },
@@ -1447,6 +1819,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avant de parler."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bevor wir reden."
           }
         }
       }
@@ -1471,6 +1849,12 @@
             "state": "translated",
             "value": "Mieux"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Besser"
+          }
         }
       }
     },
@@ -1493,6 +1877,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "En te connectant, tu acceptes les [Conditions d'utilisation](https://app.example/terms/) et tu prends connaissance de la [Politique de confidentialité](https://app.example/privacy/)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit der Anmeldung akzeptierst du die [Nutzungsbedingungen](https://app.example/terms/) und erkennst die [Datenschutzerklärung](https://app.example/privacy/) an."
           }
         }
       }
@@ -1517,6 +1907,12 @@
             "state": "translated",
             "value": "Jalons de compétence : %lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompetenz-Meilensteine: %lld"
+          }
         }
       }
     },
@@ -1539,6 +1935,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Annuler"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abbrechen"
           }
         }
       }
@@ -1563,6 +1965,12 @@
             "state": "translated",
             "value": "Vérifier"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfen"
+          }
         }
       }
     },
@@ -1585,6 +1993,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vérifier les achats"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe prüfen"
           }
         }
       }
@@ -1609,6 +2023,12 @@
             "state": "translated",
             "value": "Vérification des packs de jetons…"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token-Pakete werden geprüft…"
+          }
         }
       }
     },
@@ -1631,6 +2051,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vérification…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe…"
           }
         }
       }
@@ -1655,6 +2081,12 @@
             "state": "translated",
             "value": "Le paiement s'ouvre en toute sécurité dans Stripe. Après le paiement, reviens sur Palique et vérifie tes achats."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Bezahlung öffnet sich sicher in Stripe. Kehre nach der Zahlung zu Palique zurück und prüfe deine Käufe."
+          }
         }
       }
     },
@@ -1677,6 +2109,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Effacer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leeren"
           }
         }
       }
@@ -1701,6 +2139,12 @@
             "state": "translated",
             "value": "Fermer"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließen"
+          }
         }
       }
     },
@@ -1723,6 +2167,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminé · résultat d'origine enregistré"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossen · ursprüngliches Ergebnis gespeichert"
           }
         }
       }
@@ -1747,6 +2197,12 @@
             "state": "translated",
             "value": "Terminé : %lld%%"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossen: %lld%%"
+          }
         }
       }
     },
@@ -1769,6 +2225,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Continuer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
           }
         }
       }
@@ -1793,6 +2255,12 @@
             "state": "translated",
             "value": "Conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräch"
+          }
         }
       }
     },
@@ -1815,6 +2283,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Limite de conversation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesprächslimit"
           }
         }
       }
@@ -1839,6 +2313,12 @@
             "state": "translated",
             "value": "Thèmes de conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesprächsthemen"
+          }
         }
       }
     },
@@ -1861,6 +2341,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Transcription de la conversation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesprächstranskript"
           }
         }
       }
@@ -1885,6 +2371,12 @@
             "state": "translated",
             "value": "Conversations"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräche"
+          }
         }
       }
     },
@@ -1907,6 +2399,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exact"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtig"
           }
         }
       }
@@ -1931,6 +2429,12 @@
             "state": "translated",
             "value": "Corrige une phrase mal comprise. Les preuves d'apprentissage de l'ancienne formulation seront supprimées ; l'original reste dans ton historique de sauvegardes."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Korrigiere eine falsch verstandene Formulierung. Die Lernnachweise der alten Formulierung werden entfernt; das Original bleibt in deinem Backup-Verlauf."
+          }
         }
       }
     },
@@ -1953,6 +2457,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exact !"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtig!"
           }
         }
       }
@@ -1977,6 +2487,12 @@
             "state": "translated",
             "value": "Corrections"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Korrekturen"
+          }
         }
       }
     },
@@ -1999,6 +2515,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cours terminé !"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurs abgeschlossen!"
           }
         }
       }
@@ -2023,6 +2545,12 @@
             "state": "translated",
             "value": "Progression du cours"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kursfortschritt"
+          }
         }
       }
     },
@@ -2045,6 +2573,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les cours pour cette langue arrivent bientôt. En attendant, Thèmes est l'endroit pour t'entraîner."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurse für diese Sprache sind unterwegs. Bis dahin ist Themen der Ort zum Üben."
           }
         }
       }
@@ -2069,6 +2603,12 @@
             "state": "translated",
             "value": "Jours d'affilée"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tages-Streak"
+          }
         }
       }
     },
@@ -2091,6 +2631,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen"
           }
         }
       }
@@ -2115,6 +2661,12 @@
             "state": "translated",
             "value": "Supprimer les données de %1$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daten von %1$@ löschen"
+          }
         }
       }
     },
@@ -2137,6 +2689,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer les données d'apprentissage de %1$@ ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lerndaten von %1$@ löschen?"
           }
         }
       }
@@ -2161,6 +2719,12 @@
             "state": "translated",
             "value": "Supprimer les données d'apprentissage d'une langue"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lerndaten einer Sprache löschen"
+          }
         }
       }
     },
@@ -2183,6 +2747,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer le compte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto löschen"
           }
         }
       }
@@ -2207,6 +2777,12 @@
             "state": "translated",
             "value": "Supprimer toutes les conversations et l'apprentissage"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Gespräche und Lerninhalte löschen"
+          }
         }
       }
     },
@@ -2229,6 +2805,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer toutes les données d'apprentissage"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Lerndaten löschen"
           }
         }
       }
@@ -2253,6 +2835,12 @@
             "state": "translated",
             "value": "Supprimer toutes les données d'apprentissage de ce téléphone ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Lerndaten auf diesem Telefon löschen?"
+          }
         }
       }
     },
@@ -2275,6 +2863,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer la conversation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräch löschen"
           }
         }
       }
@@ -2299,6 +2893,12 @@
             "state": "translated",
             "value": "Supprimer cette conversation et ses preuves d'apprentissage ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Gespräch und seine Lernnachweise löschen?"
+          }
         }
       }
     },
@@ -2321,6 +2921,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quelle langue supprimer ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welche Sprache löschen?"
           }
         }
       }
@@ -2345,6 +2951,12 @@
             "state": "translated",
             "value": "Supprimer ton compte Palique ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Palique-Konto löschen?"
+          }
         }
       }
     },
@@ -2367,6 +2979,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Décris-la et nous la répéterons"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beschreibe sie, und wir üben sie"
           }
         }
       }
@@ -2391,6 +3009,12 @@
             "state": "translated",
             "value": "Décris la situation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beschreibe die Situation"
+          }
         }
       }
     },
@@ -2413,6 +3037,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertig"
           }
         }
       }
@@ -2437,6 +3067,12 @@
             "state": "translated",
             "value": "Chaque langue garde ses propres mots et sa progression. Palique trouve ton rythme en conversant. Le débit plus lent s'applique aux nouvelles conversations. L'entraînement d'écoute raconte une courte histoire sans sous-titres de sens — l'histoire écrite reste à l'écran, et tu peux toujours chercher des mots."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Sprache behält ihre eigenen Wörter und ihren Fortschritt. Palique findet dein Tempo im Gespräch. Langsameres Sprechen gilt für neue Gespräche. Hörübungen erzählen eine kurze Geschichte ohne Bedeutungs-Untertitel — die geschriebene Geschichte bleibt auf dem Bildschirm, und du kannst weiterhin Wörter nachschlagen."
+          }
         }
       }
     },
@@ -2459,6 +3095,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Modifier"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten"
           }
         }
       }
@@ -2483,6 +3125,12 @@
             "state": "translated",
             "value": "Terminer la conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräch beenden"
+          }
         }
       }
     },
@@ -2505,6 +3153,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Termine cette conversation pour changer de langue. Chaque langue garde ses propres mots et sa progression."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beende dieses Gespräch, um die Sprache zu wechseln. Jede Sprache behält ihre eigenen Wörter und ihren Fortschritt."
           }
         }
       }
@@ -2529,6 +3183,12 @@
             "state": "translated",
             "value": "Saisis une clé API OpenAI valide."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib einen gültigen OpenAI-API-Schlüssel ein."
+          }
         }
       }
     },
@@ -2551,6 +3211,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Effacer toutes les données d'apprentissage de cet iPhone ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Lerndaten auf diesem iPhone löschen?"
           }
         }
       }
@@ -2575,6 +3241,12 @@
             "state": "translated",
             "value": "Effacer les données d'apprentissage"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lerndaten löschen"
+          }
         }
       }
     },
@@ -2597,6 +3269,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Effacer les données d'apprentissage et repartir de zéro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lerndaten löschen und neu beginnen"
           }
         }
       }
@@ -2621,6 +3299,12 @@
             "state": "translated",
             "value": "Tout ce qui est ici concerne ta langue d'apprentissage actuelle. Change de langue pour voir sa propre progression."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles hier gehört zu deiner aktuellen Lernsprache. Wechsle die Sprache, um ihren eigenen Fortschritt zu sehen."
+          }
         }
       }
     },
@@ -2643,6 +3327,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'historique des examens est limité au compte connecté. Les tentatives en attente restent sur cet appareil jusqu'à la réussite de la synchronisation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Prüfungverlauf gehört zum angemeldeten Konto. Ausstehende Versuche bleiben auf diesem Gerät, bis die Synchronisierung gelingt."
           }
         }
       }
@@ -2667,6 +3357,12 @@
             "state": "translated",
             "value": "Extrait"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auszug"
+          }
         }
       }
     },
@@ -2689,6 +3385,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exercice %lld sur %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übung %lld von %lld"
           }
         }
       }
@@ -2713,6 +3415,12 @@
             "state": "translated",
             "value": "Exercices"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übungen"
+          }
         }
       }
     },
@@ -2735,6 +3443,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exercices terminés"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossene Übungen"
           }
         }
       }
@@ -2759,6 +3473,12 @@
             "state": "translated",
             "value": "Exporter la sauvegarde de la base de données (.db)"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenbank-Backup exportieren (.db)"
+          }
         }
       }
     },
@@ -2781,6 +3501,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les expressions que tu enregistres reviennent ici au bon moment."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausdrücke, die du speicherst, kommen hier zurück, wenn es darauf ankommt."
           }
         }
       }
@@ -2805,6 +3531,12 @@
             "state": "translated",
             "value": "Des mots familiers, prêts pour une nouvelle conversation."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertraute Wörter, bereit für das nächste Gespräch."
+          }
         }
       }
     },
@@ -2827,6 +3559,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rapide"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schnell"
           }
         }
       }
@@ -2851,6 +3589,12 @@
             "state": "translated",
             "value": "Trouver un thème"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thema finden"
+          }
         }
       }
     },
@@ -2873,6 +3617,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Je cherche quelque chose d'intéressant…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche etwas Interessantes…"
           }
         }
       }
@@ -2897,6 +3647,12 @@
             "state": "translated",
             "value": "Trouver ta voix"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Stimme findet sich"
+          }
         }
       }
     },
@@ -2919,6 +3675,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terminer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschließen"
           }
         }
       }
@@ -2943,6 +3705,12 @@
             "state": "translated",
             "value": "Terminer l'examen"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfung beenden"
+          }
         }
       }
     },
@@ -2965,6 +3733,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pour la prochaine fois"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für das nächste Mal"
           }
         }
       }
@@ -2989,6 +3763,12 @@
             "state": "translated",
             "value": "En douceur, pendant qu'on parle"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sanft, während wir reden"
+          }
         }
       }
     },
@@ -3011,6 +3791,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obtenir des jetons"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tokens holen"
           }
         }
       }
@@ -3035,6 +3821,12 @@
             "state": "translated",
             "value": "Écoute un court texte, puis réponds aux questions par écrit."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Höre einen kurzen Text und beantworte die Fragen schriftlich."
+          }
         }
       }
     },
@@ -3057,6 +3849,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aide et confidentialité"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hilfe und Datenschutz"
           }
         }
       }
@@ -3081,6 +3879,12 @@
             "state": "translated",
             "value": "Masquer les sous-titres de sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutungs-Untertitel ausblenden"
+          }
         }
       }
     },
@@ -3103,6 +3907,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Masquer le pinyin"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinyin ausblenden"
           }
         }
       }
@@ -3127,6 +3937,12 @@
             "state": "translated",
             "value": "Historique indisponible"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf nicht verfügbar"
+          }
         }
       }
     },
@@ -3149,6 +3965,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les conversations hébergées ne sont pas disponibles pour le moment. Réessaie plus tard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gehostete Gespräche sind gerade nicht verfügbar. Bitte versuche es später erneut."
           }
         }
       }
@@ -3173,6 +3995,12 @@
             "state": "translated",
             "value": "J'accepte d'envoyer cet extrait pour révision"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich stimme zu, diesen Auszug zur Überprüfung zu senden"
+          }
         }
       }
     },
@@ -3195,6 +4023,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Je suis prêt — afficher les questions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich bin bereit — Fragen zeigen"
           }
         }
       }
@@ -3219,6 +4053,12 @@
             "state": "translated",
             "value": "Importer une sauvegarde d'apprentissage"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lern-Backup importieren"
+          }
         }
       }
     },
@@ -3241,6 +4081,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "En cours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Läuft"
           }
         }
       }
@@ -3265,6 +4111,12 @@
             "state": "translated",
             "value": "Minutes incluses"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enthaltene Minuten"
+          }
         }
       }
     },
@@ -3287,6 +4139,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Des minutes incluses sont disponibles."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enthaltene Minuten verfügbar."
           }
         }
       }
@@ -3311,6 +4169,12 @@
             "state": "translated",
             "value": "Minutes incluses : connecte-toi pour vérifier ton solde."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enthaltene Minuten: Melde dich an, um dein Guthaben zu prüfen."
+          }
         }
       }
     },
@@ -3333,6 +4197,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Incorrect ou trompeur"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsch oder irreführend"
           }
         }
       }
@@ -3357,6 +4227,12 @@
             "state": "translated",
             "value": "Incorrect · %1$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsch · %@"
+          }
         }
       }
     },
@@ -3379,6 +4255,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Il s'écrit : %1$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es wird so geschrieben: %@"
           }
         }
       }
@@ -3403,6 +4285,12 @@
             "state": "translated",
             "value": "C'était : %1$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es war: %@"
+          }
         }
       }
     },
@@ -3425,6 +4313,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Parler librement"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfach reden"
           }
         }
       }
@@ -3449,6 +4343,12 @@
             "state": "translated",
             "value": "À ton rythme"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur dein Tempo"
+          }
         }
       }
     },
@@ -3471,6 +4371,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Garder le compte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto behalten"
           }
         }
       }
@@ -3495,6 +4401,12 @@
             "state": "translated",
             "value": "Garder les deux versions"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beide Versionen behalten"
+          }
         }
       }
     },
@@ -3517,6 +4429,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reste à l'aise"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleib entspannt"
           }
         }
       }
@@ -3541,6 +4459,12 @@
             "state": "translated",
             "value": "Continue à t'entraîner"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übe weiter"
+          }
         }
       }
     },
@@ -3563,6 +4487,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Phrases clés"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüsselphrasen"
           }
         }
       }
@@ -3587,6 +4517,12 @@
             "state": "translated",
             "value": "14 derniers jours"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte 14 Tage"
+          }
         }
       }
     },
@@ -3609,6 +4545,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "30 derniers jours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte 30 Tage"
           }
         }
       }
@@ -3633,6 +4575,12 @@
             "state": "translated",
             "value": "Apprends-le étape par étape"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schritt für Schritt lernen"
+          }
         }
       }
     },
@@ -3655,6 +4603,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Langue d'apprentissage"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lernsprache"
           }
         }
       }
@@ -3679,6 +4633,12 @@
             "state": "translated",
             "value": "Leçons terminées"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossene Lektionen"
+          }
         }
       }
     },
@@ -3702,6 +4662,12 @@
             "state": "translated",
             "value": "Réessayons"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versuchen wir es noch einmal"
+          }
         }
       }
     },
@@ -3721,6 +4687,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niveau"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Niveau"
@@ -3748,6 +4720,12 @@
             "state": "translated",
             "value": "Niveau %1$lld · %2$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niveau %1$lld · %2$@"
+          }
         }
       }
     },
@@ -3770,6 +4748,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Écouter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hören"
           }
         }
       }
@@ -3794,6 +4778,12 @@
             "state": "translated",
             "value": "Écoute et réponds"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hör zu und antworte"
+          }
         }
       }
     },
@@ -3816,6 +4806,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Écoute autant de fois que nécessaire. Le texte reste caché pendant que tu réponds — essaie d'abord de le comprendre avec tes oreilles."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hör so oft zu, wie du brauchst. Der Text bleibt verborgen, während du antwortest — versuche, ihn zuerst mit den Ohren zu verstehen."
           }
         }
       }
@@ -3840,6 +4836,12 @@
             "state": "translated",
             "value": "Médailles d'écoute"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörmedaillen"
+          }
         }
       }
     },
@@ -3862,6 +4864,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entraînement d'écoute"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörübungen"
           }
         }
       }
@@ -3886,6 +4894,12 @@
             "state": "translated",
             "value": "Textes d'écoute"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörtexte"
+          }
         }
       }
     },
@@ -3908,6 +4922,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Écoute…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ich höre zu…"
           }
         }
       }
@@ -3932,6 +4952,12 @@
             "state": "translated",
             "value": "Petit à petit · %1$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schritt für Schritt · %@"
+          }
         }
       }
     },
@@ -3954,6 +4980,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plus longue série"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Längster Streak"
           }
         }
       }
@@ -3978,6 +5010,12 @@
             "state": "translated",
             "value": "Installe-toi confortablement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mach es dir bequem"
+          }
         }
       }
     },
@@ -4000,6 +5038,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La maîtrise correspond à la meilleure preuve récente par compétence — elle s'estompe sans pratique et revient quand tu t'entraînes à nouveau."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beherrschung ist der beste aktuelle Nachweis pro Fähigkeit — sie verblasst ohne Übung und erholt sich, wenn du wieder übst."
           }
         }
       }
@@ -4024,6 +5068,12 @@
             "state": "translated",
             "value": "Sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutung"
+          }
         }
       }
     },
@@ -4046,6 +5096,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Langue des sens"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutungssprache"
           }
         }
       }
@@ -4070,6 +5126,12 @@
             "state": "translated",
             "value": "Sous-titres de sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutungs-Untertitel"
+          }
         }
       }
     },
@@ -4092,6 +5154,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couper le microphone"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon stummschalten"
           }
         }
       }
@@ -4116,6 +5184,12 @@
             "state": "translated",
             "value": "Nouvelle conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neues Gespräch"
+          }
         }
       }
     },
@@ -4138,6 +5212,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suivant"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter"
           }
         }
       }
@@ -4162,6 +5242,12 @@
             "state": "translated",
             "value": "Mot suivant"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächstes Wort"
+          }
         }
       }
     },
@@ -4184,6 +5270,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucune conversation ne correspond à ta recherche."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Gespräche passen zu deiner Suche."
           }
         }
       }
@@ -4208,6 +5300,12 @@
             "state": "translated",
             "value": "Pas encore de cours"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Kurse"
+          }
         }
       }
     },
@@ -4230,6 +5328,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plus aucune minute incluse."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine enthaltenen Minuten mehr."
           }
         }
       }
@@ -4254,6 +5358,12 @@
             "state": "translated",
             "value": "Aucun mot correspondant pour l'instant."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine passenden Wörter."
+          }
         }
       }
     },
@@ -4276,6 +5386,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plus aucun jeton prépayé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine vorausbezahlten Tokens mehr"
           }
         }
       }
@@ -4300,6 +5416,12 @@
             "state": "translated",
             "value": "Pas encore d'examens enregistrés"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine gespeicherten Prüfungen"
+          }
         }
       }
     },
@@ -4323,6 +5445,12 @@
             "state": "translated",
             "value": "Aucun mot à réviser en ce moment. Discute un peu, et les mots reviendront quand il sera temps."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Moment ist kein Wort fällig. Führe ein Gespräch, und die Wörter kommen wieder, wenn sie bereit sind."
+          }
         }
       }
     },
@@ -4342,6 +5470,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normal"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "Normal"
@@ -4369,6 +5503,12 @@
             "state": "translated",
             "value": "Pas maintenant"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
         }
       }
     },
@@ -4391,6 +5531,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pas encore — voici pourquoi :"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht — hier ist der Grund:"
           }
         }
       }
@@ -4415,6 +5561,12 @@
             "state": "translated",
             "value": "Rien à réviser pour le moment."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Moment nichts fällig."
+          }
         }
       }
     },
@@ -4434,6 +5586,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "OK"
@@ -4461,6 +5619,12 @@
             "state": "translated",
             "value": "Observé au fil des conversations. C'est provisoire, pas un certificat de niveau officiel."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beobachtet über Gespräche hinweg. Diese Angaben sind vorläufig, keine formellen Niveauzertifikate."
+          }
         }
       }
     },
@@ -4483,6 +5647,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Offensant ou blessant"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beleidigend oder verletzend"
           }
         }
       }
@@ -4507,6 +5677,12 @@
             "state": "translated",
             "value": "Un fichier .db avec tout ce que contient ton apprentissage : conversations, mots, leçons et progression. Restaurer une sauvegarde remplace ce qui se trouve sur cet appareil par le contenu du fichier. Cet appareil uniquement — pas de synchronisation cloud."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine .db-Datei mit allem, was dein Lernen enthält: Gespräche, Wörter, Lektionen und Fortschritt. Beim Wiederherstellen wird der Inhalt dieses Geräts durch den Inhalt der Datei ersetzt. Nur dieses Gerät — es gibt keine Cloud-Synchronisierung."
+          }
         }
       }
     },
@@ -4529,6 +5705,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Achat unique · Sans abonnement"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmalkauf · Kein Abo"
           }
         }
       }
@@ -4553,6 +5735,12 @@
             "state": "translated",
             "value": "Mentions open source"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open-Source-Hinweise"
+          }
         }
       }
     },
@@ -4575,6 +5763,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clé API OpenAI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI-API-Schlüssel"
           }
         }
       }
@@ -4599,6 +5793,12 @@
             "state": "translated",
             "value": "OpenAI n'a pas pu traiter la requête (HTTP %lld). Réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI konnte die Anfrage nicht abschließen (HTTP %lld). Bitte versuche es erneut."
+          }
         }
       }
     },
@@ -4621,6 +5821,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "OpenAI a renvoyé une réponse incomplète. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI hat eine unvollständige Antwort zurückgegeben. Bitte versuche es erneut."
           }
         }
       }
@@ -4645,6 +5851,12 @@
             "state": "translated",
             "value": "La limite d'utilisation ou de requêtes d'OpenAI a été atteinte. Vérifie la facturation et les limites de ton projet."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Nutzungs- oder Ratenlimit von OpenAI wurde erreicht. Prüfe Abrechnung und Limits deines Projekts."
+          }
         }
       }
     },
@@ -4667,6 +5879,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Résultat d'origine de l'examen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprüngliches Prüfungsergebnis"
           }
         }
       }
@@ -4691,6 +5909,12 @@
             "state": "translated",
             "value": "Notre conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unser Gespräch"
+          }
         }
       }
     },
@@ -4714,6 +5938,12 @@
             "state": "translated",
             "value": "Maîtrise globale"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamtbeherrschung"
+          }
         }
       }
     },
@@ -4733,6 +5963,12 @@
           }
         },
         "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PALIQUE"
+          }
+        },
+        "de": {
           "stringUnit": {
             "state": "translated",
             "value": "PALIQUE"
@@ -4760,6 +5996,12 @@
             "state": "translated",
             "value": "Palique (jetons)"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique (Tokens)"
+          }
         }
       }
     },
@@ -4782,6 +6024,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique 0.1 · compilation personnelle"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique 0.1 · persönlicher Build"
           }
         }
       }
@@ -4806,6 +6054,12 @@
             "state": "translated",
             "value": "Palique n'a pas pu mener cette demande à bien. Essaie un autre thème."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte diese Anfrage nicht abschließen. Versuche ein anderes Thema."
+          }
         }
       }
     },
@@ -4828,6 +6082,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique n'a pas pu supprimer les données d'apprentissage de la langue. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte die Lerndaten der Sprache nicht löschen. Bitte versuche es erneut."
           }
         }
       }
@@ -4852,6 +6112,12 @@
             "state": "translated",
             "value": "Palique n'a pas pu supprimer la sauvegarde d'apprentissage la plus ancienne. Tes conversations sont toujours là. Réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte das ältere Lern-Backup nicht löschen. Deine Gespräche sind noch da. Bitte versuche es erneut."
+          }
         }
       }
     },
@@ -4874,6 +6140,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique n'a pas pu effacer ses données d'apprentissage. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte seine Lerndaten nicht löschen. Bitte versuche es erneut."
           }
         }
       }
@@ -4898,6 +6170,12 @@
             "state": "translated",
             "value": "Palique n'a pas pu ouvrir un nouvel enregistrement d'apprentissage. Réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte keinen neuen Lerneintrag öffnen. Bitte versuche es erneut."
+          }
         }
       }
     },
@@ -4920,6 +6198,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique n'a pas pu ouvrir son enregistrement d'apprentissage. Tes données existantes n'ont pas été remplacées."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte seinen Lerneintrag nicht öffnen. Deine bestehenden Daten wurden nicht ersetzt."
           }
         }
       }
@@ -4944,6 +6228,12 @@
             "state": "translated",
             "value": "Palique n'a pas pu retirer les expressions sélectionnées. Réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte die ausgewählten Ausdrücke nicht entfernen. Bitte versuche es erneut."
+          }
         }
       }
     },
@@ -4966,6 +6256,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique n'a pas pu enregistrer ta progression. Exporte une sauvegarde et réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte deinen Fortschritt nicht speichern. Bitte exportiere ein Backup und versuche es erneut."
           }
         }
       }
@@ -4990,6 +6286,12 @@
             "state": "translated",
             "value": "Palique parle %1$@. Choisis la langue que tu lis le plus facilement pour les sens."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique spricht %1$@. Wähle die Sprache, in der du Bedeutungen am leichtesten liest."
+          }
         }
       }
     },
@@ -5012,6 +6314,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Palique n'arrive toujours pas à ouvrir tes données d'apprentissage. Rien n'a été effacé. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique konnte deine Lerndaten weiterhin nicht öffnen. Es wurde nichts gelöscht. Bitte versuche es erneut."
           }
         }
       }
@@ -5036,6 +6344,12 @@
             "state": "translated",
             "value": "Palique conserve tes identifiants de connexion et tes sessions de compte. Tu peux t'entraîner avec ta propre clé API sans compte."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palique speichert deine Anmeldedaten und Kontositzungen. Mit deinem eigenen API-Schlüssel kannst du auch ohne Konto üben."
+          }
         }
       }
     },
@@ -5058,6 +6372,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réussi"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestanden"
           }
         }
       }
@@ -5082,6 +6402,12 @@
             "state": "translated",
             "value": "Conversations passées"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergangene Gespräche"
+          }
         }
       }
     },
@@ -5104,6 +6430,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Écouter le texte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text abspielen"
           }
         }
       }
@@ -5128,6 +6460,12 @@
             "state": "translated",
             "value": "Pratique"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übung"
+          }
         }
       }
     },
@@ -5150,6 +6488,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Temps de pratique"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übungszeit"
           }
         }
       }
@@ -5174,6 +6518,12 @@
             "state": "translated",
             "value": "Pratiquer une leçon"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Lektion üben"
+          }
         }
       }
     },
@@ -5196,6 +6546,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pratiquer une situation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Situation üben"
           }
         }
       }
@@ -5220,6 +6576,12 @@
             "state": "translated",
             "value": "Pratiquer encore"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nochmal üben"
+          }
         }
       }
     },
@@ -5242,6 +6604,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pratiquer les exercices"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übungen machen"
           }
         }
       }
@@ -5266,6 +6634,12 @@
             "state": "translated",
             "value": "Pratiquer à l'oral"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprechen üben"
+          }
         }
       }
     },
@@ -5288,6 +6662,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pratiquer ça"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das üben"
           }
         }
       }
@@ -5312,6 +6692,12 @@
             "state": "translated",
             "value": "Pratiquer l'écrit (%lld à réviser)"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibübung (%lld fällig)"
+          }
         }
       }
     },
@@ -5334,6 +6720,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jetons prépayés pour le modèle hébergé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorausbezahlte Tokens für das gehostete Modell"
           }
         }
       }
@@ -5358,6 +6750,12 @@
             "state": "translated",
             "value": "Préparation de ton bilan…"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Rückschau wird vorbereitet…"
+          }
         }
       }
     },
@@ -5380,6 +6778,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pratique de la prononciation (bêta)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausspracheübung (Beta)"
           }
         }
       }
@@ -5404,6 +6808,12 @@
             "state": "translated",
             "value": "Prononciation : %lld%% — pas tout à fait, réécoute et essaie encore une fois"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussprache: %lld%% — noch nicht ganz, hör noch einmal zu und versuche es erneut"
+          }
         }
       }
     },
@@ -5426,6 +6836,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prononciation : %lld%% — réussi, bien dit !"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussprache: %lld%% — bestanden, gut gesagt!"
           }
         }
       }
@@ -5450,6 +6866,12 @@
             "state": "translated",
             "value": "Les achats et les conversations hébergées ne sont pas disponibles dans cette version."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe und gehostete Gespräche sind in dieser Build-Version nicht verfügbar."
+          }
         }
       }
     },
@@ -5472,6 +6894,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les achats ne sont pas disponibles dans cette version."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe sind in dieser Build-Version nicht verfügbar."
           }
         }
       }
@@ -5496,6 +6924,12 @@
             "state": "translated",
             "value": "Question %lld sur %lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frage %lld von %lld"
+          }
         }
       }
     },
@@ -5518,6 +6952,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lire"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesen"
           }
         }
       }
@@ -5542,6 +6982,12 @@
             "state": "translated",
             "value": "Lis une courte leçon, puis pratique-la dans une vraie conversation."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lies eine kurze Lektion und übe sie in einem echten Gespräch."
+          }
         }
       }
     },
@@ -5564,6 +7010,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lire à voix haute"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laut lesen"
           }
         }
       }
@@ -5588,6 +7040,12 @@
             "state": "translated",
             "value": "Lis et réponds"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lies und antworte"
+          }
         }
       }
     },
@@ -5610,6 +7068,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Motif"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grund"
           }
         }
       }
@@ -5634,6 +7098,12 @@
             "state": "translated",
             "value": "Rappel"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abruf"
+          }
         }
       }
     },
@@ -5656,6 +7126,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les barres de rappel résument la récupération répétée dans le temps ; trois barres exigent des preuves espacées sur plusieurs jours et contextes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Abrufbalken fassen wiederholtes Abrufen über die Zeit zusammen; drei Balken brauchen verteilte Nachweise über Tage und Kontexte."
           }
         }
       }
@@ -5680,6 +7156,12 @@
             "state": "translated",
             "value": "Rappe l'expression correspondant à ce sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rufe den Ausdruck zu dieser Bedeutung ab"
+          }
         }
       }
     },
@@ -5702,6 +7184,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Actualiser le compte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto aktualisieren"
           }
         }
       }
@@ -5726,6 +7214,12 @@
             "state": "translated",
             "value": "Retirer"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernen"
+          }
         }
       }
     },
@@ -5748,6 +7242,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Retirer %1$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ entfernen"
           }
         }
       }
@@ -5772,6 +7272,12 @@
             "state": "translated",
             "value": "Retirer de mes mots"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus meinen Wörtern entfernen"
+          }
         }
       }
     },
@@ -5794,6 +7300,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Supprimer la clé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüssel entfernen"
           }
         }
       }
@@ -5818,6 +7330,12 @@
             "state": "translated",
             "value": "Supprimer des langues…"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachen entfernen…"
+          }
         }
       }
     },
@@ -5840,6 +7358,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remplacer la clé OpenAI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenAI-Schlüssel ersetzen"
           }
         }
       }
@@ -5864,6 +7388,12 @@
             "state": "translated",
             "value": "Réponds en %1$@ ou dans une autre langue"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antworte auf %1$@ oder in einer anderen Sprache"
+          }
         }
       }
     },
@@ -5886,6 +7416,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réponds dans la langue qui te vient."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Antworte in der Sprache, die dir gerade einfällt."
           }
         }
       }
@@ -5910,6 +7446,12 @@
             "state": "translated",
             "value": "Signalement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldung"
+          }
         }
       }
     },
@@ -5932,6 +7474,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Signaler cette réponse"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Antwort melden"
           }
         }
       }
@@ -5956,6 +7504,12 @@
             "state": "translated",
             "value": "Restaurer la sauvegarde de la base de données (.db)"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenbank-Backup wiederherstellen (.db)"
+          }
         }
       }
     },
@@ -5978,6 +7532,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaurer les tentatives enregistrées"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeicherte Versuche wiederherstellen"
           }
         }
       }
@@ -6002,6 +7562,12 @@
             "state": "translated",
             "value": "Réessayer sans supprimer les données"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Löschen der Daten erneut versuchen"
+          }
         }
       }
     },
@@ -6024,6 +7590,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le même ami. Un nouvel endroit."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gleicher Freund. Neuer Ort."
           }
         }
       }
@@ -6048,6 +7620,12 @@
             "state": "translated",
             "value": "Enregistrer"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern"
+          }
         }
       }
     },
@@ -6070,6 +7648,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer et continuer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichern und weiter"
           }
         }
       }
@@ -6094,6 +7678,12 @@
             "state": "translated",
             "value": "Enregistre des expressions depuis une leçon ou le dictionnaire et elles reviendront pour le rappel."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichere Ausdrücke aus einer Lektion oder dem Wörterbuch, und sie kommen zum Abfragen zurück."
+          }
         }
       }
     },
@@ -6116,6 +7706,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer la clé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüssel speichern"
           }
         }
       }
@@ -6140,6 +7736,12 @@
             "state": "translated",
             "value": "Enregistrer la clé de remplacement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersatzschlüssel speichern"
+          }
         }
       }
     },
@@ -6162,6 +7764,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer le résultat"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ergebnis speichern"
           }
         }
       }
@@ -6186,6 +7794,12 @@
             "state": "translated",
             "value": "Enregistré"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeichert"
+          }
         }
       }
     },
@@ -6208,6 +7822,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tentatives enregistrées"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeicherte Versuche"
           }
         }
       }
@@ -6232,6 +7852,12 @@
             "state": "translated",
             "value": "Expressions enregistrées"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeicherte Ausdrücke"
+          }
         }
       }
     },
@@ -6254,6 +7880,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrée en toute sécurité. Lance une conversation pour te connecter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicher gespeichert. Starte ein Gespräch, um zu verbinden."
           }
         }
       }
@@ -6278,6 +7910,12 @@
             "state": "translated",
             "value": "Dis-le à ta façon."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sag es auf deine Art."
+          }
         }
       }
     },
@@ -6300,6 +7938,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Score : %1$lld%% · %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Punktzahl: %1$lld%% · %2$@"
           }
         }
       }
@@ -6324,6 +7968,12 @@
             "state": "translated",
             "value": "La recherche exige un moteur capable de renvoyer des sources. Les sources restent attachées au thème."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Suche braucht eine Engine, die Quellen liefern kann. Quellen bleiben dem Thema zugeordnet."
+          }
         }
       }
     },
@@ -6346,6 +7996,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tout sélectionner"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle auswählen"
           }
         }
       }
@@ -6370,6 +8026,12 @@
             "state": "translated",
             "value": "Envoyer le signalement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldung senden"
+          }
         }
       }
     },
@@ -6392,6 +8054,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Envoi…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird gesendet…"
           }
         }
       }
@@ -6416,6 +8084,12 @@
             "state": "translated",
             "value": "Réglages"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen"
+          }
         }
       }
     },
@@ -6438,6 +8112,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Partager des métriques d'utilisation anonymes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anonyme Nutzungsdaten teilen"
           }
         }
       }
@@ -6462,6 +8142,12 @@
             "state": "translated",
             "value": "Afficher les sous-titres de sens"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutungs-Untertitel anzeigen"
+          }
         }
       }
     },
@@ -6484,6 +8170,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher le pinyin"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinyin anzeigen"
           }
         }
       }
@@ -6508,6 +8200,12 @@
             "state": "translated",
             "value": "Afficher la transcription"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript zeigen"
+          }
         }
       }
     },
@@ -6530,6 +8228,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connecte-toi pour acheter des jetons"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Melde dich an, um Tokens zu kaufen"
           }
         }
       }
@@ -6554,6 +8258,12 @@
             "state": "translated",
             "value": "Connecte-toi à ton compte Palique pour utiliser les minutes incluses."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Melde dich bei deinem Palique-Konto an, um enthaltene Minuten zu nutzen."
+          }
         }
       }
     },
@@ -6576,6 +8286,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Se connecter avec Google"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Google anmelden"
           }
         }
       }
@@ -6600,6 +8316,12 @@
             "state": "translated",
             "value": "Se déconnecter sur tous les appareils"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf allen Geräten abmelden"
+          }
         }
       }
     },
@@ -6622,6 +8344,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La connexion n'est pas disponible dans cet aperçu."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Anmeldung ist in dieser Vorschau nicht verfügbar."
           }
         }
       }
@@ -6646,6 +8374,12 @@
             "state": "translated",
             "value": "Connecté avec Apple"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angemeldet mit Apple"
+          }
         }
       }
     },
@@ -6668,6 +8402,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Connecté avec Google"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angemeldet mit Google"
           }
         }
       }
@@ -6692,6 +8432,12 @@
             "state": "translated",
             "value": "Déconnecté sur cet iPhone. Impossible de joindre Palique pour révoquer les autres sessions ; elles expirent sous 24 heures."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem iPhone abgemeldet. Wir konnten Palique nicht erreichen, um andere Sitzungen zu widerrufen; sie laufen innerhalb von 24 Stunden ab."
+          }
         }
       }
     },
@@ -6714,6 +8460,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Situation : %1$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Situation: %@"
           }
         }
       }
@@ -6738,6 +8490,12 @@
             "state": "translated",
             "value": "Compétences"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fähigkeiten"
+          }
         }
       }
     },
@@ -6760,6 +8518,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lent"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langsam"
           }
         }
       }
@@ -6784,6 +8548,12 @@
             "state": "translated",
             "value": "Autre chose"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etwas anderes"
+          }
         }
       }
     },
@@ -6806,6 +8576,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La recherche de thèmes avec sources n'est pas disponible avec le moteur de conversation sélectionné. Tu peux quand même utiliser les thèmes enregistrés."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Themensuche mit Quellen ist mit der ausgewählten Gesprächs-Engine nicht verfügbar. Gespeicherte Themen kannst du trotzdem nutzen."
           }
         }
       }
@@ -6830,6 +8606,12 @@
             "state": "translated",
             "value": "Sources"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quellen"
+          }
         }
       }
     },
@@ -6852,6 +8634,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sources · %1$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quellen · %@"
           }
         }
       }
@@ -6876,6 +8664,12 @@
             "state": "translated",
             "value": "Débit de la voix"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprechgeschwindigkeit"
+          }
         }
       }
     },
@@ -6898,6 +8692,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Démarre une conversation et tes mots apparaîtront ici."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte ein Gespräch, und deine Wörter erscheinen hier."
           }
         }
       }
@@ -6922,6 +8722,12 @@
             "state": "translated",
             "value": "Démarre une conversation pour voir ta progression."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte ein Gespräch, um deinen Fortschritt zu sehen."
+          }
         }
       }
     },
@@ -6944,6 +8750,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Commencer un examen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfung starten"
           }
         }
       }
@@ -6968,6 +8780,12 @@
             "state": "translated",
             "value": "Démarrer la conversation"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräch starten"
+          }
         }
       }
     },
@@ -6990,6 +8808,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Commencer à parler"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Losreden"
           }
         }
       }
@@ -7014,6 +8838,12 @@
             "state": "translated",
             "value": "Étape %lld sur 2"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schritt %lld von 2"
+          }
         }
       }
     },
@@ -7036,6 +8866,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Arrêter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopp"
           }
         }
       }
@@ -7060,6 +8896,12 @@
             "state": "translated",
             "value": "Langue des sous-titres"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untertitelsprache"
+          }
         }
       }
     },
@@ -7082,6 +8924,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Changer de compte de test"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testkonto wechseln"
           }
         }
       }
@@ -7106,6 +8954,12 @@
             "state": "translated",
             "value": "La synchronisation n'a pas abouti. Tes données d'apprentissage restent sur cet appareil."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Synchronisierung konnte nicht abgeschlossen werden. Deine Lerndaten bleiben auf diesem Gerät."
+          }
         }
       }
     },
@@ -7128,6 +8982,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Synchroniser les tentatives enregistrées"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeicherte Versuche synchronisieren"
           }
         }
       }
@@ -7152,6 +9012,12 @@
             "state": "translated",
             "value": "Synchronisation de ta progression d'apprentissage…"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Lernfortschritt wird synchronisiert…"
+          }
         }
       }
     },
@@ -7174,6 +9040,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Système"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
           }
         }
       }
@@ -7198,6 +9070,12 @@
             "state": "translated",
             "value": "Parler de ça"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Darüber reden"
+          }
         }
       }
     },
@@ -7220,6 +9098,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Touche une phrase pour l'entendre, puis touche Vérifier et dis-la à voix haute."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf eine Formulierung, um sie zu hören, tippe dann auf Prüfen und sag sie laut."
           }
         }
       }
@@ -7244,6 +9128,12 @@
             "state": "translated",
             "value": "Merci. Le signalement a été envoyé pour révision."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danke. Die Meldung wurde zur Überprüfung gesendet."
+          }
         }
       }
     },
@@ -7266,6 +9156,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible d'appliquer la version du compte. Ta version enregistrée n'a pas changé."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Konto-Version konnte nicht übernommen werden. Deine gespeicherte Version wurde nicht geändert."
           }
         }
       }
@@ -7290,6 +9186,12 @@
             "state": "translated",
             "value": "Les barres estiment le rappel à l'oral, pas une maîtrise permanente. Utiliser un mot avec des sens visibles compte comme une pratique accompagnée."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Balken schätzen das gesprochene Abrufen ab, nicht dauerhafte Beherrschung. Ein Wort mit sichtbaren Bedeutungen zu benutzen zählt als unterstützte Übung."
+          }
         }
       }
     },
@@ -7312,6 +9214,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'examen n'a pas pu être validé ni enregistré, il n'a donc pas commencé. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Prüfung konnte nicht geprüft oder gespeichert werden und hat deshalb nicht begonnen. Bitte versuche es erneut."
           }
         }
       }
@@ -7336,6 +9244,12 @@
             "state": "translated",
             "value": "La donnée de test de récupération d'examen n'est pas valide."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Test-Fixture der Prüfungswiederherstellung ist ungültig."
+          }
         }
       }
     },
@@ -7358,6 +9272,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La donnée de test de récupération d'examen n'est pas disponible."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Test-Fixture der Prüfungswiederherstellung ist nicht verfügbar."
           }
         }
       }
@@ -7382,6 +9302,12 @@
             "state": "translated",
             "value": "Impossible de séparer les versions de l'examen. Aucune version n'a été écartée."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Prüfungsversionen konnten nicht getrennt werden. Keine Version wurde verworfen."
+          }
         }
       }
     },
@@ -7404,6 +9330,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible de supprimer la clé. Déverrouille cet iPhone et réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Schlüssel konnte nicht entfernt werden. Entsperr dieses iPhone und versuche es erneut."
           }
         }
       }
@@ -7428,6 +9360,12 @@
             "state": "translated",
             "value": "Impossible d'enregistrer la clé dans le Keychain de cet appareil."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Schlüssel konnte nicht im Keychain dieses Geräts gespeichert werden."
+          }
         }
       }
     },
@@ -7450,6 +9388,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "L'enregistrement d'apprentissage n'est pas disponible."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Lerneintrag ist nicht verfügbar."
           }
         }
       }
@@ -7474,6 +9418,12 @@
             "state": "translated",
             "value": "Impossible d'envoyer le signalement pour le moment. Réessaie plus tard."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Meldung konnte gerade nicht gesendet werden. Bitte versuche es später erneut."
+          }
         }
       }
     },
@@ -7496,6 +9446,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le bilan n'a pas pu être préparé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Rückschau konnte nicht erstellt werden"
           }
         }
       }
@@ -7520,6 +9476,12 @@
             "state": "translated",
             "value": "La recherche n'a renvoyé aucune source vérifiable. Essaie un thème plus précis."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Suche hat keine überprüfbaren Quellen geliefert. Versuche ein genaueres Thema."
+          }
         }
       }
     },
@@ -7542,6 +9504,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le texte reste visible — relis-le autant de fois que nécessaire et réponds aux questions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Text bleibt sichtbar — lies ihn so oft, wie du brauchst, und beantworte die Fragen."
           }
         }
       }
@@ -7566,6 +9534,12 @@
             "state": "translated",
             "value": "Impossible d'établir la connexion vocale. Vérifie ta connexion et réessaie."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sprachverbindung konnte nicht hergestellt werden. Prüfe deine Verbindung und versuche es erneut."
+          }
         }
       }
     },
@@ -7588,6 +9562,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "La connexion vocale a pris trop de temps. Réessaie."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sprachverbindung hat zu lange gedauert. Bitte versuche es erneut."
           }
         }
       }
@@ -7612,6 +9592,12 @@
             "state": "translated",
             "value": "Le monde aujourd'hui"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Welt heute"
+          }
         }
       }
     },
@@ -7634,6 +9620,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thème %1$lld · %2$@ · %3$@ · %4$lld questions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thema %1$lld · %2$@ · %3$@ · %4$lld Fragen"
           }
         }
       }
@@ -7658,6 +9650,12 @@
             "state": "translated",
             "value": "Thème %1$lld · %2$@ · %3$lld questions"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thema %1$lld · %2$@ · %3$lld Fragen"
+          }
         }
       }
     },
@@ -7680,6 +9678,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ces tentatives sont enregistrées sur cet appareil. Connecte-toi pour voir l'historique des examens synchronisé avec le compte."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Versuche sind auf diesem Gerät gespeichert. Melde dich an, um den mit dem Konto synchronisierten Prüfungsverlauf zu sehen."
           }
         }
       }
@@ -7704,6 +9708,12 @@
             "state": "translated",
             "value": "Ils pousseront à partir d'ici."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von hier aus wachsen sie."
+          }
         }
       }
     },
@@ -7726,6 +9736,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cette clé API n'a peut-être pas accès au modèle demandé. Vérifie ton projet OpenAI."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser API-Schlüssel hat möglicherweise keinen Zugriff auf das angefragte Modell. Prüfe dein OpenAI-Projekt."
           }
         }
       }
@@ -7750,6 +9766,12 @@
             "state": "translated",
             "value": "Cela supprime définitivement toutes les conversations, tous les mots et toute progression sur cet iPhone. C'est irréversible."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies entfernt endgültig jedes Gespräch, jedes Wort und jeden Fortschrittseintrag auf diesem iPhone. Das kann nicht rückgängig gemacht werden."
+          }
         }
       }
     },
@@ -7772,6 +9794,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cela supprime les conversations, le vocabulaire et la progression. Exporte d'abord une sauvegarde si tu veux les garder. Ta clé API et tes préférences restent."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies entfernt Gespräche, Wortschatz und Fortschritt. Exportiere vorher ein Backup, wenn du sie behalten willst. Dein API-Schlüssel und deine Einstellungen bleiben."
           }
         }
       }
@@ -7796,6 +9824,12 @@
             "state": "translated",
             "value": "Cela supprime les conversations, les mots et la progression des leçons en %1$@. Les autres langues, ta clé et tes préférences restent. Exporte d'abord une sauvegarde si tu veux les garder."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies entfernt die Gespräche, Wörter und Lektionsfortschritte von %1$@. Andere Sprachen, dein Schlüssel und deine Einstellungen bleiben. Exportiere vorher ein Backup, wenn du sie behalten willst."
+          }
         }
       }
     },
@@ -7818,6 +9852,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cela supprime tes identifiants de connexion et tes sessions de compte, et tu perds les minutes gratuites non utilisées. L'historique d'apprentissage reste sur cet iPhone ; tu peux le supprimer séparément dans les Réglages. Un solde payé, un paiement en attente ou une conversation active doit être réglé avant la suppression."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies entfernt deine Anmeldedaten und Kontositzungen, und ungenutzte Gratisminuten verfallen. Der Lernverlauf bleibt auf diesem iPhone; du kannst ihn separat in den Einstellungen entfernen. Ein bezahltes Guthaben, eine ausstehende Zahlung oder ein aktives Gespräch müssen vor der Löschung geklärt sein."
           }
         }
       }
@@ -7842,6 +9882,12 @@
             "state": "translated",
             "value": "Cet examen enregistré n'a pas pu être ouvert. Ses données d'origine n'ont pas changé."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese gespeicherte Prüfung konnte nicht geöffnet werden. Ihre ursprünglichen Daten wurden nicht geändert."
+          }
         }
       }
     },
@@ -7864,6 +9910,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cette version utilise ta clé API OpenAI pour démarrer une conversation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Version verwendet deinen OpenAI-API-Schlüssel, um ein Gespräch zu starten."
           }
         }
       }
@@ -7888,6 +9940,12 @@
             "state": "translated",
             "value": "À peaufiner"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Feinschliff"
+          }
         }
       }
     },
@@ -7910,6 +9968,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les packs de jetons ne sont pas disponibles pour le moment. Réessaie plus tard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token-Pakete sind gerade nicht verfügbar. Bitte prüfe später erneut."
           }
         }
       }
@@ -7934,6 +9998,12 @@
             "state": "translated",
             "value": "Les jetons sont un crédit de service prépayé pour le modèle hébergé. Ce n'est pas une monnaie et ils n'ont aucune valeur en espèces. L'usage est compté par appel — pas d'option illimitée."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tokens sind vorausbezahltes Dienstguthaben für das gehostete Modell. Sie sind kein Zahlungsmittel und haben keinen Geldwert. Die Nutzung wird pro Anruf gemessen — es gibt keine unbegrenzte Option."
+          }
         }
       }
     },
@@ -7956,6 +10026,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trop de requêtes. Réessaie dans un instant."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu viele Anfragen. Bitte versuche es gleich noch einmal."
           }
         }
       }
@@ -7980,6 +10056,12 @@
             "state": "translated",
             "value": "Réessayer"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
         }
       }
     },
@@ -8002,6 +10084,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Essaie un autre mot en %1$@ ou un autre sens en anglais."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versuche ein anderes Wort auf %1$@ oder eine englische Bedeutung."
           }
         }
       }
@@ -8026,6 +10114,12 @@
             "state": "translated",
             "value": "Réessayer le chargement"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden erneut versuchen"
+          }
         }
       }
     },
@@ -8048,6 +10142,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réessayer le sens"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedeutung erneut versuchen"
           }
         }
       }
@@ -8072,6 +10172,12 @@
             "state": "translated",
             "value": "Active les sens dès que tu as besoin d'un coup de main."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schalte Bedeutungen ein, wann immer du Hilfe brauchst."
+          }
         }
       }
     },
@@ -8094,6 +10200,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Écrire à la place"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stattdessen schreiben"
           }
         }
       }
@@ -8118,6 +10230,12 @@
             "state": "translated",
             "value": "Débloque une fois, puis prépaie de petits packs de jetons. Le modèle hébergé répond avec la clé de l'app ; ta voix ne quitte jamais l'appareil."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einmal freischalten, dann kleine Token-Pakete vorausbezahlen. Das gehostete Modell antwortet mit dem Schlüssel der App; deine Stimme verlässt das Gerät nie."
+          }
         }
       }
     },
@@ -8140,6 +10258,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réactiver le microphone"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon aktivieren"
           }
         }
       }
@@ -8164,6 +10288,12 @@
             "state": "translated",
             "value": "Mise à jour du compte"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto wird aktualisiert"
+          }
         }
       }
     },
@@ -8186,6 +10316,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Utiliser la version du compte"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto-Version verwenden"
           }
         }
       }
@@ -8210,6 +10346,12 @@
             "state": "translated",
             "value": "Utiliser ta propre clé API"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigenen API-Schlüssel verwenden"
+          }
         }
       }
     },
@@ -8232,6 +10374,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Très lent"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sehr langsam"
           }
         }
       }
@@ -8256,6 +10404,12 @@
             "state": "translated",
             "value": "L'estimation vocale utilise 0,05 $/min au 11 septembre 2026. La traduction, l'enseignement et la recherche coûtent en supplément. Une requête interrompue peut être facturée sans apparaître ici. Ton tableau de bord OpenAI fait foi. La limite de temps est locale, pas un plafond de facturation."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sprachschätzung verwendet 0,05 $/Min. (Stand: 11. September 2026). Übersetzung, Lehre und Suche kosten extra. Unterbrochene Anfragen können abgerechnet werden, ohne dass hier ein Nutzungsverzeichnis entsteht. Dein OpenAI-Dashboard ist maßgeblich. Das Zeitlimit gilt lokal, nicht als Abrechnungsgrenze."
+          }
         }
       }
     },
@@ -8278,6 +10432,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voix : GPT-Live-1 · Professeur : GPT-5.6 Luna"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stimme: GPT-Live-1 · Lehrer: GPT-5.6 Luna"
           }
         }
       }
@@ -8302,6 +10462,12 @@
             "state": "translated",
             "value": "Nous réécoutons ta pratique."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir hören deine Übung noch einmal an."
+          }
         }
       }
     },
@@ -8324,6 +10490,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Examens hebdomadaires"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wochenprüfungen"
           }
         }
       }
@@ -8348,6 +10520,12 @@
             "state": "translated",
             "value": "Examens hebdomadaires et résultats"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wochenprüfungen und Ergebnisse"
+          }
         }
       }
     },
@@ -8370,6 +10548,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bienvenue sur Palique"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Willkommen bei Palique"
           }
         }
       }
@@ -8394,6 +10578,12 @@
             "state": "translated",
             "value": "Nous trouverons ton rythme en conversant."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wir finden dein Tempo im Gespräch."
+          }
         }
       }
     },
@@ -8416,6 +10606,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce qui a été dit"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was gesagt wurde"
           }
         }
       }
@@ -8440,6 +10636,12 @@
             "state": "translated",
             "value": "Ce qui a bien marché"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was gut lief"
+          }
         }
       }
     },
@@ -8462,6 +10664,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quelle langue\nveux-tu parler ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was möchtest\ndu sprechen?"
           }
         }
       }
@@ -8486,6 +10694,12 @@
             "state": "translated",
             "value": "Que veux-tu pratiquer ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was möchtest du üben?"
+          }
         }
       }
     },
@@ -8508,6 +10722,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "De quoi veux-tu parler ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Worüber möchtest du reden?"
           }
         }
       }
@@ -8532,6 +10752,12 @@
             "state": "translated",
             "value": "Ce que tu as dit"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was du gesagt hast"
+          }
         }
       }
     },
@@ -8554,6 +10780,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Qu'as-tu\nen tête ?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was geht\ndir durch den Kopf?"
           }
         }
       }
@@ -8578,6 +10810,12 @@
             "state": "translated",
             "value": "Pourquoi le signales-tu ?"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warum meldest du das?"
+          }
         }
       }
     },
@@ -8600,6 +10838,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Avec ta permission, Palique envoie l'audio et le texte sélectionné à OpenAI pour fournir conversations et sens. Les règles de conservation du fournisseur s'appliquent."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit deiner Erlaubnis sendet Palique Audio und ausgewählten Text an OpenAI, um Gespräche und Bedeutungen bereitzustellen. Die Aufbewahrungsregeln des Anbieters gelten."
           }
         }
       }
@@ -8624,6 +10868,12 @@
             "state": "translated",
             "value": "Mot %lld sur %lld"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wort %lld von %lld"
+          }
         }
       }
     },
@@ -8646,6 +10896,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mots par rappel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wörter nach Abruf"
           }
         }
       }
@@ -8670,6 +10926,12 @@
             "state": "translated",
             "value": "Écris le mot qui signifie :"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibe das Wort, das Folgendes bedeutet:"
+          }
         }
       }
     },
@@ -8692,6 +10954,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pratique de l'écrit"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibübung"
           }
         }
       }
@@ -8716,6 +10984,12 @@
             "state": "translated",
             "value": "Mauvaise langue"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsche Sprache"
+          }
         }
       }
     },
@@ -8738,6 +11012,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "TOI"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DU"
           }
         }
       }
@@ -8762,6 +11042,12 @@
             "state": "translated",
             "value": "Tu as bien répondu %1$lld fois sur %2$lld."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast %lld von %lld richtig beantwortet."
+          }
         }
       }
     },
@@ -8784,6 +11070,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tu peux changer les deux langues dans les Réglages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beide Sprachen kannst du in den Einstellungen ändern."
           }
         }
       }
@@ -8808,6 +11100,12 @@
             "state": "translated",
             "value": "Tu as pratiqué %1$lld mots et écrit correctement %2$lld."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast %lld Wörter geübt und %lld richtig geschrieben."
+          }
         }
       }
     },
@@ -8830,6 +11128,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tu as dit"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast gesagt"
           }
         }
       }
@@ -8854,6 +11158,12 @@
             "state": "translated",
             "value": "Tes conversations en %1$@ apparaîtront ici."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Gespräche auf %1$@ erscheinen hier."
+          }
         }
       }
     },
@@ -8876,6 +11186,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ton compte OpenAI paie l'usage. La clé reste dans le Keychain de cet iPhone et n'est envoyée qu'à OpenAI."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein OpenAI-Konto zahlt die Nutzung. Der Schlüssel bleibt im Keychain dieses iPhones und wird nur an OpenAI gesendet."
           }
         }
       }
@@ -8900,6 +11216,12 @@
             "state": "translated",
             "value": "Ta clé OpenAI"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein OpenAI-Schlüssel"
+          }
         }
       }
     },
@@ -8922,6 +11244,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta clé OpenAI n'a pas été acceptée. Vérifie-la dans les Réglages."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein OpenAI-Schlüssel wurde nicht akzeptiert. Prüfe ihn in den Einstellungen."
           }
         }
       }
@@ -8946,6 +11274,12 @@
             "state": "translated",
             "value": "Ton compte Palique"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Palique-Konto"
+          }
         }
       }
     },
@@ -8968,6 +11302,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta réponse"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Antwort"
           }
         }
       }
@@ -8992,6 +11332,12 @@
             "state": "translated",
             "value": "Ta réponse : %1$@"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Antwort: %@"
+          }
         }
       }
     },
@@ -9014,6 +11360,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tes réponses sont enregistrées. Le résultat doit encore être consigné."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Antworten sind gespeichert. Das Ergebnis muss noch erfasst werden."
           }
         }
       }
@@ -9038,6 +11390,12 @@
             "state": "translated",
             "value": "Ta sauvegarde a été importée."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Backup wurde importiert."
+          }
         }
       }
     },
@@ -9060,6 +11418,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta conversation apparaîtra ici."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Gespräch erscheint hier."
           }
         }
       }
@@ -9084,6 +11448,12 @@
             "state": "translated",
             "value": "Tes conversations et ton historique d'apprentissage restent sur cet iPhone."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Gespräche und dein Lernverlauf bleiben auf diesem iPhone."
+          }
         }
       }
     },
@@ -9106,6 +11476,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ton cours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Kurs"
           }
         }
       }
@@ -9130,6 +11506,12 @@
             "state": "translated",
             "value": "Ta description reste sur cet appareil et sert uniquement à guider la pratique."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Beschreibung bleibt auf diesem Gerät und wird nur zur Anleitung der Übung verwendet."
+          }
         }
       }
     },
@@ -9152,6 +11534,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tes oreilles"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Ohren"
           }
         }
       }
@@ -9176,6 +11564,12 @@
             "state": "translated",
             "value": "Tes yeux"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Augen"
+          }
         }
       }
     },
@@ -9198,6 +11592,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta clé a été supprimée."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Schlüssel wurde entfernt."
           }
         }
       }
@@ -9222,6 +11622,12 @@
             "state": "translated",
             "value": "Ta clé est enregistrée sur cet iPhone"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Schlüssel ist auf diesem iPhone gespeichert"
+          }
         }
       }
     },
@@ -9244,6 +11650,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta progression d'apprentissage est à jour."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Lernfortschritt ist auf dem neuesten Stand."
           }
         }
       }
@@ -9268,6 +11680,12 @@
             "state": "translated",
             "value": "Ton historique d'apprentissage est stocké sur cet iPhone. Palique n'enregistre pas l'audio brut. Tu peux consulter tes mots et conversations enregistrés sans accepter."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Lernprotokoll wird auf diesem iPhone gespeichert. Palique speichert kein Rohaudio. Du kannst deine gespeicherten Wörter und Gespräche auch ohne Zustimmung ansehen."
+          }
         }
       }
     },
@@ -9290,6 +11708,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta propre situation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine eigene Situation"
           }
         }
       }
@@ -9314,6 +11738,12 @@
             "state": "translated",
             "value": "Ta pratique est enregistrée. Réessaie après ta prochaine tentative."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Übung ist gespeichert. Versuche es nach deinem nächsten Versuch erneut."
+          }
         }
       }
     },
@@ -9336,6 +11766,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta progression"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Fortschritt"
           }
         }
       }
@@ -9360,6 +11796,12 @@
             "state": "translated",
             "value": "Ton bilan"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Rückschau"
+          }
         }
       }
     },
@@ -9382,6 +11824,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les données de ton examen enregistré sont toujours sur cet appareil, mais n'ont pas pu être ouvertes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Daten deiner gespeicherten Prüfung sind noch auf diesem Gerät, konnten aber nicht geöffnet werden."
           }
         }
       }
@@ -9406,6 +11854,12 @@
             "state": "translated",
             "value": "Ton solde de jetons est épuisé. Choisis un pack ci-dessous pour continuer."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Token-Guthaben ist aufgebraucht. Wähle unten ein Paket, um weiterzumachen."
+          }
         }
       }
     },
@@ -9428,6 +11882,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tes jetons restent liés à ton compte. Tes conversations restent sur cet appareil."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Tokens bleiben bei deinem Konto. Deine Gespräche bleiben auf diesem Gerät."
           }
         }
       }
@@ -9452,6 +11912,12 @@
             "state": "translated",
             "value": "Tes mots t'appartiennent"
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Wörter gehören dir"
+          }
         }
       }
     },
@@ -9474,6 +11940,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tes mots."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Wörter."
           }
         }
       }
@@ -9498,6 +11970,12 @@
             "state": "translated",
             "value": "Tu as utilisé toutes tes minutes incluses pour l'instant."
           }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast alle deine enthaltenen Minuten fürs Erste verbraucht."
+          }
         }
       }
     },
@@ -9520,6 +11998,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "« %1$@ »"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“"
           }
         }
       }

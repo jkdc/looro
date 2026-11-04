@@ -1,0 +1,29 @@
+<resources>
+    <string name="minute_purchases_title">Mehr Zeit zum Reden</string>
+    <string name="minute_purchases_intro">Übe weiter, ein Gespräch nach dem anderen.</string>
+    <plurals name="minute_purchases_pack_minutes">
+        <item quantity="one">%1$s Minute</item>
+        <item quantity="other">%1$s Minuten</item>
+    </plurals>
+    <string name="minute_purchases_pack_action">%1$s für %2$s hinzufügen</string>
+    <string name="minute_purchases_one_time">Einmalkauf · Kein Abo</string>
+    <string name="minute_purchases_balance">%1$s Minuten verfügbar</string>
+    <string name="minute_purchases_balance_small">Weniger als eine Minute verfügbar</string>
+    <string name="minute_purchases_balance_empty">Keine Minuten verfügbar</string>
+    <string name="minute_purchases_sign_in">Melde dich an, um Minuten hinzuzufügen</string>
+    <string name="minute_purchases_sign_in_detail">Deine Minuten bleiben bei deinem Konto. Deine Gespräche bleiben auf diesem Gerät.</string>
+    <string name="minute_purchases_unavailable">Minutenpakete sind gerade nicht verfügbar. Bitte prüfe später erneut.</string>
+    <string name="minute_purchases_loading">Deine Minutenpakete werden gesucht…</string>
+    <string name="minute_purchases_check">Käufe prüfen</string>
+    <string name="minute_purchases_checking">Dein Kauf wird geprüft…</string>
+    <string name="minute_purchases_pending">Deine Zahlung ist ausstehend. Deine Minuten erscheinen, sobald sie abgeschlossen ist.</string>
+    <string name="minute_purchases_opened">Schließe deinen Kauf in Google Play ab.</string>
+    <string name="minute_purchases_canceled">Kauf abgebrochen. Du kannst jederzeit ein Paket wählen, wenn du bereit bist.</string>
+    <string name="minute_purchases_price_changed">Der Preis dieses Pakets hat sich geändert. Prüfe den neuen Preis, bevor du es erneut wählst.</string>
+    <string name="minute_purchases_added">Deine Minuten sind bereit. Reden wir weiter.</string>
+    <string name="minute_purchases_reversed">Ein Kauf wurde erstattet oder storniert. Dein Guthaben wurde aktualisiert.</string>
+    <string name="minute_purchases_verification_failed">Wir konnten einen Kauf nicht bestätigen. Prüfe erneut oder melde dich mit dem Palique-Konto an, mit dem er gekauft wurde.</string>
+    <string name="minute_purchases_sign_in_again">Melde dich an, um deine Käufe zu bestätigen und deine Minuten zu sehen.</string>
+    <string name="minute_purchases_play_terms">Google Play zeigt den Endbetrag, bevor du bestätigst.</string>
+    <string name="minute_purchases_stripe_terms">Die Bezahlung öffnet sich sicher in Stripe. Kehre nach der Zahlung zu Palique zurück und prüfe deine Käufe.</string>
+</resources>

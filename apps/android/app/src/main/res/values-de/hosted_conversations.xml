@@ -1,0 +1,27 @@
+<resources>
+    <string name="hosted_checking_previous">Palique prüft dein vorheriges Gespräch. Bitte versuche es gleich noch einmal.</string>
+    <string name="hosted_typed_start">Starte zuerst ein Sprachgespräch, bevor du mit Palique-Minuten eine geschriebene Antwort sendest.</string>
+    <string name="provider_preference_save_failed">Deine Gesprächseinstellung konnte nicht gespeichert werden.</string>
+    <string name="hosted_sign_in">Melde dich an, um deine Palique-Minuten zu nutzen.</string>
+    <string name="hosted_unconfirmed">Palique konnte diese Anfrage nicht bestätigen. Sie wird nicht erneut automatisch gesendet.</string>
+    <string name="hosted_unavailable">Palique-Minuten sind für diese Anfrage gerade nicht verfügbar.</string>
+    <string name="hosted_no_minutes">Du hast keine Gesprächsminuten verfügbar.</string>
+    <string name="hosted_extra_help_limit">Dieses Gespräch hat sein Limit für zusätzliche Erklärungen erreicht.</string>
+    <string name="hosted_window_closed">Starte ein neues Gespräch für mehr Hilfe. Deine gespeicherten Bedeutungen sind weiterhin verfügbar.</string>
+    <string name="hosted_request_failed">Palique konnte diese Anfrage nicht abschließen. Bitte versuche es später erneut.</string>
+    <string name="hosted_sign_in_again">Melde dich erneut an, um mit deinen Palique-Minuten fortzufahren.</string>
+    <string name="hosted_rate_limit">Palique hat zu viele Anfragen erhalten. Warte eine Minute und versuche es dann erneut.</string>
+    <string name="hosted_start_rejected">Der Sprachdienst konnte dieses Gespräch nicht starten. Bitte versuche es gleich noch einmal.</string>
+    <string name="hosted_error_reference">Fehlerreferenz: %1$s</string>
+    <string name="hosted_minimum_charge_disclosure">Mindestens 15 Sekunden pro Gespräch. Längere Gespräche nutzen die Zeit, in der du verbunden bist. Dein restliches Guthaben begrenzt die Abrechnung.</string>
+    <string name="sub_plan_label">Tarif %1$s %2$s</string>
+    <string name="sub_tier_free">Kostenlos</string>
+    <string name="sub_tier_standard">Standard</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(Testphase)</string>
+    <string name="sub_drip_note">Dein Gratis-Tarif fügt jeden Monat %1$d Min. hinzu.</string>
+    <string name="minutes_remaining_estimate">Noch etwa %1$s Min.</string>
+    <string name="minutes_low_warning">Weniger als 5 Gesprächsminuten übrig.</string>
+    <string name="minutes_critical_warning">Weniger als 2 Gesprächsminuten übrig.</string>
+    <string name="minutes_exhausted_upsell">Lade Minuten auf oder wechsle deinen Tarif, um weiterzureden.</string>
+</resources>

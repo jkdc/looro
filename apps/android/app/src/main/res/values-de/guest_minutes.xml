@@ -1,0 +1,24 @@
+<resources>
+    <string name="guest_unavailable_title">Gratisminuten gerade nicht verfügbar</string>
+    <string name="guest_unavailable_detail">Jedes Gespräch kostet KI-Rechenleistung. Wir arbeiten daran, mehr Gratisminuten zu finanzieren, damit mehr Menschen mit Palique lernen können.</string>
+    <string name="guest_ready_title">Dein nächstes Gespräch wartet</string>
+    <string name="guest_ready_detail">Fang an zu reden. Du kannst dich jederzeit anmelden, um deine übrigen Minuten mit deinem Konto zu behalten.</string>
+    <string name="guest_checking_title">Ein Moment zur Vorbereitung</string>
+    <string name="guest_checking_detail">Wir prüfen deine Gesprächsminuten.</string>
+    <string name="guest_retry_title">Versuchen wir es noch einmal</string>
+    <string name="guest_retry_detail">Wir konnten deine Minuten nicht prüfen. Prüfe deine Verbindung und versuche es erneut. Dein Kontingent wurde nicht zurückgesetzt.</string>
+    <string name="guest_sign_in_title">Willkommen zurück</string>
+    <string name="guest_sign_in_detail">Melde dich an, um zu deinen Minuten zurückzukehren. Dieses Gerät hat sein Willkommenskontingent bereits erhalten.</string>
+    <string name="guest_more_title">Reden wir weiter</string>
+    <string name="guest_more_detail">Deine verfügbaren Minuten sind aufgebraucht. Füge später welche hinzu, sobald Käufe möglich sind, oder nutze deinen eigenen API-Schlüssel in den Einstellungen.</string>
+    <string name="guest_link_title">Bringen wir deine Minuten zusammen</string>
+    <string name="guest_link_detail">Deine übrigen Gastminuten müssen noch zu deinem Konto übertragen werden. Prüfe erneut, um abzuschließen. Deine übrigen Minuten werden zu allen Minuten hinzugefügt, die du kaufst.</string>
+    <string name="guest_continue">Los geht’s</string>
+    <string name="guest_sign_in">Mit Google fortfahren</string>
+    <string name="guest_check_again">Erneut prüfen</string>
+    <string name="guest_personal_key">Meinen eigenen API-Schlüssel verwenden</string>
+    <string name="guest_purchases_soon">Käufe sind noch nicht verfügbar. Du kannst deinen eigenen API-Schlüssel verwenden.</string>
+    <string name="guest_account_detail">Melde dich an, um deine übrigen Gastminuten mit deinem Konto zu behalten. Dein Lernen bleibt auf diesem Gerät.</string>
+    <string name="consent_adult_confirmation">Mit dem Fortfahren bestätigst du, dass du 18 Jahre oder älter bist.</string>
+    <string name="guest_member_trial_used">Dieses Konto hat seine Willkommensminuten bereits erhalten und bekommt daher kein zweites Kontingent. Dein Kontoguthaben bleibt unverändert.</string>
+</resources>

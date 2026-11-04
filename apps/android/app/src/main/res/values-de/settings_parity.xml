@@ -1,0 +1,14 @@
+<resources>
+    <string name="settings_navigation_title">Mach es dir bequem</string>
+    <string name="settings_done">Fertig</string>
+    <string name="settings_just_your_pace">Nur dein Tempo</string>
+    <string name="settings_meaning_subtitles">Bedeutungs-Untertitel</string>
+    <string name="settings_language_footer">Jede Sprache behält ihre eigenen Wörter und ihren Fortschritt. Palique findet dein Tempo im Gespräch.</string>
+    <string name="settings_language_running_footer">Beende dieses Gespräch, um die Sprache zu wechseln. Jede Sprache behält ihre eigenen Wörter und ihren Fortschritt.</string>
+    <string name="settings_advanced">Erweitert</string>
+    <string name="settings_use_own_key">Eigenen API-Schlüssel verwenden</string>
+    <string name="settings_byok_version_footer">Eine optionale Art, Palique zu nutzen. OpenAI rechnet die Nutzung auf deinem eigenen Schlüssel direkt mit dir ab.</string>
+    <string name="settings_key_owner_footer">Dein OpenAI-Konto zahlt die Nutzung. Der Schlüssel bleibt verschlüsselt auf diesem Telefon und wird nur an OpenAI gesendet.</string>
+    <string name="settings_keep_comfortable">Bleib entspannt</string>
+    <string name="settings_limit_minutes">%1$d Minuten</string>
+</resources>

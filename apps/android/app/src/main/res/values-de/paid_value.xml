@@ -1,0 +1,11 @@
+<resources>
+    <string name="paid_balance_estimate">Etwa %1$s bezahlte Minuten</string>
+    <string name="paid_balance_small">Weniger als eine bezahlte Minute übrig</string>
+    <string name="paid_balance_detail">Die Zeit ist eine Schätzung. Stimme und Lehre ziehen ihre tatsächlichen KI-Kosten von deinem Guthaben ab.</string>
+    <string name="paid_balance_free_first">Deine Gratisminuten werden zuerst verbraucht.</string>
+    <string name="paid_pack_estimate">Etwa %1$s Minuten</string>
+    <string name="paid_ai_allocation">Für KI-Nutzung</string>
+    <string name="paid_app_fee">Palique-Gebühr (%1$s%%)</string>
+    <string name="paid_processing_fee">Geschätzte Zahlungsgebühr</string>
+    <string name="paid_processing_buffer">Puffer für Zahlungskosten</string>
+</resources>

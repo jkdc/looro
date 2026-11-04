@@ -1,0 +1,2 @@
+"NSMicrophoneUsageDescription" = "Palique nutzt dein Mikrofon, während du das Sprechen übst.";
+"NSSpeechRecognitionUsageDescription" = "Palique prüft die Aussprache mit Spracherkennung auf dem Gerät. Dein Übungsaudio wird nicht an einen Server gesendet.";
