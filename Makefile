@@ -120,13 +120,13 @@ android-test-docker: ## Ejecuta las suites JVM Android dentro de Docker con cach
 	apps/android/docker/test-unit.sh
 
 android-install: ## Instala el APK debug en el dispositivo/emulador conectado
-	adb install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
 
 android-run: ## Lanza la app en el dispositivo conectado
-	adb shell am start -n com.jkdc.palique.android/com.jkdc.palique.MainActivity
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity
 
 android-logcat: ## Logs de la app en el dispositivo
-	adb logcat --pid=$$(adb shell pidof -s com.jkdc.palique.android)
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" logcat --pid=$$(adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" shell pidof -s com.jkdc.palique.android)
 
 # ---- iOS (nativo; necesita Xcode 26+ en macOS) -----------------------------
 
