@@ -40,7 +40,14 @@ def android_keys(folder: Path):
 
 
 def specs(text: str):
-    return sorted(SPEC.findall(text.replace('%%', '')))
+    """Type multiset ignoring positional numbering, plus a check that any
+    positional usage forms the complete 1..n permutation (no dropped args)."""
+    found = SPEC.findall(text.replace('%%', ''))
+    types = sorted(re.sub(r'\d+\$', '', s) for s in found)
+    positions = sorted(int(re.match(r'%(\d+)\$', s).group(1)) for s in found if '$' in s)
+    if positions and positions != list(range(1, len(found) + 1)):
+        return None  # broken positional numbering
+    return types
 
 
 def check_android(errors):
