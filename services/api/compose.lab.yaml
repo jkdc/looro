@@ -1,0 +1,27 @@
+# Local mobile lab: publishes the API on the LAN in cleartext so a debug APK
+# running on a physical phone (same WiFi) can reach it.
+#
+# This overlay is for development only. It publishes the API without Caddy,
+# enables accounts, and sets ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true, which trusts
+# every direct RFC 1918 client for client-keyed admission instead of requiring
+# trusted-proxy headers. Never use it with real accounts, real payment
+# providers or on a network you do not control.
+#
+# Debug builds only: release builds keep usesCleartextTraffic="false" and
+# reject any origin that is not https on port 443.
+#
+# Usage: make lab-up (see docs/local-android-lab.md).
+services:
+  api:
+    ports:
+      - "${LAB_API_BIND:-0.0.0.0}:${LAB_API_PORT:-8080}:8080"
+    environment:
+      ACCOUNTS_ENABLED: "true"
+      ACCOUNTS_HMAC_KEY: ${ACCOUNTS_HMAC_KEY:?Run make lab-keys first}
+      ACCOUNTS_PROXY_TOKEN: ${ACCOUNTS_PROXY_TOKEN:?Run make lab-keys first}
+      ACCOUNTS_ALLOW_LOCAL_LOOPBACK: "true"
+      # Accounts refuse to boot without at least one identity provider. The lab
+      # never runs the OAuth exchange (the debug seam adopts a minted bearer),
+      # so a placeholder is enough. Real values, when present, always win.
+      GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-000000000000-lab.apps.googleusercontent.com}
+      GOOGLE_ANDROID_CLIENT_IDS: ${GOOGLE_ANDROID_CLIENT_IDS:-000000000000-lab.apps.googleusercontent.com}

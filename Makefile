@@ -7,6 +7,16 @@
 SHELL := /bin/bash
 COMPOSE := docker compose --project-directory $(CURDIR)/services/api -f $(CURDIR)/services/api/compose.yaml
 SMOKE := docker compose --project-directory $(CURDIR)/services/api/tests -p looro-smoke -f $(CURDIR)/services/api/tests/compose.smoke.yaml
+# Laboratorio móvil en la LAN: el mismo stack con la API publicada en claro
+# (solo builds debug; ver docs/local-android-lab.md).
+LAB_COMPOSE := $(COMPOSE) -f $(CURDIR)/services/api/compose.lab.yaml
+LAB_PORT ?= 8080
+LAB_HOST_IP ?= $(shell ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($$i=="src"){print $$(i+1); exit}}')
+# Despliegue al móvil conectado (make deploy): motor de conversación, serial adb
+# (obligatorio si hay varios dispositivos) y adopción de cuenta de laboratorio.
+DEPLOY_ENGINE ?= glm
+DEPLOY_SERIAL ?=
+SERIAL ?= $(DEPLOY_SERIAL)
 GRADLE := cd apps/android && ./gradlew
 XCODEPROJ := apps/ios/App.xcodeproj
 # Nombre del simulador usado por ios-test (docs/build-and-test.md).
@@ -14,7 +24,9 @@ IOS_SIMULATOR := iPhone 17
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs status health migrate psql admin-cli admin-add \
-  admin-passwd admin-open obs-check test-api smoke-up smoke-down android-build android-test-docker android-install \
+  admin-passwd admin-open obs-check test-api smoke-up smoke-down \
+  lab-keys lab-up lab-down lab-account lab-apk lab-install deploy \
+  android-build android-test-docker android-install \
   android-run android-logcat ios-build ios-test ios-device check clean
 
 help: ## Muestra esta ayuda
@@ -106,10 +118,54 @@ check: ## Contratos multiplataforma que corre CI (contenido generado y Swift↔K
 	python3 scripts/export_progress_sync.py --check
 	python3 scripts/export_android_content.py --check
 	python3 scripts/check_cross_platform.py
+	python3 scripts/check_ui_strings.py
 
 clean: ## Para el stack y elimina contenedores de humo
 	$(COMPOSE) down
 	$(SMOKE) down --volumes 2>/dev/null || true
+
+# ---- Laboratorio móvil en la LAN (solo builds debug) -----------------------
+
+lab-keys: ## Genera los secretos de cuentas del laboratorio en services/api/.env
+	python3 scripts/lab_env_keys.py $(CURDIR)/services/api/.env
+
+lab-up: lab-keys ## Levanta el stack con la API publicada en la LAN (LAB_PORT=8080)
+	@test -n "$(LAB_HOST_IP)" || { echo "No pude detectar la IP LAN; pasa LAB_HOST_IP=<ip>." >&2; exit 1; }
+	@# Stop first so the outgoing worker releases its advisory lock before the
+	@# replacement starts; otherwise the new container can crash-loop briefly.
+	-$(LAB_COMPOSE) stop api >/dev/null 2>&1
+	$(LAB_COMPOSE) up -d
+	@echo ""
+	@echo "API del laboratorio: http://$(LAB_HOST_IP):$(LAB_PORT)/healthz"
+	@echo "Siguiente paso:      make lab-install"
+
+lab-down: ## Para el stack del laboratorio (conserva los volúmenes)
+	$(LAB_COMPOSE) down
+
+lab-account: ## Crea la cuenta de laboratorio y muestra el comando adb para adoptarla
+	@token=$$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))'); \
+	hash=$$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$$token"); \
+	id=$$($(LAB_COMPOSE) exec -T database psql -U app -d app -tA -v ON_ERROR_STOP=1 -v hash="$$hash" -f - < services/api/lab-account.sql | tr -d '[:space:]'); \
+	case "$$id" in \
+	  ????????-????-????-????-????????????) ;; \
+	  *) echo "No se pudo crear la cuenta de laboratorio (¿está levantado make lab-up?)." >&2; exit 1 ;; \
+	esac; \
+	echo "LAB_ACCOUNT_ID=$$id"; \
+	echo ""; \
+	echo "Adopta la sesión en el dispositivo (build debug):"; \
+	echo "adb shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity --es debug.accountID $$id --es debug.accountToken $$token"
+
+lab-apk: ## Compila un APK debug apuntando a la IP LAN de este equipo
+	@test -n "$(LAB_HOST_IP)" || { echo "No pude detectar la IP LAN; pasa LAB_HOST_IP=<ip>." >&2; exit 1; }
+	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=http://$(LAB_HOST_IP):$(LAB_PORT)
+
+lab-install: lab-apk ## Compila el APK del laboratorio y lo instala en el dispositivo conectado
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
+
+deploy: lab-up ## Despliega en el móvil conectado: API de lab + APK con claves de prueba + micrófono + lanzamiento (ENGINE=glm SERIAL= ACCOUNT=1)
+	@test -n "$(LAB_HOST_IP)" || { echo "No pude detectar la IP LAN; pasa LAB_HOST_IP=<ip>." >&2; exit 1; }
+	bash apps/android/scripts/deploy-lab.sh --origin http://$(LAB_HOST_IP):$(LAB_PORT) --engine $(DEPLOY_ENGINE) \
+	  $(if $(DEPLOY_SERIAL),--serial $(DEPLOY_SERIAL),) $(if $(filter 1,$(ACCOUNT)),--account,)
 
 # ---- Android (nativo; necesita SDK 36 y Java 17) ---------------------------
 

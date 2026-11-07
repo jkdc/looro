@@ -60,6 +60,26 @@ Before enabling enhanced generated exams for another language, follow the [techn
 
 The mobile apps do not run in Docker — they build natively because they need Xcode (macOS) and the Android SDK on the host. Everything else (backend, admin panel, database, tests) goes through the Makefile.
 
+## Local service URLs
+
+With `make up` (plus the lab overlay for the published API port), every service
+answers here. Observability ports are loopback-only by design; the admin panel
+and the API go through Caddy with the internal CA — trust it once or accept the
+browser warning.
+
+| Service | URL | Notes |
+| --- | --- | --- |
+| Admin panel | `https://admin.localhost` | Operator panel (`ADMIN_DOMAIN`); open with `make admin-open`, login via `make admin-add` |
+| API behind Caddy | `https://localhost` | Production-shaped entry (`API_DOMAIN`); client routes expect trusted-proxy headers |
+| API direct (lab) | `http://127.0.0.1:8080` or `http://<PC-IP>:8080` | Published by the lab overlay (`make lab-up`); plain HTTP, no proxy |
+| Grafana | `http://127.0.0.1:3003` | Dashboards: API RED, domain metrics, traces via Tempo |
+| Prometheus | `http://127.0.0.1:9090` | Metrics store and alert rules (`make obs-check` validates configs) |
+| Alertmanager | `http://127.0.0.1:9093` | Alert routing; deliveries land in the webhook sink below |
+| Tempo | `http://127.0.0.1:3200` | Trace store (queried from Grafana, no UI of its own here) |
+| OTel collector | `http://127.0.0.1:4318` | OTLP HTTP ingest for traces/metrics (`/v1/traces`, `/v1/metrics`) |
+| Webhook logger | `http://127.0.0.1:5001` | Local sink for payment-provider webhooks and alert deliveries; inspect with `docker compose -f services/api/compose.yaml logs webhook-logger` |
+| PostgreSQL | not published | Loopback inside the compose network only — use `make psql` |
+
 ## API endpoints for local testing
 
 Everything the backend serves hangs off the API port. With `make up` the API is
@@ -127,32 +147,20 @@ moderation surface (status, private drafts, audited approve/reject).
 
 ### Phone/emulator lab against the Docker API
 
-The Android debug build accepts an `app.apiOrigin` Gradle property and, in
-debug builds only, http origins on the local network plus a deterministic
-sign-in seam for a seeded account (24-hour session):
+The Android debug build accepts an `app.apiOrigin` Gradle property. In debug
+builds only it also accepts http origins on the local network, and it exposes a
+sign-in seam that adopts a bearer minted against a local API (24-hour session).
+A physical phone on the same WiFi needs an API published on the LAN, so the lab
+uses an overlay that exposes `0.0.0.0:8080` in cleartext:
 
 ```sh
-# 1. API + database with accounts enabled (host network, LAN-reachable)
-docker run -d --name lab-db -e POSTGRES_DB=app -e POSTGRES_USER=app   -e POSTGRES_PASSWORD=local-only -p 127.0.0.1:5439:5432 postgres:17-alpine
-docker run --rm --network host -e DATABASE_URL=postgresql://app:local-only@127.0.0.1:5439/app   app-server-local:dev node dist/src/migrate.js
-docker run -d --name lab-api --network host   -e DATABASE_URL=postgresql://app:local-only@127.0.0.1:5439/app -e PORT=8080   -e PUBLIC_ORIGIN=http://localhost:8080 -e ACCOUNTS_ENABLED=true   -e ACCOUNTS_HMAC_KEY=<64-hex> -e ACCOUNTS_PROXY_TOKEN=<64-hex>   -e ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true   -e GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com   -e GOOGLE_ANDROID_SERVER_CLIENT_ID=1234567890-def.apps.googleusercontent.com   -e GOOGLE_ANDROID_CLIENT_IDS=1234567890-def.apps.googleusercontent.com   --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges   app-server-local:dev node dist/src/main.js
-
-# 2. Seed a lab account whose bearer the app can adopt (debug builds only)
-TOKEN=$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url').slice(0,43))")
-HASH=$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$TOKEN")
-docker exec -i lab-db psql -U app -d app <<SQL
-INSERT INTO accounts(id, email) VALUES(gen_random_uuid(), 'lab@example.test');
-INSERT INTO auth_sessions(id, account_id, token_hash, expires_at)
-  SELECT gen_random_uuid(), id, '$HASH', now() + interval '7 days' FROM accounts WHERE email='lab@example.test';
-SQL
-
-# 3. Build the APK pointed at the PC's LAN IP and install it
-cd apps/android && ./gradlew -Papp.apiOrigin=http://<PC-LAN-IP>:8080 :app:assembleDebug
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-
-# 4. Launch the app adopting that bearer (debug builds only)
-adb shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity   --es debug.accountID <account-uuid> --es debug.accountToken "$TOKEN"
+make lab-up        # lab secrets + stack with the API published on the LAN
+make lab-install   # debug APK pointed at this machine's LAN IP
+make lab-account   # lab account + the adb command that adopts its bearer
 ```
+
+Overrides (`LAB_PORT`, `LAB_HOST_IP`, `LAB_API_BIND`), what the lab does and
+does not prove, and troubleshooting: [Local mobile lab](docs/local-android-lab.md).
 
 `ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true` also lets direct clients without proxy
 headers use the API from the machine itself or the local network — a lab-only

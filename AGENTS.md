@@ -38,6 +38,12 @@ make test-api      # suite de integración completa en stack efímero
 make smoke-up      # solo PostgreSQL + API efímera
 make smoke-down    # para el stack de humo y borra volúmenes
 
+# Laboratorio móvil en la LAN (solo builds debug; docs/local-android-lab.md):
+make lab-up        # publica la API en 0.0.0.0:8080 con cuentas activas
+make lab-install   # APK debug apuntando a la IP LAN de este equipo
+make lab-account   # crea la cuenta de laboratorio y muestra el comando adb
+make lab-down      # para el stack del laboratorio
+
 # Contratos multiplataforma (lo que corre CI):
 make check         # exporters --check, cross-platform, db schema
 

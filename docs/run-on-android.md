@@ -13,7 +13,7 @@ Install the generated APK (`apps/android/app/build/outputs/apk/debug/app-debug.a
    ```sh
    adb devices -l
    adb install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
-   adb shell am start -n com.jkdc.palique.android/com.jkdc.palique.MainActivity
+   adb shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity
    ```
 
 `-r` updates the app and keeps its data. Updates need the same application ID (`com.jkdc.palique.android`) and the same signing key; do not uninstall the app if you want to keep your history. USB or wireless debugging is only needed to install and test from a computer, not for everyday use. The debug APK is for personal installation, not for Google Play.
