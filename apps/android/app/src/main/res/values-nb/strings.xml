@@ -621,4 +621,7 @@
     <string name="leveltest_entry_title">Verifiser nivået ditt i %1$s</string>
     <string name="leveltest_entry_cta">Denne ukens test · 10–15 min</string>
     <string name="leveltest_entry_cta_result">Sist: %1$d%% · %2$s</string>
+    <string name="talk_status_paused">Satt på pause — fortsett når du vil.</string>
+    <string name="talk_resume_button">Fortsett</string>
+    <string name="talk_restart_button">Start på nytt</string>
 </resources>

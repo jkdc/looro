@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -94,6 +95,11 @@ fun TalkScreen(
     var lookupWord by rememberSaveable { mutableStateOf("") }
     var lookupSentence by rememberSaveable { mutableStateOf("") }
     var transcript by remember { mutableStateOf<SessionRecord?>(null) }
+    // Leaving the Talk tab (TalkScreen leaves composition; the ViewModel does not)
+    // must not keep the tutor's voice playing or the microphone capturing elsewhere.
+    DisposableEffect(Unit) {
+        onDispose { vm.pauseVoiceSession() }
+    }
     val assistantPassage = vm.session?.passages?.lastOrNull { it.speaker == Speaker.assistant }
     val userPassage = vm.session?.passages?.lastOrNull { it.speaker == Speaker.user }
     // While the tutor's reply is pending, the learner's own transcription takes
@@ -282,7 +288,7 @@ fun TalkScreen(
         }
         Text(stringResource(if (vm.state == "active" && vm.isVoiceSession && !vm.isMuted) R.string.talk_microphone_on else R.string.talk_microphone_off),
             style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary, modifier = Modifier.padding(top = 6.dp))
-        if (vm.state == "active" || microphoneMessage != null) {
+        if (vm.state == "active" || vm.state == "paused" || microphoneMessage != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically) {
                 AppTextButton(onClick = { typing = true }, enabled = !busy && !vm.working) {
                     AppIcon(AppSymbol.Keyboard, Modifier.size(15.dp)); Spacer(Modifier.width(6.dp))
@@ -303,7 +309,17 @@ fun TalkScreen(
             if (onOpenAppSettings != null) AppTextButton(onClick = onOpenAppSettings) { Text(stringResource(R.string.talk_open_phone_settings)) }
         }
         vm.notice?.let { Text(it, color = AppColors.Secondary, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
-        if (vm.session != null && !vm.isRunning) {
+        if (vm.state == "paused") {
+            Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 4.dp)) {
+                AppTextButton(onClick = vm::resumeVoiceSession, enabled = !busy, modifier = Modifier.testTag("talk-resume")) {
+                    Text(stringResource(R.string.talk_resume_button), style = MaterialTheme.typography.bodySmall, color = AppColors.Ink)
+                }
+                AppTextButton(onClick = vm::restartVoiceSession, enabled = !busy, modifier = Modifier.testTag("talk-restart")) {
+                    Text(stringResource(R.string.talk_restart_button), style = MaterialTheme.typography.bodySmall, color = AppColors.Ink)
+                }
+            }
+        } else if (vm.session != null && !vm.isRunning) {
             AppTextButton(onClick = vm::resetConversation) { Text(stringResource(R.string.talk_new_conversation_button)) }
         }
         Spacer(Modifier.height(if (compact) 8.dp else 16.dp))
@@ -332,7 +348,11 @@ fun TalkScreen(
             }, CircleShape).clip(CircleShape)
             .testTag("start-conversation").semantics { contentDescription = micDescription }
             .clickable(enabled = micEnabled, role = Role.Button) {
-                if (talkActive) vm.toggleMute() else onMicrophone()
+                when {
+                    talkActive -> vm.toggleMute()
+                    vm.state == "paused" -> vm.resumeVoiceSession()
+                    else -> onMicrophone()
+                }
             }, contentAlignment = Alignment.Center) {
             if (busy) CircularProgressIndicator(Modifier.size(25.dp), color = AppColors.Ink, strokeWidth = 2.dp)
             else AppIcon(when {
@@ -449,6 +469,7 @@ private fun statusText(state: String, muted: Boolean, voice: Boolean) = when (st
     "connecting" -> stringResource(R.string.talk_status_connecting)
     "active" -> if (!voice) stringResource(R.string.talk_status_written) else if (muted) stringResource(R.string.talk_status_muted) else stringResource(R.string.talk_status_listening)
     "closing" -> stringResource(R.string.talk_status_closing)
+    "paused" -> stringResource(R.string.talk_status_paused)
     "ended" -> stringResource(R.string.talk_status_ended)
     "failed" -> stringResource(R.string.talk_status_failed)
     else -> stringResource(R.string.talk_status_idle)

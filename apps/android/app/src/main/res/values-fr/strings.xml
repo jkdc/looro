@@ -621,4 +621,7 @@
     <string name="leveltest_entry_title">Vérifie ton %1$s</string>
     <string name="leveltest_entry_cta">Le test de la semaine · 10–15 min</string>
     <string name="leveltest_entry_cta_result">Dernier : %1$d%% · %2$s</string>
+    <string name="talk_status_paused">En pause — reprends quand tu veux.</string>
+    <string name="talk_resume_button">Reprendre</string>
+    <string name="talk_restart_button">Recommencer</string>
 </resources>

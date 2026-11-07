@@ -1447,6 +1447,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private var voiceSession = false
     private var lastActivity = nowSeconds()
     private var generation = 0
+    // Pause-on-leave: the transport closed because the user navigated away, not
+    // because the conversation ended; resume reconnects with the same session.
+    private var pausedByUser = false
+    private var pausedInstructions: String? = null
 
     /**
      * Transport callbacks arrive from arbitrary threads (the Main connect flow,
@@ -2675,6 +2679,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 skillFocus = errorFocus())
         }
         val history = ConversationHistory.messages(session)
+        launchVoiceConnection(id, localVoice, choice, instructions, history, module.locale)
+    }
+
+    /** Shared tail of start() and resumeVoiceSession(): provider selection (BYOK
+        or a fresh hosted lease) plus the transport connect for this session id. */
+    private fun launchVoiceConnection(id: String, localVoice: Boolean, choice: ConversationProvider,
+                                      instructions: String, history: kotlinx.serialization.json.JsonArray, locale: String?) {
+        if (voiceSession) pausedInstructions = instructions
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
             try {
@@ -2702,7 +2714,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-                transport.connect(provider, instructions, history, module.locale)
+                transport.connect(provider, instructions, history, locale)
             } catch (cancelled: CancellationException) {
                 if (choice == ConversationProvider.HOSTED_MINUTES) reconcileHostedSessions()
                 throw cancelled
@@ -2732,6 +2744,65 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // Leaving the foreground ends the conversation and releases the microphone; its final assessment still completes.
         generation++; actionJob?.cancel(); clearLookup(); meanings.reset(); working = false
         if (isRunning) { updateSession { it.endReason = "App moved to background" }; finish(false) }
+    }
+    /** Leaving the Talk screen mid-conversation stops playback and capture without
+        ending the conversation: the session record stays and can be resumed with
+        its history or restarted from zero (TalkScreen DisposableEffect). */
+    fun pauseVoiceSession() {
+        if (!VoiceSessionLifecycle.shouldPauseOnLeave(state, voiceSession)) return
+        pausedByUser = true
+        state = "closing"; isMuted = false
+        connectionJob?.cancel(); durationJob?.cancel(); closeJob?.cancel(); actionJob?.cancel()
+        clearLookup(); meanings.reset(); working = false; partialUserTranscript = null
+        delegations.values.toList().forEach { it.cancel() }; delegations.clear()
+        try { transport.close() }
+        catch (_: Exception) { settlePause(); return }
+        // A transport that never answers the graceful close must not wedge the UI.
+        closeJob = viewModelScope.launch { delay(5000); if (state == "closing") settlePause() }
+    }
+    /** Terminal point of a user pause: the transport is fully released, the
+        conversation record is untouched (no endedAt, no usage, no auto-reset). */
+    private fun settlePause() {
+        closeJob?.cancel()
+        connectionJob?.cancel(); durationJob?.cancel(); assessmentJob?.cancel()
+        actionJob?.cancel(); replayJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
+        delegations.values.toList().forEach { it.cancel() }; delegations.clear()
+        transport.disconnect(); inputLevel = 0.0; outputLevel = 0.0; working = false; isMuted = false
+        // The hosted lease closed with the transport: settle the wallet now so a
+        // later resume can open a fresh hosted session cleanly.
+        session?.id?.takeIf { it in hostedSessionIDs }?.let {
+            hostedBindings.ended(it); reconcileHostedSessions()
+        }
+        state = VoiceSessionLifecycle.stateAfterClose(pausedByUser = true)
+        pausedByUser = false
+    }
+    /** Reconnect the transport feeding the paused conversation's own history; the
+        session record is reused, so new turns append to the same conversation. */
+    fun resumeVoiceSession() {
+        if (!VoiceSessionLifecycle.canResume(state, session != null)) return
+        val localVoice = resolveEngineSelection() != "openai"
+        if (!localVoice) {
+            if (!cloudReady()) return
+        } else if (!engineKeyReady()) return
+        val record = session ?: return
+        (transport as? com.jkdc.app.core.voice.LocalVoiceTransport)?.apply {
+            manualTurn = voiceManualTurnStore.get()
+            silenceEndMs = voiceManualTurnStore.getSilenceEndMs()
+            speechRate = archive.preferences.effectiveSpeechRate().toFloat()
+        }
+        voiceSession = true; state = "connecting"
+        val instructions = pausedInstructions ?: TeachingPolicy.voice(language, learner, selectedTheme,
+            archive.preferences.interests, archive.preferences.meaningLanguage,
+            slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0, skillFocus = errorFocus())
+        launchVoiceConnection(record.id, localVoice, conversationProvider, instructions,
+            ConversationHistory.messages(record), language.locale)
+    }
+    /** Close the paused conversation and start a brand-new voice conversation. */
+    fun restartVoiceSession() {
+        if (state != "paused") return
+        pausedByUser = false
+        resetConversation()
+        start()
     }
     private fun finish(final: Boolean, closeSucceeded: Boolean = false) {
         if (!isRunning) return
@@ -2995,7 +3066,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             "session.usage.updated", "session.closed" -> {
                 val seconds = (event["usage"] as? JsonObject)?.get("seconds")?.jsonPrimitive?.doubleOrNull
                 if (seconds != null && seconds.isFinite() && seconds in 0.0..31536000.0) updateSession { it.voiceSeconds = seconds }
-                if (event["type"]?.jsonPrimitive?.content == "session.closed") finish(true, closeSucceeded = true)
+                if (event["type"]?.jsonPrimitive?.content == "session.closed") {
+                    // A user pause closes the transport on purpose: settle into
+                    // "paused" (no endedAt, no usage, no auto-reset).
+                    if (pausedByUser) settlePause() else finish(true, closeSucceeded = true)
+                }
             }
             "error" -> { notice = getApplication<Application>().getString(R.string.notice_voice_update_rejected) }
         }
@@ -3231,7 +3306,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val clean = text.trim().take(2000)
         if (clean.isEmpty() || working || state in listOf("connecting", "closing")) return
         if (!localOnly && !cloudReady()) return
-        if (state != "active") {
+        // Continuing (active or paused) appends to the current conversation;
+        // only idle/ended/failed opens a fresh typed session.
+        val continuing = VoiceSessionLifecycle.acceptsTyped(state)
+        if (!continuing) {
             if (!localOnly && conversationProvider == ConversationProvider.HOSTED_MINUTES) {
                 presentError(getApplication<Application>().getString(R.string.hosted_typed_start)); return
             }
@@ -3246,7 +3324,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val id = session!!.id; val token = generation
         val offset = ((nowSeconds() - session!!.startedAt) * 1000).toInt().coerceAtLeast(0)
         updateSession { it.append(Fragment(speaker = Speaker.user, text = clean, startMS = offset, endMS = offset + 1, meaningVisible = archive.preferences.meaningVisible, typed = true)) }
-        if (voiceSession && resolveEngineSelection() != "openai") command("user_message", clean)
+        // Voice data-channel turns only flow while the transport is actually active.
+        if (state == "active" && voiceSession && resolveEngineSelection() != "openai") command("user_message", clean)
         lastActivity = nowSeconds(); working = true
         actionJob = viewModelScope.launch {
             try {
@@ -3260,9 +3339,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     else -> TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, skillFocus = errorFocus()) + "\n" + TeachingPolicy.typedReply(language, lesson)
                 }
                 val result = teaching(id, HelperPurpose.TYPED_REPLY, UUID.randomUUID().toString(), instructions, helperContext(session!!))
-                if (token != generation || session?.id != id || state != "active") return@launch
+                if (token != generation || session?.id != id || !VoiceSessionLifecycle.acceptsTyped(state)) return@launch
                 updateSession { addUsage(it, result.usage) }
-                if (voiceSession) {
+                if (state == "active" && voiceSession) {
                     if (resolveEngineSelection() == "openai") command("thinking", "The learner typed (data): ${clean.take(650)}")
                     command("commentary", result.text)
                 }
