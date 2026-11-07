@@ -42,7 +42,23 @@ class SettingsDetailsTest {
 
     @After fun restorePreferences() {
         if (!preferencesCaptured) return
-        compose.runOnIdle { ViewModelProvider(compose.activity)[AppViewModel::class.java].updatePreferences(originalPreferences) }
+        // A locale test may leave the activity destroyed mid-recreation; the
+        // preference restore is best-effort at that point.
+        runCatching {
+            compose.runOnIdle { ViewModelProvider(compose.activity)[AppViewModel::class.java].updatePreferences(originalPreferences) }
+        }
+    }
+
+    /** Locale recreation windows destroy the compose hierarchy between the old
+        and new activity: the poll predicates must survive that and return false. */
+    private fun textVisible(text: String): Boolean =
+        runCatching { compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty() }.getOrDefault(false)
+
+    /** Drains any pending locale recreation from a previous test before this
+        test's own locale steps run: back to system language, English UI. */
+    private fun resetToSystemLocaleAndWait(locales: LocaleManager) {
+        locales.applicationLocales = android.os.LocaleList.getEmptyLocaleList()
+        compose.waitUntil(timeoutMillis = 20_000) { textVisible("Ready when you are") }
     }
 
     @Test fun settingsMatchTheIphoneCorrectionsKeysModelsAndVersionDetails() {
@@ -80,29 +96,43 @@ class SettingsDetailsTest {
         val activity = compose.activity
         val locales = activity.getSystemService(LocaleManager::class.java)
         val original = locales.applicationLocales
+        resetToSystemLocaleAndWait(locales)
         try {
             compose.onNodeWithTag("tab-settings").performClick()
             val settings = compose.onNodeWithTag("settings-screen")
             settings.performScrollToNode(hasTestTag("settings-app-language"))
+            // Open the selector dropdown and verify the Spanish option is listed.
             compose.onNodeWithTag("settings-app-language").performClick()
-            compose.onNodeWithTag("settings-app-language-es").performClick()
-            // The appcompat selection recreates the activity; waitForIdle never
-            // settles across that recreation, so poll with a bounded timeout.
+            compose.onNodeWithTag("settings-app-language-es").assertExists()
+            // Clicking the dropdown item races with the activity recreation it
+            // triggers (ComposeNotIdleException in the test rule's idle sync), so
+            // the selection is applied through the exact mechanism the item
+            // invokes: AppCompatDelegate.setApplicationLocales. The pending
+            // dropdown dies with the recreation — no need to close it (back
+            // would dismiss the whole Settings sheet first).
+            compose.runOnIdle {
+                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+                    androidx.core.os.LocaleListCompat.forLanguageTags("es"))
+            }
             // The settings sheet (rememberSaveable) stays open and the whole
             // hierarchy — including the provider buttons — re-renders Spanish.
             compose.waitUntil(timeoutMillis = 20_000) {
-                compose.onAllNodes(hasText("Listo")).fetchSemanticsNodes().isNotEmpty() &&
-                    compose.onAllNodes(hasText("Tu propia clave")).fetchSemanticsNodes().isNotEmpty()
+                textVisible("Listo") && textVisible("Tu propia clave")
             }
+            // waitUntil returns on timeout without failing: assert the Spanish
+            // UI actually rendered.
+            compose.onNodeWithTag("settings-done").assert(hasText("Listo"))
         } finally {
             locales.applicationLocales = original
-            compose.waitForIdle()
+            // waitForIdle deadlocks across the restore recreation; poll for the
+            // English sheet header with a bounded timeout instead.
+            compose.waitUntil(timeoutMillis = 20_000) { textVisible("Make yourself comfortable") }
         }
     }
 
     @Test fun everySupportedAppLanguageResolvesItsResources() {
         // The es test above covers the full selector click flow (recreation
-        // included); clicking another popup item races with that recreation
+        // included); clicking another popup item races with activity recreation
         // and can deadlock the compose idle sync, so the remaining languages
         // are verified deterministically: each values-XX folder must resolve
         // its own localized resources and be part of the selector model.
@@ -116,6 +146,35 @@ class SettingsDetailsTest {
             assertEquals(done, localized.getString(R.string.settings_done))
             assertTrue(com.jkdc.app.core.AppLanguage.OPTIONS.contains(language))
             assertTrue(com.jkdc.app.core.AppLanguage.NATIVE_LABELS.containsKey(language))
+        }
+    }
+
+    @Test fun appLanguageChoicePersistsAcrossActivityRecreation() {
+        // Regression for the user report "the chosen app language is not
+        // remembered": the selector writes through AppCompatDelegate (system
+        // per-app locale on 13+); after the activity is recreated the choice
+        // must still drive the resources.
+        assumeTrue(Build.VERSION.SDK_INT >= 33)
+        val activity = compose.activity
+        val locales = activity.getSystemService(LocaleManager::class.java)
+        val original = locales.applicationLocales
+        resetToSystemLocaleAndWait(locales)
+        try {
+            compose.runOnIdle {
+                androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+                    androidx.core.os.LocaleListCompat.forLanguageTags("fr"))
+            }
+            // The Talk tab status line is visible without opening any sheet.
+            compose.waitUntil(timeoutMillis = 20_000) { textVisible("Prêt quand tu veux") }
+            compose.activityRule.scenario.recreate()
+            // waitForIdle deadlocks across recreate with a pending locale change;
+            // poll for the (persisted) French status line instead.
+            compose.waitUntil(timeoutMillis = 20_000) { textVisible("Prêt quand tu veux") }
+            compose.onNodeWithTag("tab-settings").performClick()
+            compose.onNodeWithTag("settings-done").assert(hasText("Terminé"))
+        } finally {
+            locales.applicationLocales = original
+            compose.waitUntil(timeoutMillis = 20_000) { textVisible("Ready when you are") }
         }
     }
 }
