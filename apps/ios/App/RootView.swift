@@ -49,6 +49,11 @@ struct RootView: View {
             }
         }
         .tint(AppColor.ink)
+        .onChange(of: tab) { oldTab, newTab in
+            // Leaving the Talk tab mid-conversation stops playback and capture
+            // without ending the conversation (Resume/Restart on return).
+            if oldTab == 0, newTab != 0, coordinator.state == .active { coordinator.pauseConversation() }
+        }
         .onChange(of: accountStore.session?.accountID) { _, accountID in
             coordinator.activateAccountAndSync(accountID?.uuidString)
         }
@@ -148,10 +153,12 @@ struct TalkView: View {
                     Text(coordinator.microphoneLabel).font(.caption2).foregroundStyle(AppColor.secondary).padding(.top, 10)
                         .accessibilityIdentifier("microphone-status")
                     HStack(spacing: 24) {
-                        if coordinator.state == .active {
+                        if coordinator.state == .active || coordinator.state == .paused {
                             Button("Type instead", systemImage: "keyboard") { typing = true }
                                 .accessibilityIdentifier("typed-reply-open")
-                            Button("A little help", systemImage: "sparkles") { coordinator.help() }
+                            if coordinator.state == .active {
+                                Button("A little help", systemImage: "sparkles") { coordinator.help() }
+                            }
                         } else if coordinator.session == nil {
                             Text("Reply in whichever language comes to you.").foregroundStyle(AppColor.secondary)
                         } else if !coordinator.isRunning {
@@ -159,6 +166,14 @@ struct TalkView: View {
                                 .accessibilityIdentifier("new-conversation")
                         }
                     }.font(.caption).padding(.top, 6).padding(.bottom, 12)
+                    if coordinator.state == .paused {
+                        HStack(spacing: 24) {
+                            Button("Resume") { coordinator.resumePausedConversation() }
+                                .accessibilityIdentifier("talk-resume")
+                            Button("Restart", role: .destructive) { coordinator.restartConversation() }
+                                .accessibilityIdentifier("talk-restart")
+                        }.font(.headline).padding(.bottom, 12)
+                    }
                     if let notice = coordinator.notice {
                         Text(notice).font(.footnote).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center).padding(.bottom, 12)
                     }

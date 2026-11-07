@@ -155,6 +155,10 @@ struct ConversationTopicSearchAdapter {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
     private(set) var session: SessionRecord?
+    // Pause-on-leave: the transport closed because the user navigated away, not
+    // because the conversation ended; resume reconnects with the same session.
+    private var pausedConversation = false
+    private var pausedInstructions: String?
     var selectedTheme: ConversationTheme?
     var selectedLesson: Lesson?
     private(set) var selectedScenario: Scenario?
@@ -621,6 +625,7 @@ struct ConversationTopicSearchAdapter {
         case .connecting: "Getting comfortable…"
         case .active: outputLevel > 0.02 ? "Palique is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
         case .closing: "Saving our conversation…"
+        case .paused: String(localized: "Paused — continue whenever you like.")
         case .ended: "Until next time"
         case .failed: "Let’s try again"
         }
@@ -682,6 +687,7 @@ struct ConversationTopicSearchAdapter {
         } else {
             instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.effectiveSpeechRate() < 1.0, skillFocus: store.errorFocus())
         }
+        pausedInstructions = instructions
         let requestedMilliseconds = store.preferences.sessionMinutes * 60_000
         connectionTask = Task { [weak self] in
             guard let self else { return }
@@ -1065,6 +1071,101 @@ struct ConversationTopicSearchAdapter {
         append("instructions", TeachingPolicy.help(language: language))
         notice = "Palique will make that a little simpler."
     }
+    /// Leaving the Talk tab mid-conversation: close the transport but keep the
+    /// conversation record (no endedAt, no usage, no auto-reset) so it can be
+    /// resumed with its history or restarted from zero. WebRTC owns the audio
+    /// unit, so a pause is a graceful close — there is no reliable way to
+    /// silence inbound audio under a live peer.
+    func pauseConversation() {
+        guard state == .active || state == .connecting else { return }
+        pausedConversation = true
+        invalidateTypedReplyContinuation()
+        state = .closing; isMuted = false
+        connectionTask?.cancel(); assessmentTask?.cancel()
+        delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
+        durationTask?.cancel(); typedReplyWorking = false
+        transport.close()
+        closeTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(5))
+            guard !Task.isCancelled, self?.state == .closing else { return }
+            self?.settlePause()
+        }
+    }
+    /// Terminal point of a user pause: transport fully released, session record
+    /// untouched apart from the transcript saved so far.
+    private func settlePause() {
+        closeTask?.cancel(); durationTask?.cancel(); connectionTask?.cancel()
+        assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+        delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
+        transport.disconnect(); pendingCommands = [:]; typedReplyWorking = false
+        isMuted = false; inputLevel = 0; outputLevel = 0
+        // The hosted lease closed with the transport: settle it now so a later
+        // resume can open a fresh hosted session cleanly.
+        if hostedSessionID != nil { closeHostedSession() }
+        state = .paused
+        save()
+        if backgroundTask != .invalid { UIApplication.shared.endBackgroundTask(backgroundTask); backgroundTask = .invalid }
+    }
+    /// Reconnect the transport feeding the paused conversation's own history;
+    /// the session record is reused, so new turns append to the same conversation.
+    func resumePausedConversation() {
+        guard state == .paused, let record = session else { return }
+        guard store.isLearnerReady else { return }
+        let prefersHosted = hostedUIAvailable && hostedPreferences.prefersHostedMinutes
+        if prefersHostedProxy { attachHostedProxy() }
+        if !prefersHosted, !CredentialStore.hasKey { showSettings = true; return }
+        cancelReset(); meanings.reset()
+        error = nil; notice = nil; lastAssessmentKey = ""
+        lastLanguageCheck = ""; pendingCommands = [:]
+        state = .connecting; isMuted = false
+        let generation = record.id
+        let learner = store.learner
+        let instructions = pausedInstructions ?? TeachingPolicy.voice(language: language, learner: learner,
+            theme: selectedTheme, interests: store.preferences.interests,
+            meaningLanguage: store.preferences.meaningLanguage,
+            slowSpeech: store.preferences.effectiveSpeechRate() < 1.0, skillFocus: store.errorFocus())
+        let requestedMilliseconds = store.preferences.sessionMinutes * 60_000
+        connectionTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                let provider = try await self.beginProvider(prefersHosted: prefersHosted)
+                try await self.transport.connect(establish: self.establishment(provider: provider, language: self.language,
+                    instructions: instructions, history: self.pausedHistory(record), requestedMilliseconds: requestedMilliseconds))
+            }
+            catch is CancellationError { return }
+            catch {
+                guard self.session?.id == generation, self.state == .connecting || self.state == .active else { return }
+                self.fail(error.localizedDescription)
+            }
+        }
+    }
+    /// Close the paused conversation and start a brand-new voice conversation.
+    func restartConversation() {
+        guard state == .paused else { return }
+        pausedConversation = false
+        resetConversation()
+        start()
+    }
+    /// The OpenAI realtime "input" items resuming the paused conversation need:
+    /// last 40 passages in chronological order, 6 KB total cap — mirrors the
+    /// Android ConversationHistory builder so both platforms resume alike.
+    private func pausedHistory(_ record: SessionRecord) -> [[String: Any]] {
+        var result: [[String: Any]] = []
+        for passage in record.passages.suffix(40).reversed() {
+            let text = String(passage.text.prefix(4_500))
+            if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { continue }
+            let item: [String: Any] = [
+                "type": "message",
+                "role": passage.speaker == .user ? "user" : "assistant",
+                "content": [["type": passage.speaker == .user ? "input_text" : "output_text", "text": text]],
+            ]
+            let candidate = [item] + result
+            if (try? JSONSerialization.data(withJSONObject: candidate, options: [.fragmentsAllowed]).count) == nil { break }
+            if JSONSerialization.data(withJSONObject: candidate, options: [.fragmentsAllowed]).count > 6_000 { break }
+            result.insert(item, at: 0)
+        }
+        return result
+    }
     func end(reason: String = "Ended by you") {
         guard state == .active || state == .connecting else { return }
         invalidateTypedReplyContinuation()
@@ -1203,7 +1304,12 @@ struct ConversationTopicSearchAdapter {
             delegate(id: id)
         case "session.usage.updated", "session.closed":
             if let usage = event["usage"] as? [String: Any], let seconds = usage["seconds"] as? Double, seconds.isFinite, seconds >= 0 { session?.voiceSeconds = seconds }
-            if type == "session.closed" { session?.endReason = event["reason"] as? String; finish(final: true) }
+            if type == "session.closed" {
+                // A user pause closes the transport on purpose: settle into
+                // .paused (no endedAt, no usage, no auto-reset).
+                if pausedConversation { settlePause() }
+                else { session?.endReason = event["reason"] as? String; finish(final: true) }
+            }
             else { scheduleSave() }
         case "error":
             let details = event["error"] as? [String: Any]
@@ -1495,7 +1601,8 @@ struct ConversationTopicSearchAdapter {
     }
     func sendTyped(_ text: String) async -> TypedReplyResult {
         let clean = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard state == .active, !clean.isEmpty, let snapshot = session else { return .cancelled }
+        // Continuing (active or paused) appends to the current conversation.
+        guard state == .active || state == .paused, !clean.isEmpty, let snapshot = session else { return .cancelled }
         guard typedReplyOperationInFlight == nil else { return .inFlight }
         typedReplyDraft = clean
         typedReplyError = nil
@@ -1529,10 +1636,21 @@ struct ConversationTopicSearchAdapter {
             } else {
                 result = try await helperRouter.respond(purpose: .typedReply, instructions: instructions, input: input)
             }
-            guard session?.id == snapshot.id, state == .active, learnerGeneration == capturedLearnerGeneration else { return .cancelled }
+            guard session?.id == snapshot.id, state == .active || state == .paused,
+                  learnerGeneration == capturedLearnerGeneration else { return .cancelled }
             addUsage(result.usage)
-            append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
-            append("commentary", result.text); scheduleAssessment(); save()
+            if state == .active {
+                // Live voice session: feed the reply through the data channel so the tutor speaks it.
+                append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
+                append("commentary", result.text); scheduleAssessment(); save()
+            } else {
+                // Paused conversation: the reply lands as a written assistant turn.
+                let offset = Int(Date().timeIntervalSince(snapshot.startedAt) * 1000)
+                session?.append(Fragment(id: UUID().uuidString, speaker: .assistant, text: result.text,
+                                         startMS: offset, endMS: offset + 1,
+                                         meaningVisible: store.preferences.meaningVisible))
+                scheduleAssessment(); save()
+            }
             typedReplyRequestIdentity.clear()
             if typedReplyDraft == clean { typedReplyDraft = "" }
             typedReplyError = nil
@@ -1541,7 +1659,8 @@ struct ConversationTopicSearchAdapter {
         } catch is CancellationError {
             return .cancelled
         } catch {
-            guard session?.id == snapshot.id, state == .active, learnerGeneration == capturedLearnerGeneration else { return .cancelled }
+            guard session?.id == snapshot.id, state == .active || state == .paused,
+                  learnerGeneration == capturedLearnerGeneration else { return .cancelled }
             // A token-proxy block keeps the message but gains the paywall route.
             noteProxyBlock(error)
             typedReplyError = error.localizedDescription
@@ -1570,6 +1689,9 @@ struct ConversationTopicSearchAdapter {
         session = SessionRecord(languageID: language.id, title: "Typed reply fixture")
         state = .active
     }
+    /// Test seam: pause settles through the transport's close path, which never
+    /// answers in a unit test; drive the terminal transition directly.
+    func settlePauseForTesting() { settlePause() }
 #endif
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }

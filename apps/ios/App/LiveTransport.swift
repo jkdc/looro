@@ -2,7 +2,7 @@ import Foundation
 import AVFoundation
 @preconcurrency import WebRTC
 
-enum ConnectionState: Equatable { case idle, connecting, active, closing, ended, failed }
+enum ConnectionState: Equatable { case idle, connecting, active, closing, paused, ended, failed }
 
 @MainActor final class LiveTransport: NSObject {
     var onEvent: (([String: Any]) -> Void)?
