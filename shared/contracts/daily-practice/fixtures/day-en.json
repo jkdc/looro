@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "packageVersionId": "11111111-1111-4111-8111-111111111111",
+  "contentHash": "20685284fff19763ce6f356d1b62ddaa00673ba1eeb89bb956f863b4839d2e2b",
+  "editorialDate": "2026-11-07",
+  "language": "en",
+  "profileVersion": "en-v1",
+  "topic": {
+    "id": "city-gardens",
+    "title": "A greener city",
+    "summary": "Imagine a shared garden in your neighbourhood."
+  },
+  "objective": "Describe a community idea and explain why it matters.",
+  "challengeReference": "B1-B2",
+  "estimatedMinutes": {
+    "preparation": 2,
+    "listening": 4,
+    "speaking": 6,
+    "practice": 3,
+    "review": 2,
+    "total": 17
+  },
+  "expressions": [
+    {
+      "id": "shared-space",
+      "text": "shared space",
+      "meanings": {
+        "en": "an area used by a group",
+        "es": "un espacio usado por un grupo"
+      },
+      "examples": {
+        "en": "The garden is a shared space.",
+        "es": "El jardín es un espacio compartido."
+      }
+    },
+    {
+      "id": "get-involved",
+      "text": "get involved",
+      "meanings": {
+        "en": "take part in an activity",
+        "es": "participar en una actividad"
+      },
+      "examples": {
+        "en": "More neighbours could get involved.",
+        "es": "Más vecinos podrían participar."
+      }
+    },
+    {
+      "id": "make-room",
+      "text": "make room for",
+      "meanings": {
+        "en": "create space for something",
+        "es": "hacer sitio para algo"
+      },
+      "examples": {
+        "en": "We can make room for herbs.",
+        "es": "Podemos hacer sitio para hierbas."
+      }
+    },
+    {
+      "id": "take-turns",
+      "text": "take turns",
+      "meanings": {
+        "en": "do something one after another",
+        "es": "turnarse"
+      },
+      "examples": {
+        "en": "We can take turns watering plants.",
+        "es": "Podemos turnarnos para regar."
+      }
+    },
+    {
+      "id": "a-sense-of",
+      "text": "a sense of community",
+      "meanings": {
+        "en": "a feeling of belonging together",
+        "es": "un sentimiento de comunidad"
+      },
+      "examples": {
+        "en": "The project created a sense of community.",
+        "es": "El proyecto creó un sentimiento de comunidad."
+      }
+    }
+  ],
+  "listening": {
+    "transcript": "Maya is describing a small garden project for the neighbourhood. People can share tools, grow herbs, and take turns caring for the plants. She hopes the project will help neighbours meet one another.",
+    "questions": [
+      {
+        "id": "listen-main",
+        "kind": "single_choice",
+        "prompt": "What is Maya proposing?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A neighbourhood garden"
+          },
+          {
+            "id": "b",
+            "text": "A new bus route"
+          },
+          {
+            "id": "c",
+            "text": "A cooking class"
+          },
+          {
+            "id": "d",
+            "text": "A sports club"
+          }
+        ],
+        "hints": {
+          "en": "Listen for the activity she wants to create.",
+          "es": "Escucha qué actividad quiere crear."
+        }
+      },
+      {
+        "id": "listen-detail",
+        "kind": "single_choice",
+        "prompt": "How will people care for the plants?",
+        "options": [
+          {
+            "id": "a",
+            "text": "They will take turns."
+          },
+          {
+            "id": "b",
+            "text": "One person will do everything."
+          },
+          {
+            "id": "c",
+            "text": "They will hire a company."
+          },
+          {
+            "id": "d",
+            "text": "They will leave them alone."
+          }
+        ],
+        "hints": {
+          "en": "Listen for how the work is shared.",
+          "es": "Escucha cómo comparten el trabajo."
+        }
+      },
+      {
+        "id": "listen-purpose",
+        "kind": "single_choice",
+        "prompt": "What does Maya hope the project will do?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Help neighbours meet."
+          },
+          {
+            "id": "b",
+            "text": "Make the streets wider."
+          },
+          {
+            "id": "c",
+            "text": "Close the local shops."
+          },
+          {
+            "id": "d",
+            "text": "Replace the park."
+          }
+        ],
+        "hints": {
+          "en": "Listen for her reason for doing this.",
+          "es": "Escucha por qué quiere hacerlo."
+        }
+      }
+    ],
+    "speechLocale": "en-US"
+  },
+  "speaking": {
+    "role": "A friendly neighbour who is planning a shared garden.",
+    "opening": "I have been thinking about a small garden for our neighbourhood. What do you think would make it useful for everyone?",
+    "topicAnchors": [
+      "people who might get involved",
+      "what to grow and share",
+      "how to organise care"
+    ],
+    "closingCue": "When you are ready, tell your neighbour one idea you would like to try first."
+  },
+  "goals": [
+    {
+      "id": "goal-idea",
+      "task": "Suggest one practical feature for the garden.",
+      "hints": {
+        "en": "Think about what people could do there.",
+        "es": "Piensa en lo que podrían hacer allí."
+      },
+      "sentenceStarters": {
+        "en": "We could...",
+        "es": "Podríamos..."
+      },
+      "exampleResponses": {
+        "en": "We could grow herbs together.",
+        "es": "Podríamos cultivar hierbas juntos."
+      }
+    },
+    {
+      "id": "goal-reason",
+      "task": "Explain how the idea could help the neighbourhood.",
+      "hints": {
+        "en": "Connect the idea to a benefit.",
+        "es": "Relaciona la idea con un beneficio."
+      },
+      "sentenceStarters": {
+        "en": "This would help because...",
+        "es": "Esto ayudaría porque..."
+      },
+      "exampleResponses": {
+        "en": "This would help because neighbours could meet.",
+        "es": "Esto ayudaría porque los vecinos podrían conocerse."
+      }
+    },
+    {
+      "id": "goal-plan",
+      "task": "Describe one way people could share the work.",
+      "hints": {
+        "en": "Think about a fair routine.",
+        "es": "Piensa en una rutina justa."
+      },
+      "sentenceStarters": {
+        "en": "We could take turns...",
+        "es": "Podríamos turnarnos para..."
+      },
+      "exampleResponses": {
+        "en": "We could take turns watering the plants.",
+        "es": "Podríamos turnarnos para regar las plantas."
+      }
+    }
+  ],
+  "practice": {
+    "questions": [
+      {
+        "id": "practice-choice-1",
+        "kind": "single_choice",
+        "prompt": "Choose the expression meaning 'participate'.",
+        "options": [
+          {
+            "id": "a",
+            "text": "get involved"
+          },
+          {
+            "id": "b",
+            "text": "make room"
+          },
+          {
+            "id": "c",
+            "text": "take turns"
+          },
+          {
+            "id": "d",
+            "text": "shared space"
+          }
+        ],
+        "hints": {
+          "en": "Look at the expression list.",
+          "es": "Consulta la lista de expresiones."
+        }
+      },
+      {
+        "id": "practice-choice-2",
+        "kind": "single_choice",
+        "prompt": "Which phrase means people do an activity one after another?",
+        "options": [
+          {
+            "id": "a",
+            "text": "take turns"
+          },
+          {
+            "id": "b",
+            "text": "get involved"
+          },
+          {
+            "id": "c",
+            "text": "shared space"
+          },
+          {
+            "id": "d",
+            "text": "make room"
+          }
+        ],
+        "hints": {
+          "en": "Think about sharing an activity.",
+          "es": "Piensa en compartir una actividad."
+        }
+      },
+      {
+        "id": "practice-gap-1",
+        "kind": "gap_fill",
+        "prompt": "The garden is a ____ for everyone.",
+        "options": [],
+        "hints": {
+          "en": "Use one expression from the topic.",
+          "es": "Usa una expresión del tema."
+        }
+      },
+      {
+        "id": "practice-gap-2",
+        "kind": "gap_fill",
+        "prompt": "We can ____ the work by watering on different days.",
+        "options": [],
+        "hints": {
+          "en": "Use the expression about doing things one after another.",
+          "es": "Usa la expresión sobre hacer algo uno tras otro."
+        }
+      }
+    ]
+  },
+  "supportLocales": [
+    "en",
+    "es"
+  ]
+}

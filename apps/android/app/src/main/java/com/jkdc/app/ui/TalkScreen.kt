@@ -284,7 +284,11 @@ fun TalkScreen(
             }
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
                 stringResource(if (vm.isRunning) R.string.talk_end_label else R.string.talk_transcript_label),
-                enabled = vm.session != null, onClick = { if (vm.isRunning) vm.end() else transcript = vm.session })
+                enabled = vm.session != null, onClick = {
+                    if (vm.isRunning) {
+                        if (!vm.endDailySpeaking()) vm.end()
+                    } else transcript = vm.session
+                })
         }
         Text(stringResource(if (vm.state == "active" && vm.isVoiceSession && !vm.isMuted) R.string.talk_microphone_on else R.string.talk_microphone_off),
             style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary, modifier = Modifier.padding(top = 6.dp))

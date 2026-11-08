@@ -36,6 +36,43 @@ class LearningDbTest {
 
     @After fun closeConnection() { connection.close() }
 
+    @Test fun manualDailyWordReaddClearsSuppressionAndStoresMarkReceiptAtomically() {
+        val owner = "member:daily-manual-readd"
+        val markId = "33333333-3333-4333-8333-333333333333"
+        LearnerOwnershipDao.activate(db, owner)
+        db.insert("daily_word_suppressions", mapOf("owner_key" to owner, "language_id" to "en",
+            "norm_key" to "garden", "deleted_at" to 10.0))
+        val plans = com.jkdc.app.core.planManualDailyWord(markId, "garden", "plants grow here", "word",
+            owner, "en", emptyList(), emptySet(), setOf("en:garden"), 20.0)
+
+        val result = LearningDbWriter.dailyWordsImported(db, owner, plans, setOf("en" to "garden"))
+
+        assertEquals(1, result.inserted)
+        assertTrue(db.query("SELECT 1 AS found FROM daily_word_suppressions WHERE owner_key=? AND language_id=? AND norm_key=?",
+            listOf(owner, "en", "garden")).isEmpty())
+        val receipt = db.query("SELECT origin_key,review_id,action FROM daily_word_imports WHERE owner_key=?",
+            listOf(owner)).single()
+        assertEquals("mark:$markId", receipt["origin_key"])
+        assertEquals(null, receipt["review_id"])
+        assertEquals("imported", receipt["action"])
+        assertEquals("plants grow here", ExpressionsDao.all(db).single().meaning)
+    }
+
+    @Test fun reviewReceiptStoresReviewIdInsteadOfOriginPrefix() {
+        val owner = "member:daily-review-receipt"
+        LearnerOwnershipDao.activate(db, owner)
+        val plan = com.jkdc.app.core.planDailyWordsImport(
+            com.jkdc.app.core.DailyWordsReview("44444444-4444-4444-8444-444444444444", "en", listOf(
+                com.jkdc.app.core.DailyWordCandidate("candidate-1", "word", "garden", "plants grow here", "supported")
+            )), owner, "en", emptyList(), emptySet(), emptySet(), 20.0).single()
+
+        LearningDbWriter.dailyWordsImported(db, owner, listOf(plan))
+
+        val receipt = db.query("SELECT origin_key,review_id FROM daily_word_imports WHERE owner_key=?", listOf(owner)).single()
+        assertEquals("review:44444444-4444-4444-8444-444444444444:candidate-1", receipt["origin_key"])
+        assertEquals("44444444-4444-4444-8444-444444444444", receipt["review_id"])
+    }
+
     @Test fun bootstrapEligibilityIsDurableAndIsolatedByLearnerIdentity() {
         LearnerOwnershipDao.activate(db, "guest:11111111-1111-4111-8111-111111111111")
         assertTrue(OwnerBootstrapEligibilityDao.canBootstrap(db, "guest:11111111-1111-4111-8111-111111111111"))
@@ -459,7 +496,7 @@ class LearningDbTest {
             val laterUpgrades = SchemaData.SCHEMA_UPGRADES.filterKeys { it >= 6 }.values.flatten().toSet()
             for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) {
                 if (statement !in laterUpgrades && statement != "PRAGMA user_version = 6" &&
-                    statement != "PRAGMA user_version = 7") legacy.exec(statement)
+                    statement != "PRAGMA user_version = 7" && statement != "PRAGMA user_version = 8") legacy.exec(statement)
             }
             legacy.insert("exam_snapshots", mapOf("content_id" to "content-a", "content_hash" to "hash-a",
                 "schema_version" to 1, "content_revision" to 1, "grading_version" to 1, "source" to "bundled",
@@ -672,14 +709,18 @@ class LearningDbTest {
         return target
     }
 
-    @Test fun schemaOpensAtVersionSevenWithExactlyThePinnedTables() {
-        assertEquals(7L, db.query("PRAGMA user_version").single().values.single())
+    @Test fun schemaOpensAtVersionNineWithExactlyThePinnedTables() {
+        assertEquals(9, LearningDb.VERSION)
+        assertEquals(SchemaData.SCHEMA_VERSION, LearningDb.VERSION)
+        assertEquals(9L, db.query("PRAGMA user_version").single().values.single())
         val tables = db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { it["name"] as String }
         // fragments_fts is the pinned v2 virtual table; fragments_fts_* are its
         // FTS4 shadow tables (SQLite internals, like sqlite_sequence).
-        assertEquals(listOf("assessment_tickets", "completions", "exam_answers", "exam_attempts",
+        assertEquals(listOf("assessment_tickets", "completions", "daily_attempt_cache", "daily_outbox",
+            "daily_review_cache", "daily_word_imports", "daily_word_suppressions",
+            "exam_answers", "exam_attempts",
             "exam_results", "exam_snapshot_ids", "exam_snapshots", "exam_sync_conflicts", "exam_sync_outbox",
             "expressions", "fragments",
             "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
@@ -758,7 +799,7 @@ class LearningDbTest {
             // the delta, then the recorded version
             v1.transaction { LearningDb.upgrade(it, 1) }
             v1.exec("PRAGMA user_version = ${LearningDb.VERSION}")
-            assertEquals(7L, v1.query("PRAGMA user_version").single().values.single())
+            assertEquals(9L, v1.query("PRAGMA user_version").single().values.single())
             // the 'rebuild' indexed the fragment v1 already had, and a NEW write
             // (the insert trigger) is searchable too
             assertEquals(listOf("s1"), SearchDao.search(v1, "heredada", "es").map { it.session.id })
@@ -1325,6 +1366,133 @@ class LearningDbTest {
     }
 
     private fun count(table: String) = db.query("SELECT COUNT(*) AS n FROM $table").single()["n"]
+
+    @Test fun dailyAttemptEventIsCachedAndQueuedAtomicallyForItsActiveOwner() {
+        val owner = "member:daily-owner"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "{\"package\":1}", "{\"stage\":\"preparation\"}", 0, 10.0)
+
+        val inserted = LearningDbWriter.enqueueDailyEvent(db, owner, "event-1", "attempt-1",
+            "{\"type\":\"answer\"}", "hash-1", 0, 0, "{\"stage\":\"listening\"}", 11.0)
+
+        assertTrue(inserted)
+        val attempt = db.query("SELECT state_json,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+            listOf(owner, "attempt-1")).single()
+        assertEquals("{\"stage\":\"listening\"}", attempt["state_json"])
+        assertEquals(1L, attempt["revision"])
+        val event = db.query("SELECT delivery_state,expected_revision,sequence FROM daily_outbox WHERE owner_key=? AND event_id=?",
+            listOf(owner, "event-1")).single()
+        assertEquals("pending", event["delivery_state"])
+        assertEquals(0L, event["expected_revision"])
+        assertEquals(0L, event["sequence"])
+    }
+
+    @Test fun dailyOutboxRejectsOwnerSwitchAndConflictingEventReplay() {
+        val owner = "member:daily-owner-a"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "{}", "{}", 0, 10.0)
+        assertTrue(LearningDbWriter.enqueueDailyEvent(db, owner, "event-1", "attempt-1", "{\"v\":1}", "hash-1", 0, 0, "{\"v\":2}", 11.0))
+        assertFalse(LearningDbWriter.enqueueDailyEvent(db, owner, "event-1", "attempt-1", "{\"v\":1}", "hash-1", 0, 0, "{\"v\":2}", 12.0))
+        assertThrows(IllegalStateException::class.java) {
+            LearningDbWriter.enqueueDailyEvent(db, owner, "event-2", "attempt-1", "{\"v\":2}", "hash-2", 0, 1, "{\"v\":3}", 13.0)
+        }
+        assertEquals(1L, count("daily_outbox"))
+
+        LearnerOwnershipDao.activate(db, "member:daily-owner-b")
+        assertThrows(IllegalStateException::class.java) {
+            LearningDbWriter.enqueueDailyEvent(db, owner, "event-3", "attempt-1", "{}", "hash-3", 1, 1, "{}", 14.0)
+        }
+        assertEquals(1L, count("daily_outbox"))
+    }
+
+    @Test fun cachedDailyAttemptKeepsItsFrozenPackageAndCannotRegressRevision() {
+        val owner = "member:daily-owner"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "package-a", "state-a", 2, 10.0)
+        assertThrows(IllegalStateException::class.java) {
+            LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "package-b", "state-b", 2, 11.0)
+        }
+        assertThrows(IllegalStateException::class.java) {
+            LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "package-a", "state-old", 1, 12.0)
+        }
+        val row = db.query("SELECT package_snapshot,state_json,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+            listOf(owner, "attempt-1")).single()
+        assertEquals("package-a", row["package_snapshot"])
+        assertEquals("state-a", row["state_json"])
+        assertEquals(2L, row["revision"])
+    }
+
+    @Test fun canonicalDailyAttemptIdReplacesTheProvisionalCacheWithoutChangingItsCreateKey() {
+        val owner = "member:daily-owner"
+        val provisional = "33333333-3333-4333-8333-333333333333"
+        val canonical = "44444444-4444-4444-8444-444444444444"
+        val key = "55555555-5555-4555-8555-555555555555"
+        LearnerOwnershipDao.activate(db, owner)
+        val state = com.jkdc.app.core.DailyAttemptReducer.encode(
+            com.jkdc.app.core.DailyAttemptLocalState.start(provisional, key))
+        LearningDbWriter.cacheDailyAttempt(db, owner, provisional, "frozen", state, 0, 10.0)
+
+        LearningDbWriter.remapDailyAttemptId(db, owner, provisional, canonical, state, 0, 11.0)
+
+        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+            listOf(owner, provisional)).single()["n"])
+        val row = db.query("SELECT package_snapshot,state_json FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+            listOf(owner, canonical)).single()
+        assertEquals("frozen", row["package_snapshot"])
+        val restored = com.jkdc.app.core.DailyAttemptReducer.decode(row["state_json"] as String)
+        assertEquals(canonical, restored.attemptId)
+        assertEquals(key, restored.createIdempotencyKey)
+    }
+
+    @Test fun dailyOutboxAcknowledgementAndReviewCacheRemainOwnerFenced() {
+        val owner = "member:daily-owner"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "package", "state", 0, 10.0)
+        LearningDbWriter.enqueueDailyEvent(db, owner, "event-1", "attempt-1", "{}", "hash", 0, 0, "next", 11.0)
+
+        LearningDbWriter.markDailyEventState(db, owner, "event-1", "acknowledged")
+        LearningDbWriter.cacheDailyReview(db, owner, "review-1", "attempt-1", "{\"schemaVersion\":1}", 12.0)
+
+        assertEquals("acknowledged", db.query("SELECT delivery_state FROM daily_outbox WHERE owner_key=? AND event_id=?",
+            listOf(owner, "event-1")).single()["delivery_state"])
+        assertEquals("{\"schemaVersion\":1}", db.query("SELECT result_json FROM daily_review_cache WHERE owner_key=? AND review_id=?",
+            listOf(owner, "review-1")).single()["result_json"])
+        LearnerOwnershipDao.activate(db, "member:other")
+        assertThrows(IllegalStateException::class.java) {
+            LearningDbWriter.markDailyEventState(db, owner, "event-1", "outcome_unknown")
+        }
+    }
+
+    @Test fun dailyWordsWriterReportsPersistedOutcomesIncludingCapacity() {
+        val owner = "member:daily-owner"
+        LearnerOwnershipDao.activate(db, owner)
+        val plans = listOf(
+            com.jkdc.app.core.DailyWordImportPlan(owner, "en", "r:a", "a", "a", "meaning", "word",
+                com.jkdc.app.core.DailyWordImportAction.INSERT, 1.0),
+            com.jkdc.app.core.DailyWordImportPlan(owner, "en", "r:b", "b", "b", "meaning", "word",
+                com.jkdc.app.core.DailyWordImportAction.KEEP, 1.0),
+            com.jkdc.app.core.DailyWordImportPlan(owner, "en", "r:c", "c", "c", "meaning", "word",
+                com.jkdc.app.core.DailyWordImportAction.SUPPRESS, 1.0),
+            com.jkdc.app.core.DailyWordImportPlan(owner, "en", "r:d", "d", "d", "meaning", "word",
+                com.jkdc.app.core.DailyWordImportAction.PENDING_CAPACITY, 1.0),
+        )
+
+        val result = LearningDbWriter.dailyWordsImported(db, owner, plans)
+
+        assertEquals(com.jkdc.app.core.DailyWordsImportSummary(1, 1, 1, 1), result)
+    }
+
+    @Test fun confirmedDailyEventRejectionIsNotOfferedAsAnUnknownRetry() {
+        val owner = "member:daily-owner"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "package", "state", 0, 10.0)
+        LearningDbWriter.enqueueDailyEvent(db, owner, "event-1", "attempt-1", "{}", "hash", 0, 0, "next", 11.0)
+
+        LearningDbWriter.markDailyEventState(db, owner, "event-1", "rejected")
+
+        assertEquals("rejected", db.query("SELECT delivery_state FROM daily_outbox WHERE owner_key=? AND event_id=?",
+            listOf(owner, "event-1")).single()["delivery_state"])
+    }
 
     private class NoUpdateCountDatabase(private val delegate: SqlDatabase) : SqlDatabase {
         override fun exec(statement: String) = delegate.exec(statement)

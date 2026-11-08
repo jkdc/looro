@@ -316,6 +316,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var selectedTheme by mutableStateOf<ConversationTheme?>(null); private set
     var selectedLesson by mutableStateOf<Lesson?>(null); private set
     var selectedScenario by mutableStateOf<Scenario?>(null); private set
+    private var dailyVoiceAttemptID: String? = null
+    private var dailyVoiceSegmentID: String? = null
+    private var dailyVoiceCloseRequested = false
+    var dailySpeakingSaving by mutableStateOf(false); private set
     private val topicTransition = TopicTransitionGate<TopicSelection>()
     internal val pendingTopicTransition get() = topicTransition.pending
     val pendingTopicTitle: String
@@ -467,6 +471,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val current = examOwnerIdentity.value
         val resolvedIdentity = com.jkdc.app.core.LocalLearnerIdentity.resolve(accountID, localGuestIdentityID)
         if (current.ownerAccountID != resolvedIdentity) {
+            dailyVoiceAttemptID = null; dailyVoiceSegmentID = null; dailyVoiceCloseRequested = false
             if (errorCanRetryLocalHistory) dismissError()
             val updated = LevelTestAttemptHistoryIdentity(resolvedIdentity, current.generation + 1)
             examOwnerIdentity.value = updated
@@ -1139,6 +1144,438 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return DailyPlanEngine.plan(budget, dueRecallCount(), next != null, unplayedListening, unplayedReading)
     }
 
+    private fun dailyClient() = DailyPracticeClient(accountConfiguration ?: throw HostedFailure.Unavailable)
+
+    private fun requireDailyOwner(ownerIdentity: String): Pair<LevelTestAttemptHistoryIdentity, String> {
+        val identity = examOwnerIdentity.value
+        check(loadedLearningIdentity == ownerIdentity && identity.ownerAccountID == ownerIdentity) { "daily_attempt_owner_changed" }
+        return identity to ownerIdentity
+    }
+
+    private suspend fun dailySession(ownerIdentity: String, captured: LevelTestAttemptHistoryIdentity): AccountSession {
+        val session = availableHostedOwner() ?: throw HostedFailure.SignInRequired
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        check(ownerIdentity == "member:${session.accountID}" || ownerIdentity == "guest:${session.accountID}") {
+            "daily_attempt_owner_changed"
+        }
+        return session
+    }
+
+    private suspend fun persistDailyDbAndWait(ownerIdentity: String, captured: LevelTestAttemptHistoryIdentity,
+        write: (SqlDatabase) -> Unit) {
+        check(storageReady && !jsonMode) { "Durable daily practice storage is unavailable" }
+        val target = checkNotNull(store?.db) { "Learning database is unavailable" }
+        val completion = CompletableDeferred<Boolean>()
+        writes.send(WriteRequest({ write(target) }, completion,
+            ownerIdentity = ownerIdentity, ownerGeneration = captured.generation))
+        check(completion.await()) { "daily_attempt_owner_changed" }
+    }
+
+    suspend fun dailyCurrentPackage(): DailyPracticePackage = dailyClient().currentPackage(language.id)
+
+    var dailyListeningPlaying by mutableStateOf(false); private set
+    var dailyListeningBusy by mutableStateOf(false); private set
+    var dailyListeningVoiceUnavailable by mutableStateOf(false); private set
+    private var dailyListeningJob: Job? = null
+
+    /** Speak the frozen package transcript with the profile-bound on-device voice. */
+    fun playDailyListening(dailyPackage: DailyPracticePackage) {
+        if (dailyListeningBusy) return
+        dailyListeningBusy = true
+        dailyListeningVoiceUnavailable = false
+        dailyListeningJob = viewModelScope.launch {
+            try {
+                if (!lessonReader.initialize() || !lessonReader.setLanguage(dailyPackage.listening.speechLocale)) {
+                    dailyListeningVoiceUnavailable = true
+                    return@launch
+                }
+                lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
+                dailyListeningPlaying = true
+                if (lessonReader.speak(dailyPackage.listening.transcript) == null) {
+                    dailyListeningVoiceUnavailable = true
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                dailyListeningVoiceUnavailable = true
+            } finally {
+                dailyListeningPlaying = false
+                dailyListeningBusy = false
+            }
+        }
+    }
+
+    fun stopDailyListening() {
+        dailyListeningJob?.cancel()
+        lessonReader.stop()
+        dailyListeningPlaying = false
+    }
+
+    /** Owner-scoped local cache used to restore an interrupted attempt and its frozen package. */
+    suspend fun cachedDailyAttempts(ownerIdentity: String): List<Pair<DailyPracticePackage, DailyAttemptLocalState>> {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        check(!jsonMode) { "Durable daily practice is unavailable in JSON fail-safe mode" }
+        val db = checkNotNull(store?.db) { "Learning database is unavailable" }
+        val rows = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            db.query("SELECT package_snapshot,state_json FROM daily_attempt_cache WHERE owner_key=? ORDER BY updated_at DESC",
+                listOf(ownerIdentity))
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        return rows.mapNotNull { row ->
+            try {
+                DailyPracticeCodec.decodePackage(row["package_snapshot"] as String) to
+                    DailyAttemptReducer.decode(row["state_json"] as String)
+            } catch (_: Exception) { null }
+        }
+    }
+
+    /** Cache package, draft, and create idempotency key before the first network write. */
+    suspend fun createDailyAttempt(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        explanationLanguage: String): Pair<DailyAttemptLocalState, kotlinx.serialization.json.JsonObject> {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        val attemptID = UUID.randomUUID().toString()
+        val idempotencyKey = UUID.randomUUID().toString()
+        val draft = DailyAttemptLocalState.start(attemptID, idempotencyKey)
+        val packageJSON = DailyPracticeCodec.encodePackage(dailyPackage)
+        persistDailyDbAndWait(ownerIdentity, captured) { db ->
+            LearningDbWriter.cacheDailyAttempt(db, ownerIdentity, attemptID, packageJSON,
+                DailyAttemptReducer.encode(draft), 0, System.currentTimeMillis() / 1000.0)
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val response = dailyClient().createAttempt(session, attemptID, dailyPackage.packageVersionId,
+            explanationLanguage, 1, idempotencyKey)
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val canonicalID = response["attemptId"]?.jsonPrimitive?.contentOrNull
+            ?.takeIf { runCatching { UUID.fromString(it) }.isSuccess } ?: throw DailyPracticeFailure.InvalidResponse
+        val serverRevision = response["revision"]?.jsonPrimitive?.longOrNull ?: 0L
+        val accepted = restoreDailyServerProgress(draft.copy(attemptId = canonicalID,
+            revision = serverRevision, createStatus = "acknowledged"), response)
+        persistDailyDbAndWait(ownerIdentity, captured) { db ->
+            if (canonicalID == attemptID) LearningDbWriter.cacheDailyAttempt(db, ownerIdentity, attemptID, packageJSON,
+                DailyAttemptReducer.encode(accepted), serverRevision, System.currentTimeMillis() / 1000.0)
+            else LearningDbWriter.remapDailyAttemptId(db, ownerIdentity, attemptID, canonicalID,
+                DailyAttemptReducer.encode(accepted), serverRevision, System.currentTimeMillis() / 1000.0)
+        }
+        return accepted to response
+    }
+
+    suspend fun retryDailyAttemptCreate(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        draft: DailyAttemptLocalState, explanationLanguage: String): Pair<DailyAttemptLocalState, JsonObject> {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        check(draft.createIdempotencyKey.isNotBlank()) { "daily_create_key_missing" }
+        val response = dailyClient().createAttempt(session, draft.attemptId, dailyPackage.packageVersionId,
+            explanationLanguage, 1, draft.createIdempotencyKey)
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val canonicalID = response["attemptId"]?.jsonPrimitive?.contentOrNull
+            ?.takeIf { runCatching { UUID.fromString(it) }.isSuccess } ?: throw DailyPracticeFailure.InvalidResponse
+        val serverRevision = response["revision"]?.jsonPrimitive?.longOrNull ?: draft.revision
+        val accepted = restoreDailyServerProgress(draft.copy(attemptId = canonicalID,
+            revision = serverRevision, createStatus = "acknowledged"), response)
+        persistDailyDbAndWait(ownerIdentity, captured) { db ->
+            if (canonicalID == draft.attemptId) LearningDbWriter.cacheDailyAttempt(db, ownerIdentity, canonicalID,
+                DailyPracticeCodec.encodePackage(dailyPackage), DailyAttemptReducer.encode(accepted), serverRevision,
+                System.currentTimeMillis() / 1000.0)
+            else LearningDbWriter.remapDailyAttemptId(db, ownerIdentity, draft.attemptId, canonicalID,
+                DailyAttemptReducer.encode(accepted), serverRevision, System.currentTimeMillis() / 1000.0)
+        }
+        return accepted to response
+    }
+
+    private fun restoreDailyServerProgress(draft: DailyAttemptLocalState, response: JsonObject): DailyAttemptLocalState {
+        val rows = response["completedStages"]?.jsonArray.orEmpty().mapNotNull { it.jsonObject }
+        val completed = rows.filter { it["status"]?.jsonPrimitive?.contentOrNull == "completed" }
+            .mapNotNull { it["stage"]?.jsonPrimitive?.contentOrNull }.toSet()
+        val skipped = rows.filter { it["status"]?.jsonPrimitive?.contentOrNull == "skipped" }
+            .mapNotNull { it["stage"]?.jsonPrimitive?.contentOrNull }.toSet()
+        val terminal = response["state"]?.jsonPrimitive?.contentOrNull in setOf("completed", "partial")
+        return DailyAttemptReducer.restoreServerProgress(draft, completed, skipped, terminal)
+    }
+
+    suspend fun persistDailyDraft(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        draft: DailyAttemptLocalState) {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val packageJSON = DailyPracticeCodec.encodePackage(dailyPackage)
+        persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.cacheDailyAttempt(db, ownerIdentity, draft.attemptId,
+            packageJSON, DailyAttemptReducer.encode(draft), draft.revision, System.currentTimeMillis() / 1000.0) }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+    }
+
+    /** Queue a stable event and next local state atomically, then send exactly that envelope. */
+    suspend fun appendDailyEvent(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        state: DailyAttemptLocalState, event: JsonObject): Pair<DailyAttemptLocalState, JsonObject> {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        val eventID = UUID.randomUUID().toString()
+        val eventJSON = event.toString()
+        val intentHash = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(eventJSON.toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it) }
+        val next = DailyAttemptReducer.afterQueuedEvent(state)
+        val packageJSON = DailyPracticeCodec.encodePackage(dailyPackage)
+        persistDailyDbAndWait(ownerIdentity, captured) { db ->
+            LearningDbWriter.enqueueDailyEvent(db, ownerIdentity, eventID, state.attemptId, eventJSON,
+                intentHash, state.revision, state.nextEventSequence, DailyAttemptReducer.encode(next),
+                System.currentTimeMillis() / 1000.0)
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val envelope = buildJsonObject {
+            put("schemaVersion", 1); put("eventId", eventID); put("expectedRevision", state.revision)
+            put("event", event)
+        }
+        persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.markDailyEventState(db, ownerIdentity, eventID, "sending") }
+        try {
+            val response = dailyClient().appendEvent(session, state.attemptId, envelope)
+            check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+            persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.markDailyEventState(db, ownerIdentity, eventID, "acknowledged") }
+            return next to response
+        } catch (failure: DailyPracticeFailure.OutcomeUnknown) {
+            withContext(NonCancellable) {
+                persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.markDailyEventState(db, ownerIdentity, eventID, "outcome_unknown") }
+            }
+            throw failure
+        } catch (failure: DailyPracticeFailure.Http) {
+            if (failure.status == 409) {
+                withContext(NonCancellable) {
+                    persistDailyDbAndWait(ownerIdentity, captured) {
+                        LearningDbWriter.markDailyEventState(it, ownerIdentity, eventID, "revision_conflict")
+                    }
+                }
+                val reconciled = reconcileDailyStageConflict(ownerIdentity, dailyPackage, session, captured,
+                    state, eventID, event)
+                if (reconciled != null) return reconciled
+                throw failure
+            }
+            withContext(NonCancellable) {
+                persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.markDailyEventState(db, ownerIdentity, eventID, "rejected") }
+            }
+            throw failure
+        }
+    }
+
+    /** One bounded rebase for a confirmed stage conflict; event identity and intent stay fixed. */
+    private suspend fun reconcileDailyStageConflict(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        session: AccountSession, captured: LevelTestAttemptHistoryIdentity, state: DailyAttemptLocalState,
+        eventID: String, event: JsonObject): Pair<DailyAttemptLocalState, JsonObject>? {
+        val type = event["type"]?.jsonPrimitive?.contentOrNull ?: return null
+        if (type != "stage_submitted" && type != "stage_skipped" && type != "word_marked") return null
+        val remote = dailyClient().attempt(session, state.attemptId)
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val revision = remote["revision"]?.jsonPrimitive?.longOrNull ?: return null
+        if (remote["attemptId"]?.jsonPrimitive?.contentOrNull != state.attemptId ||
+            remote["packageVersionId"]?.jsonPrimitive?.contentOrNull != dailyPackage.packageVersionId ||
+            !DailyAttemptReducer.isServerAttemptInProgress(remote["state"]?.jsonPrimitive?.contentOrNull) || revision <= state.revision) return null
+        val stage = event["stage"]?.jsonPrimitive?.contentOrNull
+        if (type != "word_marked" && stage == null) return null
+        val resolved = stage != null && remote["completedStages"]?.jsonArray.orEmpty().any { row ->
+            row.jsonObject["stage"]?.jsonPrimitive?.contentOrNull == stage
+        }
+        if (!DailyAttemptReducer.canRebaseConfirmedConflict(type, resolved, true, true, true, false)) return null
+
+        val local = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(store!!.db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            store!!.db.query("SELECT state_json FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(ownerIdentity, state.attemptId)).firstOrNull()?.get("state_json") as? String
+        } ?: return null
+        val rebased = DailyAttemptReducer.decode(local).copy(revision = revision)
+        val envelope = buildJsonObject { put("schemaVersion", 1); put("eventId", eventID); put("expectedRevision", revision); put("event", event) }
+        persistDailyDbAndWait(ownerIdentity, captured) { db -> db.transaction { tx ->
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(tx) == ownerIdentity) { "daily_attempt_owner_changed" }
+            val row = tx.query("SELECT delivery_state,attempt_id FROM daily_outbox WHERE owner_key=? AND event_id=?",
+                listOf(ownerIdentity, eventID)).firstOrNull() ?: error("daily_event_not_found")
+            check(row["delivery_state"] == "revision_conflict" && row["attempt_id"] == state.attemptId)
+            tx.update("UPDATE daily_outbox SET expected_revision=?,delivery_state='sending' WHERE owner_key=? AND event_id=?",
+                listOf(revision, ownerIdentity, eventID))
+            tx.update("UPDATE daily_attempt_cache SET state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=?",
+                listOf(DailyAttemptReducer.encode(rebased), revision, System.currentTimeMillis() / 1000.0, ownerIdentity, state.attemptId))
+        } }
+        return try {
+            val response = dailyClient().appendEvent(session, state.attemptId, envelope)
+            check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+            val acceptedRevision = DailyAttemptReducer.acceptedRebasedRevision(
+                revision, response["revision"]?.jsonPrimitive?.longOrNull,
+            )
+            val accepted = rebased.copy(revision = acceptedRevision)
+            persistDailyDbAndWait(ownerIdentity, captured) { db -> db.transaction { tx ->
+                check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(tx) == ownerIdentity) { "daily_attempt_owner_changed" }
+                tx.update("UPDATE daily_attempt_cache SET state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=?",
+                    listOf(DailyAttemptReducer.encode(accepted), acceptedRevision,
+                        System.currentTimeMillis() / 1000.0, ownerIdentity, state.attemptId))
+                tx.update("UPDATE daily_outbox SET delivery_state='acknowledged' WHERE owner_key=? AND event_id=? AND delivery_state='sending'",
+                    listOf(ownerIdentity, eventID))
+            } }
+            accepted to response
+        } catch (retryFailure: DailyPracticeFailure.OutcomeUnknown) {
+            withContext(NonCancellable) { persistDailyDbAndWait(ownerIdentity, captured) {
+                LearningDbWriter.markDailyEventState(it, ownerIdentity, eventID, "outcome_unknown")
+            } }
+            throw retryFailure
+        } catch (retryFailure: DailyPracticeFailure.Http) {
+            withContext(NonCancellable) { persistDailyDbAndWait(ownerIdentity, captured) {
+                LearningDbWriter.markDailyEventState(it, ownerIdentity, eventID,
+                    if (retryFailure.status == 409) "revision_conflict" else "rejected")
+            } }
+            throw retryFailure
+        }
+    }
+
+    /** Explicit recovery for an unknown event; reuses its immutable ID, intent and revision. */
+    suspend fun retryUnknownDailyEvent(ownerIdentity: String, attemptID: String): JsonObject {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        val db = checkNotNull(store?.db)
+        val row = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            db.query("SELECT event_id,intent_json,expected_revision FROM daily_outbox WHERE owner_key=? AND attempt_id=? AND delivery_state IN ('pending','sending','outcome_unknown') ORDER BY sequence LIMIT 1",
+                listOf(ownerIdentity, attemptID)).firstOrNull()
+        } ?: error("daily_unknown_event_not_found")
+        val eventID = row["event_id"] as String
+        val envelope = buildJsonObject {
+            put("schemaVersion", 1); put("eventId", eventID); put("expectedRevision", row["expected_revision"] as Long)
+            put("event", Json.parseToJsonElement(row["intent_json"] as String))
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        persistDailyDbAndWait(ownerIdentity, captured) { target -> LearningDbWriter.markDailyEventState(target, ownerIdentity, eventID, "sending") }
+        return try {
+            val response = dailyClient().appendEvent(session, attemptID, envelope)
+            check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+            persistDailyDbAndWait(ownerIdentity, captured) { target -> LearningDbWriter.markDailyEventState(target, ownerIdentity, eventID, "acknowledged") }
+            response
+        } catch (failure: DailyPracticeFailure.OutcomeUnknown) {
+            withContext(NonCancellable) {
+                persistDailyDbAndWait(ownerIdentity, captured) { target -> LearningDbWriter.markDailyEventState(target, ownerIdentity, eventID, "outcome_unknown") }
+            }
+            throw failure
+        } catch (failure: DailyPracticeFailure.Http) {
+            withContext(NonCancellable) {
+                persistDailyDbAndWait(ownerIdentity, captured) { target -> LearningDbWriter.markDailyEventState(target, ownerIdentity, eventID,
+                    if (failure.status == 409) "revision_conflict" else "rejected") }
+            }
+            throw failure
+        }
+    }
+
+    suspend fun hasUnknownDailyEvent(ownerIdentity: String, attemptID: String): Boolean {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val db = checkNotNull(store?.db)
+        val found = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            db.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key=? AND attempt_id=? AND delivery_state IN ('pending','sending','outcome_unknown') LIMIT 1",
+                listOf(ownerIdentity, attemptID)).isNotEmpty()
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        return found
+    }
+
+    suspend fun hasBlockingDailyEvent(ownerIdentity: String, attemptID: String): Boolean {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val db = checkNotNull(store?.db)
+        val found = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            db.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key=? AND attempt_id=? AND delivery_state!='acknowledged' LIMIT 1",
+                listOf(ownerIdentity, attemptID)).isNotEmpty()
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        return found
+    }
+
+    suspend fun dailyAttempt(ownerIdentity: String, attemptID: String): JsonObject {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        val result = dailyClient().attempt(session, attemptID)
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        return result
+    }
+
+    suspend fun dailyReview(ownerIdentity: String, attemptID: String): JsonObject {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        val session = dailySession(ownerIdentity, captured)
+        val review = dailyClient().review(session, attemptID)
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val reviewID = review["reviewId"]?.jsonPrimitive?.contentOrNull ?: return review
+        persistDailyDbAndWait(ownerIdentity, captured) { db -> LearningDbWriter.cacheDailyReview(db, ownerIdentity, reviewID, attemptID,
+            review.toString(), System.currentTimeMillis() / 1000.0) }
+        return review
+    }
+
+    /** Imports only server-admitted supported candidates, after explicit learner action. */
+    suspend fun importDailyWords(ownerIdentity: String, dailyPackage: DailyPracticePackage,
+        attemptID: String, review: JsonObject): DailyWordsImportSummary {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        check(review["schemaVersion"]?.jsonPrimitive?.int == 1 &&
+            review["attemptId"]?.jsonPrimitive?.content == attemptID &&
+            review["packageVersionId"]?.jsonPrimitive?.content == dailyPackage.packageVersionId &&
+            review["language"]?.jsonPrimitive?.content == dailyPackage.language) { "daily_review_binding_mismatch" }
+        val reviewID = review["reviewId"]?.jsonPrimitive?.contentOrNull ?: error("daily_review_invalid")
+        val items = review["wordCandidates"]?.jsonArray ?: error("daily_review_invalid")
+        val candidates = items.mapNotNull { raw ->
+            val value = raw.jsonObject
+            if (value["confidence"]?.jsonPrimitive?.content != "supported") return@mapNotNull null
+            com.jkdc.app.core.DailyWordCandidate(
+                candidateId = value["candidateId"]?.jsonPrimitive?.content ?: return@mapNotNull null,
+                kind = value["kind"]?.jsonPrimitive?.content ?: return@mapNotNull null,
+                text = value["text"]?.jsonPrimitive?.content ?: return@mapNotNull null,
+                meaning = value["meaning"]?.jsonPrimitive?.content ?: return@mapNotNull null,
+                confidence = "supported", origin = value["origin"]?.jsonPrimitive?.contentOrNull)
+        }
+        val db = checkNotNull(store?.db)
+        val (existing, receipts, suppressions) = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            val words = ExpressionsDao.all(db).map { com.jkdc.app.core.DailyWordExisting(it.text,
+                it.languageID ?: dailyPackage.language, it.bars, it.attempts, it.meaning) }
+            val saved = db.query("SELECT origin_key FROM daily_word_imports WHERE owner_key=? AND action IN ('imported','existing','suppressed')",
+                listOf(ownerIdentity)).map { it["origin_key"] as String }.toSet()
+            val hidden = db.query("SELECT language_id,norm_key FROM daily_word_suppressions WHERE owner_key=?",
+                listOf(ownerIdentity)).map { "${it["language_id"]}:${it["norm_key"]}" }.toSet()
+            Triple(words, saved, hidden)
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val plans = planDailyWordsImport(com.jkdc.app.core.DailyWordsReview(reviewID, dailyPackage.language, candidates),
+            ownerIdentity, dailyPackage.language, existing, receipts, suppressions, System.currentTimeMillis() / 1000.0)
+        var summary: DailyWordsImportSummary? = null
+        persistDailyDbAndWait(ownerIdentity, captured) { target -> summary = LearningDbWriter.dailyWordsImported(target, ownerIdentity, plans) }
+        val latest = withContext(Dispatchers.IO) { ExpressionsDao.all(db) }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        archive = archive.copy(expressions = latest.toMutableList())
+        return checkNotNull(summary)
+    }
+
+    /** Saves a learner-authored mark through the same receipt, suppression, and capacity planner as review imports. */
+    suspend fun saveDailyManualWord(ownerIdentity: String, dailyPackage: DailyPracticePackage, attemptID: String,
+        markID: String, text: String, meaning: String, kind: String): DailyWordsImportSummary {
+        val (captured, _) = requireDailyOwner(ownerIdentity)
+        check(dailyPackage.language == language.id && attemptID.isNotBlank()) { "daily_manual_word_binding_mismatch" }
+        val db = checkNotNull(store?.db)
+        val (existing, receipts, suppressions) = withContext(Dispatchers.IO) {
+            check(com.jkdc.app.data.LearnerOwnershipDao.activeIdentity(db) == ownerIdentity) { "daily_attempt_owner_changed" }
+            val attempt = db.query("SELECT package_snapshot FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(ownerIdentity, attemptID)).firstOrNull() ?: error("daily_attempt_not_cached")
+            check(DailyPracticeCodec.decodePackage(attempt["package_snapshot"] as String).packageVersionId == dailyPackage.packageVersionId) {
+                "daily_attempt_package_changed"
+            }
+            val words = ExpressionsDao.all(db).map { DailyWordExisting(it.text, it.languageID ?: dailyPackage.language,
+                it.bars, it.attempts, it.meaning) }
+            val saved = db.query("SELECT origin_key FROM daily_word_imports WHERE owner_key=? AND action IN ('imported','existing','suppressed')",
+                listOf(ownerIdentity)).map { it["origin_key"] as String }.toSet()
+            val hidden = db.query("SELECT language_id,norm_key FROM daily_word_suppressions WHERE owner_key=?",
+                listOf(ownerIdentity)).map { "${it["language_id"]}:${it["norm_key"]}" }.toSet()
+            Triple(words, saved, hidden)
+        }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        val plans = planManualDailyWord(markID, text, meaning, kind, ownerIdentity, dailyPackage.language,
+            existing, receipts, suppressions, System.currentTimeMillis() / 1000.0)
+        var summary: DailyWordsImportSummary? = null
+        persistDailyDbAndWait(ownerIdentity, captured) { target ->
+            summary = LearningDbWriter.dailyWordsImported(target, ownerIdentity, plans,
+                clearSuppressions = setOf(dailyPackage.language to RecallEngine.normalizeKey(text)))
+        }
+        val latest = withContext(Dispatchers.IO) { ExpressionsDao.all(db) }
+        check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
+        archive = archive.copy(expressions = latest.toMutableList())
+        return checkNotNull(summary)
+    }
+
     /** Push/pull the progress ledger against the signed-in member. Guest progress stays local-only. Failures
         are silent for the user but logged for debugging — sync must never nag,
         the local ledger stays the source of truth. */
@@ -1763,7 +2200,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val ownerIdentity = owner.ownerAccountID ?: localGuestIdentityID
         writes.send(WriteRequest({ write(target) }, completion,
             ownerIdentity = ownerIdentity, ownerGeneration = owner.generation))
-        completion.await()
+        check(completion.await()) { "learning_write_owner_changed" }
     }
 
     /**
@@ -2619,16 +3056,24 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
         }
-        val localVoice = resolveEngineSelection() != "openai"
+        val dailyAttemptID = dailyVoiceAttemptID
+        val localVoice = resolveEngineSelection() != "openai" && dailyAttemptID == null
         if (!localVoice) {
-            if (!cloudReady()) return
+            if (dailyAttemptID == null) {
+                if (!cloudReady()) return
+            } else {
+                if (!storageReady) { presentError(getApplication<Application>().getString(R.string.error_resolve_local_history_first)); return }
+                if (archive.preferences.aiConsentVersion != 1) {
+                    presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
+                }
+            }
         } else {
             // On-device voice needs no OpenAI gates, but a missing engine key
             // must fail before the session is created: the greeting would die
             // silently and the first spoken turn would surface the key error.
             if (!engineKeyReady()) return
         }
-        val choice = conversationProvider
+        val choice = if (dailyAttemptID != null) ConversationProvider.HOSTED_MINUTES else conversationProvider
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES && accountChangeBlocked) {
             presentError(getApplication<Application>().getString(R.string.hosted_checking_previous))
             reconcileHostedSessions(); return
@@ -2679,13 +3124,45 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 skillFocus = errorFocus())
         }
         val history = ConversationHistory.messages(session)
-        launchVoiceConnection(id, localVoice, choice, instructions, history, module.locale)
+        launchVoiceConnection(id, localVoice, choice, instructions, history, module.locale, dailyAttemptID)
+    }
+
+    /** Bind the next hosted voice connection to the active daily attempt. */
+    fun prepareDailySpeaking(attemptID: String) {
+        require(runCatching { java.util.UUID.fromString(attemptID) }.isSuccess)
+        check(!isRunning) { "daily_speaking_already_running" }
+        dailyVoiceAttemptID = attemptID
+        dailyVoiceSegmentID = null; dailyVoiceCloseRequested = false
+        selectedTheme = null; selectedLesson = null; selectedScenario = null
+    }
+
+    fun needsDailyMinuteAccess(): Boolean {
+        if (isRunning) return true
+        if (ConversationProviderPolicy.canStart(ConversationProvider.HOSTED_MINUTES, hasKey, hostedReadiness) &&
+            !selectedAccount.busy) return false
+        showMinuteAccess = true
+        refreshHostedReadiness()
+        return true
+    }
+
+    fun clearDailySpeaking(attemptID: String) {
+        if (dailyVoiceAttemptID == attemptID && !isRunning) {
+            dailyVoiceAttemptID = null; dailyVoiceSegmentID = null; dailyVoiceCloseRequested = false
+        }
+    }
+
+    fun endDailySpeaking(): Boolean {
+        if (dailyVoiceAttemptID == null || !isRunning) return false
+        dailyVoiceCloseRequested = true
+        end("Daily practice speaking closed")
+        return true
     }
 
     /** Shared tail of start() and resumeVoiceSession(): provider selection (BYOK
         or a fresh hosted lease) plus the transport connect for this session id. */
     private fun launchVoiceConnection(id: String, localVoice: Boolean, choice: ConversationProvider,
-                                      instructions: String, history: kotlinx.serialization.json.JsonArray, locale: String?) {
+                                      instructions: String, history: kotlinx.serialization.json.JsonArray, locale: String?,
+                                      dailyAttemptID: String? = null) {
         if (voiceSession) pausedInstructions = instructions
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
@@ -2702,8 +3179,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     withContext(NonCancellable) { providerStore.markHosted(id, owner.accountID) }
                     object : LiveSessionProvider {
                         override suspend fun createLiveSession(request: LiveSessionRequest): LiveSessionConnection {
-                            val result = hosted.createLiveSession(request.copy(requestedMilliseconds = archive.preferences.sessionMinutes * 60_000L))
+                            val bounded = request.copy(requestedMilliseconds = if (dailyAttemptID == null)
+                                archive.preferences.sessionMinutes * 60_000L else null)
+                            val result = if (dailyAttemptID == null) hosted.createLiveSession(bounded)
+                                else hosted.createDailyLiveSession(bounded, dailyAttemptID)
                             val lease = result.lease as? HostedAPIClient.HostedLease ?: throw HostedFailure.InvalidResponse
+                            if (dailyAttemptID != null) dailyVoiceSegmentID = lease.dailyVoiceSegmentID
                             withContext(NonCancellable + Dispatchers.Main.immediate) {
                                 hostedBindings.bind(id, owner.accountID, binding(lease))
                                 if (session?.id != id || state != "connecting") {
@@ -2714,7 +3195,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 }
-                transport.connect(provider, instructions, history, locale)
+                transport.connect(provider, if (dailyAttemptID == null) instructions else "",
+                    if (dailyAttemptID == null) history else kotlinx.serialization.json.JsonArray(emptyList()), locale)
             } catch (cancelled: CancellationException) {
                 if (choice == ConversationProvider.HOSTED_MINUTES) reconcileHostedSessions()
                 throw cancelled
@@ -2806,6 +3288,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     private fun finish(final: Boolean, closeSucceeded: Boolean = false) {
         if (!isRunning) return
+        val dailyAttemptToSave = dailyVoiceAttemptID
+        val dailySegmentToSave = dailyVoiceSegmentID
+        val closeDailySpeaking = dailyVoiceCloseRequested
+        dailyVoiceAttemptID = null
+        dailyVoiceSegmentID = null
+        dailyVoiceCloseRequested = false
         val finishedSessionID = session?.id
         connectionJob?.cancel(); durationJob?.cancel(); closeJob?.cancel(); assessmentJob?.cancel()
         actionJob?.cancel(); replayJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
@@ -2838,16 +3326,79 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         state = "ended"
+        if (dailyAttemptToSave != null && dailySegmentToSave != null) {
+            dailySpeakingSaving = true
+            val capturedOwner = loadedLearningIdentity
+            val capturedIdentity = examOwnerIdentity.value
+            val fragments = session?.fragments?.toList().orEmpty()
+            viewModelScope.launch {
+                try {
+                    val owner = capturedOwner ?: return@launch
+                    check(examOwnerIdentity.value == capturedIdentity && loadedLearningIdentity == owner) { "daily_attempt_owner_changed" }
+                    val (dailyPackage, attemptState) = cachedDailyAttempts(owner).firstOrNull { it.second.attemptId == dailyAttemptToSave }
+                        ?: error("daily_attempt_not_cached")
+                    check(!hasBlockingDailyEvent(owner, dailyAttemptToSave)) { "daily_previous_event_unresolved" }
+                    var nextState = attemptState
+                    val savedFragments = fragments.mapIndexed { index, fragment ->
+                        require(fragment.text.isNotBlank() && fragment.text.codePointCount(0, fragment.text.length) <= 1_000) {
+                            "daily_fragment_invalid; conversation remains in history"
+                        }
+                        val fragmentID = fragment.id.takeIf { runCatching { UUID.fromString(it) }.isSuccess }
+                            ?: UUID.randomUUID().toString()
+                        com.jkdc.app.core.DailySpeechFragment(fragmentID,
+                            if (fragment.speaker == Speaker.user) "learner" else "tutor", fragment.text,
+                            dailySegmentToSave, index, transcriptionUncertain = false)
+                    }
+                    if (savedFragments.isNotEmpty()) {
+                        nextState = DailyAttemptReducer.queueSpeakingFragments(attemptState, savedFragments)
+                        persistDailyDraft(owner, dailyPackage, nextState)
+                    }
+                    if (nextState.pendingSpeakingFragments.isNotEmpty()) {
+                        var currentSessionActiveMsSent = false
+                        while (nextState.pendingSpeakingFragments.isNotEmpty()) {
+                            val pendingSegmentID = nextState.pendingSpeakingFragments.first().voiceSegmentId
+                            val segmentPrefix = nextState.pendingSpeakingFragments.takeWhile { it.voiceSegmentId == pendingSegmentID }
+                            val chunk = DailyAttemptReducer.speakingFragmentChunks(segmentPrefix).first()
+                            val staged = DailyAttemptReducer.dequeueSpeakingFragments(nextState, chunk.size)
+                            val segmentEvent = buildJsonObject {
+                                put("type", "speaking_segment_saved"); put("segmentId", pendingSegmentID)
+                                val activeMs = if (pendingSegmentID == dailySegmentToSave && !currentSessionActiveMsSent)
+                                    ((session?.voiceSeconds ?: 0.0) * 1000).toLong().coerceIn(0, 3_600_000) else 0L
+                                if (pendingSegmentID == dailySegmentToSave) currentSessionActiveMsSent = true
+                                put("activeMs", activeMs)
+                                put("fragments", JsonArray(chunk.map { fragment -> buildJsonObject {
+                                    put("id", fragment.id); put("role", fragment.role); put("text", fragment.text)
+                                    put("voiceSegmentId", fragment.voiceSegmentId); put("sequence", fragment.sequence)
+                                    put("transcriptionUncertain", fragment.transcriptionUncertain)
+                                } }))
+                                put("helpUsed", JsonArray(attemptState.helpUsed.sorted().take(8).map(::JsonPrimitive)))
+                            }
+                            nextState = appendDailyEvent(owner, dailyPackage, staged, segmentEvent).first
+                        }
+                    }
+                    if (closeDailySpeaking && nextState.stage == DailyAttemptStage.SPEAKING && nextState.speakingOpen) {
+                        val closed = DailyAttemptReducer.closeSpeaking(nextState)
+                        appendDailyEvent(owner, dailyPackage, closed, buildJsonObject { put("type", "speaking_closed") })
+                    }
+                } catch (failure: Exception) {
+                    notice = getApplication<Application>().getString(R.string.daily_error_persistent,
+                        failure.message ?: "daily_save_failed")
+                } finally {
+                    dailySpeakingSaving = false
+                }
+            }
+        }
         closeSettlement?.takeIf { it.first == finishedSessionID }?.second?.complete(closeSucceeded)
         viewModelScope.launch { usageReporter.flush() }
         syncProgress()
         session?.let {
             if (it.id in hostedSessionIDs) {
-                hostedBindings.ended(it.id); reconcileHostedSessions(); finishHostedAssessment(clone(it))
-            } else finalAssessments.submit(clone(it))
+                hostedBindings.ended(it.id); reconcileHostedSessions()
+                if (dailyAttemptToSave == null) finishHostedAssessment(clone(it))
+            } else if (dailyAttemptToSave == null) finalAssessments.submit(clone(it))
         }
         session?.takeIf { it.isScenario }?.let { maybeGenerateScenarioReview(clone(it)) }
-        scheduleTranslation(utteranceComplete = true)
+        if (dailyAttemptToSave == null) scheduleTranslation(utteranceComplete = true)
         resetJob = viewModelScope.launch { delay(15000); if (state == "ended") resetConversation() }
     }
     /** One attempt per finished practice session; mastery is never claimed here.
@@ -3032,13 +3583,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             "session.started" -> if (state == "connecting") {
                 state = "active"; lastActivity = nowSeconds()
                 updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content ?: it.providerID }
-                val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
-                command("instructions", when {
-                    lesson != null -> TeachingPolicy.lessonOpening(lesson, language)
-                    session?.isScenario == true -> TeachingPolicy.scenarioOpening(language)
-                    session?.isListening == true -> TeachingPolicy.listeningStory(language)
-                    else -> TeachingPolicy.greeting(language, selectedTheme)
-                }); startDurationChecks()
+                if (dailyVoiceAttemptID == null) {
+                    val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
+                    command("instructions", when {
+                        lesson != null -> TeachingPolicy.lessonOpening(lesson, language)
+                        session?.isScenario == true -> TeachingPolicy.scenarioOpening(language)
+                        session?.isListening == true -> TeachingPolicy.listeningStory(language)
+                        else -> TeachingPolicy.greeting(language, selectedTheme)
+                    })
+                }
+                startDurationChecks()
             }
             "session.input_transcript.partial" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
@@ -3057,9 +3611,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 updateSession { it.append(Fragment(id = event["event_id"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString(), speaker = speaker, text = text, startMS = start, endMS = end, meaningVisible = archive.preferences.meaningVisible)) }
                 lastActivity = nowSeconds()
                 if (speaker == Speaker.user) partialUserTranscript = null
-                if (speaker == Speaker.assistant) { scheduleTranslation(); if (state == "active") checkLanguage() } else scheduleAssessment()
+                if (dailyVoiceAttemptID == null) {
+                    if (speaker == Speaker.assistant) { scheduleTranslation(); if (state == "active") checkLanguage() }
+                    else scheduleAssessment()
+                }
             }
             "session.delegation.created" -> {
+                if (dailyVoiceAttemptID != null) return
                 val d = event["delegation"] as? JsonObject ?: return
                 if (d["target"]?.jsonPrimitive?.content == "client") d["id"]?.jsonPrimitive?.content?.let(::delegate)
             }
@@ -3085,6 +3643,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 if (current.id in hostedSessionIDs && hostedBindings.reachedDeadline(current.id)) {
                     updateSession { it.endReason = "Reserved conversation time ended" }; finish(false); break
                 }
+                if (dailyVoiceAttemptID != null) continue
                 // Cost-free engines: sessions only end when the user ends them —
                 // a slow reply must never cost them the conversation.
                 if (!localVoiceSession && nowSeconds() - current.startedAt > archive.preferences.sessionMinutes * 60) {

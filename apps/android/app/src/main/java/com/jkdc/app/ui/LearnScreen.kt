@@ -62,7 +62,8 @@ import com.jkdc.app.core.LevelStats
     study card with optional read-aloud. Practice flows through the same
     consent + microphone path as a normal conversation. */
 @Composable
-fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: () -> Unit) {
+fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: () -> Unit,
+    onDailySpeaking: (String) -> Unit = {}) {
     val courses = CourseRegistry.forLanguage(vm.language.id)
     // Keyed on the observable ledger revision, the LOADED identity and the
     // language: a deferred bootstrap page (or an account/language switch)
@@ -74,11 +75,14 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
     var exercisesOpen by rememberSaveable { mutableStateOf(false) }
     var recallOpen by rememberSaveable { mutableStateOf(false) }
+    var dailyOpen by rememberSaveable { mutableStateOf(false) }
     var openCheckpointID by rememberSaveable { mutableStateOf<String?>(null) }
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
     val openLesson = openLessonID?.let { CourseRegistry.lesson(it) }
     val openCheckpoint = openCheckpointID?.let { vm.checkpoint(it) }
-    if (recallOpen) {
+    if (dailyOpen) {
+        DailyPracticeScreen(vm, onBack = { dailyOpen = false }, onOpenSpeaking = onDailySpeaking)
+    } else if (recallOpen) {
         RecallScreen(vm, onBack = { recallOpen = false })
     } else if (openCheckpoint != null) {
         CheckpointScreen(vm, openCheckpoint, onBack = { openCheckpointID = null })
@@ -151,6 +155,18 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
                 stringResource(R.string.learn_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
+            item {
+                val enabled = vm.language.id == "en"
+                Surface(Modifier.fillMaxWidth().then(if (enabled) Modifier.clickable(role = Role.Button) { dailyOpen = true } else Modifier)
+                    .testTag("daily-practice-entry"), shape = RoundedCornerShape(26.dp),
+                    color = if (enabled) AppColors.Lilac else AppColors.Surface) {
+                    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(stringResource(R.string.daily_entry_title), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(if (enabled) R.string.daily_entry_subtitle else R.string.daily_entry_disabled),
+                            color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            }
             if (vm.progressSyncStatusForActiveOwner() != null) item { ProgressSyncStatusBanner(vm) }
             if (vm.dueRecallCount() > 0) item {
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { recallOpen = true }.testTag("recall-card"),

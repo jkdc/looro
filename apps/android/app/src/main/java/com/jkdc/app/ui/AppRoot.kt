@@ -185,6 +185,14 @@ fun AppRoot(
                                     if (vm.pendingTopicTransition == null) withConsent(CloudAction.StartVoice)
                                     tab = 0
                                 },
+                                onDailySpeaking = { attemptID ->
+                                    vm.prepareDailySpeaking(attemptID)
+                                    tab = 0
+                                    if (prefs.aiConsentVersion != AI_CONSENT_VERSION) {
+                                        vm.pendingCloudAction = CloudAction.StartVoice
+                                        showConsent = true
+                                    } else if (!vm.needsDailyMinuteAccess()) onRequestMicrophone()
+                                },
                             )
                             3 -> WordsScreen(vm,
                                 onOpenLessons = { tab = 2 },

@@ -96,12 +96,24 @@ class HostedAPIClient internal constructor(
         }
     }
 
-    override suspend fun createLiveSession(request: LiveSessionRequest): LiveSessionConnection {
+    override suspend fun createLiveSession(request: LiveSessionRequest): LiveSessionConnection =
+        createLiveSession(request, dailyAttemptId = null)
+
+    /** The daily binding is server-resolved; arbitrary prompt and history fields are omitted. */
+    suspend fun createDailyLiveSession(request: LiveSessionRequest, dailyAttemptId: String): LiveSessionConnection {
+        require(UUID_PATTERN.matches(dailyAttemptId))
+        return createLiveSession(request, dailyAttemptId)
+    }
+
+    private suspend fun createLiveSession(request: LiveSessionRequest, dailyAttemptId: String?): LiveSessionConnection {
         validateCreate(request)
         val account = authorization()
         val body = buildJsonObject {
-            put("sdp", request.sdp); put("language", request.language!!); put("instructions", request.instructions)
-            put("history", request.history)
+            put("sdp", request.sdp); put("language", request.language!!)
+            if (dailyAttemptId == null) {
+                put("instructions", request.instructions)
+                put("history", request.history)
+            } else put("dailyAttemptId", dailyAttemptId)
             request.requestedMilliseconds?.let { put("requestedMilliseconds", it) }
         }
         return request("POST", "sessions", account, body, request.requestID,
@@ -109,6 +121,10 @@ class HostedAPIClient internal constructor(
             val id = result.string("sessionID")?.takeIf(UUID_PATTERN::matches) ?: throw HostedFailure.Unconfirmed
             val lease = HostedLease(id, account)
             try {
+                if (dailyAttemptId != null) {
+                    lease.dailyVoiceSegmentID = result.string("dailyVoiceSegmentId")?.takeIf(UUID_PATTERN::matches)
+                        ?: throw HostedFailure.InvalidResponse
+                }
                 val deadline = result.instant("deadline")
                 val paid = isPaid(result)
                 val reserved = result.count(if (paid) "limitMilliseconds" else "reservedMilliseconds", 3_600_000)
@@ -135,6 +151,7 @@ class HostedAPIClient internal constructor(
         var reservedMilliseconds: Long = 0; internal set
         var minimumChargeMilliseconds: Long? = null; internal set
         var billingPolicy: String? = null; internal set
+        var dailyVoiceSegmentID: String? = null; internal set
         private val cutoffRequested = AtomicBoolean(false)
         val teaching: TeachingClient = object : TeachingClient {
             override suspend fun respond(instructions: String, input: String, schema: JsonObject?, search: Boolean,

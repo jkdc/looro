@@ -5,21 +5,21 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
- * Opens the learner's learning database (schema v6, shared/db/schema.sql via
+ * Opens the learner's learning database (schema v9, shared/db/schema.sql via
  * [SchemaData]). Android builds it through SQLiteOpenHelper; JVM tests build
  * the same statements through LearningDb.openJvm (test source set,
  * sqlite-jdbc). Foreign keys are enforced on every connection, as the schema
  * header requires.
  *
  * Fresh installs run the whole statement list in [onCreate] (the list ends
-     * with `PRAGMA user_version = 6`, which the helper records again as
+     * with `PRAGMA user_version = 9`, which the helper records again as
  * [VERSION]); an installed database upgrades through [upgrade], which
  * applies the pinned per-version deltas ([SchemaData.SCHEMA_UPGRADES]) so
  * both paths converge on the same end state from the one source.
  */
 object LearningDb {
     /** Bump only together with a migration; shared/db/schema.sql pins the shape. */
-    const val VERSION = 7
+    const val VERSION = 9
     const val NAME = "learning.db"
 
     /**

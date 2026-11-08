@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looro.invalid/contracts/daily-practice/event.schema.json",
+  "title": "DailyAttemptEventEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "eventId",
+    "expectedRevision",
+    "event"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "expectedRevision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "event": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/preparation"
+        },
+        {
+          "$ref": "#/$defs/submit"
+        },
+        {
+          "$ref": "#/$defs/speaking"
+        },
+        {
+          "$ref": "#/$defs/skip"
+        },
+        {
+          "$ref": "#/$defs/mark"
+        },
+        {
+          "$ref": "#/$defs/close"
+        },
+        {
+          "$ref": "#/$defs/finish"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "active": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{1,64}$"
+    },
+    "preparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "activeMs"
+      ],
+      "properties": {
+        "type": {
+          "const": "preparation_completed"
+        },
+        "activeMs": {
+          "$ref": "#/$defs/active"
+        }
+      }
+    },
+    "submit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "stage",
+        "activeMs",
+        "answers",
+        "helpUsed"
+      ],
+      "properties": {
+        "type": {
+          "const": "stage_submitted"
+        },
+        "stage": {
+          "enum": [
+            "listening",
+            "practice"
+          ]
+        },
+        "activeMs": {
+          "$ref": "#/$defs/active"
+        },
+        "answers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "questionId",
+              "value"
+            ],
+            "properties": {
+              "questionId": {
+                "$ref": "#/$defs/id"
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 120
+              }
+            }
+          }
+        },
+        "helpUsed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "speaking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "segmentId",
+        "activeMs",
+        "fragments",
+        "helpUsed"
+      ],
+      "properties": {
+        "type": {
+          "const": "speaking_segment_saved"
+        },
+        "segmentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "activeMs": {
+          "$ref": "#/$defs/active"
+        },
+        "fragments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "role",
+              "text",
+              "voiceSegmentId",
+              "sequence",
+              "transcriptionUncertain"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "role": {
+                "enum": [
+                  "learner",
+                  "tutor"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "maxLength": 1000
+              },
+              "voiceSegmentId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "transcriptionUncertain": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "helpUsed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "skip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "stage",
+        "activeMs",
+        "reason"
+      ],
+      "properties": {
+        "type": {
+          "const": "stage_skipped"
+        },
+        "stage": {
+          "enum": [
+            "preparation",
+            "listening",
+            "speaking",
+            "practice"
+          ]
+        },
+        "activeMs": {
+          "$ref": "#/$defs/active"
+        },
+        "reason": {
+          "enum": [
+            "learner_choice",
+            "microphone_denied",
+            "network_error",
+            "funding_unavailable",
+            "local_tts_unavailable"
+          ]
+        }
+      }
+    },
+    "mark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "markId",
+        "text",
+        "meaning",
+        "kind",
+        "sourceQuestionId"
+      ],
+      "properties": {
+        "type": {
+          "const": "word_marked"
+        },
+        "markId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "meaning": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "kind": {
+          "enum": [
+            "word",
+            "expression"
+          ]
+        },
+        "sourceQuestionId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "close": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "const": "speaking_closed"
+        }
+      }
+    },
+    "finish": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "stopReason"
+      ],
+      "properties": {
+        "type": {
+          "const": "finished"
+        },
+        "stopReason": {
+          "enum": [
+            "learner_choice",
+            "natural_close"
+          ]
+        }
+      }
+    }
+  }
+}

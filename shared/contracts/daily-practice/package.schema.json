@@ -1,0 +1,346 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looro.invalid/contracts/daily-practice/package.schema.json",
+  "title": "DailyPackage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packageVersionId",
+    "contentHash",
+    "editorialDate",
+    "language",
+    "profileVersion",
+    "topic",
+    "objective",
+    "challengeReference",
+    "estimatedMinutes",
+    "expressions",
+    "listening",
+    "speaking",
+    "goals",
+    "practice",
+    "supportLocales"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "packageVersionId": {
+      "$ref": "#/$defs/uuid"
+    },
+    "contentHash": {
+      "$ref": "#/$defs/hash"
+    },
+    "editorialDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "language": {
+      "const": "en"
+    },
+    "profileVersion": {
+      "const": "en-v1"
+    },
+    "topic": {
+      "$ref": "#/$defs/topic"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "challengeReference": {
+      "const": "B1-B2"
+    },
+    "estimatedMinutes": {
+      "const": {
+        "preparation": 2,
+        "listening": 4,
+        "speaking": 6,
+        "practice": 3,
+        "review": 2,
+        "total": 17
+      }
+    },
+    "expressions": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/expression"
+      }
+    },
+    "listening": {
+      "$ref": "#/$defs/listening"
+    },
+    "speaking": {
+      "$ref": "#/$defs/speaking"
+    },
+    "goals": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/goal"
+      }
+    },
+    "practice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questions"
+      ],
+      "properties": {
+        "questions": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/question"
+          }
+        }
+      }
+    },
+    "supportLocales": {
+      "const": [
+        "en",
+        "es"
+      ]
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{1,64}$"
+    },
+    "localized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "es"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "es": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "summary"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "expression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "meanings",
+        "examples"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "meanings": {
+          "$ref": "#/$defs/localized"
+        },
+        "examples": {
+          "$ref": "#/$defs/localized"
+        }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "prompt",
+        "options",
+        "hints"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "single_choice",
+            "gap_fill"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        },
+        "hints": {
+          "$ref": "#/$defs/localized"
+        }
+      }
+    },
+    "listening": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "speechLocale",
+        "transcript",
+        "questions"
+      ],
+      "properties": {
+        "speechLocale": {
+          "const": "en-US"
+        },
+        "transcript": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "questions": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/$defs/question"
+          }
+        }
+      }
+    },
+    "speaking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "opening",
+        "topicAnchors",
+        "closingCue"
+      ],
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "opening": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        },
+        "topicAnchors": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "not": {
+              "pattern": "\\?"
+            }
+          }
+        },
+        "closingCue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 400
+        }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "task",
+        "hints",
+        "sentenceStarters",
+        "exampleResponses"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "task": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "hints": {
+          "$ref": "#/$defs/localized"
+        },
+        "sentenceStarters": {
+          "$ref": "#/$defs/localized"
+        },
+        "exampleResponses": {
+          "$ref": "#/$defs/localized"
+        }
+      }
+    }
+  }
+}

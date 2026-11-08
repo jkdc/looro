@@ -1,6 +1,7 @@
 package com.jkdc.app.data
 
 import com.jkdc.app.core.Archive
+import com.jkdc.app.core.DailyAttemptReducer
 import com.jkdc.app.core.CompletionMark
 import com.jkdc.app.core.ExpressionState
 import com.jkdc.app.core.LessonState
@@ -123,8 +124,160 @@ object LearningDbWriter {
     /** removeExpression(): RecallEngine.remove drops the language row AND the
         legacy NULL row for the text; the mirror deletes both. */
     fun expressionRemoved(db: SqlDatabase, text: String, languageID: String) {
-        ExpressionsDao.removeVisible(db, text, languageID)
+        db.transaction { tx ->
+            val owner = LearnerOwnershipDao.activeIdentity(tx)
+            val key = com.jkdc.app.core.RecallEngine.normalizeKey(text)
+            if (owner != null && tx.query("SELECT 1 AS found FROM daily_word_imports WHERE owner_key = ? AND language_id = ? AND expression_key = ? LIMIT 1",
+                    listOf(owner, languageID, key)).isNotEmpty()) {
+                tx.insert("daily_word_suppressions", mapOf("owner_key" to owner, "language_id" to languageID,
+                    "norm_key" to key, "deleted_at" to System.currentTimeMillis() / 1000.0), ConflictStrategy.IGNORE)
+            }
+            ExpressionsDao.removeVisible(tx, text, languageID)
+        }
     }
+
+    /** Persist the immutable package snapshot and latest local attempt state before rendering it. */
+    fun cacheDailyAttempt(db: SqlDatabase, owner: String, attemptID: String, packageSnapshot: String,
+        stateJSON: String, revision: Long, updatedAt: Double) {
+        require(owner.isNotBlank() && attemptID.isNotBlank() && revision >= 0 && updatedAt.isFinite())
+        require(packageSnapshot.toByteArray(Charsets.UTF_8).size <= 65_536 && stateJSON.toByteArray(Charsets.UTF_8).size <= 65_536)
+        db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
+            val existing = tx.query("SELECT package_snapshot,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, attemptID)).firstOrNull()
+            check(existing == null || existing["package_snapshot"] == packageSnapshot) { "daily_attempt_package_changed" }
+            val priorRevision = existing?.get("revision") as? Long
+            check(priorRevision == null || revision >= priorRevision) { "daily_attempt_stale_revision" }
+            tx.insert("daily_attempt_cache", mapOf("owner_key" to owner, "attempt_id" to attemptID,
+                "package_snapshot" to packageSnapshot, "state_json" to stateJSON, "revision" to revision,
+                "updated_at" to updatedAt), ConflictStrategy.REPLACE)
+        }
+    }
+
+    /** Adopt a server-canonical attempt ID before any event can be queued. */
+    fun remapDailyAttemptId(db: SqlDatabase, owner: String, provisionalID: String, canonicalID: String,
+        stateJSON: String, revision: Long, updatedAt: Double) {
+        require(owner.isNotBlank() && provisionalID.isNotBlank() && canonicalID.isNotBlank() &&
+            revision >= 0 && updatedAt.isFinite())
+        val remappedState = DailyAttemptReducer.decode(stateJSON).copy(attemptId = canonicalID, revision = revision)
+        db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
+            val existing = tx.query("SELECT package_snapshot FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, provisionalID)).singleOrNull() ?: error("daily_attempt_not_cached")
+            check(tx.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key=? AND attempt_id=? LIMIT 1",
+                listOf(owner, provisionalID)).isEmpty()) { "daily_attempt_already_has_events" }
+            check(tx.query("SELECT 1 AS found FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=? LIMIT 1",
+                listOf(owner, canonicalID)).isEmpty()) { "daily_attempt_canonical_id_conflict" }
+            val changed = tx.update("UPDATE daily_attempt_cache SET attempt_id=?,state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=?",
+                listOf(canonicalID, DailyAttemptReducer.encode(remappedState), revision, updatedAt, owner, provisionalID))
+            check(changed == 1L && existing["package_snapshot"] != null) { "daily_attempt_remap_failed" }
+        }
+    }
+
+    /** Atomically advances the local reducer and records its network event before dispatch. */
+    fun enqueueDailyEvent(db: SqlDatabase, owner: String, eventID: String, attemptID: String, intentJSON: String,
+        intentHash: String, expectedRevision: Long, sequence: Long, nextStateJSON: String, createdAt: Double): Boolean {
+        require(owner.isNotBlank() && eventID.isNotBlank() && attemptID.isNotBlank() && intentHash.isNotBlank())
+        require(expectedRevision >= 0 && sequence >= 0 && createdAt.isFinite())
+        require(intentJSON.toByteArray(Charsets.UTF_8).size <= 24_576 && nextStateJSON.toByteArray(Charsets.UTF_8).size <= 65_536)
+        return db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
+            val previous = tx.query("SELECT revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, attemptID)).firstOrNull() ?: error("daily_attempt_not_cached")
+            val replay = tx.query("SELECT attempt_id,intent_json,intent_hash,expected_revision,sequence FROM daily_outbox WHERE owner_key=? AND event_id=?",
+                listOf(owner, eventID)).firstOrNull()
+            if (replay != null) {
+                check(replay["attempt_id"] == attemptID && replay["intent_json"] == intentJSON &&
+                    replay["intent_hash"] == intentHash && replay["expected_revision"] == expectedRevision &&
+                    replay["sequence"] == sequence) { "daily_event_id_conflict" }
+                return@transaction false
+            }
+            check((previous["revision"] as Long) == expectedRevision) { "daily_attempt_revision_conflict" }
+            val nextSequence = (tx.query("SELECT COALESCE(MAX(sequence),-1)+1 AS next_sequence FROM daily_outbox WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, attemptID)).single()["next_sequence"] as Long)
+            check(sequence == nextSequence) { "daily_event_sequence_conflict" }
+            tx.insert("daily_outbox", mapOf("owner_key" to owner, "event_id" to eventID, "attempt_id" to attemptID,
+                "intent_json" to intentJSON, "intent_hash" to intentHash, "expected_revision" to expectedRevision,
+                "sequence" to sequence, "delivery_state" to "pending", "created_at" to createdAt))
+            val changed = tx.update("UPDATE daily_attempt_cache SET state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=? AND revision=?",
+                listOf(nextStateJSON, expectedRevision + 1, createdAt, owner, attemptID, expectedRevision))
+            check(changed == 1L) { "daily_attempt_revision_conflict" }
+            true
+        }
+    }
+
+    /** Records the result class for a previously persisted immutable outbox event. */
+    fun markDailyEventState(db: SqlDatabase, owner: String, eventID: String, state: String) {
+        require(state in setOf("pending", "sending", "outcome_unknown", "revision_conflict", "rejected", "acknowledged"))
+        db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
+            val changed = tx.update("UPDATE daily_outbox SET delivery_state=? WHERE owner_key=? AND event_id=?",
+                listOf(state, owner, eventID))
+            check(changed == 1L) { "daily_event_not_found" }
+        }
+    }
+
+    /** Caches only the server-admitted review, immutable for this owner/review ID. */
+    fun cacheDailyReview(db: SqlDatabase, owner: String, reviewID: String, attemptID: String,
+        resultJSON: String, createdAt: Double) {
+        require(owner.isNotBlank() && reviewID.isNotBlank() && attemptID.isNotBlank() && createdAt.isFinite())
+        require(resultJSON.toByteArray(Charsets.UTF_8).size <= 32_768)
+        db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
+            check(tx.query("SELECT 1 AS found FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, attemptID)).isNotEmpty()) { "daily_attempt_not_cached" }
+            val existing = tx.query("SELECT attempt_id,result_json FROM daily_review_cache WHERE owner_key=? AND review_id=?",
+                listOf(owner, reviewID)).firstOrNull()
+            check(existing == null || (existing["attempt_id"] == attemptID && existing["result_json"] == resultJSON)) {
+                "daily_review_conflict"
+            }
+            if (existing == null) tx.insert("daily_review_cache", mapOf("owner_key" to owner, "review_id" to reviewID,
+                "attempt_id" to attemptID, "result_json" to resultJSON, "created_at" to createdAt))
+        }
+    }
+
+    /** Applies a planned batch only while the database still belongs to its captured learner. */
+    fun dailyWordsImported(db: SqlDatabase, owner: String, plans: List<com.jkdc.app.core.DailyWordImportPlan>,
+        clearSuppressions: Set<Pair<String, String>> = emptySet()): com.jkdc.app.core.DailyWordsImportSummary =
+        db.transaction { tx ->
+            check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_import_owner_changed" }
+            val plannedKeys = plans.map { it.languageID to it.normKey }.toSet()
+            require(clearSuppressions.all { it in plannedKeys }) { "daily_import_suppression_not_planned" }
+            clearSuppressions.forEach { (language, normKey) ->
+                tx.update("DELETE FROM daily_word_suppressions WHERE owner_key=? AND language_id=? AND norm_key=?",
+                    listOf(owner, language, normKey))
+            }
+            var inserted = 0; var existing = 0; var suppressed = 0; var pendingCapacity = 0
+            for (plan in plans) {
+                require(plan.owner == owner)
+                var action = when (plan.action) {
+                    com.jkdc.app.core.DailyWordImportAction.INSERT -> "imported"
+                    com.jkdc.app.core.DailyWordImportAction.KEEP -> "existing"
+                    com.jkdc.app.core.DailyWordImportAction.SUPPRESS -> "suppressed"
+                    com.jkdc.app.core.DailyWordImportAction.PENDING_CAPACITY -> "pending_capacity"
+                }
+                if (plan.action == com.jkdc.app.core.DailyWordImportAction.INSERT) {
+                    val saved = ExpressionsDao.upsert(tx, ExpressionState(text = plan.text, meaning = plan.meaning,
+                        source = "lookup", dueAt = plan.now, languageID = plan.languageID), adoptLegacy = false)
+                    if (!saved) action = "pending_capacity"
+                }
+                when (action) {
+                    "imported" -> inserted++
+                    "existing" -> existing++
+                    "suppressed" -> suppressed++
+                    "pending_capacity" -> pendingCapacity++
+                }
+                if (action != "pending_capacity") tx.update("DELETE FROM daily_word_imports WHERE owner_key = ? AND origin_key = ? AND action = 'pending_capacity'",
+                    listOf(owner, plan.originKey))
+                val originParts = plan.originKey.split(':')
+                val reviewID = originParts.getOrNull(1)?.takeIf { originParts.firstOrNull() == "review" && originParts.size >= 3 }
+                tx.insert("daily_word_imports", mapOf("owner_key" to owner, "origin_key" to plan.originKey,
+                    "language_id" to plan.languageID, "expression_key" to plan.normKey, "kind" to plan.kind,
+                    "review_id" to reviewID, "action" to action,
+                    "importer_version" to 1, "created_at" to plan.now), ConflictStrategy.REPLACE)
+            }
+            com.jkdc.app.core.DailyWordsImportSummary(inserted, existing, suppressed, pendingCapacity)
+        }
 
     /** updatePreferences()/toggleMeaning()/hideWord(): the whole Preferences
         (one row). */

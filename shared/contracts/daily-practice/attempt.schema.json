@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://looro.invalid/contracts/daily-practice/attempt.schema.json",
+  "title": "DailyAttemptView",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "attemptId", "attemptNumber", "packageVersionId", "language", "editorialDate", "explanationLanguage", "revision", "state", "startedAt", "completedStages", "activeMs", "stopReason", "reviewState", "reviewId", "inputHash"],
+  "properties": {
+    "schemaVersion": { "const": 1 }, "attemptId": { "$ref": "#/$defs/uuid" }, "attemptNumber": { "type": "integer", "minimum": 1 },
+    "packageVersionId": { "$ref": "#/$defs/uuid" }, "language": { "const": "en" }, "editorialDate": { "type": "string", "format": "date" },
+    "explanationLanguage": { "enum": ["en", "es"] }, "revision": { "type": "integer", "minimum": 0 }, "state": { "enum": ["in_progress", "completed", "withdrawn"] },
+    "startedAt": { "type": "integer", "minimum": 0 }, "completedStages": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["stage", "status", "activeMs"], "properties": { "stage": { "enum": ["preparation", "listening", "speaking", "practice"] }, "status": { "enum": ["completed", "skipped"] }, "activeMs": { "type": "integer", "minimum": 0 } } } },
+    "activeMs": { "type": "integer", "minimum": 0 }, "stopReason": { "type": ["string", "null"] }, "reviewState": { "enum": ["not_started", "queued", "running", "ready", "partial", "failed", "unknown"] },
+    "reviewId": { "oneOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] }, "inputHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] }
+  },
+  "$defs": { "uuid": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" }, "hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" } }
+}
