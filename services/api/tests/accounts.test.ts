@@ -1,6 +1,7 @@
 import { test, before, beforeEach, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { generateKeyPair, exportJWK, createLocalJWKSet, SignJWT } from 'jose';
 import { createApp } from '../src/app.js';
 import { connectDatabase, transaction } from '../src/db.js';
@@ -8,6 +9,7 @@ import { migrate } from '../src/migrate.js';
 import { accountProfile, authenticate, createChallenge, deleteAccount, digest, exchangeIdentity, pruneAuthenticationRecords, signOut, verifyIdentity } from '../src/auth.js';
 import { accountAdmissionConfig, AuthAdmission } from '../src/auth-admission.js';
 import { appendEntry } from '../src/ledger.js';
+import { hashDailyArtifact } from '../src/daily-content.js';
 
 const url = process.env.TEST_DATABASE_URL;
 if (url && !new URL(url).pathname.endsWith('_test')) throw new Error('Use a dedicated database ending in _test.');
@@ -16,6 +18,7 @@ before(async () => { if (db) await migrate(db); });
 beforeEach(async () => { if (db) await db.query('TRUNCATE auth_rate_limits'); });
 after(async () => { if (db) await db.end(); });
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !db && 'Set TEST_DATABASE_URL for PostgreSQL tests.' }, fn);
+const dailyFixture = JSON.parse(readFileSync(new URL('../../../shared/contracts/daily-practice/fixtures/day-en.json', import.meta.url), 'utf8'));
 const signing = await generateKeyPair('RS256'), jwk = await exportJWK(signing.publicKey); jwk.kid = 'account-test';
 const keys = createLocalJWKSet({ keys: [jwk] });
 const config = { googleClientID: 'app-google-test', appleClientID: 'com.example.app' };
@@ -224,6 +227,64 @@ integration('deleting an account with resolved financial history removes PII whi
   assert.equal(account.email, null); assert.ok(account.deleted_at);
   assert.equal((await db!.query('SELECT 1 FROM ledger WHERE account_id=$1', [value.accountID])).rowCount, 2);
   assert.equal((await db!.query('SELECT 1 FROM identities WHERE account_id=$1', [value.accountID])).rowCount, 0);
+});
+integration('soft account deletion removes daily learner evidence and cancels provably unsent review work', async()=>{
+  const value=await session(),account=value.accountID;
+  const packageId=randomUUID(),attemptId=randomUUID(),jobId=randomUUID(),reservationId=randomUUID(),reviewId=randomUUID();
+  const eventId=randomUUID(),requestKey=randomUUID(),inputHash='a'.repeat(64),date=dailyFixture.editorialDate;
+  try{
+    await transaction(db!,async sql=>{
+      await appendEntry(sql,account,`daily-cleanup-purchase:${account}`,'purchase',100n,0n);
+      await appendEntry(sql,account,`daily-cleanup-reversal:${account}`,'reversal',-100n,0n);
+      const publicPayload={...dailyFixture,packageVersionId:packageId,contentHash:undefined,artifactHash:undefined};
+      const contentHash=hashDailyArtifact(publicPayload),artifactHash='b'.repeat(64),textHash='c'.repeat(64);
+      await sql.query(`INSERT INTO daily_packages(id,language,editorial_date,schema_version,profile_version,state,public_payload,private_payload,
+        content_hash,artifact_hash,text_hash,judge_state,judge_artifact_hash,judge_text_hash)
+        VALUES($1,'en',$2,1,'en-v1','published',$3::jsonb,'{}'::jsonb,$4,$5,$6,'passed',$5,$6)`,
+      [packageId,date,JSON.stringify(publicPayload),contentHash,artifactHash,textHash]);
+      await sql.query(`INSERT INTO daily_publications(language,editorial_date,package_id) VALUES('en',$1,$2)`,[date,packageId]);
+      await sql.query(`INSERT INTO daily_attempts(id,account_id,package_id,language,editorial_date,attempt_number,explanation_language,
+        daily_consent_version,state,revision,stage_state) VALUES($1,$2,$3,'en',$4,1,'en',1,'in_progress',1,'{}'::jsonb)`,
+      [attemptId,account,packageId,date]);
+      await sql.query(`INSERT INTO daily_attempt_events(attempt_id,event_id,request_hash,expected_revision,accepted_revision,event_type,body,response)
+        VALUES($1,$2,$3,0,1,'preparation_completed','{"type":"preparation_completed"}'::jsonb,'{"revision":1}'::jsonb)`,
+      [attemptId,eventId,inputHash]);
+      await sql.query(`INSERT INTO daily_attempt_request_keys(account_id,operation,idempotency_key,request_hash,http_status,response)
+        VALUES($1,'create_attempt',$2,$3,201,'{"attemptId":"private"}'::jsonb)`,[account,requestKey,inputHash]);
+      await sql.query('INSERT INTO daily_review_inputs(attempt_id,input_hash,snapshot) VALUES($1,$2,$3::jsonb)',[attemptId,inputHash,'{}']);
+      await sql.query(`INSERT INTO daily_reviews(id,attempt_id,input_hash,rubric_version,result) VALUES($1,$2,$3,'daily-review-v1','{"private":"evidence"}'::jsonb)`,
+      [reviewId,attemptId,inputHash]);
+      await sql.query("UPDATE daily_attempts SET review_id=$2,review_state='ready' WHERE id=$1",[attemptId,reviewId]);
+      await sql.query(`INSERT INTO daily_jobs(id,kind,binding_id,language,editorial_date,attempt_id,state,config_snapshot)
+        VALUES($1,'review',$2,'en',$3,$2,'queued','{}'::jsonb)`,[jobId,attemptId,date]);
+      await sql.query(`INSERT INTO daily_cost_reservations(id,job_id,cost_center,budget_date,binding_id,max_nano_usd,state)
+        VALUES($1,$2,'review',$3,$4,100,'held')`,[reservationId,jobId,date,attemptId]);
+      await sql.query(`INSERT INTO daily_provider_operations(id,job_id,phase,dispatch_key,state,reservation_id)
+        VALUES($1,$2,'review',$3,'reserved',$4)`,[randomUUID(),jobId,`${jobId}:review:v1`,reservationId]);
+    });
+
+    assert.deepEqual(await deleteAccount(db!,account),{retainedFinancialRecords:true});
+    assert.equal((await db!.query('SELECT 1 FROM accounts WHERE id=$1 AND deleted_at IS NOT NULL',[account])).rowCount,1);
+    for(const [table,column,owner] of [
+      ['daily_attempts','id',attemptId],
+      ['daily_attempt_events','attempt_id',attemptId],
+      ['daily_attempt_request_keys','account_id',account],
+      ['daily_review_inputs','attempt_id',attemptId],
+      ['daily_reviews','attempt_id',attemptId],
+    ]){
+      assert.equal((await db!.query(`SELECT 1 FROM ${table} WHERE ${column}=$1`,[owner])).rowCount,0,`${table} retained learner evidence`);
+    }
+    const job=(await db!.query('SELECT state,attempt_id FROM daily_jobs WHERE id=$1',[jobId])).rows[0];
+    assert.deepEqual(job,{state:'cancelled',attempt_id:null});
+    assert.equal((await db!.query('SELECT state FROM daily_cost_reservations WHERE id=$1',[reservationId])).rows[0]?.state,'released');
+  } finally {
+    await db!.query('DELETE FROM daily_provider_operations WHERE job_id=$1',[jobId]);
+    await db!.query('DELETE FROM daily_cost_reservations WHERE id=$1',[reservationId]);
+    await db!.query('DELETE FROM daily_jobs WHERE id=$1',[jobId]);
+    await db!.query('DELETE FROM daily_attempts WHERE id=$1',[attemptId]);
+    await db!.query("DELETE FROM daily_publications WHERE package_id=$1",[packageId]);
+    await db!.query('DELETE FROM daily_packages WHERE id=$1',[packageId]);
+  }
 });
 integration('auth quotas persist across instances, reject spoofed headers, and prune short-lived identifiers', async () => {
   const one = new AuthAdmission(db!, admissionConfig), two = new AuthAdmission(db!, admissionConfig);
