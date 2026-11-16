@@ -19,10 +19,16 @@ topic, objetivo, preparación, listening, briefing de speaking, práctica y ayud
 - **WHEN** se solicita un idioma válido no habilitado
 - **THEN** se devuelve daily_language_not_enabled sin contenido inglés de fallback.
 
+#### Scenario: Local listening voice is unavailable
+- **GIVEN** el dispositivo no dispone de una voz para el `speechLocale` publicado
+- **WHEN** el alumno inicia la reproducción del transcript
+- **THEN** la app no selecciona silenciosamente una voz de otro idioma
+- **AND** ofrece reintentar tras habilitar/instalar la voz o saltar listening como parcial con `local_tts_unavailable`.
+
 ### Requirement: Frozen and validated publication
 
-La publicación MUST referenciar contenido privado validado, juez independiente
-con pass sobre texto/claves exactos y audio verificado. Un hash desactualizado,
+La publicación MUST referenciar contenido privado validado y juez independiente
+con pass sobre texto/claves exactos y locale de voz conforme al perfil. Un hash desactualizado,
 fail, uncertain, job unknown o borrador SHALL NOT ser publicable. Una publicación
 consumida SHALL NOT cambiar de versión; retirada impide nueva práctica oral.
 
@@ -230,7 +236,8 @@ Apagar nuevos intentos SHALL NOT impedir recuperar los ya admitidos.
 ### Requirement: Explicit language onboarding
 
 El motor SHALL consumir perfiles versionados sin reglas inglesas globales.
-Activar idioma nuevo MUST exigir perfil, validación/juez, ayudas, audio y pruebas
+Activar idioma nuevo MUST exigir perfil, validación/juez, ayudas, locale BCP-47
+compatible con síntesis local y pruebas
 propias; un idioma no habilitado SHALL NOT entrar por fallback al inglés.
 
 #### Scenario: Profile exists but language is not enabled

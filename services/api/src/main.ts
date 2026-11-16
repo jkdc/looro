@@ -24,6 +24,9 @@ import { InstallationGuestMinuteAttestor } from './guest-minutes.js';
 import { SubscriptionBilling } from './subscription-billing.js';
 import { createLevelTestScheduler, parseLevelTestSchedulerConfig, runLevelTestCombinations } from './level-tests-scheduler.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
+import { createDailyScheduler, type DailyScheduler } from './daily-scheduler.js';
+import { createDailyContentWorkerScheduler, type DailyContentWorkerScheduler } from './daily-content-worker-scheduler.js';
+import { createDailyReviewWorkerScheduler, type DailyReviewWorkerScheduler } from './daily-review-worker-scheduler.js';
 import { log } from './log.js';
 import { addDatabasePoolObservability, initGenerationMetrics, initObservability, shutdownObservability, startGenerationMetricsRefresh } from './observability.js';
 
@@ -37,6 +40,9 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
   let hostedHelpers: HostedHelpers | undefined;
   let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>> | undefined;
   let generationScheduler: ReturnType<typeof createLevelTestScheduler> | undefined;
+  let dailyScheduler: DailyScheduler | undefined;
+  let dailyContentWorker: DailyContentWorkerScheduler | undefined;
+  let dailyReviewWorker: DailyReviewWorkerScheduler | undefined;
   let tokenProxy: TokenProxy | undefined;
   let app: ReturnType<typeof createApp> | undefined;
   let cleanup: ReturnType<typeof setInterval> | undefined;
@@ -52,6 +58,9 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     startWorkers: () => {
       minuteCommerce?.runner.start();
       generationScheduler?.start();
+      dailyScheduler?.start();
+      dailyContentWorker?.start();
+      dailyReviewWorker?.start();
       log.info('api_started');
     },
     shutdownSteps: [
@@ -62,6 +71,9 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
         stopGenerationMetricsRefresh?.();
       },
       async () => { await generationScheduler?.stop(); },
+      async () => { await dailyContentWorker?.stop(); },
+      async () => { await dailyReviewWorker?.stop(); },
+      () => { dailyScheduler?.stop(); },
       async () => { await guestLinkFlight; },
       async () => { await tokenProxy?.stop(); },
       async () => { await app?.close(); },
@@ -81,6 +93,9 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     initObservability(env);
     const db = connectDatabase(databaseURL);
     database = db;
+    dailyScheduler = createDailyScheduler(db);
+    dailyContentWorker = createDailyContentWorkerScheduler(db,env);
+    dailyReviewWorker = createDailyReviewWorkerScheduler(db,env);
     addDatabasePoolObservability(db);
     await initGenerationMetrics(db);
     stopGenerationMetricsRefresh = startGenerationMetricsRefresh(db);

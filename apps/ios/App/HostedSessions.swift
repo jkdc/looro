@@ -188,6 +188,32 @@ extension ManagedAccountClient {
         return try Self.parseCreate(data)
     }
 
+    /// Daily speaking is a distinct server-bound request. It intentionally
+    /// omits caller-authored instructions and history; the API resolves both
+    /// from the frozen package and attempt transcript. The legacy overload
+    /// above remains unchanged for free voice and scenario sessions.
+    func hostedDailyCreate(sdp: String, language: String, dailyAttemptID: String, idempotencyKey: String,
+                           session: ManagedAccountSession)
+        async throws -> (sessionID: String, answerSDP: String, voiceSegmentID: String) {
+        guard UUID(uuidString: dailyAttemptID) != nil, UUID(uuidString: idempotencyKey) != nil else {
+            throw ManagedAccountError.invalidResponse
+        }
+        let body: [String: Any] = ["sdp": sdp, "language": language, "dailyAttemptId": dailyAttemptID.lowercased()]
+        let data = try await hostedData("/v1/live/sessions", method: "POST", jsonBody: body, session: session,
+                                        idempotencyKey: idempotencyKey.lowercased(), sizeLimit: 1_048_576)
+        let created = try Self.parseCreate(data)
+        guard let segmentID = Self.parseDailyVoiceSegmentId(data) else {
+            throw ManagedAccountError.invalidResponse
+        }
+        return (created.sessionID, created.answerSDP, segmentID)
+    }
+
+    static func parseDailyVoiceSegmentId(_ data: Data) -> String? {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let id = json["dailyVoiceSegmentId"] as? String, UUID(uuidString: id) != nil else { return nil }
+        return id.lowercased()
+    }
+
     static func parseCreate(_ data: Data) throws -> (sessionID: String, answerSDP: String) {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let sessionID = json["sessionID"] as? String, UUID(uuidString: sessionID) != nil,

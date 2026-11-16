@@ -785,3 +785,84 @@ WHEN NEW.owner_key IS NULL AND (SELECT value FROM meta WHERE key = 'active_learn
 BEGIN UPDATE progress_sync_state SET owner_key = (SELECT value FROM meta WHERE key = 'active_learner_identity') WHERE rowid = NEW.rowid; END;
 
 PRAGMA user_version = 7;
+
+-- Daily-practice state is private, learner-owned, and deliberately local. The
+-- import receipt and suppression tables survive ordinary expression edits.
+CREATE TABLE daily_attempt_cache (
+    owner_key TEXT NOT NULL,
+    attempt_id TEXT NOT NULL,
+    package_snapshot TEXT NOT NULL,
+    state_json TEXT NOT NULL,
+    revision INTEGER NOT NULL CHECK (revision >= 0),
+    updated_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, attempt_id)
+);
+
+CREATE TABLE daily_outbox (
+    owner_key TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    attempt_id TEXT NOT NULL,
+    intent_json TEXT NOT NULL,
+    intent_hash TEXT NOT NULL,
+    expected_revision INTEGER NOT NULL CHECK (expected_revision >= 0),
+    sequence INTEGER NOT NULL CHECK (sequence >= 0),
+    delivery_state TEXT NOT NULL CHECK (delivery_state IN ('pending','sending','outcome_unknown','revision_conflict','acknowledged')),
+    created_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, event_id),
+    UNIQUE (owner_key, attempt_id, sequence)
+);
+
+CREATE TABLE daily_review_cache (
+    owner_key TEXT NOT NULL,
+    review_id TEXT NOT NULL,
+    attempt_id TEXT NOT NULL,
+    result_json TEXT NOT NULL,
+    created_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, review_id),
+    UNIQUE (owner_key, attempt_id)
+);
+
+CREATE TABLE daily_word_imports (
+    owner_key TEXT NOT NULL,
+    origin_key TEXT NOT NULL,
+    language_id TEXT NOT NULL,
+    expression_key TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK (kind IN ('word','expression')),
+    review_id TEXT,
+    action TEXT NOT NULL CHECK (action IN ('imported','existing','suppressed','pending_capacity')),
+    importer_version INTEGER NOT NULL CHECK (importer_version > 0),
+    created_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, origin_key)
+);
+
+CREATE TABLE daily_word_suppressions (
+    owner_key TEXT NOT NULL,
+    language_id TEXT NOT NULL,
+    norm_key TEXT NOT NULL,
+    deleted_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, language_id, norm_key)
+);
+
+PRAGMA user_version = 8;
+
+-- v9 records definitive server rejections separately from unknown transport
+-- outcomes so rejected immutable events cannot be retried as if still pending.
+CREATE TABLE daily_outbox_v9 (
+    owner_key TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    attempt_id TEXT NOT NULL,
+    intent_json TEXT NOT NULL,
+    intent_hash TEXT NOT NULL,
+    expected_revision INTEGER NOT NULL CHECK (expected_revision >= 0),
+    sequence INTEGER NOT NULL CHECK (sequence >= 0),
+    delivery_state TEXT NOT NULL CHECK (delivery_state IN ('pending','sending','outcome_unknown','revision_conflict','rejected','acknowledged')),
+    created_at REAL NOT NULL,
+    PRIMARY KEY (owner_key, event_id),
+    UNIQUE (owner_key, attempt_id, sequence)
+);
+INSERT INTO daily_outbox_v9 (owner_key,event_id,attempt_id,intent_json,intent_hash,expected_revision,sequence,delivery_state,created_at)
+    SELECT owner_key,event_id,attempt_id,intent_json,intent_hash,expected_revision,sequence,delivery_state,created_at
+    FROM daily_outbox;
+DROP TABLE daily_outbox;
+ALTER TABLE daily_outbox_v9 RENAME TO daily_outbox;
+PRAGMA user_version = 9;

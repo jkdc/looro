@@ -35,12 +35,16 @@ services:
       # Test-only secrets for this disposable stack (documented in README.md).
       ADMIN_HMAC_KEY: "1111111111111111111111111111111111111111111111111111111111111111"
       ADMIN_PROXY_TOKEN: "2222222222222222222222222222222222222222222222222222222222222222"
-      ADMIN_PUBLIC_ORIGIN: http://127.0.0.1:8090
+      ADMIN_PUBLIC_ORIGIN: ${ADMIN_PUBLIC_ORIGIN:-http://127.0.0.1:8090}
       ADMIN_ALLOW_LOCAL_LOOPBACK: "true"
       LEVELTEST_LLM_MASTER_KEY: "3333333333333333333333333333333333333333333333333333333333333333"
+      LEVELTEST_LLM_PROVIDER: "openai"
+      LEVELTEST_LLM_URL: http://127.0.0.1:9999/v1
+      LEVELTEST_LLM_API_KEY: sk-daily-e2e-only
+      LEVELTEST_LLM_MODEL: stub-model
       # The scheduler stays OFF: the panel must show configured=false.
       LEVELTEST_GENERATE_ENABLED: "false"
-    ports: ["127.0.0.1:8081:8080"]
+    ports: ["127.0.0.1:${E2E_API_PORT:-8081}:8080"]
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
@@ -52,6 +56,15 @@ services:
     image: app-server-browser:local
     volumes:
       - ./stub-llm.mjs:/stub.mjs:ro
+    command: ["node", "/stub.mjs"]
+  # Daily worker traffic uses loopback because provider URLs intentionally
+  # permit cleartext HTTP only for loopback destinations.
+  daily-stub-llm:
+    image: app-server-browser:local
+    network_mode: "service:api"
+    volumes:
+      - ./stub-llm.mjs:/stub.mjs:ro
+      - ../../../../shared/contracts/daily-practice/fixtures/day-en.json:/daily-fixture.json:ro
     command: ["node", "/stub.mjs"]
   seed-generate:
     image: app-server-browser:local
@@ -76,7 +89,7 @@ services:
     image: caddy:2-alpine
     environment:
       ADMIN_PROXY_TOKEN: "2222222222222222222222222222222222222222222222222222222222222222"
-    ports: ["127.0.0.1:8090:80"]
+    ports: ["127.0.0.1:${E2E_PANEL_PORT:-8090}:80"]
     volumes:
       - ./Caddyfile.browser:/etc/caddy/Caddyfile:ro
       - ../../admin-ui:/srv/admin-ui:ro
@@ -85,6 +98,7 @@ services:
     image: app-server-browser:local
     volumes:
       - ./bootstrap.mjs:/app/bootstrap.mjs:ro
+      - ../../../../shared/contracts/daily-practice/fixtures/day-en.json:/app/daily-fixture.json:ro
     working_dir: /app
     environment:
       DATABASE_URL: postgresql://app_e2e:browser-e2e-isolated-only@database:5432/app_browser_e2e

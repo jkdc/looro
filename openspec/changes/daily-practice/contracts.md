@@ -1,9 +1,12 @@
 # Contratos propuestos: contenido, intentos y administración
 
-**Nada de esta sección está implementado todavía.** Los endpoints existentes
-conservan sus contratos. Añadir esquemas versionados y fixtures en
-`shared/contracts/daily-practice/` durante la implementación, no generar modelos
-por copiar este Markdown sin pruebas.
+**Contrato parcialmente aprobado (2026-11-08).** El usuario aprobó listening con
+TTS local y generación/revisión diaria mediante el proveedor LLM ya configurado
+para exámenes, bajo presupuesto operativo acotado, sin cobro al alumno y apagado
+por defecto. Esto autoriza implementar soporte, pero no llamadas reales, activación
+o despliegue. Los endpoints existentes conservan sus contratos. Añadir esquemas
+versionados y fixtures en `shared/contracts/daily-practice/` durante la
+implementación, no generar modelos por copiar este Markdown sin pruebas.
 
 ## 1. Convenciones de wire
 
@@ -44,28 +47,29 @@ respuesta, evidencia de juez, credenciales ni instrucciones de administración**
 | `challengeReference` | literal `B1-B2`; no cambia por alumno |
 | `estimatedMinutes` | `{preparation:2,listening:4,speaking:6,practice:3,review:2,total:17}` informational, never enforced |
 | `expressions` | Exactamente 5 `{id,text,meanings,examples}`; text ≤120; meanings/examples con claves `en` y `es`, valores ≤300 |
-| `listening` | `{audio,transcript,questions}`; transcript ≤1.500 codepoints; exactamente 3 preguntas |
+| `listening` | `{speechLocale,transcript,questions}`; locale BCP-47 del perfil; transcript ≤1.500 codepoints; exactamente 3 preguntas |
 | `speaking` | `{role,opening,topicAnchors,closingCue}`; role/opening/closing ≤400 codepoints; up to 3 non-interrogative topic anchors; no fixed turn/question count |
 | `practice` | `{questions}`; exactamente 4 preguntas, 2 `single_choice` y 2 `gap_fill` |
 | `supportLocales` | `['en','es']` |
 
-`audio={path,mimeType,durationMs,byteLength,sha256}`. Path relativo de la propia
-API, no URL arbitraria generada por LLM. MIME `audio/mpeg`, duración 60.000–90.000
-ms, máximo 3 MiB. No descargar URLs de terceros suministradas en el paquete.
+`speechLocale` es el locale BCP-47 congelado por el perfil (por ejemplo,
+`en-US`). La app sintetiza `transcript` localmente con el TTS de plataforma que
+ya utiliza para los listenings. No se incluye ni persiste un archivo de audio,
+URL, duración exacta o checksum en el paquete; el mismo contenido y `contentHash`
+se conserva entre alumnos, aunque la voz, velocidad y duración audible varíen
+entre dispositivos. No usar una voz de otro idioma silenciosamente si falta la
+voz solicitada.
 
 Pregunta pública: `{id,kind,prompt,options,hints}`. Prompt ≤400; `options` contiene
 4 `{id,text}` para elección y `[]` para hueco; text ≤200; hints `{en,es}` ≤300.
 Cada meta: `{id,task,hints,sentenceStarters,exampleResponses}`; task ≤300,
 ayudas por locale ≤400. El ejemplo enseña, no se cuenta como producción propia.
 
-Artefacto privado añade por pregunta `acceptedOptionId` o `acceptedAnswers`,
-`explanation` por locale y `targetExpressionIds`; por speaking añade rúbrica
-versionada y anclajes de metas. Toda clave apunta a opciones/expresiones reales.
-Claves de hueco: 1–8 alternativas no vacías de ≤120 codepoints.
+Artefacto privado v1 tiene `listening` y `practice`, ambos arrays con exactamente una clave por pregunta pública. Cada clave lleva `questionId`, `explanation:{en,es}` y `targetExpressionIds`; una pregunta `single_choice` lleva solo `acceptedOptionId` que exista en sus opciones, y una `gap_fill` lleva solo `acceptedAnswers` con 1–8 alternativas no vacías de ≤120 codepoints. Los IDs de pregunta no se repiten ni se omiten; los IDs objetivo deben existir en `expressions`. La API valida estas relaciones antes de juzgar y antes de publicar.
 
-Proyección pública ≤64 KiB sin audio; artefacto privado ≤96 KiB sin audio. El
-script inglés se limita además por el perfil para lograr duración, no por reglas
-globales que asumirían palabras separadas por espacios en todos los idiomas.
+Proyección pública ≤64 KiB y artefacto privado ≤96 KiB. El script se limita por
+perfil para una duración aproximada de listening a velocidad de referencia; la
+duración real depende del TTS y las preferencias locales, y nunca es un timeout.
 
 ### Endpoints públicos
 
@@ -73,14 +77,13 @@ globales que asumirían palabras separadas por espacios en todos los idiomas.
 |---|---|
 | `GET /v1/daily-practice/current?language=en` | `200 {schemaVersion:1,serverNow,editorialDate,package:DailyPackage}` |
 | `GET /v1/daily-practice/packages/:packageVersionId` | `200 DailyPackage` solo si fue publicado y no retirado |
-| `GET /v1/daily-practice/packages/:packageVersionId/audio` | Binario con MIME, longitud, checksum y soporte de cache condicional |
 
 Errores: idioma inválido `400 invalid_language`; conocido pero no habilitado
 `404 daily_language_not_enabled`; sin publicación válida `404 daily_not_available`;
 versión retirada `410 daily_content_withdrawn`; borrador privado/ID desconocido
 `404 not_found`; lectura desactivada `503 daily_unavailable`.
 
-`current` usa ETag y cache público máximo 30 s; versiones/audio también 30 s para
+`current` usa ETag y cache público máximo 30 s; versiones también 30 s para
 limitar exposición tras retirada. La admisión de intentos/voz consulta siempre
 estado transaccional, no cache. Incorporar rutas al inventario real de admisión
 pública; mantener rate limiting y no desactivar trusted-proxy globalmente.
@@ -175,10 +178,10 @@ Evento es unión cerrada:
 
 | `type` | Campos y efecto |
 |---|---|
-| `preparation_completed` | `activeMs`; fija primera etapa |
+| `preparation_completed` | `activeMs`, `helpUsed` opcional (IDs de ayuda consultados en la preparación); fija primera etapa. Las ayudas por meta consultadas aquí (pista, inicio de frase, ejemplo) son andamiaje del speaking, así que el servidor las guarda bajo `helpUsed.speaking` y la revisión marca esa sección como asistida |
 | `stage_submitted` | `stage=listening|practice`, `activeMs`, todas las preguntas de esa etapa exactamente una vez, valor string ≤120 o null, `helpUsed:string[]` IDs válidos; corrección cerrada server |
 | `speaking_segment_saved` | `segmentId` UUID asociado a voz propia, `activeMs`, `fragments[]`, `helpUsed[]`; agrega IDs nuevos y guarda el turno completo |
-| `stage_skipped` | `stage=preparation|listening|speaking|practice`, `activeMs`, `reason=learner_choice|microphone_denied|network_error|funding_unavailable`; registra parcialidad, nunca time_limit |
+| `stage_skipped` | `stage=preparation|listening|speaking|practice`, `activeMs`, `reason=learner_choice|microphone_denied|network_error|funding_unavailable|local_tts_unavailable`; registra parcialidad, nunca time_limit |
 | `word_marked` | `markId` UUID, `text` ≤120, `meaning` ≤300, `kind=word|expression`, `sourceQuestionId` o null; máximo 12 marcas por intento |
 | `speaking_closed` | Cierra conversación oral tras elección del alumno y preserva todos los fragmentos |
 | `finished` | Fija snapshot/job después de etapas resueltas y cierre oral; `stopReason=learner_choice|natural_close` |
@@ -251,7 +254,10 @@ type DailyReview = {
 
 Exactamente 3 `sections`, sin duplicados. Correct/total null para speaking;
 listening/práctica incluyen omitidas en total y ninguna omitida suma correct.
-Errores de comprensión/práctica citan texto exacto de respuesta enviada y
+`helped` lo recalcula el servidor desde el `helpUsed` validado del snapshot:
+listening y práctica con las ayudas de su propia etapa; speaking incluye
+también las ayudas por meta consultadas durante la preparación (son andamiaje
+del speaking; ver evento `preparation_completed`). Errores de comprensión/práctica citan texto exacto de respuesta enviada y
 `questionId`; errores orales citan solo fragmentos learner. No concatenar textos
 de varios fragmentos para fabricar una cita que nunca se pronunció seguida.
 `uncertain` se muestra como observación, no como error confirmado, y no se importa
@@ -277,7 +283,8 @@ después de admitirse. Un operador no puede editarla in-place.
 | 409 / revision_conflict | Descargar intento y reconciliar por eventos |
 | 409 / daily_voice_active | Esperar cierre/reconciliar voz; no abrir segunda conexión |
 
-| 410 / daily_content_withdrawn | Parar nuevo audio, conservar evidencia y finalizar parcial |
+| 410 / daily_content_withdrawn | Impedir nuevo intento, conservar el snapshot ya admitido y finalizar según estado |
+| cliente / local_tts_unavailable | No reproducir una voz de otro idioma; permitir reintentar tras habilitar la voz local o saltar listening explícitamente, registrándolo como parcial |
 | 413 / daily_payload_too_large | Reducir nuevo envío sin truncar evidencia ya aceptada |
 | 429 / rate_limit existente | Respetar Retry-After; repetir operación idempotente |
 | 503 / daily_budget_unavailable | Sin nueva reserva/llamada; conservar actividades libres |
@@ -314,8 +321,10 @@ mutaciones. Configuración y acciones con efectos usan CAS + Idempotency-Key.
 correspondiente y verificar hash/binding. Si no, `unrecoverable`; no inventar un
 resultado ni liberar exposición desconocida como si fuera coste cero.
 
-Config: flags de design.md, perfil/versiones, referencias de proveedor/voz,
+Config: flags de design.md, perfil/versiones y referencias de proveedor LLM para
+generación y juicio,
 `generationDailyBudgetNanoUsd`, `reviewDailyBudgetNanoUsd`,
 `maxReviewReservationNanoUsd`, todos importes positivos al habilitar la operación.
-El presupuesto de contenido incluye generación+juez+TTS. Un cambio de configuración
+El presupuesto de contenido incluye generación+juez; TTS es local y no crea gasto
+de proveedor en servidor. Un cambio de configuración
 afecta solo jobs nuevos; el snapshot de los ya enviados permanece.

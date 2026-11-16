@@ -30,7 +30,7 @@ porque las políticas actuales de conversación pueden usar historial personal.
 | Etapa | Contenido fijo | Presupuesto activo |
 |---|---|---:|
 | Preparación | Topic, objetivo y 5 expresiones con significado y ejemplo | 120 s |
-| Listening | Audio de 60–90 s, hasta 2 reproducciones y 3 preguntas de elección única | 240 s |
+| Listening | Transcript dimensionado para ≈60–90 s a velocidad de referencia; TTS local, hasta 2 reproducciones y 3 preguntas | 240 s |
 | Speaking | Conversación natural y dinámica sobre el topic, con apertura y cierre disponibles | ≈360 s |
 | Práctica | 4 ejercicios comunes: 2 elección única y 2 huecos de respuesta acotada | 180 s |
 | Revisión y Words | Fortalezas, hasta 3 prioridades y selección/aporte manual | 120 s |
@@ -72,6 +72,14 @@ otras preferencias de interfaz usan `en` con aviso de idioma de ayuda. Esto no
 activa cursos en español ni mezcla el idioma de aprendizaje. El idioma de
 explicación final se congela al iniciar el intento: `en` o `es`.
 
+Las ayudas por meta (pista, inicio de frase y respuesta de ejemplo) se
+presentan durante la preparación pero son **andamiaje del speaking**: quién las
+consulta entra a hablar con la meta ya andamiada. El intento las registra como
+ayuda del speaking (`preparation_completed.helpUsed`, guardada por el servidor
+en la etiqueta de ayuda del speaking), y la revisión final marca esa sección
+como `helped` cuando se consultaron. El resto de ayudas se atribuye a la etapa
+que las ofreció (transcripción a listening, pista antes de enviar a práctica).
+
 Las mismas ayudas deben ser accesibles con lector de pantalla y sin depender
 de color. Permiso de micrófono denegado conserva el resto del intento, explica
 la limitación y permite terminarlo como parcial; texto no se etiqueta speaking.
@@ -112,14 +120,14 @@ Words. No se convierte la opinión del LLM en una verdad irreversible.
 
 ## Perfil lingüístico extensible
 
-`DailyLanguageProfile` contiene ID de idioma, versión, rúbrica, constructores de
-prompts, normalización de respuestas, segmentación/validación de texto, ayudas,
-voces TTS permitidas y fixtures lingüísticos. El motor solo conoce capacidades,
+`DailyLanguageProfile` contiene ID de idioma, versión, locale BCP-47 de voz,
+rúbrica, constructores de prompts, normalización de respuestas,
+segmentación/validación de texto, ayudas y fixtures lingüísticos. El motor conoce capacidades,
 IDs, límites de bytes y duraciones; no contiene expresiones regulares inglesas.
 
 Inicialmente solo existe una implementación habilitada: `en`. Activar otro
 idioma exige perfil, referencias propias, revisión lingüística independiente,
-fixtures válidas/inválidas, audio y pruebas completas de generación/juez/
+fixtures válidas/inválidas, locale/compatibilidad TTS local y pruebas completas de generación/juez/
 publicación/móvil. Traducir un prompt no equivale a soporte verificado. Los
 límites por palabras inglesas, si se usan en autoría, viven en el perfil.
 

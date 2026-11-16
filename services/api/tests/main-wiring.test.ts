@@ -43,7 +43,10 @@ test('main composition starts configured workers only after listening succeeds',
   assert.equal(result.status, 0);
   before(result.events, 'http_listen', 'minute_worker_start');
   before(result.events, 'minute_worker_start', 'generation_worker_start');
-  before(result.events, 'generation_worker_start', 'api_started');
+  before(result.events, 'generation_worker_start', 'daily_worker_start');
+  before(result.events, 'daily_worker_start', 'daily_content_worker_start');
+  before(result.events, 'daily_content_worker_start', 'daily_review_worker_start');
+  before(result.events, 'daily_review_worker_start', 'api_started');
   assert.ok(!result.events.includes('startup_failed'), result.events.join(', '));
 });
 
@@ -55,6 +58,8 @@ test('main composition closes initialized resources when generation metrics init
   assert.ok(!result.events.includes('api_started'), result.events.join(', '));
   assert.ok(!result.events.includes('minute_worker_start'), result.events.join(', '));
   assert.ok(!result.events.includes('generation_worker_start'), result.events.join(', '));
+  assert.ok(!result.events.includes('daily_content_worker_start'), result.events.join(', '));
+  assert.ok(!result.events.includes('daily_review_worker_start'), result.events.join(', '));
   assert.ok(!result.events.includes('http_close'), result.events.join(', '));
 });
 
@@ -101,6 +106,9 @@ test('main composition registers signal handlers and shuts resources down on SIG
   has(result.events, 'signal_handler_registered:SIGTERM');
   has(result.events, 'signal_handler_registered:SIGINT');
   before(result.events, 'api_started', 'timers_clear');
+  before(result.events, 'timers_clear', 'daily_content_worker_stop');
+  before(result.events, 'daily_content_worker_stop', 'daily_review_worker_stop');
+  before(result.events, 'daily_review_worker_stop', 'daily_worker_stop');
   before(result.events, 'timers_clear', 'http_close');
   before(result.events, 'http_close', 'observability_shutdown');
   before(result.events, 'observability_shutdown', 'database_close');

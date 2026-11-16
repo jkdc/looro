@@ -71,3 +71,48 @@ Date: 2026-10-08 · Branch `feature/learning-platform` · Backend-only change
   EN/B1 reading passages are coherent, engaging and level-plausible. The
   19 flagged items need human disposition before treating the weeks as
   final — that is the designed workflow, not a defect.
+
+## Normalización de la petición de generación y su barra de aceptación (2026-11-16)
+
+**Defecto reportado desde el panel**: generación en/A1 semana 202647 fallida
+(`generation_failed`, detalle `listening: minimum: 5 valid passages`). El
+proveedor respondió correctamente (usage completo, ~3.3k in / ~31k out); el
+pool válido quedó en 5 pasajes porque la petición al LLM era **exactamente** el
+pool target (6) sin margen: un solo candidato descartado por la validación
+determinista (rango de palabras 35–70 en A1, dedupe, juez) hundía la semana.
+
+**Normalización** (single source of truth ya existente en el contenido:
+`poolTarget = 2 × examShape` en las 10 entradas de EXAM_MODELS, ahora
+garantizada por prueba):
+
+- La petición por sección lleva **margen de generación explícito**
+  (+1 pasajes de lectura/listening, +4 recognition, +1 writing) sobre el pool
+  target; la barra de aceptación por sección y la validación del pool siguen
+  exigiendo el pool target completo (invariante de calidad sin cambios).
+- La barra de aceptación por sección (`sectionPoolMinimum`) es el pool target,
+  no la petición inflada — sin esto el margen sería inútil.
+- La vía legacy no inglesa conserva su contrato interno (ask = `SECTION_SPECS`,
+  barra = su propio conteo, pool validado contra `examShape`), conforme a la
+  guía de onboarding; los números duros `SECTION_SPECS` se documentan como
+  pipeline legacy.
+
+**Pruebas** (RED/GREEN en stack efímero):
+- `section asks include generation headroom…` — RED previo (`count: 6` vs `7`),
+  GREEN tras el margen.
+- `the section acceptance bar stays at the pool target while the ask carries
+  headroom` — nuevo.
+- `every exam model derives its pool target from exactly twice the exam shape`
+  — guarda de normalización del catálogo completo.
+- Actualizada a la petición normalizada la aserción del contrato de ask en
+  `level-test-blueprint.test.ts` (24→28, 6→7 con margen documentado).
+- Suite completa `make test-api`: **989/989, 0 fallos** (tras una pasada
+  intermedia que detectó los tres tests acoplados al contrato antiguo).
+
+**Despliegue local**: `make up --build` reconstruyó la API con el fix
+(verificado en contenedor: ask en/A1 = 7, mínimo 6). El job fallido quedó con
+`attempts=0` para permitir el reintento desde «Regenerar». El reintento usa el
+proveedor LLM configurado — cada intento consume tokens del proveedor.
+
+**Pendiente operativo**: `make up` sigue abortando en Prometheus porque un
+proceso del host ocupa 127.0.0.1:9090 (ajeno a Docker; no afecta al panel ni
+a la generación).

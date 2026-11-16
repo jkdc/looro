@@ -3,6 +3,7 @@ package com.jkdc.app.core
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.put
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 
@@ -99,10 +100,15 @@ object DailyAttemptReducer {
         return state.copy(answers = state.answers + (questionId to value))
     }
 
+    /** Records only identifiers the server accepts; a malformed help id never fails the stage. */
     fun markHelpUsed(state: DailyAttemptLocalState, ids: List<String>): DailyAttemptLocalState {
-        require(ids.all { it.matches(Regex("^[a-z0-9_-]{1,64}$")) })
-        return state.copy(helpUsed = state.helpUsed + ids)
+        val valid = ids.filter { it.matches(Regex("^[a-z0-9_-]{1,64}$")) }
+        return state.copy(helpUsed = state.helpUsed + valid)
     }
+
+    /** Help evidence belongs to the stage that offered it; sends at most the server limit. */
+    fun helpUsedForStage(helpUsed: Set<String>, allowedIds: Set<String>): List<String> =
+        helpUsed.filter(allowedIds::contains).sorted().take(8)
 
     fun markTarget(state: DailyAttemptLocalState, expressionId: String): DailyAttemptLocalState {
         require(!state.finished && state.stage != DailyAttemptStage.REVIEW && expressionId.matches(Regex("^[a-z0-9_-]{1,64}$")))
@@ -198,7 +204,7 @@ object DailyAttemptReducer {
             speakingOpen = if (stage == DailyAttemptStage.SPEAKING) false else state.speakingOpen)
     }
 
-    fun stageSkippedEvent(stage: DailyAttemptStage, reason: String): kotlinx.serialization.json.JsonObject {
+    fun stageSkippedEvent(stage: DailyAttemptStage, reason: String, activeMs: Long = 0): kotlinx.serialization.json.JsonObject {
         require(stage != DailyAttemptStage.REVIEW)
         require(reason in setOf("learner_choice", "microphone_denied", "network_error", "funding_unavailable", "local_tts_unavailable"))
         val stageName = when (stage) {
@@ -211,8 +217,32 @@ object DailyAttemptReducer {
         return kotlinx.serialization.json.buildJsonObject {
             put("type", JsonPrimitive("stage_skipped"))
             put("stage", JsonPrimitive(stageName))
-            put("activeMs", JsonPrimitive(0))
+            put("activeMs", JsonPrimitive(activeMs.coerceAtLeast(0L)))
             put("reason", JsonPrimitive(reason))
+        }
+    }
+
+    /** The closed stage submission exactly as the screen sends it; answers and
+     *  per-stage help evidence travel with the attempt's own wording. */
+    fun stageSubmittedEvent(state: DailyAttemptLocalState, questionIds: List<String>, stage: DailyAttemptStage,
+        allowedHelpIds: Set<String>, activeMs: Long): kotlinx.serialization.json.JsonObject {
+        require(stage == DailyAttemptStage.LISTENING || stage == DailyAttemptStage.PRACTICE)
+        return kotlinx.serialization.json.buildJsonObject {
+            put("type", JsonPrimitive("stage_submitted"))
+            put("stage", JsonPrimitive(if (stage == DailyAttemptStage.LISTENING) "listening" else "practice"))
+            put("activeMs", JsonPrimitive(activeMs.coerceAtLeast(0L)))
+            put("answers", kotlinx.serialization.json.buildJsonArray {
+                questionIds.forEach { questionId ->
+                    add(kotlinx.serialization.json.buildJsonObject {
+                        put("questionId", JsonPrimitive(questionId))
+                        val answer = state.answers[questionId]
+                        if (answer != null) put("value", JsonPrimitive(answer)) else put("value", kotlinx.serialization.json.JsonNull)
+                    })
+                }
+            })
+            put("helpUsed", kotlinx.serialization.json.buildJsonArray {
+                helpUsedForStage(state.helpUsed, allowedHelpIds).forEach { add(JsonPrimitive(it)) }
+            })
         }
     }
 

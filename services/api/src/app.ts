@@ -6,6 +6,8 @@ import { transaction, type Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
 import { registerLevelTestAttemptRoutes } from './level-test-attempts.js';
+import { projectPublicDailyPackage } from './daily-content.js';
+import { appendDailyEvent, createDailyAttempt, getDailyAttempt, getDailyAttemptPackage, getDailyReview, listDailyAttempts } from './daily-attempts.js';
 import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
 import { aiPricingPolicy } from './ai-top-up-pricing.js';
@@ -30,6 +32,8 @@ import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdm
 import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
 import { snapshot as adminSnapshot, timeseries, usageOverview, TIMESERIES_SETS } from './admin-metrics.js';
 import { recordAdminAction } from './admin-audit.js';
+import { dailyAdminSnapshot, getDailyAdminPackage, getDailyAdminRun, listDailyAdminJobs, listDailyAdminPackages, runDailyAdminIdempotent,
+  publishDailyAdminPackage, saveDailyAdminConfig, startDailyAdminGeneration, withdrawDailyAdminPackage } from './daily-admin.js';
 import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
 import { accountCloseoutReport } from './account-closeout-admin.js';
 import { normalizeAccessEmail } from './access-requests.js';
@@ -70,7 +74,8 @@ const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/au
 // Cacheable public content: carries no session, but is now durably admitted —
 // per visitor network when the proxy authenticates the address, global-only
 // otherwise (see the admission block in the request hook).
-const publicContentPaths = new Set(['/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current', '/v1/level-tests/generated', '/v1/level-tests/hybrid']);
+const publicContentPaths = new Set(['/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current', '/v1/level-tests/generated', '/v1/level-tests/hybrid',
+  '/v1/daily-practice/current', '/v1/daily-practice/packages/:packageVersionId']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -290,6 +295,100 @@ export function createApp(services: Services) {
       status: reply.statusCode, duration_ms: Math.round(reply.elapsedTime) });
   });
   registerLevelTestAttemptRoutes(app, db);
+  app.post('/v1/daily-practice/attempts', { bodyLimit: 24 * 1024 }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const idempotencyKey = request.headers['idempotency-key'];
+    if (typeof idempotencyKey !== 'string' || !/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(idempotencyKey))
+      throw new ServiceError('invalid_idempotency_key', 400);
+    const result = await createDailyAttempt(db, account, objectBody(request), idempotencyKey);
+    return reply.code(result.status).header('Cache-Control', 'private, no-store').send(result.attempt);
+  });
+  app.get('/v1/daily-practice/attempts', async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const query = request.query as Record<string, unknown>;
+    if (Object.keys(query).some(key => !['language','limit','cursor'].includes(key)) ||
+      typeof query.language !== 'string' || !/^[a-z]{2}(?:-[A-Z]{2})?$/.test(query.language))
+      throw new ServiceError('invalid_language', 400);
+    if (query.language !== 'en') throw new ServiceError('daily_language_not_enabled', 404);
+    const limitText = query.limit === undefined ? '20' : query.limit;
+    if (typeof limitText !== 'string' || !/^(?:[1-9]|[1-4][0-9]|50)$/.test(limitText) ||
+      (query.cursor !== undefined && (typeof query.cursor !== 'string' || query.cursor.length > 512)))
+      throw new ServiceError('invalid_daily_history', 400);
+    const page = await listDailyAttempts(db, account, query.language, Number(limitText), query.cursor as string | undefined);
+    return reply.header('Cache-Control', 'private, no-store').send(page);
+  });
+  app.get('/v1/daily-practice/attempts/:attemptId/review', async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const attemptId = (request.params as { attemptId: string }).attemptId;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attemptId))
+      throw new ServiceError('not_found', 404);
+    const result = await getDailyReview(db, account, attemptId);
+    if (result.status === 202) return reply.code(202).header('Cache-Control', 'private, no-store')
+      .send({ state: result.state, retryAfterMs: result.retryAfterMs });
+    return reply.header('Cache-Control', 'private, no-store').send(result.review);
+  });
+  app.get('/v1/daily-practice/attempts/:attemptId/package', async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const attemptId = (request.params as { attemptId: string }).attemptId;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attemptId))
+      throw new ServiceError('not_found', 404);
+    const snapshot = await getDailyAttemptPackage(db, account, attemptId);
+    return reply.header('Cache-Control', 'private, no-store').send(snapshot);
+  });
+  app.get('/v1/daily-practice/attempts/:attemptId', async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const attemptId = (request.params as { attemptId: string }).attemptId;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attemptId))
+      throw new ServiceError('not_found', 404);
+    const attempt = await getDailyAttempt(db, account, attemptId);
+    if (!attempt) throw new ServiceError('not_found', 404);
+    return reply.header('Cache-Control', 'private, no-store').send(attempt);
+  });
+  app.post('/v1/daily-practice/attempts/:attemptId/events', { bodyLimit: 24 * 1024 }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    const attemptId = (request.params as { attemptId: string }).attemptId;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(attemptId))
+      throw new ServiceError('not_found', 404);
+    const body = objectBody(request);
+    const attempt = await appendDailyEvent(db, account, attemptId, body);
+    const status = (body.event as Record<string, unknown> | undefined)?.type === 'finished' ? 202 : 200;
+    return reply.code(status).header('Cache-Control', 'private, no-store').send(attempt);
+  });
+  app.get('/v1/daily-practice/current', async (request, reply) => {
+    const query = request.query as Record<string, unknown>;
+    if (Object.keys(query).some(key => key !== 'language') || typeof query.language !== 'string' || !/^[a-z]{2}(?:-[A-Z]{2})?$/.test(query.language))
+      throw new ServiceError('invalid_language', 400);
+    const config = (await db.query<{ read_enabled: boolean; enabled_languages: string[] }>(
+      'SELECT read_enabled,enabled_languages FROM daily_config WHERE singleton=true')).rows[0];
+    if (!config?.read_enabled) throw new ServiceError('daily_unavailable', 503);
+    if (!config.enabled_languages.includes(query.language)) throw new ServiceError('daily_language_not_enabled', 404);
+    const editorialDate = new Date().toISOString().slice(0, 10);
+    const row = (await db.query<{ public_payload: Record<string, unknown>; content_hash: string }>(`SELECT p.public_payload,p.content_hash
+      FROM daily_publications d JOIN daily_packages p ON p.id=d.package_id
+      WHERE d.language=$1 AND d.editorial_date=$2 AND d.withdrawn_at IS NULL AND p.state='published'`,
+    [query.language, editorialDate])).rows[0];
+    if (!row) throw new ServiceError('daily_not_available', 404);
+    const etag = `"${row.content_hash}"`;
+    reply.header('ETag', etag).header('Cache-Control', 'public, max-age=30');
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    return { schemaVersion: 1, serverNow: Date.now(), editorialDate, package: projectPublicDailyPackage(row.public_payload) };
+  });
+  app.get('/v1/daily-practice/packages/:packageVersionId', async (request, reply) => {
+    const packageVersionId = (request.params as { packageVersionId: string }).packageVersionId;
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(packageVersionId))
+      throw new ServiceError('not_found', 404);
+    const config = (await db.query<{ read_enabled: boolean; enabled_languages: string[] }>(
+      'SELECT read_enabled,enabled_languages FROM daily_config WHERE singleton=true')).rows[0];
+    if (!config?.read_enabled) throw new ServiceError('daily_unavailable', 503);
+    const row = (await db.query<{ public_payload: Record<string, unknown>; content_hash: string; language: string }>(`SELECT p.public_payload,p.content_hash,p.language
+      FROM daily_publications d JOIN daily_packages p ON p.id=d.package_id
+      WHERE d.package_id=$1 AND d.withdrawn_at IS NULL AND p.state='published'`, [packageVersionId])).rows[0];
+    if (!row || !config.enabled_languages.includes(row.language)) throw new ServiceError('not_found', 404);
+    const etag = `"${row.content_hash}"`;
+    reply.header('ETag', etag).header('Cache-Control', 'public, max-age=30');
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    return projectPublicDailyPackage(row.public_payload);
+  });
   const featureState=()=>{
     const hostedVoice=Boolean(services.hosted?.available && (!services.hosted.minuteFunded || services.hostedHelpers));
     const livePayments=['stripe','play'].some(provider=>services.minuteCommerce?.aiPurchases?.products(provider as 'stripe'|'play').some(product=>product.environment==='live'));
@@ -460,6 +559,55 @@ export function createApp(services: Services) {
   });
   app.get('/v1/admin/metrics/usage', async request => {    const query = request.query as Record<string, unknown>;
     return usageOverview(db, query.days === undefined ? 30 : Number(query.days));
+  });
+  app.get('/v1/admin/daily-practice/config', async () => dailyAdminSnapshot(db));
+  app.get('/v1/admin/daily-practice/packages', async (request,reply) => {
+    return reply.header('Cache-Control','private, no-store').send(await listDailyAdminPackages(db,request.query));
+  });
+  app.get('/v1/admin/daily-practice/packages/:id', async (request,reply) => {
+    const id=(request.params as {id:string}).id;
+    return reply.header('Cache-Control','private, no-store').send(await getDailyAdminPackage(db,id));
+  });
+  app.get('/v1/admin/daily-practice/jobs', async (request,reply) => {
+    return reply.header('Cache-Control','private, no-store').send(await listDailyAdminJobs(db,request.query));
+  });
+  app.post('/v1/admin/daily-practice/generation-runs', {bodyLimit:4096}, async (request,reply) => {
+    const body=objectBody(request),key=request.headers['idempotency-key'];
+    if(typeof key!=='string')throw new ServiceError('invalid_idempotency_key',400);
+    const result=await startDailyAdminGeneration(db,request.admin!.adminID,body,key);
+    return reply.code(result.replayed?200:202).header('Cache-Control','private, no-store')
+      .header('Idempotent-Replay',String(result.replayed)).send(result.response);
+  });
+  app.get('/v1/admin/daily-practice/generation-runs/:runId', async (request,reply) => {
+    return reply.header('Cache-Control','private, no-store').send(await getDailyAdminRun(db,(request.params as {runId:string}).runId));
+  });
+  app.post('/v1/admin/daily-practice/publications', {bodyLimit:4096}, async (request,reply) => {
+    const key=request.headers['idempotency-key'];
+    if(typeof key!=='string')throw new ServiceError('invalid_idempotency_key',400);
+    const result=await publishDailyAdminPackage(db,request.admin!.adminID,objectBody(request),key);
+    return reply.code(result.replayed?200:201).header('Cache-Control','private, no-store')
+      .header('Idempotent-Replay',String(result.replayed)).send(result.response);
+  });
+  app.post('/v1/admin/daily-practice/packages/:id/withdraw', {bodyLimit:4096}, async (request,reply) => {
+    const key=request.headers['idempotency-key'],body=objectBody(request),id=(request.params as {id:string}).id;
+    if(typeof key!=='string'||Object.keys(body).length!==2||Object.keys(body).some(field=>!['expectedRevision','reason'].includes(field)))
+      throw new ServiceError('invalid_daily_admin_request',400);
+    const result=await withdrawDailyAdminPackage(db,request.admin!.adminID,id,body.expectedRevision as number,body.reason,key);
+    return reply.code(result.replayed?200:200).header('Cache-Control','private, no-store')
+      .header('Idempotent-Replay',String(result.replayed)).send(result.response);
+  });
+  app.put('/v1/admin/daily-practice/config', { bodyLimit: 8192 }, async (request, reply) => {
+    const body=objectBody(request);
+    const idempotencyKey=request.headers['idempotency-key'];
+    if(Object.keys(body).length!==3||Object.keys(body).some(key=>!['expectedRevision','reason','config'].includes(key))||
+      !Number.isSafeInteger(body.expectedRevision)||!body.config||typeof body.config!=='object'||Array.isArray(body.config)||
+      typeof idempotencyKey!=='string')
+      throw new ServiceError('invalid_request',400);
+    const config=body.config as Record<string,unknown>;
+    const merged={...config,schemaVersion:1,expectedRevision:body.expectedRevision};
+    const result=await runDailyAdminIdempotent(db,request.admin!.adminID,'config_update',idempotencyKey,body,
+      tx=>saveDailyAdminConfig(tx,merged,request.admin!.adminID,body.reason));
+    return reply.header('Cache-Control','private, no-store').header('Idempotent-Replay',String(result.replayed)).send(result.response);
   });
   // ---- Audited panel actions (every mutation writes admin_actions) ----
   const adminActor = (admin: { adminID: string; email: string | null }) => `admin:${admin.email ?? admin.adminID}`;
@@ -802,14 +950,17 @@ export function createApp(services: Services) {
     if (!services.hosted?.available) throw new ServiceError('hosted_voice_not_ready', 503);
     if (services.hosted.minuteFunded && !services.hostedHelpers) throw new ServiceError('hosted_helpers_not_ready', 503);
     const account = await authenticate(db, request.headers.authorization, services.hosted.minuteFunded), body = objectBody(request);
-    if (Object.keys(body).some(key => !['sdp','language','instructions','history','requestedMilliseconds'].includes(key))) throw new ServiceError('invalid_request');
+    if (Object.keys(body).some(key => !['sdp','language','instructions','history','requestedMilliseconds','dailyAttemptId'].includes(key))) throw new ServiceError('invalid_request');
+    const dailyAttemptId = body.dailyAttemptId === undefined ? undefined : stringField(body,'dailyAttemptId',36);
+    if(dailyAttemptId!==undefined&&(!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(dailyAttemptId)||
+      Object.hasOwn(body,'instructions')||Object.hasOwn(body,'history')))throw new ServiceError('invalid_daily_voice_context');
     if (body.requestedMilliseconds !== undefined && (typeof body.requestedMilliseconds !== 'number' ||
         !Number.isSafeInteger(body.requestedMilliseconds) || body.requestedMilliseconds < 60_000 || body.requestedMilliseconds > 3_600_000))
       throw new ServiceError('invalid_request');
     const key = request.headers['idempotency-key'];
     if (typeof key !== 'string') throw new ServiceError('idempotency_key_required');
     return services.hosted.create(account, key, stringField(body, 'sdp', 65_536), stringField(body, 'language', 10),
-      { instructions: body.instructions, history: body.history }, body.requestedMilliseconds as number | undefined);
+      { instructions: body.instructions, history: body.history }, body.requestedMilliseconds as number | undefined,dailyAttemptId);
   });
   app.get('/v1/live/sessions/:id', async request => {
     if (!services.hosted) throw new ServiceError('hosted_voice_not_ready', 503);

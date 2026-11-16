@@ -23,7 +23,7 @@ import { join } from 'node:path';
 
 const PANEL = process.env.E2E_PANEL_ORIGIN ?? 'http://127.0.0.1:8090';
 const API = process.env.E2E_API_ORIGIN ?? 'http://127.0.0.1:8081';
-const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? 'e2e-evidence/t11-browser-e2e';
+const EVIDENCE = process.env.E2E_EVIDENCE_DIR ?? '.superpowers/sdd/2026-11-07-daily-practice/evidence/admin';
 
 const require = createRequire(import.meta.url);
 const playwrightRoots = [
@@ -1649,6 +1649,52 @@ try {
     if (!audit.includes('Revisión comercial en E2E')) throw new Error('audited motive missing');
   });
   await shot('22-audit');
+  let dailyConfigWrites = [];
+  let dailyConfigWriteCount = 0;
+  let dailyConfig = { revision: 12, read_enabled: false, new_attempts_enabled: false, generation_enabled: false,
+    auto_publish_enabled: false, enabled_languages: ['en'], content_budget_nano_usd: '0',
+    review_budget_nano_usd: '0', retention_days: 365 };
+  await page.route('**/v1/admin/daily-practice/config', async route => {
+    if (route.request().method() === 'GET') return route.fulfill({ json: { config: dailyConfig, jobs: [] } });
+    if (route.request().method() !== 'PUT') return route.continue();
+    dailyConfigWrites.push({ body: route.request().postData(), key: route.request().headers()['idempotency-key'] });
+    dailyConfigWriteCount++;
+    if (dailyConfigWriteCount === 1) return route.abort();
+    const requestBody = JSON.parse(route.request().postData() ?? '{}');
+    dailyConfig = { revision: 13, read_enabled: requestBody.config.readEnabled,
+      new_attempts_enabled: requestBody.config.newAttemptsEnabled, generation_enabled: requestBody.config.generationEnabled,
+      auto_publish_enabled: requestBody.config.autoPublishEnabled, enabled_languages: requestBody.config.enabledLanguages,
+      content_budget_nano_usd: requestBody.config.contentBudgetNanoUsd, review_budget_nano_usd: requestBody.config.reviewBudgetNanoUsd,
+      retention_days: requestBody.config.retentionDays };
+    return route.fulfill({ json: dailyConfig });
+  });
+  await page.route('**/v1/admin/daily-practice/packages?*', route => route.fulfill({ json: { items: [], nextCursor: null } }));
+  await page.route('**/v1/admin/daily-practice/jobs?*', route => route.fulfill({ json: { items: [], hasMore: false } }));
+  await page.goto(`${PANEL}/#daily-practice`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#daily-config-save', { timeout: 10_000 });
+  await check('daily config requires a changed value and audit reason before saving', async () => {
+    if (await page.isEnabled('#daily-config-save')) throw new Error('save was enabled before a dirty change');
+    await page.fill('#daily-config-reason', 'Enable for controlled rehearsal');
+    if (await page.isEnabled('#daily-config-save')) throw new Error('reason alone made the clean config saveable');
+    await page.check('#daily-generation');
+    if (!(await page.isEnabled('#daily-config-save'))) throw new Error('dirty config plus reason did not enable save');
+  });
+  await page.click('#daily-config-save');
+  await page.waitForFunction(() => (document.querySelector('#daily-config-status')?.textContent ?? '').includes('No se confirmó'));
+  await check('uncertain daily config retries preserve the exact request and idempotency key', async () => {
+    const first = dailyConfigWrites[0];
+    if (!first?.key || !/^[0-9a-f-]{36}$/i.test(first.key)) throw new Error('first request has no UUID idempotency key');
+    const responsePromise = page.waitForResponse(response => response.url().endsWith('/v1/admin/daily-practice/config') && response.request().method() === 'PUT');
+    await page.click('#daily-config-save');
+    await responsePromise;
+    if (dailyConfigWrites.length !== 2 || dailyConfigWrites[1].key !== first.key || dailyConfigWrites[1].body !== first.body)
+      throw new Error(`retry changed its operation identity: ${JSON.stringify(dailyConfigWrites)}`);
+    await expectText('#daily-config-status', 'Configuración guardada y auditada');
+    if (!(await page.isChecked('#daily-generation'))) throw new Error('confirmed config was not reflected in the form');
+  });
+  await page.unroute('**/v1/admin/daily-practice/config');
+  await page.unroute('**/v1/admin/daily-practice/packages?*');
+  await page.unroute('**/v1/admin/daily-practice/jobs?*');
   await check('the remaining views never raised a page error', async () => {
     const fresh = observedPageErrors.slice(errorsBeforeSurfaces);
     if (fresh.length) throw new Error(fresh.join(' | '));

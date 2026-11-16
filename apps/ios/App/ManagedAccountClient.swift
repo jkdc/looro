@@ -576,6 +576,166 @@ struct ManagedAccountClient {
     }
 }
 
+enum DailyPracticeClientError: Error, Equatable {
+    case invalidResponse
+    case unavailable
+    case outcomeUnknown
+    case http(status: Int, code: String?)
+}
+
+private struct DailyCurrentPackageEnvelope: Decodable {
+    let schemaVersion: Int
+    let package: DailyPracticePackage
+}
+
+/// Owner-bound daily-practice transport. Writes are never retried by this client;
+/// callers persist the same event/idempotency identity before invoking it again.
+struct DailyPracticeClient {
+    private let configuration: ManagedAccountConfiguration
+    private let http: any ManagedAccountRequestTransport
+
+    init(configuration: ManagedAccountConfiguration) {
+        self.init(configuration: configuration, transport: ManagedAccountHTTP())
+    }
+
+    init(configuration: ManagedAccountConfiguration, transport: any ManagedAccountRequestTransport) {
+        self.configuration = configuration
+        http = transport
+    }
+
+    func currentPackage(language: String) async throws -> DailyPracticePackage {
+        guard language.range(of: "^[a-z]{2}(?:-[A-Z]{2})?$", options: .regularExpression) != nil else {
+            throw DailyPracticeClientError.invalidResponse
+        }
+        let (data, _) = try await send(path: "/v1/daily-practice/current", method: "GET", query: ["language": language])
+        do {
+            let envelope = try JSONDecoder().decode(DailyCurrentPackageEnvelope.self, from: data)
+            guard envelope.schemaVersion == 1 else { throw DailyPracticeClientError.invalidResponse }
+            return envelope.package
+        } catch let error as DailyPracticeClientError { throw error }
+        catch { throw DailyPracticeClientError.invalidResponse }
+    }
+
+    func publishedPackage(packageVersionID: String) async throws -> Data {
+        guard Self.isUUID(packageVersionID) else { throw DailyPracticeClientError.invalidResponse }
+        return try await send(path: "/v1/daily-practice/packages/\(packageVersionID.lowercased())", method: "GET").data
+    }
+
+    func createAttempt(session: ManagedAccountSession, attemptID: String, packageVersionID: String,
+                       explanationLanguage: String, dailyConsentVersion: Int, idempotencyKey: String) async throws -> Data {
+        guard Self.isUUID(attemptID), Self.isUUID(packageVersionID), Self.isUUID(idempotencyKey),
+              ["en", "es"].contains(explanationLanguage), dailyConsentVersion == 1 else {
+            throw DailyPracticeClientError.invalidResponse
+        }
+        let body = try JSONSerialization.data(withJSONObject: [
+            "schemaVersion": 1, "attemptId": attemptID.lowercased(), "packageVersionId": packageVersionID.lowercased(),
+            "explanationLanguage": explanationLanguage, "dailyConsentVersion": dailyConsentVersion
+        ], options: [.sortedKeys])
+        let result = try await send(path: "/v1/daily-practice/attempts", method: "POST", body: body,
+                                    session: session, idempotencyKey: idempotencyKey.lowercased())
+        try Self.validateAttempt(result.data)
+        return result.data
+    }
+
+    func attempts(session: ManagedAccountSession, language: String = "en", limit: Int = 20,
+                  cursor: String? = nil) async throws -> Data {
+        guard language.range(of: "^[a-z]{2}(?:-[A-Z]{2})?$", options: .regularExpression) != nil,
+              (1...50).contains(limit), cursor.map({ $0.utf8.count <= 2_048 }) ?? true else {
+            throw DailyPracticeClientError.invalidResponse
+        }
+        var query = ["language": language, "limit": String(limit)]
+        if let cursor { query["cursor"] = cursor }
+        return try await send(path: "/v1/daily-practice/attempts", method: "GET", query: query,
+                              session: session, responseLimit: 2 * 1024 * 1024).data
+    }
+
+    func attempt(session: ManagedAccountSession, attemptID: String) async throws -> Data {
+        guard Self.isUUID(attemptID) else { throw DailyPracticeClientError.invalidResponse }
+        let result = try await send(path: "/v1/daily-practice/attempts/\(attemptID.lowercased())", method: "GET", session: session)
+        try Self.validateAttempt(result.data)
+        return result.data
+    }
+
+    func attemptPackage(session: ManagedAccountSession, attemptID: String) async throws -> Data {
+        guard Self.isUUID(attemptID) else { throw DailyPracticeClientError.invalidResponse }
+        return try await send(path: "/v1/daily-practice/attempts/\(attemptID.lowercased())/package",
+                              method: "GET", session: session, responseLimit: 96_000).data
+    }
+
+    func appendEvent(session: ManagedAccountSession, attemptID: String, envelope: Data) async throws -> Data {
+        guard Self.isUUID(attemptID), !envelope.isEmpty, envelope.count <= 24 * 1024 else {
+            throw DailyPracticeClientError.invalidResponse
+        }
+        let result = try await send(path: "/v1/daily-practice/attempts/\(attemptID.lowercased())/events",
+                                    method: "POST", body: envelope, session: session)
+        try Self.validateAttempt(result.data)
+        return result.data
+    }
+
+    func review(session: ManagedAccountSession, attemptID: String) async throws -> (data: Data, status: Int) {
+        guard Self.isUUID(attemptID) else { throw DailyPracticeClientError.invalidResponse }
+        return try await send(path: "/v1/daily-practice/attempts/\(attemptID.lowercased())/review",
+                              method: "GET", session: session, responseLimit: 96_000)
+    }
+
+    private func send(path: String, method: String, query: [String: String] = [:], body: Data? = nil,
+                      session: ManagedAccountSession? = nil, idempotencyKey: String? = nil,
+                      responseLimit: Int = 128 * 1024) async throws -> (data: Data, status: Int) {
+        guard var components = URLComponents(url: configuration.origin, resolvingAgainstBaseURL: false) else {
+            throw DailyPracticeClientError.unavailable
+        }
+        components.path = path
+        components.queryItems = query.keys.sorted().map { URLQueryItem(name: $0, value: query[$0]) }
+        guard let url = components.url else { throw DailyPracticeClientError.invalidResponse }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
+        if let body {
+            request.httpBody = body
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        if let idempotencyKey { request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key") }
+        if let session {
+            guard session.isUsable(scope: configuration.storageScope) else { throw DailyPracticeClientError.http(status: 401, code: "sign_in_required") }
+            request.setValue("Bearer " + session.accessToken, forHTTPHeaderField: "Authorization")
+        }
+        let data: Data
+        let response: HTTPURLResponse
+        do { (data, response) = try await http.send(request, limit: responseLimit) }
+        catch is CancellationError { throw CancellationError() }
+        catch ManagedAccountError.cancelled { throw ManagedAccountError.cancelled }
+        catch { throw method == "GET" ? DailyPracticeClientError.unavailable : DailyPracticeClientError.outcomeUnknown }
+        guard (200...299).contains(response.statusCode) else {
+            let code = Self.safeErrorCode(data)
+            throw DailyPracticeClientError.http(status: response.statusCode, code: code)
+        }
+        return (data, response.statusCode)
+    }
+
+    private static func isUUID(_ value: String) -> Bool {
+        value.range(of: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89aAbB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+                    options: .regularExpression) != nil
+    }
+
+    private static func validateAttempt(_ data: Data) throws {
+        guard let value = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              value["schemaVersion"] as? Int == 1, let attemptID = value["attemptId"] as? String,
+              isUUID(attemptID), let revision = value["revision"] as? Int, revision >= 0,
+              let state = value["state"] as? String, ["in_progress", "completed", "withdrawn"].contains(state)
+        else { throw DailyPracticeClientError.invalidResponse }
+    }
+
+    private static func safeErrorCode(_ data: Data) -> String? {
+        guard let value = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        let error = value["error"] as? [String: Any]
+        let code = error?["code"] as? String ?? value["error"] as? String
+        guard let code, code.count <= 80,
+              code.range(of: "^[a-z_]+$", options: .regularExpression) != nil else { return nil }
+        return code
+    }
+}
+
 struct ManagedAccountKeychain {
     private let scope: String
     init(scope: String) { self.scope = scope }

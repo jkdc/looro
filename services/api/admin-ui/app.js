@@ -1,6 +1,7 @@
 import { createDashboardCharts } from './features/dashboard-charts.js?v=1';
 import { BROWSE_UNARY_OPERATORS, normalizeBrowseFilters, browseFilterQuery } from './features/browse-filters.js?v=1';
 import { watchFailureStatus } from './features/generation-watch.js?v=1';
+import { dailyConfigIsDirty, dailyConfigRequest, dailyPackageIsCurrent, dailyPendingRequest, dailyPreviewText, dailyProviderUsageText, dailyRequestIsCurrent } from './features/daily-practice.js?v=6';
 
 /* Palique admin panel — vanilla JS over the /v1/admin API. No build step. */
 'use strict';
@@ -14,6 +15,7 @@ const NAV = [
   { id: 'usage', label: 'Uso', icon: 'ti-activity', group: 'Operación' },
   { id: 'exam-weeks', label: 'Generar y revisar', icon: 'ti-book', group: 'Exámenes' },
   { id: 'exam-results', label: 'Resultados', icon: 'ti-clipboard-check', group: 'Exámenes' },
+  { id: 'daily-practice', label: 'Práctica diaria', icon: 'ti-calendar-event', group: 'Aprendizaje' },
   { id: 'ia-config', label: 'Configuración de IA', icon: 'ti-cpu', group: 'Exámenes' },
   { id: 'plans', label: 'Planes', icon: 'ti-crown', group: 'Comercial' },
   { id: 'campaigns', label: 'Campañas', icon: 'ti-gift', group: 'Comercial' },
@@ -447,6 +449,8 @@ async function renderBrowse(container, fixedTable, context) {
   let loadSequence = 0;
   let loadController = null;
   const load = async () => {
+    selectedPackageId = null;
+    $('#daily-preview').textContent = 'Selecciona un paquete para revisar su contenido público.';
     const sequence = ++loadSequence;
     loadController?.abort();
     loadController = new AbortController();
@@ -1632,6 +1636,248 @@ function contextMenu(tableName) {
 }
 
 /* ---- router ---- */
+async function renderDailyPractice(container, _params, _id, context) {
+  const today = new Date().toISOString().slice(0, 10);
+  container.innerHTML = `<section aria-labelledby="daily-title"><div class="d-flex justify-content-between align-items-start mb-3">
+    <div><h2 id="daily-title">Práctica diaria</h2><p class="text-secondary">Configuración, estado editorial y paquetes. La generación permanece desactivada hasta habilitar la operación.</p></div>
+    </div><div id="daily-error" role="alert" aria-live="polite"></div><div class="card mb-3"><div class="card-body" id="daily-config" role="status">Cargando configuración…</div></div>
+    <div class="card"><div class="card-header d-flex flex-wrap gap-2 align-items-end"><label>Fecha desde<input class="form-control" id="daily-from" type="date" value="${today}"></label>
+    <label>Fecha hasta<input class="form-control" id="daily-to" type="date" value="${today}"></label><button class="btn btn-outline-primary" id="daily-load">Cargar paquetes</button>
+    <div class="ms-auto"><label class="form-label" for="daily-generation-reason">Motivo para generar (mínimo 10 caracteres)</label><textarea class="form-control" id="daily-generation-reason" rows="1" maxlength="500"></textarea>
+    <button class="btn btn-warning mt-2" id="daily-generate">Iniciar generación de inglés</button><span class="ms-2" id="daily-generation-status" role="status" aria-live="polite"></span></div></div>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Fecha</th><th>Estado</th><th>Revisión</th><th>Integridad</th><th></th></tr></thead><tbody id="daily-packages"><tr><td colspan="5">Cargando…</td></tr></tbody></table></div></div>
+    <div class="card mt-3"><div class="card-header">Ejecuciones de generación y revisión</div><div class="card-body"><p class="text-muted">Los tokens por fase se conservan para análisis previo a release; no afectan cuotas, acceso ni disponibilidad.</p><div id="daily-jobs-error" role="alert" aria-live="polite"></div>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Run ID</th><th>Tipo</th><th>Estado</th><th>Fase</th><th>Error</th><th>Reserva (nanoUSD)</th><th>Liquidado (nanoUSD)</th><th>Tokens por operación (análisis)</th></tr></thead>
+    <tbody id="daily-jobs"><tr><td colspan="8">Cargando…</td></tr></tbody></table></div></div></div>
+    <div class="card mt-3"><div class="card-header">Vista previa editorial segura</div><div class="card-body"><pre id="daily-preview" class="text-wrap mb-0" aria-live="polite">Selecciona un paquete para revisar su contenido público.</pre>
+    <label class="form-label mt-3" for="daily-package-reason">Motivo de publicación o retirada (mínimo 10 caracteres; se audita)</label><textarea class="form-control" id="daily-package-reason" rows="2" maxlength="500"></textarea>
+    <div class="d-flex gap-2 mt-2"><button class="btn btn-success" id="daily-publish" disabled>Publicar paquete seleccionado</button><button class="btn btn-outline-danger" id="daily-withdraw" disabled>Retirar paquete seleccionado</button></div>
+    <div id="daily-package-action-status" role="status" aria-live="polite" class="mt-2"></div></div></div></section>`;
+  const config = await api('/v1/admin/daily-practice/config', { signal: context.signal });
+  if (!context.isCurrent()) return;
+  let c = config.config;
+  const configHost = $('#daily-config');
+  const paintConfig = () => {
+    if (!c) { configHost.textContent = 'No hay configuración disponible.'; return; }
+    configHost.innerHTML = `<div class="d-flex flex-wrap justify-content-between gap-2"><div><h3 class="h4">Configuración diaria · revisión ${escapeHtml(String(c.revision))}</h3>
+      <p class="text-secondary">Los cambios quedan auditados. Idiomas habilitados: ${escapeHtml((c.enabled_languages ?? []).join(', '))}.</p></div></div>
+      <div class="row g-3"><div class="col-md-6"><label class="form-check form-switch"><input class="form-check-input" id="daily-read" type="checkbox" ${c.read_enabled ? 'checked' : ''}><span class="form-check-label">Permitir lectura pública</span></label>
+      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-attempts" type="checkbox" ${c.new_attempts_enabled ? 'checked' : ''}><span class="form-check-label">Permitir nuevos intentos</span></label>
+      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-generation" type="checkbox" ${c.generation_enabled ? 'checked' : ''}><span class="form-check-label">Permitir generación</span></label>
+      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-auto-publish" type="checkbox" ${c.auto_publish_enabled ? 'checked' : ''}><span class="form-check-label">Publicación automática (requiere autorización editorial)</span></label></div>
+      <div class="col-md-6"><label class="form-label" for="daily-content-budget">Presupuesto máximo por contenido (nanoUSD)</label><input class="form-control" id="daily-content-budget" inputmode="numeric" value="${escapeHtml(String(c.content_budget_nano_usd))}">
+      <label class="form-label mt-2" for="daily-review-budget">Presupuesto máximo por revisión (nanoUSD)</label><input class="form-control" id="daily-review-budget" inputmode="numeric" value="${escapeHtml(String(c.review_budget_nano_usd))}">
+      <label class="form-label mt-2" for="daily-retention">Retención (días)</label><input class="form-control" id="daily-retention" type="number" min="30" max="3650" value="${escapeHtml(String(c.retention_days))}"></div>
+      <div class="col-12"><label class="form-label" for="daily-config-reason">Motivo (obligatorio, mínimo 10 caracteres; se audita)</label><textarea class="form-control" id="daily-config-reason" rows="2" maxlength="500"></textarea></div>
+      <div class="col-12 d-flex align-items-center gap-3"><button class="btn btn-primary" id="daily-config-save" disabled>Guardar configuración</button><button class="btn btn-outline-secondary" id="daily-config-reload" type="button">Recargar configuración</button><span id="daily-config-status" role="status" aria-live="polite"></span></div></div>`;
+    const button = $('#daily-config-save');
+    const readDraft = () => ({ readEnabled: $('#daily-read').checked, newAttemptsEnabled: $('#daily-attempts').checked,
+      generationEnabled: $('#daily-generation').checked, autoPublishEnabled: $('#daily-auto-publish').checked,
+      enabledLanguages: [...(c.enabled_languages ?? [])], contentBudgetNanoUsd: $('#daily-content-budget').value.trim(),
+      reviewBudgetNanoUsd: $('#daily-review-budget').value.trim(), retentionDays: Number($('#daily-retention').value) });
+    const updateDirty = () => { button.disabled = !dailyConfigIsDirty(c, readDraft()) || $('#daily-config-reason').value.trim().length < 10; };
+    configHost.querySelectorAll('input,textarea').forEach(input => input.addEventListener('input', updateDirty));
+    button.onclick = async () => {
+      let payload;
+      try { payload = dailyConfigRequest(c, readDraft(), $('#daily-config-reason').value); }
+      catch (error) { $('#daily-config-status').textContent = `No se puede guardar (${error.message}).`; return; }
+      configPending = dailyPendingRequest(configPending, 'config', payload, () => crypto.randomUUID());
+      const requestHash = configPending.body;
+      button.disabled = true;
+      $('#daily-config-status').textContent = 'Guardando…';
+      try {
+        c = await api('/v1/admin/daily-practice/config', { method: 'PUT',
+          headers: { 'content-type': 'application/json', 'Idempotency-Key': configPending.key }, body: requestHash });
+        configPending = null;
+        paintConfig();
+        $('#daily-config-status').textContent = 'Configuración guardada y auditada.';
+      } catch (error) {
+        if (error.name !== 'AbortError' && context.isCurrent()) {
+          $('#daily-config-status').textContent = error.status === 409
+            ? 'La configuración cambió en otra sesión. Recarga antes de volver a guardar.'
+            : `No se confirmó el guardado (${error.code ?? 'request_failed'}). Reintenta sin cambiar el contenido para conservar la misma clave idempotente.`;
+          updateDirty();
+        }
+      }
+    };
+    $('#daily-config-reload').onclick = async () => {
+      $('#daily-config-status').textContent = 'Recargando…';
+      try {
+        const latest = await api('/v1/admin/daily-practice/config', { signal: context.signal });
+        if (!context.isCurrent()) return;
+        c = latest.config ?? null;
+        configPending = null;
+        paintConfig();
+        $('#daily-config-status').textContent = 'Configuración recargada.';
+      } catch (error) {
+        if (error.name !== 'AbortError' && context.isCurrent())
+          $('#daily-config-status').textContent = `No se pudo recargar (${error.code ?? 'request_failed'}).`;
+      }
+    };
+    updateDirty();
+  };
+  let configPending = null;
+  let generationPending = null;
+  let packagePending = null;
+  let selectedPackageDetail = null;
+  paintConfig();
+  const load = async () => {
+    const request = { language: 'en', dateFrom: $('#daily-from').value, dateTo: $('#daily-to').value };
+    selectedPackageId = null;
+    selectedPackageDetail = null;
+    $('#daily-publish').disabled = true;
+    $('#daily-withdraw').disabled = true;
+    $('#daily-preview').textContent = 'Selecciona un paquete para revisar su contenido público.';
+    $('#daily-error').textContent = '';
+    try {
+      const params = new URLSearchParams({ ...request, limit: '50' });
+      const page = await api(`/v1/admin/daily-practice/packages?${params}`, { signal: context.signal });
+      const selected = { language: 'en', editorialDate: $('#daily-from').value, generationRunId: $('#daily-to').value };
+      if (!context.isCurrent() || !dailyRequestIsCurrent(selected, { language: request.language,
+        editorialDate: request.dateFrom, generationRunId: request.dateTo })) return;
+      $('#daily-packages').innerHTML = page.items.length ? page.items.map(item => `<tr><td>${escapeHtml(String(item.editorial_date))}</td><td>${escapeHtml(String(item.state))}</td><td>${escapeHtml(String(item.revision))}</td><td>${escapeHtml(`${item.content_hash ? 'contenido' : ''}${item.text_hash ? ' · texto' : ''}${item.artifact_hash ? ' · audio' : ''}` || '—')}</td><td><button class="btn btn-sm btn-outline-primary" data-daily-package="${escapeHtml(String(item.id))}">Vista previa</button></td></tr>`).join('') : '<tr><td colspan="5">No hay paquetes para estas fechas.</td></tr>';
+      $('#daily-jobs-error').textContent = '';
+      const jobsParams = new URLSearchParams({ language: 'en', dateFrom: request.dateFrom, dateTo: request.dateTo, kind: 'all', limit: '50' });
+      const jobs = await api(`/v1/admin/daily-practice/jobs?${jobsParams}`, { signal: context.signal });
+      if (!context.isCurrent() || !dailyRequestIsCurrent(selected, { language: 'en', editorialDate: $('#daily-from').value,
+        generationRunId: $('#daily-to').value })) return;
+      $('#daily-jobs').innerHTML = jobs.items.length ? jobs.items.map(job => `<tr data-daily-run="${escapeHtml(String(job.id))}"><td>${escapeHtml(String(job.id))}</td><td>${escapeHtml(String(job.kind))}</td>
+        <td>${escapeHtml(String(job.state))}</td><td>${escapeHtml(String(job.phase ?? '—'))}</td><td>${escapeHtml(String(job.error_code ?? '—'))}</td>
+        <td>${escapeHtml(String(job.reserved_nano_usd))}</td><td>${escapeHtml(String(job.settled_nano_usd))}</td><td>${escapeHtml(dailyProviderUsageText(job.provider_operations))}</td></tr>`).join('') : '<tr><td colspan="8">No hay ejecuciones para estas fechas.</td></tr>';
+    } catch (error) { if (error.name !== 'AbortError' && context.isCurrent()) {
+      $('#daily-error').textContent = `No se pudieron cargar los paquetes (${error.code ?? 'request_failed'}). Puedes reintentar.`;
+      $('#daily-jobs-error').textContent = `No se pudo cargar el estado de las ejecuciones (${error.code ?? 'request_failed'}).`;
+    } }
+  };
+  let selectedPackageId = null;
+  let watchedRunId = null;
+  let watchTimer = null;
+  let watchInFlight = false;
+  const watchDailyRun = runId => {
+    watchedRunId = runId;
+    if (watchTimer) clearInterval(watchTimer);
+    const poll = async () => {
+      if (!context.isCurrent() || watchedRunId !== runId || watchInFlight) return;
+      watchInFlight = true;
+      try {
+        const run = await api(`/v1/admin/daily-practice/generation-runs/${encodeURIComponent(runId)}`, { signal: context.signal });
+        if (!context.isCurrent() || watchedRunId !== runId) return;
+        const row = document.querySelector(`[data-daily-run="${CSS.escape(runId)}"]`);
+        if (row) {
+          row.children[2].textContent = String(run.state ?? 'unknown');
+          row.children[3].textContent = String(run.phase ?? '—');
+          row.children[4].textContent = String(run.error_code ?? '—');
+          row.children[5].textContent = String(run.reserved_nano_usd ?? '0');
+          row.children[7].textContent = dailyProviderUsageText(run.provider_operations);
+        }
+        $('#daily-generation-status').textContent = `Ejecución ${runId}: ${String(run.state ?? 'unknown')}${run.error_code ? ` (${run.error_code})` : ''}.`;
+        if (!['queued', 'running'].includes(run.state)) {
+          clearInterval(watchTimer); watchTimer = null; watchedRunId = null;
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError' && context.isCurrent())
+          $('#daily-generation-status').textContent = `Sin confirmación del estado de ${runId} (${error.code ?? 'request_failed'}); no se reintentará la generación automáticamente.`;
+      } finally { watchInFlight = false; }
+    };
+    void poll();
+    watchTimer = setInterval(() => { void poll(); }, 5_000);
+  };
+  context.signal.addEventListener('abort', () => { if (watchTimer) clearInterval(watchTimer); }, { once: true });
+  const runDailyMutation = async ({ name, button, status, url, body, success }) => {
+    if (!context.isCurrent()) return;
+    const serialized = JSON.stringify(body);
+    packagePending = dailyPendingRequest(packagePending, name, serialized, () => crypto.randomUUID());
+    const key = packagePending.key;
+    button.disabled = true;
+    status.textContent = 'Enviando…';
+    try {
+      await api(url, { method: 'POST', headers: { 'content-type': 'application/json', 'Idempotency-Key': key }, body: serialized });
+      if (!context.isCurrent()) return;
+      packagePending = null;
+      status.textContent = success;
+      selectedPackageId = null;
+      selectedPackageDetail = null;
+      $('#daily-preview').textContent = 'Acción confirmada. Actualizando paquetes…';
+      await load();
+    } catch (error) {
+      if (error.name !== 'AbortError' && context.isCurrent()) {
+        status.textContent = `No se confirmó la acción (${error.code ?? 'request_failed'}). Reintenta sin cambiar el motivo para reutilizar la clave idempotente.`;
+        button.disabled = false;
+      }
+    }
+  };
+  $('#daily-generate').onclick = async event => {
+    const button = event.currentTarget;
+    const reason = $('#daily-generation-reason').value.trim();
+    if (reason.length < 10) {
+      $('#daily-generation-status').textContent = 'Escribe un motivo de al menos 10 caracteres.';
+      $('#daily-generation-reason').focus();
+      return;
+    }
+    const body = { language: 'en', editorialDate: $('#daily-from').value, reason };
+    const serialized = JSON.stringify(body);
+    generationPending = dailyPendingRequest(generationPending, 'generation', serialized, () => crypto.randomUUID());
+    button.disabled = true;
+    $('#daily-generation-status').textContent = 'Solicitando ejecución…';
+    try {
+      const result = await api('/v1/admin/daily-practice/generation-runs', { method: 'POST',
+        headers: { 'content-type': 'application/json', 'Idempotency-Key': generationPending.key }, body: serialized });
+      if (!context.isCurrent()) return;
+      generationPending = null;
+      $('#daily-generation-status').textContent = `Ejecución ${result.runId}: ${result.state}.`;
+      await load();
+      watchDailyRun(result.runId);
+    } catch (error) {
+      if (error.name !== 'AbortError' && context.isCurrent())
+        $('#daily-generation-status').textContent = `No se confirmó la solicitud (${error.code ?? 'request_failed'}). Reintenta sin cambiar fecha ni motivo para conservar la clave idempotente.`;
+    } finally { if (context.isCurrent()) button.disabled = false; }
+  };
+  $('#daily-package-reason').addEventListener('input', () => {
+    const ready = $('#daily-package-reason').value.trim().length >= 10;
+    $('#daily-publish').disabled = !ready || !selectedPackageDetail || selectedPackageDetail.state !== 'ready' ||
+      !/^[0-9a-f]{64}$/.test(String(selectedPackageDetail.artifact_hash ?? ''));
+    $('#daily-withdraw').disabled = !ready || !selectedPackageDetail || selectedPackageDetail.state !== 'published';
+  });
+  $('#daily-publish').onclick = event => {
+    if (!selectedPackageDetail) return;
+    const detail = selectedPackageDetail;
+    void runDailyMutation({ name: 'publish', button: event.currentTarget, status: $('#daily-package-action-status'),
+      url: '/v1/admin/daily-practice/publications', body: { packageVersionId: detail.id,
+        artifactHash: detail.artifact_hash, expectedRevision: Number(detail.revision),
+        reason: $('#daily-package-reason').value.trim() }, success: 'Paquete publicado.' });
+  };
+  $('#daily-withdraw').onclick = event => {
+    if (!selectedPackageDetail) return;
+    const detail = selectedPackageDetail;
+    void runDailyMutation({ name: 'withdraw', button: event.currentTarget, status: $('#daily-package-action-status'),
+      url: `/v1/admin/daily-practice/packages/${encodeURIComponent(detail.id)}/withdraw`,
+      body: { expectedRevision: Number(detail.revision), reason: $('#daily-package-reason').value.trim() }, success: 'Paquete retirado.' });
+  };
+  $('#daily-packages').onclick = async event => {
+    const button = event.target.closest('[data-daily-package]');
+    if (!button) return;
+    selectedPackageId = button.dataset.dailyPackage;
+    selectedPackageDetail = null;
+    $('#daily-publish').disabled = true;
+    $('#daily-withdraw').disabled = true;
+    $('#daily-package-action-status').textContent = '';
+    $('#daily-preview').textContent = 'Cargando vista previa…';
+    try {
+      const detail = await api(`/v1/admin/daily-practice/packages/${encodeURIComponent(selectedPackageId)}`, { signal: context.signal });
+      if (!context.isCurrent() || !dailyPackageIsCurrent(selectedPackageId, button.dataset.dailyPackage)) return;
+      selectedPackageDetail = detail;
+      $('#daily-preview').textContent = dailyPreviewText(detail);
+      $('#daily-package-action-status').textContent = '';
+      $('#daily-publish').disabled = detail.state !== 'ready' || !/^[0-9a-f]{64}$/.test(String(detail.artifact_hash ?? ''));
+      $('#daily-withdraw').disabled = detail.state !== 'published';
+    } catch (error) {
+      if (error.name !== 'AbortError' && context.isCurrent() && dailyPackageIsCurrent(selectedPackageId, button.dataset.dailyPackage))
+        $('#daily-preview').textContent = `No se pudo cargar la vista previa (${error.code ?? 'request_failed'}). Selecciona el paquete para reintentar.`;
+    }
+  };
+  $('#daily-load').onclick = () => { void load(); };
+  await load();
+}
 const VIEWS = {
   overview: { title: 'Resumen', render: (container, _params, _id, context) => renderDashboard('overview', container, context) },
   growth: { title: 'Crecimiento', render: (container, _params, _id, context) => renderDashboard('growth', container, context) },
@@ -1642,6 +1888,7 @@ const VIEWS = {
   policy: { title: 'Política de bienvenida', render: (container, _params, _id, context) => renderPolicy(container, context) },
   'exam-weeks': { title: 'Generar y revisar exámenes', render: (container, params, _id, context) => renderExamWeeksView(container, params, context) },
   'exam-results': { title: 'Resultados de exámenes', render: (container, params, _id, context) => renderExamAttempts(container, params, {}, context) },
+  'daily-practice': { title: 'Práctica diaria', render: renderDailyPractice },
   'ia-config': { title: 'Configuración de IA', render: renderAiConfig },
   exam: { title: 'Revisión de examen', render: renderExamReview },
   plans: { title: 'Planes y suscripciones', render: (container, _params, _id, context) => renderPlans(container, context) },

@@ -44,8 +44,8 @@ make lab-install   # APK debug apuntando a la IP LAN de este equipo
 make lab-account   # crea la cuenta de laboratorio y muestra el comando adb
 make lab-down      # para el stack del laboratorio
 
-# Contratos multiplataforma (lo que corre CI):
-make check         # exporters --check, cross-platform, db schema
+# Contratos multiplataforma (lo que corre CI; Python checks dentro de Docker):
+make check         # exporters --check, cross-platform, UI strings
 
 # Panel admin:
 make admin-add USER=<nombre> EMAIL=<email>   # crea operador
@@ -53,16 +53,30 @@ make admin-cli ARGS="list"                  # CLI de admins
 make admin-open                             # abre el panel en el navegador
 ```
 
+**Regla de ejecución del backend y herramientas no móviles**: los comandos de
+compilación, type-check, pruebas y CLIs de API/admin se ejecutan dentro de los
+contenedores Docker del repositorio, no con Node/npm en el host. Antes de usar
+el stack normal, comprueba `make status`; si no está levantado, usa `make up` y
+`make health`. Para pruebas de integración usa siempre `make test-api`, que
+construye y ejecuta la suite contra una base PostgreSQL efímera y la elimina al
+terminar; nunca sustituyas esa base por la local. Para pruebas rápidas o
+diagnosticar un fallo, conserva el stack efímero con `KEEP_SMOKE_STACK=1 make
+test-api`, inspecciónalo con los comandos `docker compose exec` adecuados y
+limpia después con `make smoke-down` solo si el stack se creó mediante
+`make smoke-up` (si `test-api` lo conservó, usa el mismo `make smoke-down`). No
+ejecutes migraciones de prueba ni pruebas destructivas contra el stack normal.
+Las apps Android e iOS son la excepción: se compilan y prueban en sus toolchains
+nativos descritos abajo. `make check` valida contratos/exporters multiplataforma
+y no reemplaza las pruebas dentro del contenedor.
+
 **Dentro del contenedor** (si necesitas los CLIs directamente):
 ```bash
 make admin-cli ARGS="..."        # admins-admin
 docker compose -f services/api/compose.yaml exec api node dist/src/leveltests-generate.js
 ```
 
-**Type-check local** (fuera de Docker, rápido):
-```bash
-cd services/api && npx tsc --noEmit
-```
+El build/type-check de TypeScript ya forma parte de `make test-api`; no ejecutes
+`npx tsc` directamente en el host para validar cambios del backend.
 
 ### Android (nativo; SDK 36 + Java 17 en el host)
 
@@ -99,14 +113,13 @@ swift test --package-path apps/ios
 
 ### Scripts de contenido (`scripts/`)
 
+Las comprobaciones Python de contenido/contratos se ejecutan dentro de Docker
+mediante `make check`; no las invoques directamente con Python en el host. Los
+comandos de generación manual también deben ejecutarse en un contenedor Python
+con el repositorio montado, salvo que formen parte de una app móvil nativa.
+
 ```bash
-python3 scripts/export_courses.py --check      # valida + genera Kotlin y Swift
-python3 scripts/export_listening.py --check
-python3 scripts/export_placement.py --check    # bancos de placement
-python3 scripts/export_leveltests.py --check   # pools de level-tests
-python3 scripts/check_cross_platform.py        # paridad iOS/Android
-python3 scripts/check_db_schema.py             # schema SQLite de la app
-python3 scripts/build_leveltests.py            # cosecha pools desde contenido
+make check                                      # contratos/exporters dentro de Docker
 ```
 
 **Regla**: los ficheros `*Data.kt` y `*Data.swift` son **generados** — nunca
@@ -135,7 +148,8 @@ shared/
    semanal con sha256 estable — idéntica en app y server (golden test).
    Endpoint: `GET /v1/level-tests/current?language=&level=`
 
-2. **LLM generada** (server): `npm run leveltests-generate` llama a un
+2. **LLM generada** (server): ejecuta `docker compose ... exec api node
+   dist/src/leveltests-generate.js`; llama a un
    proveedor LLM (GLM/OpenAI/opencode), valida por 3 puertas (validador
    determinista → juez LLM → revisión humana), compone 3 variantes.
    Endpoint: `GET /v1/level-tests/generated?language=&level=` (404 si no hay
@@ -167,7 +181,8 @@ Reglas no negociables:
 4. **Extrae y prueba la lógica pura.** La lógica de estado o de contrato que
    pueda aislarse de `admin-ui/app.js` vive en `admin-ui/features/*.js` y se
    cubre con pruebas Node en `services/api/tests/*.test.ts`. El E2E no sustituye
-   esta cobertura: un fallo de normalización debe fallar rápido, sin Docker.
+   esta cobertura: las pruebas rápidas también corren dentro de Docker mediante
+   el stack efímero de `make test-api`, nunca con Node del host.
 5. **E2E para los flujos reales del panel.** Navegación, respuestas tardías,
    errores persistentes y reintentos se añaden a
    `services/api/tests/browser/admin-e2e.mjs`. Una prueba unitaria no demuestra
@@ -223,11 +238,20 @@ es la referencia, también cuando no haya acceso a Engram u otro agente.
 
 ## Entorno de desarrollo
 
-- **Linux**: Android + servidor funcionan completo. iOS no compila (solo se
-  puede editar el código, no verificarlo).
-- **macOS**: todo (requerido para iOS).
-- **Docker**: necesario para todo el backend (stack completo vía `make up`;
-  stack efímero para tests vía `make test-api`).
+- **Linux**: Android + servidor funcionan completo. iOS no compila aquí por
+  falta de Xcode; esto **no bloquea el desarrollo**. Continúa implementando y
+  actualizando código y pruebas iOS, ejecuta las comprobaciones estáticas o
+  compartidas disponibles en Linux, y registra build/tests nativos como
+  `no ejecutados: requieren macOS/Xcode`. Nunca declares esos checks verdes ni
+  retrases trabajo independiente por esta limitación.
+- **macOS**: necesario únicamente para compilar y ejecutar las pruebas nativas
+  de iOS. Cuando no esté disponible, deja esos checks pendientes para una futura
+  verificación en macOS; no conviertas esa carencia en bloqueo de implementación.
+- **Docker**: necesario para todo salvo las apps móviles. Backend, CLIs,
+  pruebas API, scripts Python no móviles y pruebas de carga se lanzan mediante
+  Make/containers. Stack completo vía `make up`; PostgreSQL efímero para tests
+  vía `make test-api`. La UI administrativa del navegador sigue abriéndose en
+  el host.
 - **Emulador Android**: `emulator-5554` está disponible si está arrancado;
   los dispositivos físicos aparecen con `adb devices`.
 - **API key de GLM**: `apps/android/api-keys.properties` (gitignored) —
@@ -286,19 +310,39 @@ Todas las actions están pineadas por SHA.
 
 1. **Lee primero**: `README.md`, el `proposal.md` del change relevante si
    existe, y los ficheros vecinos del que vas a tocar.
-2. **Type-check temprano**: `npx tsc --noEmit` (server) o
+2. **Type-check temprano**: `make test-api` (server; compila TypeScript dentro
+   del contenedor) o
    `./gradlew :app:compileDebugKotlin` (Android) antes de escribir tests.
 3. **Test-first siempre**: primero la prueba que falla por el motivo correcto,
    después la corrección mínima. Los motores puros (PlacementEngine,
    LevelTestEngine, ExerciseEngine) y la lógica de UI extraída son deterministas
    y testeables en JVM/Node.
 4. **Regenera, no edites**: si tocas `shared/*.json`, ejecuta el exporter.
-5. **Verifica todo lo que puedas**: suite del server con PG efímero, tests
-   Android, `--check` de exporters. Reporta qué no pudiste verificar.
+5. **Verifica todo lo que puedas sin bloquear desarrollo por toolchains ausentes**:
+   ejecuta la suite del server con PG efímero, tests Android y `--check` de
+   exporters. En Linux, sigue implementando iOS y ejecuta las comprobaciones
+   disponibles; anota build/tests nativos iOS como pendientes de macOS/Xcode.
+   Reporta con claridad todo lo no verificado.
 6. **Documenta el cambio**: si es significativo, crea/mantén el change en
    `openspec/changes/` y actualiza el `verify-report.md`.
 7. **Commits**: mensajes descriptivos en inglés, presente tense, formato
    `tipo(ámbito): descripción` (ej: `feat(level-tests): chunked generation`).
+
+### Modelos para subagentes Codex
+
+Usa los nombres de modelo que el runtime expone actualmente. Para la
+delegación ODD en Codex:
+
+| Clase | Modelo | Esfuerzo |
+|---|---|---|
+| `odd-explorer` | `gpt-6-luna` | `high` |
+| `odd-worker` | `gpt-6-luna` | `high` |
+| `odd-verify` | `gpt-6-sol` | `medium` |
+
+No uses `gpt-6.1-luna` ni `gpt-6.0-luna`: no son nombres válidos en el
+runtime de esta sesión. Si un modelo indicado no está disponible, no lo
+sustituyas silenciosamente; informa el bloqueo y sigue la ruta de degradación
+documentada.
 
 ## Mapa rápido de ficheros clave
 

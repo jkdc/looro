@@ -36,7 +36,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / 'shared/db/schema.sql'
 FIXTURES = ROOT / 'shared/fixtures/db/migration'
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 9
 
 # ---------------------------------------------------------------------------
 # Pinned inventory.
@@ -248,6 +248,34 @@ TABLES = {
         ('reason', 'TEXT', 0, 0, None),
         ('updated_at_ms', 'INTEGER', 1, 0, None),
     ],
+    'daily_attempt_cache': [
+        ('owner_key', 'TEXT', 1, 1, None), ('attempt_id', 'TEXT', 1, 2, None),
+        ('package_snapshot', 'TEXT', 1, 0, None), ('state_json', 'TEXT', 1, 0, None),
+        ('revision', 'INTEGER', 1, 0, None), ('updated_at', 'REAL', 1, 0, None),
+    ],
+    'daily_outbox': [
+        ('owner_key', 'TEXT', 1, 1, None), ('event_id', 'TEXT', 1, 2, None),
+        ('attempt_id', 'TEXT', 1, 0, None), ('intent_json', 'TEXT', 1, 0, None),
+        ('intent_hash', 'TEXT', 1, 0, None), ('expected_revision', 'INTEGER', 1, 0, None),
+        ('sequence', 'INTEGER', 1, 0, None), ('delivery_state', 'TEXT', 1, 0, None),
+        ('created_at', 'REAL', 1, 0, None),
+    ],
+    'daily_review_cache': [
+        ('owner_key', 'TEXT', 1, 1, None), ('review_id', 'TEXT', 1, 2, None),
+        ('attempt_id', 'TEXT', 1, 0, None), ('result_json', 'TEXT', 1, 0, None),
+        ('created_at', 'REAL', 1, 0, None),
+    ],
+    'daily_word_imports': [
+        ('owner_key', 'TEXT', 1, 1, None), ('origin_key', 'TEXT', 1, 2, None),
+        ('language_id', 'TEXT', 1, 0, None), ('expression_key', 'TEXT', 1, 0, None),
+        ('kind', 'TEXT', 1, 0, None), ('review_id', 'TEXT', 0, 0, None),
+        ('action', 'TEXT', 1, 0, None), ('importer_version', 'INTEGER', 1, 0, None),
+        ('created_at', 'REAL', 1, 0, None),
+    ],
+    'daily_word_suppressions': [
+        ('owner_key', 'TEXT', 1, 1, None), ('language_id', 'TEXT', 1, 2, None),
+        ('norm_key', 'TEXT', 1, 3, None), ('deleted_at', 'REAL', 1, 0, None),
+    ],
 }
 
 # Mutable learner rows are partitioned by the namespaced local identity.
@@ -321,6 +349,7 @@ INDEXES.extend([
 # fixture payload, so historical fixture inventories intentionally omit it.
 FIXTURE_LOCAL_STATE_TABLES = {
     'remote_progress_rollups', 'progress_sync_state', 'progress_recovery',
+    'daily_attempt_cache', 'daily_outbox', 'daily_review_cache', 'daily_word_imports', 'daily_word_suppressions',
 }
 
 # Pinned constraints.
@@ -352,9 +381,12 @@ REQUIRED_CONSTRAINTS = [
     ('exam_sync_conflicts', "CHECK (resolution IS NULL OR resolution IN ('takeover', 'fork'))"),
     ('remote_progress_rollups', 'CHECK (last_at_ms >= first_at_ms'),
     ('progress_sync_state', "CHECK (direction IN ('download', 'upload'))"),
+    ('daily_outbox', "CHECK (delivery_state IN ('pending','sending','outcome_unknown','revision_conflict','rejected','acknowledged'))"),
+    ('daily_word_imports', "CHECK (action IN ('imported','existing','suppressed','pending_capacity'))"),
+    ('daily_word_imports', "CHECK (kind IN ('word','expression'))"),
     ('progress_recovery', 'CHECK (source_version >= 0)'),
     ('progress_recovery', "CHECK (state IN ('pending', 'repaired', 'excluded', 'unresolved', 'validated'))"),
-    (None, 'PRAGMA user_version = 7;'),
+    (None, 'PRAGMA user_version = 9;'),
 ]
 
 # ---------------------------------------------------------------------------

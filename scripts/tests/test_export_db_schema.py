@@ -1,3 +1,4 @@
+import sqlite3
 import sys
 import unittest
 from pathlib import Path
@@ -17,19 +18,19 @@ class SplitTest(unittest.TestCase):
         # + the 10 v3 objects + PRAGMA v3 + conflict table v4 + PRAGMA v4
         # + eight v5 outbox migration statements + PRAGMA v5
         # + three v6 progress persistence tables + indexes, timestamp evidence
-        # columns for local progress, and the v7 owner-partition migration.
-        self.assertEqual(152, len(self.statements))
+        # columns for local progress, owner partitions, and daily-practice local state.
+        self.assertEqual(163, len(self.statements))
         self.assertTrue(self.statements[0].startswith('CREATE TABLE meta'))
         self.assertEqual('PRAGMA user_version = 1', self.statements[14])
         self.assertEqual('PRAGMA user_version = 2', self.statements[21])
-        self.assertEqual('PRAGMA user_version = 7', self.statements[-1])
+        self.assertEqual('PRAGMA user_version = 9', self.statements[-1])
         self.assertEqual([], [s for s in self.statements if s.rstrip().endswith(';')])
 
     def test_v6_progress_tables_exist_in_a_fresh_schema(self):
         conn = export_db_schema.smoke_test(self.statements)
         tables = {row[0] for row in conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'")}
-        self.assertEqual(7, conn.execute('PRAGMA user_version').fetchone()[0])
+        self.assertEqual(9, conn.execute('PRAGMA user_version').fetchone()[0])
         self.assertTrue({
             'exam_snapshots', 'exam_snapshot_ids', 'exam_attempts', 'exam_answers',
             'exam_results', 'exam_sync_outbox', 'exam_sync_conflicts',
@@ -74,7 +75,25 @@ class SplitTest(unittest.TestCase):
 
     def test_version_deltas_split_at_the_pragmas(self):
         deltas = export_db_schema.version_deltas(self.statements)
-        self.assertEqual([2, 3, 4, 5, 6, 7], sorted(deltas))
+        self.assertEqual([2, 3, 4, 5, 6, 7, 8, 9], sorted(deltas))
+
+    def test_v8_daily_tables_upgrade_existing_v7_database_without_rebuilding(self):
+        deltas = export_db_schema.version_deltas(self.statements)
+        conn = sqlite3.connect(':memory:')
+        for statement in self.statements:
+            if statement == 'PRAGMA user_version = 7':
+                conn.execute(statement)
+                break
+            conn.execute(statement)
+        self.assertEqual(7, conn.execute('PRAGMA user_version').fetchone()[0])
+        for statement in deltas[8]:
+            conn.execute(statement)
+        conn.execute('PRAGMA user_version = 8')
+        tables = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        self.assertTrue({'daily_attempt_cache', 'daily_outbox', 'daily_review_cache',
+                         'daily_word_imports', 'daily_word_suppressions'} <= tables)
+        self.assertEqual(8, conn.execute('PRAGMA user_version').fetchone()[0])
+        conn.close()
         self.assertEqual(6, len(deltas[2]))
         self.assertTrue(deltas[2][0].startswith('CREATE VIRTUAL TABLE fragments_fts'))
         self.assertEqual(4, sum(1 for s in deltas[2] if s.startswith('CREATE TRIGGER')))
@@ -90,6 +109,25 @@ class SplitTest(unittest.TestCase):
         # no migration PRAGMA rides along: openers set versions transactionally
         self.assertEqual([], [s for s in deltas[2] if s.startswith('PRAGMA')])
         self.assertEqual([], [s for s in deltas[3] if s.startswith('PRAGMA')])
+
+    def test_v9_outbox_rejection_migration_preserves_rows_and_allows_rejected(self):
+        deltas = export_db_schema.version_deltas(self.statements)
+        conn = sqlite3.connect(':memory:')
+        for statement in self.statements:
+            if statement == 'PRAGMA user_version = 8':
+                break
+            conn.execute(statement)
+        conn.execute('PRAGMA user_version = 8')
+        conn.execute("INSERT INTO daily_outbox(owner_key,event_id,attempt_id,intent_json,intent_hash,expected_revision,sequence,delivery_state,created_at) "
+                     "VALUES('owner','event','attempt','{}','hash',0,0,'outcome_unknown',1)")
+        self.assertIn(9, deltas)
+        for statement in deltas[9]:
+            conn.execute(statement)
+        conn.execute('PRAGMA user_version = 9')
+        conn.execute("UPDATE daily_outbox SET delivery_state='rejected' WHERE event_id='event'")
+        row = conn.execute("SELECT delivery_state,expected_revision FROM daily_outbox WHERE event_id='event'").fetchone()
+        self.assertEqual(('rejected', 0), row)
+        self.assertEqual(9, export_db_schema.SCHEMA_VERSION)
 
     def test_semicolons_inside_strings_and_comments_do_not_split(self):
         sql = ("INSERT INTO meta VALUES ('a;b'); -- a comment; with a semicolon\n"
@@ -108,7 +146,7 @@ class SplitTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'without a terminating'):
             export_db_schema.split_statements('PRAGMA user_version = 1')
 
-    def test_smoke_test_executes_every_statement_ends_at_version_seven_and_searches(self):
+    def test_smoke_test_executes_every_statement_ends_at_version_eight_and_searches(self):
         conn = export_db_schema.smoke_test(self.statements)
         self.assertEqual(export_db_schema.SCHEMA_VERSION,
                          conn.execute('PRAGMA user_version').fetchone()[0])
@@ -139,8 +177,8 @@ class KotlinTest(unittest.TestCase):
         self.assertIn('package com.jkdc.app.data', source)
         self.assertIn('object SchemaData', source)
         self.assertIn('val LEARNING_SCHEMA_STATEMENTS: List<String> = listOf(', source)
-        self.assertIn('const val SCHEMA_VERSION = 7', source)
-        self.assertIn('"PRAGMA user_version = 7"', source)
+        self.assertIn('const val SCHEMA_VERSION = 9', source)
+        self.assertIn('"PRAGMA user_version = 9"', source)
         self.assertIn('val SCHEMA_UPGRADES: Map<Int, List<String>> = mapOf(', source)
         self.assertIn('2 to listOf(', source)
         self.assertIn('3 to listOf(', source)
@@ -158,9 +196,9 @@ class SwiftTest(unittest.TestCase):
             statements, export_db_schema.version_deltas(statements))
         self.assertIn('public enum SchemaData', source)
         self.assertIn('public static let learningSchemaStatements: [String] = [', source)
-        self.assertIn('public static let schemaVersion = 7', source)
+        self.assertIn('public static let schemaVersion = 9', source)
         self.assertIn('public static let schemaUpgrades: [Int: [String]] = [', source)
-        self.assertIn('"PRAGMA user_version = 7"', source)
+        self.assertIn('"PRAGMA user_version = 9"', source)
         # the Kotlin and Swift literals carry exactly the same statements
         kotlin = export_db_schema.generate_kotlin(
             statements, export_db_schema.version_deltas(statements))

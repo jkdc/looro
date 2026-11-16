@@ -21,17 +21,21 @@ admin Content Security Policy.
 
 ```sh
 cd services/api/tests/browser
-docker compose -f compose.yaml up --build -d database migrate api stub-llm caddy bootstrap seed-generate
-# wait for bootstrap (operator + student attempt + failed job) and for the
+E2E_API_PORT=18081 E2E_PANEL_PORT=18090 ADMIN_PUBLIC_ORIGIN=http://127.0.0.1:18090 docker compose -p looro-daily-practice-e2e -f compose.yaml up --build -d database migrate api stub-llm daily-stub-llm caddy bootstrap seed-generate
+# wait for bootstrap (operator + student attempt + failed job + daily package) and for the
 # generation pipeline (two draft weeks) to finish:
-docker compose -f compose.yaml logs -f bootstrap seed-generate   # Ctrl-C when both log their seeded output
+docker compose -p looro-daily-practice-e2e -f compose.yaml logs -f bootstrap seed-generate   # Ctrl-C when both log their seeded output
 
 # from the repository root:
-node services/api/tests/browser/admin-e2e.mjs
+E2E_PANEL_ORIGIN=http://127.0.0.1:18090 E2E_API_ORIGIN=http://127.0.0.1:18081 E2E_EVIDENCE_DIR="$PWD/.superpowers/sdd/2026-11-07-daily-practice/evidence/admin" node services/api/tests/browser/admin-e2e.mjs
+E2E_PANEL_ORIGIN=http://127.0.0.1:18090 node services/api/tests/browser/daily-practice-e2e.mjs
 
-docker compose -f services/api/tests/browser/compose.yaml down -v   # tear down
+docker compose -p looro-daily-practice-e2e -f services/api/tests/browser/compose.yaml down -v   # tear down
 ```
 
+The host ports are configurable with `E2E_API_PORT` (default `8081`) and
+`E2E_PANEL_PORT` (default `8090`) to avoid colliding with another local stack;
+set `ADMIN_PUBLIC_ORIGIN` to the matching loopback panel origin when overriding it.
 Environment overrides: `E2E_PANEL_ORIGIN` (default `http://127.0.0.1:8090`),
 `E2E_API_ORIGIN` (default `http://127.0.0.1:8081`), `E2E_EVIDENCE_DIR`
 (default `e2e-evidence/t11-browser-e2e`), `PLAYWRIGHT_CORE_PATH` (a
@@ -45,13 +49,24 @@ Screenshots of every asserted state land in the evidence directory.
 - Local operator `e2e-operator` / `e2e-browser-password` (loopback http origin
   allowed via `ADMIN_ALLOW_LOCAL_LOOPBACK=true`; the panel binds
   `http://127.0.0.1:8090`, the API's public port is `127.0.0.1:8081`).
+- One synthetic, validated daily package for the current UTC date. It uses a
+  test-only silent audio payload and matching hashes. The browser scenario
+  enables read/generation flags and a bounded content budget only in this
+  disposable database, aborts the first generation request, then retries the
+  unchanged request through the real admin route. The API's durable worker
+  calls the deterministic stub provider, passes the real validation/judge
+  pipeline, and creates the package linked to the polled run. The test then
+  previews and publishes that exact package, reads it publicly, and withdraws
+  it.
 - Two private draft weeks for the current ISO week: `en/A1` (approved by the
   E2E) and `en/A2` (rejected by the E2E). Pools are hand-written English
   content that passes the same structural validator approval re-runs.
 - `LEVELTEST_GENERATE_ENABLED=false`: the panel must show the scheduler as
   configured=No and in-process=No.
-- Stub provider at `http://stub-llm:9999/v1` inside the Docker network; the
-  saved-configuration connection test targets it and must answer HTTP 200.
+- Stub provider at `http://stub-llm:9999/v1` inside the Docker network for
+  legacy exam E2E and a loopback-bound daily-worker stub at
+  `http://127.0.0.1:9999/v1`; both use the same deterministic fixture-aware
+  responder and make no external provider calls.
 
 ## What is asserted
 

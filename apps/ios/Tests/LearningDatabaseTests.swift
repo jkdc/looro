@@ -19,15 +19,17 @@ final class LearningDatabaseTests: XCTestCase {
 
     // MARK: opener
 
-    func testSchemaOpensAtVersionSevenWithExactlyThePinnedTables() throws {
-        XCTAssertEqual(Int64(7), try db.query("PRAGMA user_version").first!.long("user_version"))
+    func testSchemaOpensAtVersionNineWithExactlyThePinnedTables() throws {
+        XCTAssertEqual(Int64(9), try db.query("PRAGMA user_version").first!.long("user_version"))
         let tables = try db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { $0.text("name") }
         // fragments_fts is the pinned v2 virtual table; fragments_fts_* are its
         // FTS4 shadow tables (SQLite internals, like sqlite_sequence).
-        XCTAssertEqual(["assessment_tickets", "completions", "exam_answers", "exam_attempts",
-                        "exam_results", "exam_snapshot_ids", "exam_snapshots", "exam_sync_outbox",
+        XCTAssertEqual(["assessment_tickets", "completions", "daily_attempt_cache", "daily_outbox",
+                        "daily_review_cache", "daily_word_imports", "daily_word_suppressions",
+                        "exam_answers", "exam_attempts",
+                        "exam_results", "exam_snapshot_ids", "exam_snapshots", "exam_sync_conflicts", "exam_sync_outbox",
                         "expressions", "fragments",
                         "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
                         "fragments_fts_segments", "fragments_fts_stat",
@@ -58,6 +60,83 @@ final class LearningDatabaseTests: XCTestCase {
                         "usage_outbox_owner_insert"],
                        try db.query("SELECT name FROM sqlite_master WHERE type = 'trigger' ORDER BY name")
                            .map { $0.text("name") })
+    }
+
+    func testDailyWordsImportStaleInsertPreservesCurrentRecallProgress() throws {
+        let owner = "member:daily-stale-import"
+        try LearnerOwnershipDao.activate(db, identity: owner)
+        let review = DailyWordsReview(reviewID: "review-stale", languageID: "en", candidates: [
+            DailyWordCandidate(candidateID: "candidate-stale", kind: "word", text: "garden",
+                               meaning: "a growing place", confidence: "supported")
+        ])
+        let stalePlan = planDailyWordsImport(result: review, owner: owner, language: "en", existing: [],
+                                              receipts: [], suppressions: [], now: 20)
+        _ = try ExpressionsDao.upsert(db, ExpressionState(text: "garden", meaning: "my meaning", source: "lookup",
+                                                           bars: 3, attempts: 6, lastSeen: 17, dueAt: 19, languageID: "en"))
+
+        let actions = try LearningDbWriter.dailyWordsImported(db, owner: owner, plans: stalePlan)
+
+        XCTAssertEqual("existing", actions["review:review-stale:candidate-stale"])
+        let saved = try ExpressionsDao.all(db).first!
+        XCTAssertEqual("my meaning", saved.meaning)
+        XCTAssertEqual(3, saved.bars)
+        XCTAssertEqual(6, saved.attempts)
+        XCTAssertEqual(17, saved.lastSeen)
+        XCTAssertEqual(19, saved.dueAt)
+    }
+
+    func testDailyWordsKeepFillsBlankMeaningAndAdoptsLegacyProgress() throws {
+        let owner = "member:daily-keep-legacy"
+        try LearnerOwnershipDao.activate(db, identity: owner)
+        _ = try ExpressionsDao.upsert(db, ExpressionState(text: "garden", meaning: "", source: "lookup",
+                                                           bars: 2, attempts: 4, lastSeen: 17, dueAt: 19))
+        let review = DailyWordsReview(reviewID: "review-keep", languageID: "en", candidates: [
+            DailyWordCandidate(candidateID: "candidate-keep", kind: "word", text: "garden",
+                               meaning: "a growing place", confidence: "supported")
+        ])
+        let plans = planDailyWordsImport(result: review, owner: owner, language: "en",
+            existing: [DailyWordExisting(text: "garden", languageID: "en", bars: 2, attempts: 4, meaning: "")],
+            receipts: [], suppressions: [], now: 20)
+
+        _ = try LearningDbWriter.dailyWordsImported(db, owner: owner, plans: plans)
+
+        let saved = try ExpressionsDao.all(db).first!
+        XCTAssertEqual("en", saved.languageID)
+        XCTAssertEqual("a growing place", saved.meaning)
+        XCTAssertEqual(2, saved.bars)
+        XCTAssertEqual(4, saved.attempts)
+        XCTAssertEqual(17, saved.lastSeen)
+        XCTAssertEqual(19, saved.dueAt)
+    }
+
+    func testDailyWordsKeepPrefersExactLanguageRowOverEarlierLegacyDuplicate() throws {
+        let owner = "member:daily-exact-over-legacy"
+        try LearnerOwnershipDao.activate(db, identity: owner)
+        _ = try ExpressionsDao.upsert(db, ExpressionState(text: "garden", meaning: "legacy meaning", source: "lookup",
+                                                           bars: 1, attempts: 2, lastSeen: 11, dueAt: 13))
+        _ = try db.insert("expressions", ["norm_key": "garden", "language_id": "en", "text": "garden",
+            "meaning": "English meaning", "source": "lookup", "bars": 3, "attempts": 7,
+            "last_seen": 17.0, "due_at": 19.0, "lesson_id": NSNull(), "owner_key": owner])
+        let review = DailyWordsReview(reviewID: "review-duplicate", languageID: "en", candidates: [
+            DailyWordCandidate(candidateID: "candidate-duplicate", kind: "word", text: "garden",
+                               meaning: "new meaning", confidence: "supported")
+        ])
+        let plans = planDailyWordsImport(result: review, owner: owner, language: "en",
+            existing: [DailyWordExisting(text: "garden", languageID: "en", bars: 3, attempts: 7, meaning: "English meaning")],
+            receipts: [], suppressions: [], now: 20)
+
+        _ = try LearningDbWriter.dailyWordsImported(db, owner: owner, plans: plans)
+
+        let rows = try db.query("SELECT language_id,meaning,bars,attempts,last_seen,due_at FROM expressions ORDER BY rowid")
+        XCTAssertEqual(2, rows.count)
+        XCTAssertEqual("legacy meaning", try rows[0].text("meaning"))
+        XCTAssertEqual(1, try rows[0].int("bars"))
+        XCTAssertEqual("en", try rows[1].text("language_id"))
+        XCTAssertEqual("English meaning", try rows[1].text("meaning"))
+        XCTAssertEqual(3, try rows[1].int("bars"))
+        XCTAssertEqual(7, try rows[1].int("attempts"))
+        XCTAssertEqual(17, try rows[1].real("last_seen"))
+        XCTAssertEqual(19, try rows[1].real("due_at"))
     }
 
     func testFreshIndexStaysInSyncThroughTheTriggers() throws {

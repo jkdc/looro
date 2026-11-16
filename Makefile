@@ -7,6 +7,8 @@
 SHELL := /bin/bash
 COMPOSE := docker compose --project-directory $(CURDIR)/services/api -f $(CURDIR)/services/api/compose.yaml
 SMOKE := docker compose --project-directory $(CURDIR)/services/api/tests -p looro-smoke -f $(CURDIR)/services/api/tests/compose.smoke.yaml
+LOAD_RUNNER_COMPOSE := docker compose --project-directory $(CURDIR)/services/api/load -f $(CURDIR)/services/api/load/compose.runner.yaml
+PYTHON_CHECK_IMAGE ?= python:3.12-alpine
 # Laboratorio móvil en la LAN: el mismo stack con la API publicada en claro
 # (solo builds debug; ver docs/local-android-lab.md).
 LAB_COMPOSE := $(COMPOSE) -f $(CURDIR)/services/api/compose.lab.yaml
@@ -114,11 +116,7 @@ smoke-down: ## Para el stack de humo y borra sus volúmenes
 	$(SMOKE) down --volumes
 
 check: ## Contratos multiplataforma que corre CI (contenido generado y Swift↔Kotlin)
-	python3 -m unittest discover -s scripts/tests -t .
-	python3 scripts/export_progress_sync.py --check
-	python3 scripts/export_android_content.py --check
-	python3 scripts/check_cross_platform.py
-	python3 scripts/check_ui_strings.py
+	docker run --rm -v $(CURDIR):/workspace -w /workspace $(PYTHON_CHECK_IMAGE) sh -ec 'python3 -m unittest discover -s scripts/tests -t . && python3 scripts/export_progress_sync.py --check && python3 scripts/export_android_content.py --check && python3 scripts/check_cross_platform.py && python3 scripts/check_ui_strings.py'
 
 clean: ## Para el stack y elimina contenedores de humo
 	$(COMPOSE) down
@@ -127,7 +125,7 @@ clean: ## Para el stack y elimina contenedores de humo
 # ---- Laboratorio móvil en la LAN (solo builds debug) -----------------------
 
 lab-keys: ## Genera los secretos de cuentas del laboratorio en services/api/.env
-	python3 scripts/lab_env_keys.py $(CURDIR)/services/api/.env
+	docker run --rm -v $(CURDIR):/workspace -w /workspace $(PYTHON_CHECK_IMAGE) python3 scripts/lab_env_keys.py /workspace/services/api/.env
 
 lab-up: lab-keys ## Levanta el stack con la API publicada en la LAN (LAB_PORT=8080)
 	@test -n "$(LAB_HOST_IP)" || { echo "No pude detectar la IP LAN; pasa LAB_HOST_IP=<ip>." >&2; exit 1; }
@@ -143,8 +141,8 @@ lab-down: ## Para el stack del laboratorio (conserva los volúmenes)
 	$(LAB_COMPOSE) down
 
 lab-account: ## Crea la cuenta de laboratorio y muestra el comando adb para adoptarla
-	@token=$$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))'); \
-	hash=$$(python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$$token"); \
+	@token=$$(docker run --rm $(PYTHON_CHECK_IMAGE) python3 -c 'import secrets; print(secrets.token_urlsafe(32))'); \
+	hash=$$(docker run --rm $(PYTHON_CHECK_IMAGE) python3 -c 'import hashlib,sys; print(hashlib.sha256(sys.argv[1].encode()).hexdigest())' "$$token"); \
 	id=$$($(LAB_COMPOSE) exec -T database psql -U app -d app -tA -v ON_ERROR_STOP=1 -v hash="$$hash" -f - < services/api/lab-account.sql | tr -d '[:space:]'); \
 	case "$$id" in \
 	  ????????-????-????-????-????????????) ;; \
@@ -207,9 +205,12 @@ ios-device: ## Compila e instala en el iPhone conectado (requiere equipo de firm
 	  --device $$(xcrun devicectl list devices -q | head -1) \
 	  .build/DerivedData/Build/Products/Debug-iphoneos/App.app
 
-.PHONY: load-api-smoke load-api-baseline
+.PHONY: load-api-runner-test load-api-smoke load-api-baseline
+load-api-runner-test: ## Comprueba el aislamiento del contenedor de herramientas de carga
+	$(LOAD_RUNNER_COMPOSE) run --build --rm --entrypoint node load-runner --test /workspace/services/api/load/runner.test.mjs
+
 load-api-smoke: ## Prueba de carga corta con fixtures y proveedor aislados
-	node services/api/load/run.mjs smoke
+	$(LOAD_RUNNER_COMPOSE) run --build --rm load-runner smoke
 
 load-api-baseline: ## Señal local de capacidad; no certifica producción
-	node services/api/load/run.mjs baseline
+	$(LOAD_RUNNER_COMPOSE) run --build --rm load-runner baseline

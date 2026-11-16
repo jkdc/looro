@@ -48,7 +48,7 @@ object DailyWordsImport {
         existing: List<DailyWordExisting>,
         receipts: Set<String>,
         suppressions: Set<String>,
-        now: Double,
+        now: Double = nowSeconds(),
     ): List<DailyWordImportPlan> {
         require(owner.isNotBlank() && language.matches(Regex("^[a-z]{2}(?:-[A-Z]{2})?$")))
         require(result.languageID == language && result.reviewId.isNotBlank() && now.isFinite())
@@ -92,7 +92,7 @@ fun planManualDailyWord(
     existing: List<DailyWordExisting>,
     receipts: Set<String>,
     suppressions: Set<String>,
-    now: Double,
+    now: Double = nowSeconds(),
 ): List<DailyWordImportPlan> {
     require(runCatching { UUID.fromString(markID) }.isSuccess)
     val cleanedText = text.trim()
@@ -116,5 +116,5 @@ fun planDailyWordsImport(
     existing: List<DailyWordExisting>,
     receipts: Set<String>,
     suppressions: Set<String>,
-    now: Double,
+    now: Double = nowSeconds(),
 ): List<DailyWordImportPlan> = DailyWordsImport.planDailyWordsImport(result, owner, language, existing, receipts, suppressions, now)

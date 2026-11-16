@@ -151,6 +151,128 @@ struct ConversationTopicSearchAdapter {
     func clear() { owner = nil; storedMessageID = nil }
 }
 
+@MainActor @Observable final class DailySpeakingController {
+    private let transport = LiveTransport()
+    private(set) var isActive = false
+    private(set) var isConnecting = false
+    private(set) var isMuted = false
+    private(set) var status = "Ready to speak"
+    private(set) var inputLevel = 0.0
+    private(set) var outputLevel = 0.0
+    private(set) var fragments: [DailySpeakingFragment] = []
+    private(set) var voiceSegmentID: String?
+    private(set) var error: String?
+    @ObservationIgnored private var hostedSessionID: String?
+    @ObservationIgnored private var hostedSession: ManagedAccountSession?
+    @ObservationIgnored private var sequence = 0
+    @ObservationIgnored private var onFragment: ((DailySpeakingFragment) -> Void)?
+    @ObservationIgnored private var operationGeneration = UUID()
+
+    init() {
+        transport.onEvent = { [weak self] event in self?.receive(event) }
+        transport.onLevels = { [weak self] input, output in
+            self?.inputLevel = input; self?.outputLevel = output
+        }
+        transport.onFailure = { [weak self] failure in
+            self?.error = failure; self?.status = "Voice connection interrupted"
+        }
+    }
+
+    func start(client: ManagedAccountClient, session: ManagedAccountSession, attemptID: String,
+               package: DailyPracticePackage, onFragment: @escaping (DailySpeakingFragment) -> Void) async throws {
+        guard !isActive, !isConnecting, UUID(uuidString: attemptID) != nil else {
+            throw ManagedAccountError.invalidResponse
+        }
+        let generation = UUID()
+        operationGeneration = generation
+        isConnecting = true; error = nil; status = "Connecting microphone"; fragments = []; sequence = 0
+        self.onFragment = onFragment
+        hostedSession = session
+        defer { isConnecting = false }
+        let capabilities = try await client.hostedCapabilities(session: session)
+        guard operationGeneration == generation else { throw CancellationError() }
+        guard capabilities.available else { throw HostedFailure.unavailable }
+        let balance = try await client.minutesBalance(session: session)
+        guard operationGeneration == generation else { throw CancellationError() }
+        guard balance.canStartConversation else { throw HostedFailure.insufficientMinutes }
+        do {
+            try await transport.connect { [weak self] offer in
+                guard self?.operationGeneration == generation else { throw CancellationError() }
+                let result = try await client.hostedDailyCreate(sdp: offer, language: package.language,
+                    dailyAttemptID: attemptID, idempotencyKey: UUID().uuidString.lowercased(), session: session)
+                guard self?.operationGeneration == generation else {
+                    _ = try? await client.hostedClose(sessionID: result.sessionID, session: session)
+                    throw CancellationError()
+                }
+                self?.hostedSessionID = result.sessionID
+                self?.voiceSegmentID = result.voiceSegmentID
+                return (session: ["id": result.sessionID], answer: result.answerSDP)
+            }
+        } catch {
+            if let hostedSessionID { _ = try? await client.hostedClose(sessionID: hostedSessionID, session: session) }
+            transport.disconnect(); self.hostedSessionID = nil; self.hostedSession = nil
+            throw error
+        }
+        guard operationGeneration == generation else {
+            if let hostedSessionID { _ = try? await client.hostedClose(sessionID: hostedSessionID, session: session) }
+            transport.disconnect(); hostedSessionID = nil; hostedSession = nil
+            throw CancellationError()
+        }
+        if !isActive { isActive = true; status = "Listening" }
+    }
+
+    func stop(client: ManagedAccountClient) async throws {
+        guard let hostedSessionID else {
+            operationGeneration = UUID()
+            transport.disconnect(); isActive = false; isConnecting = false; return
+        }
+        status = "Closing speaking session"
+        guard let hostedSession else { throw HostedFailure.signInRequired }
+        let status = try await client.hostedClose(sessionID: hostedSessionID, session: hostedSession)
+        guard status.isClosed else { throw HostedFailure.unavailable }
+        operationGeneration = UUID()
+        transport.disconnect(); self.hostedSessionID = nil; self.hostedSession = nil
+        isActive = false; isConnecting = false; self.status = "Speaking session closed"
+    }
+
+    func interrupt(client: ManagedAccountClient?) {
+        operationGeneration = UUID()
+        let sessionID = hostedSessionID
+        let session = hostedSession
+        hostedSessionID = nil; hostedSession = nil
+        transport.disconnect(); isActive = false; isConnecting = false
+        status = "Speaking paused; this attempt is still open"
+        if let client, let sessionID, let session {
+            Task { _ = try? await client.hostedClose(sessionID: sessionID, session: session) }
+        }
+    }
+
+    func toggleMute() {
+        guard isActive else { return }
+        isMuted.toggle(); transport.mute(isMuted)
+    }
+
+    private func receive(_ event: [String: Any]) {
+        guard let type = event["type"] as? String else { return }
+        switch type {
+        case "app.session.created": break
+        case "session.started":
+            isActive = true; status = "Listening"
+            _ = transport.send(["type": "response.create", "event_id": UUID().uuidString.lowercased()])
+        case "session.input_transcript.completed", "session.output_transcript.completed":
+            guard let text = event["transcript"] as? String,
+                  !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  let segment = voiceSegmentID else { return }
+            let fragment = DailySpeakingFragment(role: type == "session.input_transcript.completed" ? .learner : .tutor,
+                text: text, voiceSegmentId: segment, sequence: sequence)
+            sequence += 1; fragments.append(fragment); onFragment?(fragment)
+        case "error":
+            error = "A speaking update could not be confirmed. Keep this attempt open and retry sync."
+        default: break
+        }
+    }
+}
+
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
@@ -515,6 +637,7 @@ struct ConversationTopicSearchAdapter {
     private let injectedTypedReplyAdapter: ConversationTypedReplyAdapter?
     private let injectedTopicSearchAdapter: ConversationTopicSearchAdapter?
     private let transport = LiveTransport()
+    let dailySpeaking = DailySpeakingController()
     private var connectionTask: Task<Void, Never>?
     private var assessmentTask: Task<Void, Never>?
     private var scenarioReviewTask: Task<Void, Never>?
@@ -791,6 +914,7 @@ struct ConversationTopicSearchAdapter {
         let isSameRequestedMember = accountID.map { "member:\($0)" } == store.activeLearnerIdentity
         let isSameRequestedGuest = accountID == nil && store.activeLearnerIdentity.hasPrefix("guest:")
         if !(isSameRequestedMember || isSameRequestedGuest) || !store.isLearnerReady {
+            closeDailySpeakingForInterruption()
             // Quiesce every deferred writer while the previous partition is
             // still loaded. Cancellation alone cannot fence completed callbacks.
             if isRunning { finish(final: false) }
@@ -820,6 +944,24 @@ struct ConversationTopicSearchAdapter {
         progressSyncTaskAccountID = nil
         progressSyncStatus = nil
         if store.isLearnerReady { syncProgress() }
+    }
+
+    func startDailySpeaking(attemptID: String, package: DailyPracticePackage, session: ManagedAccountSession,
+                            onFragment: @escaping (DailySpeakingFragment) -> Void) async throws {
+        guard hasAIConsent else { showAIConsent = true; throw AIProcessingConsent.ConsentError.required }
+        guard hostedUIAvailable, let (client, _) = managed else { throw HostedFailure.unavailable }
+        try await dailySpeaking.start(client: client, session: session, attemptID: attemptID,
+                                      package: package, onFragment: onFragment)
+    }
+
+    func stopDailySpeaking() async throws {
+        guard let (client, _) = managed else { throw HostedFailure.unavailable }
+        try await dailySpeaking.stop(client: client)
+    }
+
+    func closeDailySpeakingForInterruption() {
+        guard dailySpeaking.isActive || dailySpeaking.isConnecting else { return }
+        dailySpeaking.interrupt(client: managed?.client)
     }
     /// The error alert's "Get tokens" action: opens the paywall sheet with the
     /// exhausted banner still set when the block was a 402.

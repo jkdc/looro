@@ -64,6 +64,15 @@ export class SubscriptionBilling {}
 export function createLevelTestScheduler() {
   return { start() { record('generation_worker_start'); }, async stop() { record('generation_worker_stop'); }, isStarted() { return true; } };
 }
+export function createDailyScheduler() {
+  return { start() { record('daily_worker_start'); }, stop() { record('daily_worker_stop'); } };
+}
+export function createDailyContentWorkerScheduler() {
+  return { start() { record('daily_content_worker_start'); }, async stop() { record('daily_content_worker_stop'); } };
+}
+export function createDailyReviewWorkerScheduler() {
+  return { start() { record('daily_review_worker_start'); }, async stop() { record('daily_review_worker_stop'); } };
+}
 export async function runLevelTestCombinations() {}
 export async function runLevelTestGenerationJob() {}
 export function initObservability() { record('observability_init'); }

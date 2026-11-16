@@ -77,6 +77,8 @@ interface SectionSpec {
   perPassage: number;    // questions per passage (0 = no passages)
 }
 
+// Legacy wildcard pipeline ask (non-English languages): internally consistent
+// with its own pool validation, which judges against the exam shape.
 const SECTION_SPECS: Record<SectionName, SectionSpec> = {
   recognition: { section: 'recognition', count: 12, perPassage: 0 },
   reading:     { section: 'reading',     count: 2,  perPassage: 3 },
@@ -84,15 +86,29 @@ const SECTION_SPECS: Record<SectionName, SectionSpec> = {
   writing:     { section: 'writing',     count: 3,  perPassage: 0 },
 };
 
+// Ask the model for more candidates than the pool target: deterministic
+// validation (word ranges, dedupe, judge flags) may discard candidates, and
+// the validator still requires the full pool target. Without this headroom a
+// single rejected passage fails the whole week (en A1 week 202647).
+const GENERATION_HEADROOM: Record<SectionName, number> = { recognition: 4, reading: 1, listening: 1, writing: 1 };
+
 export function sectionGenerationSpec(section: SectionName, model: ExamModelEntry): Pick<SectionSpec, 'count' | 'perPassage'> {
-  if (section === 'recognition') return { count: model.poolTarget.recognition, perPassage: 0 };
-  if (section === 'writing') return { count: model.poolTarget.writing, perPassage: 0 };
+  if (section === 'recognition') return { count: model.poolTarget.recognition + GENERATION_HEADROOM.recognition, perPassage: 0 };
+  if (section === 'writing') return { count: model.poolTarget.writing + GENERATION_HEADROOM.writing, perPassage: 0 };
   const sectionBlueprint = model.sections[section];
+  const headroom = section === 'reading' ? GENERATION_HEADROOM.reading : GENERATION_HEADROOM.listening;
   return {
-    count: section === 'reading' ? model.poolTarget.readingPassages : model.poolTarget.listeningPassages,
+    count: (section === 'reading' ? model.poolTarget.readingPassages : model.poolTarget.listeningPassages) + headroom,
     perPassage: sectionBlueprint?.questions ?? (section === 'reading'
       ? model.examShape.readingPerPassage : model.examShape.listeningPerPassage),
   };
+}
+
+/** Section-level acceptance bar: the pool target itself, never the inflated ask. */
+export function sectionPoolMinimum(section: SectionName, model: ExamModelEntry): number {
+  if (section === 'recognition') return model.poolTarget.recognition;
+  if (section === 'writing') return model.poolTarget.writing;
+  return section === 'reading' ? model.poolTarget.readingPassages : model.poolTarget.listeningPassages;
 }
 
 const SKILLS_BY_LEVEL: Record<string, Record<SectionName, string>> = {
@@ -281,7 +297,12 @@ async function generateSection(
   languageID: string, level: string, model: ExamModelEntry, weekId: number,
   repairFeedback: string[] = [], signal?: AbortSignal,
 ): Promise<SectionResult> {
+  // Blueprint-driven generation (English) asks with headroom and accepts at
+  // the pool target. The legacy wildcard pipeline keeps its own ask == bar,
+  // matching what the deterministic pool validation requires for those
+  // languages (exam shape) — see generated-exam-language-onboarding.md.
   const spec = languageID === 'en' ? sectionGenerationSpec(section, model) : SECTION_SPECS[section];
+  const sectionMinimum = languageID === 'en' ? sectionPoolMinimum(section, model) : spec.count;
   const fewShot = generationExamples(languageID, level, section);
   const messages = buildSectionMessages(section, languageID, level, spec.count, spec.perPassage, weekId, fewShot, model, repairFeedback);
   const reply = await call(config, messages, signal);
@@ -325,7 +346,7 @@ async function generateSection(
       }
       passages.push({ title: p.title ?? '', text: passageText, items: passageItems });
     }
-    if (passages.length < spec.count) {
+    if (passages.length < sectionMinimum) {
       validationErrors.push({ section, code: 'minimum', detail: `${passages.length} valid passages` });
     }
     return { section, items: [], passages, validationErrors };

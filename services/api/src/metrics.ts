@@ -18,6 +18,11 @@ export interface PaliqueMetrics {
   generationJobDuration: Histogram;
   generationLastSuccess: Gauge;
   generationLastFailure: Gauge;
+  dailyGenerationJobs: Counter;
+  dailyReviewJobs: Counter;
+  dailyJobDuration: Histogram;
+  dailyAttempts: Counter;
+  dailyWordsImports: Counter;
   llmRequests: Counter;
   llmRequestDuration: Histogram;
   llmTokens: Counter;
@@ -49,6 +54,13 @@ function build(meter: Meter): PaliqueMetrics {
       { description: 'Unix seconds of the last finished generation job; initialized at boot.' }),
     generationLastFailure: meter.createGauge('palique.leveltest.generation.last_failure_unix_seconds',
       { description: 'Unix seconds of the last failed generation execution; initialized at boot.' }),
+    dailyGenerationJobs: meter.createCounter('palique.daily.generation.jobs', { description: 'Daily package generation job outcomes.' }),
+    dailyReviewJobs: meter.createCounter('palique.daily.review.jobs', { description: 'Daily learner review job outcomes.' }),
+    dailyJobDuration: meter.createHistogram('palique.daily.job.duration', { unit: 's',
+      advice: { explicitBucketBoundaries: [1, 5, 15, 30, 60, 120, 300, 600, 900] },
+      description: 'Daily generation and review job duration.' }),
+    dailyAttempts: meter.createCounter('palique.daily.attempts', { description: 'Daily practice attempt state transitions.' }),
+    dailyWordsImports: meter.createCounter('palique.daily.words.imports', { description: 'Content-free daily Words import outcomes.' }),
     llmRequests: meter.createCounter('palique.llm.requests', { description: 'LLM chat completions by provider and outcome.' }),
     llmRequestDuration: meter.createHistogram('palique.llm.request.duration', { unit: 's',
       advice: { explicitBucketBoundaries: [0.25, 0.5, 1, 2, 5, 10, 30, 60, 120, 300, 600] },

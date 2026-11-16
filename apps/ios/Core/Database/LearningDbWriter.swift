@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 /**
  * The DB mirror of every LearningStore mutation site (the phase-E cutover).
@@ -31,6 +32,241 @@ import Foundation
  *    flows; the parameters stay for parity.
  */
 public enum LearningDbWriter {
+    public static func cacheDailyAttempt(_ db: SqlDatabase, owner: String, draft: DailyPracticeDraft,
+                                         now: Double = Date.now.timeIntervalSinceReferenceDate) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let packageData = try encoder.encode(draft.package)
+        let stateData = try encoder.encode(draft)
+        guard let package = String(data: packageData, encoding: .utf8),
+              let state = String(data: stateData, encoding: .utf8) else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_encoding")
+        }
+        try db.transaction { tx in
+            try persistDailyAttempt(tx, owner: owner, draft: draft, package: package, state: state, now: now)
+        }
+    }
+
+    public static func acknowledgeDailyEvent(_ db: SqlDatabase, owner: String, eventID: String,
+                                             draft: DailyPracticeDraft, expectedRevision: Int,
+                                             acceptedResponse: Data,
+                                             now: Double = Date.now.timeIntervalSinceReferenceDate) throws {
+        guard draft.owner == owner, UUID(uuidString: eventID) != nil,
+              let response = String(data: acceptedResponse, encoding: .utf8),
+              (try? JSONSerialization.jsonObject(with: acceptedResponse)) != nil else {
+            throw SqlDatabaseError.unsupportedValue("daily_event_ack_invalid")
+        }
+        let acceptedDraft = draft.recordingAcceptedServerResponse(acceptedResponse)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let packageData = try encoder.encode(acceptedDraft.package)
+        let stateData = try encoder.encode(acceptedDraft)
+        guard let package = String(data: packageData, encoding: .utf8),
+              let state = String(data: stateData, encoding: .utf8), !response.isEmpty else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_encoding")
+        }
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner else {
+                throw SqlDatabaseError.unsupportedValue("daily_event_owner_changed")
+            }
+            let changed = try tx.update("UPDATE daily_outbox SET delivery_state = 'acknowledged' WHERE owner_key = ? AND event_id = ? AND attempt_id = ? AND expected_revision = ? AND delivery_state IN ('sending','outcome_unknown')",
+                                        [owner, eventID, draft.attemptID, expectedRevision])
+            guard changed == 1 else { throw SqlDatabaseError.unsupportedValue("daily_event_ack_missing") }
+            try persistDailyAttempt(tx, owner: owner, draft: acceptedDraft, package: package, state: state, now: now)
+        }
+    }
+
+    private static func persistDailyAttempt(_ tx: SqlDatabase, owner: String, draft: DailyPracticeDraft,
+                                            package: String, state: String, now: Double) throws {
+        guard try LearnerOwnershipDao.activeIdentity(tx) == owner, draft.owner == owner else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_owner_changed")
+        }
+        if let row = try tx.query("SELECT revision FROM daily_attempt_cache WHERE owner_key = ? AND attempt_id = ? LIMIT 1",
+                                  [owner, draft.attemptID]).first,
+           row.int("revision") > draft.revision {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_revision_regressed")
+        }
+        _ = try tx.insert("daily_attempt_cache", ["owner_key": owner, "attempt_id": draft.attemptID,
+            "package_snapshot": package, "state_json": state, "revision": draft.revision, "updated_at": now],
+            strategy: .replace)
+    }
+
+    public static func cachedDailyAttempts(_ db: SqlDatabase, owner: String) throws -> [DailyPracticeDraft] {
+        guard try LearnerOwnershipDao.activeIdentity(db) == owner else { return [] }
+        return try db.query("SELECT state_json FROM daily_attempt_cache WHERE owner_key = ? ORDER BY updated_at DESC",
+                            [owner]).compactMap { row in
+            guard let data = row.textOrNull("state_json")?.data(using: .utf8) else { return nil }
+            return try? JSONDecoder().decode(DailyPracticeDraft.self, from: data)
+        }
+    }
+
+    public static func adoptDailyAttempt(_ db: SqlDatabase, owner: String, provisional: DailyPracticeDraft,
+                                         adopted: DailyPracticeDraft,
+                                         now: Double = Date.now.timeIntervalSinceReferenceDate) throws {
+        guard provisional.owner == owner, !provisional.remoteConfirmed,
+              adopted.owner == owner, adopted.remoteConfirmed,
+              provisional.attemptID != adopted.attemptID else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_adoption_invalid")
+        }
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        guard let package = String(data: try encoder.encode(adopted.package), encoding: .utf8),
+              let state = String(data: try encoder.encode(adopted), encoding: .utf8) else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_encoding")
+        }
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner,
+                  (try tx.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key = ? AND attempt_id = ? LIMIT 1",
+                                [owner, provisional.attemptID])).isEmpty else {
+                throw SqlDatabaseError.unsupportedValue("daily_attempt_adoption_has_events")
+            }
+            try persistDailyAttempt(tx, owner: owner, draft: adopted, package: package, state: state, now: now)
+            _ = try tx.update("DELETE FROM daily_attempt_cache WHERE owner_key = ? AND attempt_id = ?",
+                              [owner, provisional.attemptID])
+        }
+    }
+
+    @discardableResult
+    public static func enqueueDailyEvent(_ db: SqlDatabase, owner: String, attemptID: String,
+                                         envelope: Data, now: Double = Date.now.timeIntervalSinceReferenceDate) throws -> String {
+        guard envelope.count <= 24 * 1024,
+              let json = try JSONSerialization.jsonObject(with: envelope) as? [String: Any],
+              let eventID = json["eventId"] as? String, UUID(uuidString: eventID) != nil,
+              json["schemaVersion"] as? Int == 1,
+              let revision = json["expectedRevision"] as? Int, revision >= 0,
+              UUID(uuidString: attemptID) != nil else {
+            throw SqlDatabaseError.unsupportedValue("daily_event_invalid")
+        }
+        let intent = String(data: envelope, encoding: .utf8) ?? ""
+        guard let stableIntent = stableDailyIntentData(json) else {
+            throw SqlDatabaseError.unsupportedValue("daily_event_invalid")
+        }
+        let hash = SHA256.hash(data: stableIntent).map { String(format: "%02x", $0) }.joined()
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner else {
+                throw SqlDatabaseError.unsupportedValue("daily_event_owner_changed")
+            }
+            if let row = try tx.query("SELECT intent_json,intent_hash FROM daily_outbox WHERE owner_key = ? AND event_id = ? LIMIT 1",
+                                      [owner, eventID]).first {
+                guard let oldData = row.text("intent_json").data(using: .utf8),
+                      let oldJSON = try? JSONSerialization.jsonObject(with: oldData) as? [String: Any],
+                      let oldIntent = stableDailyIntentData(oldJSON), oldIntent == stableIntent else {
+                    throw SqlDatabaseError.unsupportedValue("daily_event_id_conflict")
+                }
+                return eventID
+            }
+            guard let attempt = try tx.query("SELECT revision FROM daily_attempt_cache WHERE owner_key = ? AND attempt_id = ? LIMIT 1",
+                                             [owner, attemptID]).first else {
+                throw SqlDatabaseError.unsupportedValue("daily_attempt_missing")
+            }
+            let nextSequence = (try tx.query("SELECT COALESCE(MAX(sequence), -1) + 1 AS next FROM daily_outbox WHERE owner_key = ? AND attempt_id = ?",
+                                             [owner, attemptID]).first?.int("next")) ?? 0
+            _ = try tx.insert("daily_outbox", ["owner_key": owner, "event_id": eventID, "attempt_id": attemptID,
+                "intent_json": intent, "intent_hash": hash, "expected_revision": revision,
+                "sequence": nextSequence, "delivery_state": "pending", "created_at": now])
+            _ = attempt // The attempt row check binds this outbox event to a locally owned attempt.
+            return eventID
+        }
+    }
+
+    public static func pendingDailyEvents(_ db: SqlDatabase, owner: String, attemptID: String) throws -> [SqlRow] {
+        guard try LearnerOwnershipDao.activeIdentity(db) == owner else { return [] }
+        return try db.query("SELECT event_id,intent_json,delivery_state,expected_revision,sequence FROM daily_outbox WHERE owner_key = ? AND attempt_id = ? AND delivery_state IN ('pending','sending','outcome_unknown') ORDER BY sequence",
+                            [owner, attemptID])
+    }
+
+    public static func rebaseDailyEvent(_ db: SqlDatabase, owner: String, eventID: String, attemptID: String,
+                                        from expectedRevision: Int, acceptedDraft: DailyPracticeDraft,
+                                        now: Double = Date.now.timeIntervalSinceReferenceDate) throws -> Data {
+        guard acceptedDraft.owner == owner, acceptedDraft.attemptID == attemptID,
+              acceptedDraft.serverRevision > expectedRevision,
+              (acceptedDraft.rebasedEventIDs ?? []).contains(eventID), UUID(uuidString: eventID) != nil else {
+            throw SqlDatabaseError.unsupportedValue("daily_event_rebase_invalid")
+        }
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        let package = try encoder.encode(acceptedDraft.package)
+        let state = try encoder.encode(acceptedDraft)
+        guard let packageJSON = String(data: package, encoding: .utf8),
+              let stateJSON = String(data: state, encoding: .utf8) else {
+            throw SqlDatabaseError.unsupportedValue("daily_attempt_encoding")
+        }
+        var result = Data()
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner,
+                  let row = try tx.query("SELECT intent_json,expected_revision FROM daily_outbox WHERE owner_key = ? AND event_id = ? AND attempt_id = ? AND delivery_state = 'revision_conflict' LIMIT 1",
+                                         [owner, eventID, attemptID]).first,
+                  row.int("expected_revision") == expectedRevision,
+                  let oldData = row.text("intent_json").data(using: .utf8),
+                  var json = try JSONSerialization.jsonObject(with: oldData) as? [String: Any],
+                  json["eventId"] as? String == eventID else {
+                throw SqlDatabaseError.unsupportedValue("daily_event_rebase_missing")
+            }
+            json["expectedRevision"] = acceptedDraft.serverRevision
+            let rebased = try JSONSerialization.data(withJSONObject: json, options: [.sortedKeys])
+            guard rebased.count <= 24 * 1024, let stableIntent = stableDailyIntentData(json) else {
+                throw SqlDatabaseError.unsupportedValue("daily_event_invalid")
+            }
+            let hash = SHA256.hash(data: stableIntent).map { String(format: "%02x", $0) }.joined()
+            let changed = try tx.update("UPDATE daily_outbox SET intent_json = ?, intent_hash = ?, expected_revision = ?, delivery_state = 'pending' WHERE owner_key = ? AND event_id = ? AND attempt_id = ? AND expected_revision = ? AND delivery_state = 'revision_conflict'",
+                                        [String(data: rebased, encoding: .utf8), hash, acceptedDraft.serverRevision,
+                                         owner, eventID, attemptID, expectedRevision])
+            guard changed == 1 else { throw SqlDatabaseError.unsupportedValue("daily_event_rebase_raced") }
+            try persistDailyAttempt(tx, owner: owner, draft: acceptedDraft,
+                package: packageJSON, state: stateJSON, now: now)
+            result = rebased
+        }
+        return result
+    }
+
+    public static func dailyAttemptHasConflict(_ db: SqlDatabase, owner: String, attemptID: String) throws -> Bool {
+        guard try LearnerOwnershipDao.activeIdentity(db) == owner else { return false }
+        return !(try db.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key = ? AND attempt_id = ? AND delivery_state = 'revision_conflict' LIMIT 1",
+                              [owner, attemptID])).isEmpty
+    }
+
+    public static func markDailyEvent(_ db: SqlDatabase, owner: String, eventID: String, state: String) throws {
+        guard ["sending", "outcome_unknown", "revision_conflict", "acknowledged"].contains(state) else {
+            throw SqlDatabaseError.unsupportedValue("daily_event_state_invalid")
+        }
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner else {
+                throw SqlDatabaseError.unsupportedValue("daily_event_owner_changed")
+            }
+            _ = try tx.update("UPDATE daily_outbox SET delivery_state = ? WHERE owner_key = ? AND event_id = ?",
+                              [state, owner, eventID])
+        }
+    }
+
+    private static func stableDailyIntentData(_ json: [String: Any]) -> Data? {
+        var stable = json
+        stable.removeValue(forKey: "expectedRevision")
+        return try? JSONSerialization.data(withJSONObject: stable, options: [.sortedKeys])
+    }
+
+    public static func cacheDailyReview(_ db: SqlDatabase, owner: String, draft: DailyPracticeDraft,
+                                        review: DailyReviewResult,
+                                        now: Double = Date.now.timeIntervalSinceReferenceDate) throws {
+        let data = try JSONEncoder().encode(review)
+        guard let json = String(data: data, encoding: .utf8), UUID(uuidString: review.reviewId) != nil,
+              review.attemptId == draft.attemptID, review.inputHash == draft.inputHash else {
+            throw SqlDatabaseError.unsupportedValue("daily_review_invalid")
+        }
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner, owner == draft.owner else {
+                throw SqlDatabaseError.unsupportedValue("daily_review_owner_changed")
+            }
+            _ = try tx.insert("daily_review_cache", ["owner_key": owner, "review_id": review.reviewId,
+                "attempt_id": draft.attemptID, "result_json": json, "created_at": now], strategy: .replace)
+        }
+    }
+
+    public static func cachedDailyReview(_ db: SqlDatabase, owner: String, attemptID: String) throws -> DailyReviewResult? {
+        guard try LearnerOwnershipDao.activeIdentity(db) == owner else { return nil }
+        guard let json = try db.query("SELECT result_json FROM daily_review_cache WHERE owner_key = ? AND attempt_id = ? LIMIT 1",
+                                     [owner, attemptID]).first?.textOrNull("result_json"),
+              let data = json.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(DailyReviewResult.self, from: data)
+    }
+
 
     /// save()/correctPassage(): one session's durable form — the session row
     /// (scalar columns plus the four write-once JSON payloads) and its whole
@@ -108,7 +344,85 @@ public enum LearningDbWriter {
     /// removeExpression(): RecallEngine.remove drops the language row AND the
     /// legacy NULL row for the text; the mirror deletes both.
     public static func expressionRemoved(_ db: SqlDatabase, _ text: String, _ languageID: String) throws {
-        _ = try ExpressionsDao.removeVisible(db, text, languageID)
+        try db.transaction { tx in
+            let owner = try LearnerOwnershipDao.activeIdentity(tx)
+            let key = RecallEngine.normalizeKey(text)
+            if let owner, !(try tx.query("SELECT 1 AS found FROM daily_word_imports WHERE owner_key = ? AND language_id = ? AND expression_key = ? LIMIT 1",
+                                         [owner, languageID, key])).isEmpty {
+                _ = try tx.insert("daily_word_suppressions", ["owner_key": owner, "language_id": languageID,
+                    "norm_key": key, "deleted_at": Date.now.timeIntervalSinceReferenceDate], strategy: .ignore)
+            }
+            _ = try ExpressionsDao.removeVisible(tx, text, languageID)
+        }
+    }
+
+    public static func dailyWordsImported(_ db: SqlDatabase, owner: String, plans: [DailyWordImportPlan],
+                                          clearSuppressions: Set<String> = []) throws -> [String: String] {
+        try db.transaction { tx in
+            guard try LearnerOwnershipDao.activeIdentity(tx) == owner else {
+                throw SqlDatabaseError.unsupportedValue("daily_import_owner_changed")
+            }
+            for key in clearSuppressions {
+                guard let separator = key.firstIndex(of: ":") else { continue }
+                let language = String(key[..<separator])
+                let normKey = String(key[key.index(after: separator)...])
+                _ = try tx.update("DELETE FROM daily_word_suppressions WHERE owner_key = ? AND language_id = ? AND norm_key = ?",
+                                  [owner, language, normKey])
+            }
+            var actions: [String: String] = [:]
+            for plan in plans {
+                guard plan.owner == owner else { throw SqlDatabaseError.unsupportedValue("daily_import_owner_changed") }
+                var action: String
+                let suppressed = !(try tx.query("SELECT 1 AS found FROM daily_word_suppressions WHERE owner_key = ? AND language_id = ? AND norm_key = ? LIMIT 1",
+                                                [owner, plan.languageID, plan.normKey])).isEmpty
+                let receipt = !(try tx.query("SELECT 1 AS found FROM daily_word_imports WHERE owner_key = ? AND origin_key = ? AND action IN ('imported','existing','suppressed') LIMIT 1",
+                                             [owner, plan.originKey])).isEmpty
+                let expressions = try ExpressionsDao.all(tx)
+                let current = expressions.first {
+                    RecallEngine.normalizeKey($0.text) == plan.normKey && $0.languageID == plan.languageID
+                } ?? expressions.first {
+                    RecallEngine.normalizeKey($0.text) == plan.normKey && $0.languageID == nil
+                }
+                if suppressed {
+                    action = "suppressed"
+                } else if current != nil || receipt || plan.action == .keep {
+                    if let current, current.meaning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || current.languageID == nil {
+                        let updated = ExpressionState(text: current.text,
+                            meaning: current.meaning.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                ? plan.meaning : current.meaning,
+                            source: current.source, lessonID: current.lessonID, bars: current.bars,
+                            attempts: current.attempts, lastSeen: current.lastSeen, dueAt: current.dueAt,
+                            languageID: plan.languageID)
+                        action = try ExpressionsDao.upsert(tx, updated, adoptLegacy: true) ? "existing" : "pending_capacity"
+                    } else {
+                        action = "existing"
+                    }
+                } else if plan.action == .insert {
+                    let saved = try ExpressionsDao.upsert(tx, ExpressionState(text: plan.text, meaning: plan.meaning,
+                        source: "lookup", dueAt: plan.now, languageID: plan.languageID), adoptLegacy: true)
+                    action = saved ? "imported" : "pending_capacity"
+                } else {
+                    switch plan.action {
+                    case .insert: action = "imported"
+                    case .keep: action = "existing"
+                    case .suppress: action = "suppressed"
+                    case .pendingCapacity: action = "pending_capacity"
+                    }
+                }
+                if action != "pending_capacity" {
+                    _ = try tx.update("DELETE FROM daily_word_imports WHERE owner_key = ? AND origin_key = ? AND action = 'pending_capacity'",
+                                      [owner, plan.originKey])
+                }
+                let originParts = plan.originKey.split(separator: ":", omittingEmptySubsequences: false)
+                let reviewID = originParts.count >= 3 && originParts.first == "review" ? String(originParts[1]) : nil
+                _ = try tx.insert("daily_word_imports", ["owner_key": owner, "origin_key": plan.originKey,
+                    "language_id": plan.languageID, "expression_key": plan.normKey, "kind": plan.kind,
+                    "review_id": reviewID,
+                    "action": action, "importer_version": 1, "created_at": plan.now], strategy: .replace)
+                actions[plan.originKey] = action
+            }
+            return actions
+        }
     }
 
     /// selectLanguage()/updatePreferences()/hideWord(): the whole Preferences

@@ -6,6 +6,22 @@
 //      English pools, so drafts are created through the real generation
 //      pipeline (validator included) instead of hand-inserted SQL rows.
 import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+
+let dailyFixture;
+try { dailyFixture = JSON.parse(await readFile('/daily-fixture.json', 'utf8')); }
+catch { /* The legacy exam-generation stub does not mount the daily fixture. */ }
+
+const dailyCandidate = () => {
+  const { topic, objective, expressions, listening, speaking, goals, practice } = dailyFixture;
+  const content = { topic, objective, expressions, listening: { transcript: listening.transcript, questions: listening.questions },
+    speaking, goals, practice };
+  const answerKeys = questions => questions.map(question => ({ questionId: question.id,
+    explanation: { en: 'The fixture answer is supported by the lesson.', es: 'La respuesta de prueba está respaldada por la lección.' },
+    targetExpressionIds: [expressions[0].id],
+    ...(question.kind === 'single_choice' ? { acceptedOptionId: question.options[0].id } : { acceptedAnswers: ['a clear answer'] }) }));
+  return { content, privatePayload: { listening: answerKeys(listening.questions), practice: answerKeys(practice.questions) } };
+};
 
 const choice = (prompt, answer, wrong) => ({
   kind: 'choice', prompt, options: [answer, ...wrong.slice(0, 3)], answers: [answer],
@@ -64,6 +80,16 @@ const server = createServer((request, response) => {
       usage: { prompt_tokens: 1, completion_tokens: 1, total_tokens: 2 },
     });
     response.writeHead(200, { 'content-type': 'application/json' });
+    if (prompt.includes('Return ONLY JSON with exactly {"content":{"topic"')) {
+      if (!dailyFixture) return response.end(reply('{}'));
+      return response.end(reply(JSON.stringify(dailyCandidate())));
+    }
+    if (prompt.includes('independent strict language-learning content judge')) {
+      let ids = [];
+      try { ids = JSON.parse(prompt.slice(prompt.lastIndexOf('\n') + 1)).requiredEvidenceIds ?? []; } catch { /* invalid request */ }
+      return response.end(reply(JSON.stringify({ decision: 'pass', evidence: ids.map(id => ({ id, verdict: 'pass',
+        rationale: 'Deterministic fixture content passes browser-worker validation.' })) })));
+    }
     if (prompt.includes('vocabulary and grammar')) return response.end(reply(JSON.stringify(recognition)));
     if (prompt.includes('reading passages')) return response.end(reply(JSON.stringify(reading)));
     if (prompt.includes('listening passages')) return response.end(reply(JSON.stringify(listening)));

@@ -5,7 +5,8 @@ import { createApp } from '../src/app.js';
 import { connectDatabase, transaction, type Database } from '../src/db.js';
 import { validateGeneratedPool } from '../src/level-tests-validate.js';
 import { encryptSecret, decryptSecret, maskKey, resolveLlmConfig, LlmTransportError } from '../src/llm-config.js';
-import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
+import { examModelFor, sectionGenerationSpec, sectionPoolMinimum, generateWeeklyLevelTest } from '../src/level-tests-llm.js';
+import { EXAM_MODELS } from '../src/level-tests-content.generated.js';
 
 const ENV_BASE: NodeJS.ProcessEnv = {
   LEVELTEST_LLM_MASTER_KEY: 'a'.repeat(64),
@@ -322,4 +323,49 @@ integration('unknown judge transport outcome stops generation in flag and strict
     assert.equal(calls, 5);
     assert.equal((await db.query(`SELECT 1 FROM level_test_weeks WHERE language_id='fr' AND level='A1' AND week_index=998001`)).rowCount, 0);
   }
+});
+
+// ---- unit: generation ask normalization ----
+// Defect (en A1 week 202647): the section ask equaled the pool target, so a
+// single candidate rejected by deterministic validation (word range, dedupe,
+// judge) left `listening: minimum: 5 valid passages` and failed the week.
+// The ask now carries explicit headroom; the validator requirement (the pool
+// target) is unchanged and remains the only quality bar.
+
+test('section asks include generation headroom so one rejected candidate cannot fail the week', () => {
+  const enA1 = examModelFor('A1', 'en');
+  assert.ok(enA1, 'the en A1 blueprint must exist');
+  assert.deepEqual(sectionGenerationSpec('listening', enA1),
+    { count: enA1.poolTarget.listeningPassages + 1, perPassage: enA1.examShape.listeningPerPassage });
+  assert.deepEqual(sectionGenerationSpec('reading', enA1),
+    { count: enA1.poolTarget.readingPassages + 1, perPassage: enA1.examShape.readingPerPassage });
+  assert.deepEqual(sectionGenerationSpec('recognition', enA1),
+    { count: enA1.poolTarget.recognition + 4, perPassage: 0 });
+  assert.deepEqual(sectionGenerationSpec('writing', enA1),
+    { count: enA1.poolTarget.writing + 1, perPassage: 0 });
+  // The shared spec normalizes any blueprint; the legacy wildcard pipeline
+  // keeps its own ask (see generated-exam-language-onboarding.md).
+  const wildcardB2 = examModelFor('B2', 'es');
+  assert.ok(wildcardB2, 'the wildcard B2 blueprint must exist');
+  assert.equal(sectionGenerationSpec('listening', wildcardB2).count, wildcardB2.poolTarget.listeningPassages + 1);
+});
+
+test('every exam model derives its pool target from exactly twice the exam shape', () => {
+  for (const entry of EXAM_MODELS.levels) {
+    const message = `${entry.languageID}/${entry.level}`;
+    assert.equal(entry.poolTarget.recognition, 2 * entry.examShape.recognition, `recognition: ${message}`);
+    assert.equal(entry.poolTarget.writing, 2 * entry.examShape.writing, `writing: ${message}`);
+    assert.equal(entry.poolTarget.readingPassages, 2 * entry.examShape.readingPassages, `reading: ${message}`);
+    assert.equal(entry.poolTarget.listeningPassages, 2 * entry.examShape.listeningPassages, `listening: ${message}`);
+  }
+});
+
+test('the section acceptance bar stays at the pool target while the ask carries headroom', () => {
+  const enA1 = examModelFor('A1', 'en');
+  assert.ok(enA1);
+  assert.equal(sectionPoolMinimum('listening', enA1), enA1.poolTarget.listeningPassages);
+  assert.equal(sectionPoolMinimum('recognition', enA1), enA1.poolTarget.recognition);
+  assert.ok(sectionGenerationSpec('listening', enA1).count > sectionPoolMinimum('listening', enA1),
+    'the ask must exceed the acceptance bar so one rejected candidate cannot fail the week');
+  assert.ok(sectionGenerationSpec('recognition', enA1).count > sectionPoolMinimum('recognition', enA1));
 });

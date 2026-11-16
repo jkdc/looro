@@ -1,0 +1,18 @@
+services:
+  load-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.runner
+    image: palique-load-tools:local
+    working_dir: /workspace
+    entrypoint: [node, services/api/load/run.mjs]
+    command: [smoke]
+    network_mode: none
+    volumes:
+      - type: bind
+        source: ../../..
+        target: /workspace
+        read_only: true
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock

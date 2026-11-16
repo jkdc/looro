@@ -1,5 +1,209 @@
 # Verificación — daily-practice
 
+## Verificación de extremo a extremo y correcciones (2026-11-09)
+
+Revisión independiente de la rama completa (requisitos vigentes + lógica acordada
++ defectos de revisiones anteriores), con flujo real en emulador contra una API
+aislada. Flags locales activados solo en la base efímera del laboratorio; sin
+llamadas a proveedores reales, sin activación ni despliegue. Sin commits ni push.
+
+### Defectos confirmados y corregidos (cada uno con prueba que falla antes)
+
+1. **Candidato Words sin evidencia tumbaba toda la revisión (servicio).**
+   `validateDailyReview` lanzaba `invalid_daily_review` para un candidato con
+   `evidenceIds: []`; el requisito manda descartar el candidato sin perder el
+   feedback independiente. RED: `a candidate without any evidence is dropped
+   without failing the whole review` (fallaba con `invalid_daily_review`);
+   GREEN 8/8 en `daily-review.test.ts`. Se añadieron además pruebas guarda de
+   requisito: error inventado no autoriza candidato; respuesta correcta no
+   habilita candidato ni error; forma corregida sobre pregunta fallada llega a
+   Words. Guarda de prompt en `daily-prompts.test.ts` (grounding solo con
+   error verificado o fragmento cierto).
+2. **Validador iOS rechazaba la revisión completa por un candidato legal.**
+   `DailyReviewResult.decodeAndValidate` solo admitía evidencia de fragmento;
+   los candidatos anclados a pregunta fallada con forma corregida (que el
+   servidor emite conforme al contrato) provocaban `invalidReview` y perdían
+   todo el feedback. Ahora los candidatos de revisión con evidencia no
+   admitida se descartan sin invalidar la revisión y se aceptan las dos formas
+   legales (fragmento cierto del alumno con texto contenido o corrección de un
+   error validado; pregunta fallada cuya corrección coincide). Prueba escrita
+   (`testReviewKeepsFeedbackAndDropsOnlyUnsupportedWordCandidates`);
+   **ejecución pendiente de macOS/Xcode**.
+3. **Ayudas de Android se atribuían a etapas equivocadas.** La pantalla enviaba
+   el conjunto plano acumulado (recortado alfabéticamente a 8) en cada
+   `stage_submitted` y en `speaking_segment_saved`; la ayuda de preparación
+   nunca se enviaba en `preparation_completed`. Corregido con filtrado por
+   etapa (reducer puro `helpUsedForStage` + wiring): preparación manda sus
+   ayudas en su evento; listening/práctica solo las suyas; speaking solo las
+   de metas. iOS ya filtraba correctamente (`intersection`) y se mantuvo como
+   referencia. RED/GREEN JVM en `DailyPracticeTest`.
+4. **Las respuestas elegidas se enviaban nulas (defecto crítico preexistente).**
+   En el clic de envío, `draft.answers[q.id]?.let { put("value", it) } ?:
+   put("value", JsonNull)`: `JsonObjectBuilder.put` devuelve el valor previo de
+   la clave (null en la primera inserción), por lo que el Elvis **siempre**
+   sobrescribía la respuesta recién puesta con `JsonNull`. Observado en el
+   emulador: listening y práctica aceptadas por el servidor con todo `null`
+   (estado + outbox del dispositivo con las respuestas correctas descartaban
+   pérdida de estado local). Corregido extrayendo la construcción del evento al
+   reducer puro `stageSubmittedEvent`; RED JVM con la expresión buguenta
+   verbatim (`expected:<[a]> but was:<[null]>`) y GREEN tras el arreglo.
+   GREEN de sistema: la cuenta de laboratorio B envió `a/b/a` y `a/b/null/null`
+   y la corrección cerrada del servidor calificó 2 correct / 1 incorrect.
+5. **El botón de envío podía quedar inalcanzable.** El `LazyColumn` llegaba
+   hasta el fondo sin `contentPadding`, y con contenido corto el botón
+   «Save answers and continue» quedaba permanentemente bajo la barra de
+   navegación (verificado por bounds de UI Automator). Corregido con
+   `contentPadding` inferior; verificado en vivo (el botón pasa a ser
+   alcanzable y el envío funciona).
+6. **Presupuesto de revisión a cero producía 500 genérico.** Sin presupuesto,
+   la creación de intentos fallaba con `500 service_unavailable` en vez del
+   `503 daily_budget_unavailable` del contrato. RED con prueba PostgreSQL
+   aislada (`creating an attempt without review budget fails closed…`, que
+   exigía `ServiceError` 503 y cero efectos: sin intento, sin reserva y
+   publicación sin consumir); GREEN tras mapear el fallo de reserva.
+
+### Comportamiento verificado en vivo (emulador + API aislada en Docker)
+
+Stack efímero propio (PostgreSQL 17 + API de la rama con migraciones 059–065),
+puerta 10.0.2.2:8080 para el emulador, cuentas de laboratorio A/B, paquete
+fixture publicado sembrado en BD (sin generación LLM), flags activados solo ahí.
+Recorrido por UI: onboarding (inglés/español) → paquete «A greener city» →
+crear intento (recuperación con la misma clave de idempotencia tras un fallo
+inyectado de presupuesto) → preparación (marca de expresión `word_marked`
+aceptada; ayudas de objetivos en `preparation_completed` con
+`helpUsed=["hint_goal-idea","hint_goal-plan","hint_goal-reason"]` y
+`activeMs` medido 629755) → listening (transcripción registrada como ayuda;
+respuestas reales tras el fix, grading 2/1) → speaking omitido
+(`stage_skipped` con `activeMs` medido 1209236, razón `learner_choice`) →
+práctica (respuestas `a/b/null/null`, huecos vacíos omitidos) → finish
+(`input_hash` fijado) → revisión:
+   - sin evidencia → resultado sintético `partial`/`not_observed` sin
+     proveedor, trabajo `cancelled`, reserva `released`; candidato
+     `learner_mark` «shared space» importado a Words del dispositivo con
+     recibo `mark:<markId>` acción `existing` (sin duplicar ni resetear
+     barras/progress);
+   - con evidencia → trabajo en cola y worker **falla cerrado** sin proveedor
+     (`daily_llm_unavailable`, sin llamada externa); el cliente muestra error
+     persistente `daily_review_unavailable` con reintento y el intento queda
+     consultable.
+Reanudación verificada dos veces (navegación fuera/vuelta y reinstalación de
+APK): mismo intento, mismas respuestas en caché, sin eventos duplicados.
+Reinicio de medición por etapa observado (listening 106087 ms tras el salto
+anterior). El evento de listening solo llevó `helpUsed=["transcript"]` (sin
+fuga de ayudas de preparación): atribución por etapa correcta en vivo.
+
+### Nota sobre «tiempo activo»
+
+Los requisitos no definen el tratamiento del tiempo en segundo plano. La
+implementación cuenta tiempo de reloj de la etapa: Android
+(`SystemClock.elapsedRealtime`, incluye sueño profundo) e iOS
+(`ProcessInfo.systemUptime`) **sí cuentan el tiempo con la app en segundo
+plano**. No se declara equivalencia con el «presupuesto activo» de pedagogía;
+queda como decisión de producto pendiente (medir, o excluir segundo plano)
+antes del piloto.
+
+### Comprobaciones ejecutadas
+
+| Comprobación | Resultado |
+|---|---|
+| `make test-api` final tras corregir reserva del worker (PostgreSQL aislado) | 986 pruebas, 0 fallos, 0 omitidos; stack efímero eliminado al terminar |
+| `make check` | Pasó: 152 pruebas Python, esquema v9 sin drift, localización 8 idiomas |
+| Android `:app:testDebugUnitTest :core:engine-local:testDebugUnitTest` | 935 pruebas, 0 fallos, 0 omitidos (incluye RED/GREEN del elvis y filtrado por etapa) |
+| Android `:app:lintDebug :app:assembleDebug` | BUILD SUCCESSFUL; APK debug instalado en el emulador |
+| Android `:app:compileUiTestAndroidTestKotlin` | Compila (task correcto de la variante uiTest; `compileDebugAndroidTestKotlin` no existe en este proyecto) |
+| `git diff --check` | Pasó (sin whitespace errors) |
+| iOS Core/App/UI | **No ejecutado**: host Linux sin Swift/Xcode; XCTest escrito y pendiente de macOS |
+| Android `DailyPracticeScreenTest` en emulador | 2/2; fixture de intento cacheado corregido y prueba focalizada pasa |
+| Daily admin browser E2E | Pasa con worker de generación real y proveedor LLM stub; run/package ID seguido hasta publicación, lectura pública y retirada |
+| `make load-api-baseline` | Pasa con proveedor local; integridad de balances/ledger y usage/settled coincidente; stack/volúmenes eliminados |
+
+### Clasificación de la verificación (2026-11-09)
+
+**Verificado (ejecutado, evidencia en este documento):** suites de API
+(`make test-api`, 986/986 con PostgreSQL aislado), Python (`make check`, 152),
+Android JVM (935/935, incluye RED/GREEN de los defectos 3 y 4), lint/build APK
+y compilación `compileUiTestAndroidTestKotlin`, y los flujos reales
+cliente→API→BD del emulador descritos arriba (eventos con CAS, ayudas por
+etapa, tiempo medido, reanudación tras salida y reinstalación, revisión
+sintética sin evidencia, importación a Words con recibo, fallo cerrado del
+worker con evidencia y su presentación en el cliente, grading 2/1 tras el fix
+de respuestas).
+
+**Pendiente (no bloquea el desarrollo ni invalida lo verificado):** ejecutar
+en macOS/Xcode las pruebas Swift escritas para los defectos 2 (`DailyPracticeTests`)
+y las suites App/UI iOS completas. El host Linux no tiene toolchain Swift; el
+código iOS está revisado estáticamente y sus contratos con el servidor
+verificados por las pruebas del servidor.
+
+**Omitido deliberadamente (requiere autorización de proveedor/piloto):**
+speaking hospedado real y revisión con LLM real en el flujo del emulador. El
+binding de voz se revisó estáticamente (iOS `DailySpeakingController` con
+`hostedDailyCreate(dailyAttemptID:)`, gates de capacidades/saldo y
+generation-fencing; Android `dailyVoice*`; servidor `daily-voice.ts` con
+`in_progress`+etapa+`daily_voice_active` bajo lock) y la puerta de voz nunca se
+activó; cero llamadas a proveedores. La revisión LLM real y el piloto siguen
+requiriendo su autorización separada.
+
+**Por decidir/documentar (decisión de producto):** si «tiempo activo» debe
+excluir el tiempo en segundo plano. Hoy ambos clientes cuentan reloj de etapa
+(Android `elapsedRealtime`, incluye sueño profundo; iOS `systemUptime`), por
+lo que el segundo plano SÍ se cuenta; los requisitos no lo definen y no se
+declara equivalencia con el presupuesto activo de pedagogy.md. Decidir antes
+del piloto (medir tal cual, o pausar el contador en background).
+
+**Documentación añadida en esta sesión:** el mapeo
+`preparation_completed.helpUsed → helpUsed.speaking` quedó justificado y
+documentado en `contracts.md` (tabla de eventos, §4 y semántica de `helped`,
+§5) y en `pedagogy.md` (ayudas por meta como andamiaje del speaking): las
+ayudas por meta se ofrecen en la pantalla de preparación, pero quién las
+consulta entra a hablar con la meta ya andamiada, de modo que la revisión
+marca la sección speaking como `helped` cuando se consultaron. El resto de
+ayudas se atribuye a la etapa que las ofreció.
+
+**Cobertura de la regresión de outbox:** la prueba instrumentada que leía
+`daily_outbox` se retiró **antes de ejecutarse** — nunca corrió — porque el
+harness `uiTest` instala una app aparte sin `MANAGED_API_ORIGIN`, incapaz por
+diseño de encolar eventos diarios (y el test hermano de reanudación ya fallaba
+en este emulador antes de esta sesión). El comportamiento «las respuestas
+elegidas viajan en el envío» queda cubierto por la prueba JVM determinista
+`stageSubmissionCarriesTheAnswersChosenOnThisDevice` (RED con la expresión
+buguente verbatim: `expected:<[a]> but was:<[null]>`; GREEN tras el fix) y por
+la evidencia de sistema del emulador (antes: servidor aceptó todo nulo con las
+respuestas presentes en el outbox/dispositivo; después: `a/b/a` y grading
+2/1). El test conectado **no se presenta como ejecutado**.
+
+### Correspondencia informe ↔ código (auditada el 2026-11-10)
+
+Anclas verificadas sobre el árbol actual; `make test-api` se ejecutó de nuevo
+tras corregir la reserva del worker (986/986):
+
+- `services/api/src/daily-review.ts:88` — `grounded=evidence.length>0&&…`
+  descarta el candidato sin evidencia (sin throw por lista vacía).
+- `services/api/src/daily-attempts.ts:192` — fallo de reserva mapeado a
+  `ServiceError('daily_budget_unavailable', 503)`.
+- `services/api/src/daily-prompts.ts:42` — cláusulas de grounding del prompt de
+  revisión; guarda en `tests/daily-prompts.test.ts:36`.
+- Pruebas servidor: los 4 casos nuevos de candidatos/evidencia en
+  `tests/daily-review.test.ts:44,52,63,73` y la prueba PostgreSQL de
+  presupuesto en `tests/daily-attempts.test.ts:65`.
+- `apps/android/app/src/main/java/com/jkdc/app/core/DailyPractice.kt:110,238`
+  — `helpUsedForStage` y `stageSubmittedEvent` sin elvis (asignación explícita
+  de `JsonNull` solo cuando falta respuesta).
+- `apps/android/app/src/main/java/com/jkdc/app/ui/DailyPracticeScreen.kt:323,430`
+  — `contentPadding` inferior y envío vía extractor; testTags
+  `daily-submit-stage` y `daily-answer-*` presentes.
+- `apps/android/app/src/main/java/com/jkdc/app/AppViewModel.kt:3374` —
+  `helpUsed` de los segmentos de speaking filtrado a metas.
+- `apps/ios/Core/DailyPractice.swift:397-406` — filtro de candidatos no
+  admitidos con las dos formas legales (fragmento cierto con texto contenido o
+  corrección de error validado; pregunta fallada con corrección coincidente).
+- Prueba Swift del defecto 2: `apps/ios/Tests/DailyPracticeTests.swift:201`.
+- Pruebas Android JVM: `DailyPracticeTest.kt:45,60,69`.
+- `apps/android/app/src/androidTest/java/com/jkdc/app/DailyPracticeScreenTest.kt`
+  restaurado a sus 2 pruebas originales (sin test de outbox).
+
+# Verificación previa
+
 Fecha: 2026-11-07. **La verificación de implementación sigue parcial; esta evidencia no autoriza activar la funcionalidad.**
 
 ## Reanudación de implementación y correcciones de integridad (2026-11-08)
@@ -12,7 +216,7 @@ También se exige publicación no retirada en la admisión de speaking, tanto en
 
 | Comprobación | Resultado |
 |---|---|
-| `make test-api` final en stack Docker/PostgreSQL aislado | Pasó: 974 tests, 0 fallidos, 0 omitidos; contenedores, red y volumen eliminados al terminar |
+| `make test-api` final en stack Docker/PostgreSQL aislado | Pasó: 976 tests, 0 fallidos, 0 omitidos; contenedores, red y volumen eliminados al terminar |
 | `make check` | Pasó: 152 pruebas Python, esquema/export/paridad/localización; persisten ResourceWarnings de SQLite no relacionados |
 | `services/api npm run check` | Pasó |
 | Suite focal `daily-jobs`, `daily-provider-operations`, `daily-review`, `daily-voice`, `accounts` | Pasó; los tests de base se ejecutaron en la suite aislada |
@@ -259,3 +463,26 @@ Verification correction (2026-11-08): An additional run-poll sanitization test w
 - Unidad de pruebas y verificación registrada en el commit `bce9a1c` (`test(daily-practice): verify worker and deletion cleanup`).
 - Se añadió `DailyPracticeScreenTest`: el RED falló en el tag de ruta ausente; tras añadir `daily-practice-screen`, el test aislado pasó 1/1 en `emulator-5554`. Las pruebas instrumentadas verifican que el alumno inglés abre la pantalla desde `tab-learn`; no cubren todavía respuestas/errores/reanudación.
 - APKs `UiTest` y `UiTestAndroidTest` recompilados y prueba aislada pasada. Después del cambio, el conjunto equivalente a `make android-build` volvió a terminar `BUILD SUCCESSFUL`; los avisos Kotlin existentes de deprecación/performance continúan.
+
+## Revisión de persistencia local Android (2026-11-08)
+
+Una revisión independiente detectó defectos que impedían guardar eventos diarios en Android y podían reiniciar el progreso de Words al importar resultados desfasados. Se corrigieron antes de esta verificación:
+
+- Las escrituras diarias ya no interpretan `SqlDatabase.update() == -1` como fallo: el adaptador Android usa `execSQL` y no ofrece recuento de filas. Los métodos verifican el estado persistido dentro de la misma transacción; los conflictos CAS siguen fallando si la revisión no avanzó.
+- La importación vuelve a comprobar en la transacción la expresión actual, el recibo y la supresión. Un plan `INSERT` obsoleto no reemplaza el progreso concurrente; `KEEP` rellena significado vacío y adopta fila legacy sin resetear barras, intentos ni fechas. Si coexisten una fila legacy y otra del idioma, prioriza la coincidencia exacta por idioma antes de considerar adopción.
+- Las fechas de repaso utilizan `nowSeconds()` (época de Apple), no Unix seconds. El esquema canónico y los dos generados declaran versión 9.
+
+| Comprobación | Resultado |
+|---|---|
+| Regresiones Android focalizadas | Pasaron: escrituras/remapeo sin row count, plan obsoleto, `KEEP`, época, prioridad exacta sobre legacy y cierre/reapertura de SQLite. Las pruebas de precedencia y los cuatro casos iniciales fallaron primero por el comportamiento esperado. |
+| Android JVM completo | Pasó: 932 tests, 0 fallidos, 0 omitidos (105 suites incluyendo engine-local). |
+| `:app:lintDebug :app:assembleDebug` | Pasó con JDK 21, Gradle 8.11.1 y caché local de dependencias. |
+| `make check` | Pasó: 152 tests Python y validaciones de esquema/export/paridad/localización; siguen avisos `ResourceWarning` de SQLite. |
+| `make test-api` aislado con PostgreSQL | Pasó: 976 tests, 0 fallidos, 0 omitidos. |
+| Revisión independiente acotada a la persistencia y su corrección | Pasó estáticamente y con sonda SQLite: cinco hallazgos originales corregidos y se corrigió además la precedencia entre fila exacta y legacy. No certifica el feature completo ni reemplaza XCTest. |
+| Android connected UI | El test de entrada Daily Practice pasó 1/1 en ejecución previa. La suite instrumentada completa observó 12 fallos de 84, en CaptionParity, DesignReview, ManualMuteUi, Onboarding y ReportHistory; no se afirma verde. |
+| iOS Core/App/UI | No verificado en este host Linux sin Swift/Xcode. |
+
+La feature sigue **parcial**, con pruebas de recuperación/backup, escenarios UI y verificación iOS pendientes. No se hicieron llamadas reales a proveedores, activación, piloto ni despliegue.
+
+La re-revisión de iOS encontró la misma precedencia entre fila legacy y exacta por idioma; ambas plataformas ahora buscan primero la coincidencia exacta. Android observó RED→GREEN y conserva ambas filas/progreso. Se añadieron pruebas Swift para esa coexistencia y para schema v9, pero no se pudieron ejecutar en este host. Un error tipográfico del test (accesor `double` en vez de `real`) fue corregido tras el informe independiente; sigue pendiente ejecutar Swift en macOS.

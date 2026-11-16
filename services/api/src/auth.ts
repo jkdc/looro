@@ -158,6 +158,10 @@ export async function deleteAccount(db: Database, account: string, appleRevoker?
     await sql.query('DELETE FROM level_test_attempts WHERE account_id=$1', [account]);
     await sql.query('DELETE FROM level_test_attempt_snapshot_ids WHERE account_id=$1', [account]);
     await sql.query('DELETE FROM level_test_attempt_snapshots WHERE account_id=$1', [account]);
+    await sql.query("UPDATE daily_jobs j SET state='cancelled',lease_owner=NULL,lease_until=NULL,updated_at=now() WHERE j.attempt_id IN (SELECT id FROM daily_attempts WHERE account_id=$1) AND j.state IN ('reserved','queued','running') AND NOT EXISTS (SELECT 1 FROM daily_provider_operations o WHERE o.job_id=j.id AND o.state IN ('sending','unknown','succeeded'))",[account]);
+    await sql.query("UPDATE daily_cost_reservations r SET state='released',settled_at=now() FROM daily_jobs j WHERE r.job_id=j.id AND j.attempt_id IN (SELECT id FROM daily_attempts WHERE account_id=$1) AND r.state='held' AND NOT EXISTS (SELECT 1 FROM daily_provider_operations o WHERE o.job_id=j.id AND o.state IN ('sending','unknown','succeeded'))",[account]);
+    await sql.query('DELETE FROM daily_attempt_request_keys WHERE account_id=$1',[account]);
+    await sql.query('DELETE FROM daily_attempts WHERE account_id=$1',[account]);
     await sql.query('DELETE FROM identities WHERE account_id=$1', [account]);
     await sql.query('DELETE FROM auth_sessions WHERE account_id=$1', [account]);
     // Unused promotional time is forfeited on deletion; it must not trap a free account.

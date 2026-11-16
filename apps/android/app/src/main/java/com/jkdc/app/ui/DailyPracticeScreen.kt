@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import android.os.SystemClock
 import androidx.compose.ui.platform.testTag
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,6 +51,10 @@ private fun takeCodePoints(value: String, maximum: Int): String =
     value.substring(0, value.offsetByCodePoints(0, minOf(maximum, value.codePointCount(0, value.length))))
 
 @Composable
+internal fun rememberDailyHintsVisible(attemptId: String, stage: DailyAttemptStage): androidx.compose.runtime.MutableState<Boolean> =
+    rememberSaveable(attemptId, stage) { mutableStateOf(false) }
+
+@Composable
 fun DailyPracticeScreen(vm: AppViewModel, onBack: () -> Unit, onOpenSpeaking: (String) -> Unit) {
     DisposableEffect(vm) { onDispose { vm.stopDailyListening() } }
     val owner = vm.loadedLearningIdentity
@@ -67,7 +73,7 @@ fun DailyPracticeScreen(vm: AppViewModel, onBack: () -> Unit, onOpenSpeaking: (S
     var retryEventAvailable by rememberSaveable { mutableStateOf(false) }
     var outboxBlocked by rememberSaveable { mutableStateOf(false) }
     var showTranscript by rememberSaveable { mutableStateOf(false) }
-    var showHints by rememberSaveable { mutableStateOf(false) }
+    var showHints by rememberDailyHintsVisible(draft?.attemptId.orEmpty(), draft?.stage ?: DailyAttemptStage.PREPARATION)
     val explanationLanguage = vm.archive.preferences.meaningLanguage.substringBefore('-')
         .takeIf { it == "en" || it == "es" } ?: "en"
 
@@ -304,6 +310,10 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
     onReview: () -> Unit, onImport: (kotlinx.serialization.json.JsonObject) -> Unit,
     onTranscript: () -> Unit, onHints: () -> Unit, onRetryCreate: () -> Unit, onRetryEvent: () -> Unit,
     retryEventAvailable: Boolean, createUnknown: Boolean) {
+    var stageStartedAtMs by rememberSaveable(draft.attemptId, draft.stage) {
+        mutableLongStateOf(SystemClock.elapsedRealtime())
+    }
+    fun activeStageMs(): Long = (SystemClock.elapsedRealtime() - stageStartedAtMs).coerceAtLeast(0L)
     val language = vm.archive.preferences.meaningLanguage.substringBefore('-').takeIf { it == "es" } ?: "en"
     var manualText by rememberSaveable(draft.attemptId) { mutableStateOf("") }
     var manualMeaning by rememberSaveable(draft.attemptId) { mutableStateOf("") }
@@ -311,7 +321,10 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
     var manualMessage by rememberSaveable(draft.attemptId) { mutableStateOf<String?>(null) }
     var savingManualWord by rememberSaveable(draft.attemptId) { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp),
+        // The bottom navigation overlays the list; without this padding the stage
+        // submit and skip buttons stay unreachable on short content.
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 200.dp)) {
         item { TextButton(onClick = onBack) { Text(stringResource(R.string.daily_back)) } }
         item { Text(pkg.topic.title, style = MaterialTheme.typography.headlineSmall) }
         item { Text(stringResource(R.string.daily_saved_on_device), color = AppColors.Secondary,
@@ -378,12 +391,21 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
                     if (showHints) Text(if (language == "es") goal.hints.es else goal.hints.en, color = AppColors.Secondary)
                 }
                 item { TextButton(onClick = onHints) { Text(stringResource(if (showHints) R.string.daily_hide_hint else R.string.daily_show_hint)) } }
-                item { Button(enabled = !busy && !outboxBlocked, onClick = { onEvent(DailyAttemptReducer.completePreparation(draft),
-                    kotlinx.serialization.json.buildJsonObject { put("type", "preparation_completed"); put("activeMs", 0) }) }) {
+                item { Button(enabled = !busy && !outboxBlocked, onClick = {
+                    val goalHelpIds = pkg.goals.map { "hint_${it.id}" }.toSet()
+                    onEvent(DailyAttemptReducer.completePreparation(draft),
+                        kotlinx.serialization.json.buildJsonObject {
+                            put("type", "preparation_completed"); put("activeMs", activeStageMs())
+                            put("helpUsed", kotlinx.serialization.json.buildJsonArray {
+                                DailyAttemptReducer.helpUsedForStage(draft.helpUsed, goalHelpIds)
+                                    .forEach { add(kotlinx.serialization.json.JsonPrimitive(it)) }
+                            })
+                        })
+                }) {
                     Text(stringResource(R.string.daily_continue))
                 } }
                 item { TextButton(enabled = !busy && !outboxBlocked, onClick = { onEvent(DailyAttemptReducer.skip(draft, draft.stage),
-                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice")) }) {
+                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice", activeStageMs())) }) {
                     Text(stringResource(R.string.daily_skip))
                 } }
             }
@@ -394,7 +416,7 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
                     item { DailyListeningPlayer(vm, pkg) {
                         onEvent(
                             DailyAttemptReducer.skip(draft, DailyAttemptStage.LISTENING),
-                            DailyAttemptReducer.stageSkippedEvent(DailyAttemptStage.LISTENING, "local_tts_unavailable"),
+                            DailyAttemptReducer.stageSkippedEvent(DailyAttemptStage.LISTENING, "local_tts_unavailable", activeStageMs()),
                         )
                     } }
                     item { TextButton(onClick = onTranscript) { Text(stringResource(if (showTranscript) R.string.daily_hide_transcript else R.string.daily_show_transcript)) } }
@@ -405,23 +427,15 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
                         onAnswer = { value -> onDraft(DailyAttemptReducer.answer(draft, question.id, value)) })
                 }
                 item { TextButton(onClick = onHints) { Text(stringResource(if (showHints) R.string.daily_hide_hint else R.string.daily_show_hint)) } }
-                item { Button(enabled = !busy && !outboxBlocked, onClick = {
-                    val next = DailyAttemptReducer.submitStage(draft, draft.stage)
-                    val event = kotlinx.serialization.json.buildJsonObject {
-                        put("type", "stage_submitted"); put("stage", if (draft.stage == DailyAttemptStage.LISTENING) "listening" else "practice"); put("activeMs", 0)
-                        put("answers", kotlinx.serialization.json.buildJsonArray {
-                            questions.forEach { q -> add(kotlinx.serialization.json.buildJsonObject {
-                                put("questionId", q.id); draft.answers[q.id]?.let { put("value", it) } ?: put("value", kotlinx.serialization.json.JsonNull)
-                            }) }
-                        })
-                        put("helpUsed", kotlinx.serialization.json.buildJsonArray {
-                            draft.helpUsed.sorted().take(8).forEach { add(kotlinx.serialization.json.JsonPrimitive(it)) }
-                        })
-                    }
-                    onEvent(next, event)
+                item { Button(modifier = Modifier.testTag("daily-submit-stage"), enabled = !busy && !outboxBlocked, onClick = {
+                    val listeningStage = draft.stage == DailyAttemptStage.LISTENING
+                    val stageHelpIds = (questions.map { "hint_${it.id}" } +
+                        if (listeningStage) listOf("transcript") else emptyList()).toSet()
+                    val event = DailyAttemptReducer.stageSubmittedEvent(draft, questions.map { it.id }, draft.stage, stageHelpIds, activeStageMs())
+                    onEvent(DailyAttemptReducer.submitStage(draft, draft.stage), event)
                 }) { Text(stringResource(R.string.daily_submit)) } }
                 item { TextButton(enabled = !busy && !outboxBlocked, onClick = { onEvent(DailyAttemptReducer.skip(draft, draft.stage),
-                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice")) }) {
+                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice", activeStageMs())) }) {
                     Text(stringResource(R.string.daily_skip))
                 } }
             }
@@ -437,7 +451,7 @@ private fun DailyAttemptContent(vm: AppViewModel, pkg: DailyPracticePackage, dra
                     Text(stringResource(R.string.daily_close_speaking))
                 } }
                 item { TextButton(enabled = !busy && !outboxBlocked, onClick = { onEvent(DailyAttemptReducer.skip(draft, draft.stage),
-                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice")) }) {
+                    DailyAttemptReducer.stageSkippedEvent(draft.stage, "learner_choice", activeStageMs())) }) {
                     Text(stringResource(R.string.daily_skip))
                 } }
             }
@@ -536,13 +550,13 @@ private fun DailyListeningPlayer(vm: AppViewModel, pkg: DailyPracticePackage, on
     }
 }
 
-@Composable
+    @Composable
 private fun DailyQuestionCard(question: DailyQuestion, answer: String?, showHint: Boolean, language: String,
     onAnswer: (String?) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(question.prompt, style = MaterialTheme.typography.titleMedium)
         if (question.options.isNotEmpty()) question.options.forEach { option ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+            Row(Modifier.fillMaxWidth().testTag("daily-answer-${question.id}-${option.id}"), horizontalArrangement = Arrangement.Start) {
                 RadioButton(selected = answer == option.id, onClick = { onAnswer(option.id) })
                 Text(option.text, Modifier.padding(top = 12.dp))
             }

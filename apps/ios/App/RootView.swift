@@ -28,7 +28,8 @@ struct RootView: View {
                                    practiseScenario: { scenario in coordinator.chooseScenario(scenario); tab = 0 }) }
             }
             Tab("Learn", systemImage: "graduationcap", value: 2) {
-                shell { CoursesView(coordinator: coordinator) { tab = 0 } }
+                shell { CoursesView(coordinator: coordinator, accountStore: accountStore,
+                                    onThemeChosen: { tab = 0 }, onOpenWords: { tab = 3 }) }
             }
             Tab("Words", systemImage: "book", value: 3) {
                 shell { WordsView(coordinator: coordinator, onOpenLessons: { tab = 2 }, onOpenTalk: { tab = 0 }) }

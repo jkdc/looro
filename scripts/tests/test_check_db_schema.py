@@ -137,8 +137,8 @@ class SchemaTest(unittest.TestCase):
         # fragments_fts itself and its FTS4 external-content shadow tables
         # (_segments/_segdir/_docsize/_stat — external content keeps no
         # _content, and _data would be FTS5-only) are pinned or skipped,
-        # never inventory drift; v6 adds three install-local progress tables.
-        self.assertEqual(20, len(tables))
+        # never inventory drift; v6/v8 add install-local progress and daily state.
+        self.assertEqual(25, len(tables))
         self.assertNotIn('fragments_fts', tables)
         self.assertTrue(check_db_schema.is_internal_table('fragments_fts'))
         for shadow in ('fragments_fts_segments', 'fragments_fts_segdir',

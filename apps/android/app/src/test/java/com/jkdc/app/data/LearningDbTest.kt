@@ -1494,6 +1494,145 @@ class LearningDbTest {
             listOf(owner, "event-1")).single()["delivery_state"])
     }
 
+    @Test fun dailyAttemptIdRemapSupportsAndroidUpdatesWithoutRowCounts() {
+        val owner = "member:daily-remap-no-count"
+        val provisional = "33333333-3333-4333-8333-333333333333"
+        val canonical = "44444444-4444-4444-8444-444444444444"
+        LearnerOwnershipDao.activate(db, owner)
+        val state = com.jkdc.app.core.DailyAttemptReducer.encode(
+            com.jkdc.app.core.DailyAttemptLocalState.start(provisional, "55555555-5555-4555-8555-555555555555"))
+        LearningDbWriter.cacheDailyAttempt(db, owner, provisional, "frozen", state, 0, 10.0)
+
+        LearningDbWriter.remapDailyAttemptId(NoUpdateCountDatabase(db), owner, provisional, canonical, state, 0, 11.0)
+
+        assertEquals(canonical, com.jkdc.app.core.DailyAttemptReducer.decode(
+            db.query("SELECT state_json FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?", listOf(owner, canonical))
+                .single().text("state_json")).attemptId)
+    }
+
+    @Test fun dailyAttemptSnapshotSurvivesClosingAndReopeningTheLocalDatabase() {
+        val owner = "member:daily-reopen"
+        val attemptID = "66666666-6666-4666-8666-666666666666"
+        val packageSnapshot = "frozen-daily-package"
+        val state = com.jkdc.app.core.DailyAttemptReducer.encode(
+            com.jkdc.app.core.DailyAttemptLocalState.start(attemptID, "77777777-7777-4777-8777-777777777777"))
+        val file = File.createTempFile("daily-attempt-reopen", ".db")
+        try {
+            DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}").use { firstConnection ->
+                val first = LearningDb.openJvm(firstConnection)
+                LearnerOwnershipDao.activate(first, owner)
+                LearningDbWriter.cacheDailyAttempt(first, owner, attemptID, packageSnapshot, state, 0, 10.0)
+            }
+            DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}").use { reopenedConnection ->
+                val reopened = JvmSqlDatabase(reopenedConnection)
+                assertEquals(owner, LearnerOwnershipDao.activeIdentity(reopened))
+                val row = reopened.query("SELECT package_snapshot,state_json,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                    listOf(owner, attemptID)).single()
+                assertEquals(packageSnapshot, row.text("package_snapshot"))
+                assertEquals(state, row.text("state_json"))
+                assertEquals(0L, row.long("revision"))
+                assertEquals(attemptID, com.jkdc.app.core.DailyAttemptReducer.decode(row.text("state_json")).attemptId)
+            }
+        } finally { file.delete() }
+    }
+
+    @Test fun dailyOutboxWritesSupportAndroidUpdatesWithoutRowCounts() {
+        val owner = "member:daily-outbox-no-count"
+        LearnerOwnershipDao.activate(db, owner)
+        LearningDbWriter.cacheDailyAttempt(db, owner, "attempt-1", "frozen", "state-0", 0, 10.0)
+        val androidContract = NoUpdateCountDatabase(db)
+
+        assertTrue(LearningDbWriter.enqueueDailyEvent(androidContract, owner, "event-1", "attempt-1",
+            "{\"v\":1}", "hash-1", 0, 0, "state-1", 11.0))
+        LearningDbWriter.markDailyEventState(androidContract, owner, "event-1", "acknowledged")
+
+        assertEquals(1L, db.query("SELECT revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+            listOf(owner, "attempt-1")).single().long("revision"))
+        assertEquals("acknowledged", db.query("SELECT delivery_state FROM daily_outbox WHERE owner_key=? AND event_id=?",
+            listOf(owner, "event-1")).single().text("delivery_state"))
+    }
+
+    @Test fun staleDailyInsertPlanKeepsProgressFromTheTransactionallyCurrentExpression() {
+        val owner = "member:daily-stale-insert"
+        LearnerOwnershipDao.activate(db, owner)
+        val plan = com.jkdc.app.core.planDailyWordsImport(
+            com.jkdc.app.core.DailyWordsReview("review-1", "en", listOf(
+                com.jkdc.app.core.DailyWordCandidate("candidate-1", "word", "garden", "a growing place", "supported")
+            )), owner, "en", emptyList(), emptySet(), emptySet(), 20.0).single()
+        ExpressionsDao.upsert(db, com.jkdc.app.core.ExpressionState("garden", "my meaning", "lookup", bars = 3,
+            attempts = 6, lastSeen = 17.0, dueAt = 19.0, languageID = "en"))
+
+        val result = LearningDbWriter.dailyWordsImported(db, owner, listOf(plan))
+
+        val saved = ExpressionsDao.all(db).single()
+        assertEquals(com.jkdc.app.core.DailyWordsImportSummary(0, 1, 0, 0), result)
+        assertEquals(3, saved.bars)
+        assertEquals(6, saved.attempts)
+        assertEquals(17.0, saved.lastSeen, 0.0)
+        assertEquals(19.0, saved.dueAt, 0.0)
+        assertEquals("my meaning", saved.meaning)
+    }
+
+    @Test fun dailyKeepFillsAnEmptyMeaningAndAdoptsLegacyProgressWithoutReset() {
+        val owner = "member:daily-keep-legacy"
+        LearnerOwnershipDao.activate(db, owner)
+        ExpressionsDao.upsert(db, com.jkdc.app.core.ExpressionState("garden", "", "lookup", bars = 2,
+            attempts = 4, lastSeen = 17.0, dueAt = 19.0, languageID = null))
+        val plan = com.jkdc.app.core.planDailyWordsImport(
+            com.jkdc.app.core.DailyWordsReview("review-2", "en", listOf(
+                com.jkdc.app.core.DailyWordCandidate("candidate-2", "word", "garden", "a growing place", "supported")
+            )), owner, "en", listOf(com.jkdc.app.core.DailyWordExisting("garden", "en", 2, 4, "")),
+            emptySet(), emptySet(), 20.0).single()
+
+        val result = LearningDbWriter.dailyWordsImported(db, owner, listOf(plan))
+
+        val saved = ExpressionsDao.all(db).single()
+        assertEquals(com.jkdc.app.core.DailyWordsImportSummary(0, 1, 0, 0), result)
+        assertEquals("en", saved.languageID)
+        assertEquals("a growing place", saved.meaning)
+        assertEquals(2, saved.bars)
+        assertEquals(4, saved.attempts)
+        assertEquals(17.0, saved.lastSeen, 0.0)
+        assertEquals(19.0, saved.dueAt, 0.0)
+    }
+
+    @Test fun dailyKeepPrefersExactLanguageRowOverAnEarlierLegacyDuplicate() {
+        val owner = "member:daily-exact-over-legacy"
+        LearnerOwnershipDao.activate(db, owner)
+        ExpressionsDao.upsert(db, com.jkdc.app.core.ExpressionState("garden", "legacy meaning", "lookup",
+            bars = 1, attempts = 2, lastSeen = 11.0, dueAt = 13.0, languageID = null))
+        db.insert("expressions", mapOf("norm_key" to "garden", "language_id" to "en", "text" to "garden",
+            "meaning" to "English meaning", "source" to "lookup", "bars" to 3, "attempts" to 7,
+            "last_seen" to 17.0, "due_at" to 19.0, "lesson_id" to null, "owner_key" to owner))
+        val plan = com.jkdc.app.core.planDailyWordsImport(
+            com.jkdc.app.core.DailyWordsReview("review-duplicate", "en", listOf(
+                com.jkdc.app.core.DailyWordCandidate("candidate-duplicate", "word", "garden", "new meaning", "supported")
+            )), owner, "en", listOf(com.jkdc.app.core.DailyWordExisting("garden", "en", 3, 7, "English meaning")),
+            emptySet(), emptySet(), 20.0).single()
+
+        LearningDbWriter.dailyWordsImported(db, owner, listOf(plan))
+
+        val rows = db.query("SELECT language_id,meaning,bars,attempts,last_seen,due_at FROM expressions ORDER BY rowid")
+        assertEquals(2, rows.size)
+        assertEquals("legacy meaning", rows[0].text("meaning"))
+        assertEquals(1, rows[0].int("bars"))
+        assertEquals("en", rows[1].text("language_id"))
+        assertEquals("English meaning", rows[1].text("meaning"))
+        assertEquals(3, rows[1].int("bars"))
+        assertEquals(7, rows[1].int("attempts"))
+        assertEquals(17.0, rows[1].real("last_seen"), 0.0)
+        assertEquals(19.0, rows[1].real("due_at"), 0.0)
+    }
+
+    @Test fun dailyImportDefaultDueDateUsesAppleReferenceEpoch() {
+        val plans = com.jkdc.app.core.planDailyWordsImport(
+            com.jkdc.app.core.DailyWordsReview("review-epoch", "en", listOf(
+                com.jkdc.app.core.DailyWordCandidate("candidate-epoch", "word", "garden", "a growing place", "supported")
+            )), "member:daily-epoch", "en", emptyList(), emptySet(), emptySet())
+
+        assertTrue(plans.single().now < 1_000_000_000.0)
+    }
+
     private class NoUpdateCountDatabase(private val delegate: SqlDatabase) : SqlDatabase {
         override fun exec(statement: String) = delegate.exec(statement)
         override fun insert(table: String, row: Map<String, Any?>, strategy: ConflictStrategy) =

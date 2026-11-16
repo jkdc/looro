@@ -4,6 +4,13 @@ import Security
 import Observation
 import LearningCore
 
+struct DailyWordsImportSummary: Equatable {
+    let imported: Int
+    let existing: Int
+    let suppressed: Int
+    let pendingCapacity: Int
+}
+
 @Model final class StoredArchive {
     @Attribute(.unique) var key: String
     var payload: Data
@@ -695,6 +702,200 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         }
         return true
     }
+
+    var dailyPracticeOwnerKey: String? {
+        guard isLearnerReady, !dbStore.jsonMode else { return nil }
+        return activeLearnerIdentity
+    }
+
+    func cacheDailyPracticeDraft(_ draft: DailyPracticeDraft) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode,
+              draft.owner == activeLearnerIdentity, draft.restoreGeneration == dataGeneration else { return false }
+        do {
+            try LearningDbWriter.cacheDailyAttempt(dbStore.db, owner: activeLearnerIdentity, draft: draft)
+            error = nil
+            return true
+        } catch {
+            self.error = String(localized: "Palique couldn’t save your progress. Please try again.")
+            return false
+        }
+    }
+
+    func cachedDailyPracticeDrafts() -> [DailyPracticeDraft] {
+        guard isLearnerReady, !dbStore.jsonMode else { return [] }
+        return (try? LearningDbWriter.cachedDailyAttempts(dbStore.db, owner: activeLearnerIdentity)) ?? []
+    }
+
+    func adoptDailyPracticeAttempt(_ provisional: DailyPracticeDraft, as adopted: DailyPracticeDraft) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode, provisional.owner == activeLearnerIdentity,
+              adopted.owner == activeLearnerIdentity, provisional.restoreGeneration == dataGeneration,
+              adopted.restoreGeneration == dataGeneration else { return false }
+        do {
+            try LearningDbWriter.adoptDailyAttempt(dbStore.db, owner: activeLearnerIdentity,
+                provisional: provisional, adopted: adopted)
+            return true
+        } catch { return false }
+    }
+
+    func enqueueDailyPracticeEvent(_ draft: DailyPracticeDraft, envelope: Data) -> String? {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.remoteConfirmed,
+              draft.restoreGeneration == dataGeneration,
+              let payload = try? JSONSerialization.jsonObject(with: envelope) as? [String: Any],
+              payload["expectedRevision"] as? Int == draft.serverRevision,
+              cacheDailyPracticeDraft(draft) else { return nil }
+        do {
+            return try LearningDbWriter.enqueueDailyEvent(dbStore.db, owner: activeLearnerIdentity,
+                attemptID: draft.attemptID, envelope: envelope)
+        } catch {
+            self.error = String(localized: "Palique couldn’t save your progress. Please try again.")
+            return nil
+        }
+    }
+
+    func pendingDailyPracticeEvents(_ draft: DailyPracticeDraft) -> [Data] {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration,
+              let rows = try? LearningDbWriter.pendingDailyEvents(dbStore.db, owner: activeLearnerIdentity,
+                                                                 attemptID: draft.attemptID) else { return [] }
+        return rows.compactMap { ($0["intent_json"] as? String)?.data(using: .utf8) }
+    }
+
+    func dailyPracticeHasRevisionConflict(_ draft: DailyPracticeDraft) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration else { return false }
+        return (try? LearningDbWriter.dailyAttemptHasConflict(dbStore.db, owner: activeLearnerIdentity,
+                                                               attemptID: draft.attemptID)) ?? false
+    }
+
+    func markDailyPracticeEvent(_ draft: DailyPracticeDraft, eventID: String, state: String) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration else { return false }
+        do {
+            try LearningDbWriter.markDailyEvent(dbStore.db, owner: activeLearnerIdentity, eventID: eventID, state: state)
+            return true
+        } catch { return false }
+    }
+
+    func rebaseDailyPracticeEvent(_ original: DailyPracticeDraft, eventID: String,
+                                  acceptedDraft: DailyPracticeDraft) -> Data? {
+        guard isLearnerReady, !dbStore.jsonMode, original.owner == activeLearnerIdentity,
+              acceptedDraft.owner == activeLearnerIdentity,
+              original.restoreGeneration == dataGeneration, acceptedDraft.restoreGeneration == dataGeneration,
+              original.attemptID == acceptedDraft.attemptID,
+              acceptedDraft.serverRevision > original.serverRevision else { return nil }
+        return try? LearningDbWriter.rebaseDailyEvent(dbStore.db, owner: activeLearnerIdentity,
+            eventID: eventID, attemptID: original.attemptID, from: original.serverRevision,
+            acceptedDraft: acceptedDraft)
+    }
+
+    func acknowledgeDailyPracticeEvent(_ original: DailyPracticeDraft, eventID: String,
+                                      acceptedDraft: DailyPracticeDraft, acceptedResponse: Data,
+                                      now: Double = Date.now.timeIntervalSinceReferenceDate) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode, original.owner == activeLearnerIdentity,
+              acceptedDraft.owner == activeLearnerIdentity,
+              original.restoreGeneration == dataGeneration, acceptedDraft.restoreGeneration == dataGeneration,
+              original.attemptID == acceptedDraft.attemptID,
+              acceptedDraft.serverRevision >= original.serverRevision else { return false }
+        do {
+            try LearningDbWriter.acknowledgeDailyEvent(dbStore.db, owner: activeLearnerIdentity,
+                eventID: eventID, draft: acceptedDraft, expectedRevision: original.serverRevision,
+                acceptedResponse: acceptedResponse, now: now)
+            return true
+        } catch { return false }
+    }
+
+    func cacheDailyReview(_ review: DailyReviewResult, for draft: DailyPracticeDraft) -> Bool {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration, review.attemptId == draft.attemptID,
+              review.inputHash == draft.inputHash else { return false }
+        do {
+            try LearningDbWriter.cacheDailyReview(dbStore.db, owner: activeLearnerIdentity,
+                draft: draft, review: review)
+            return true
+        } catch { return false }
+    }
+
+    func cachedDailyReview(for draft: DailyPracticeDraft) -> DailyReviewResult? {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration else { return nil }
+        return try? LearningDbWriter.cachedDailyReview(dbStore.db, owner: activeLearnerIdentity,
+                                                       attemptID: draft.attemptID)
+    }
+
+    func importDailyReview(_ review: DailyReviewResult, for draft: DailyPracticeDraft) -> DailyWordsImportSummary? {
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration, review.attemptId == draft.attemptID,
+              review.inputHash == draft.inputHash, review.language == draft.package.language else { return nil }
+        do {
+            let language = review.language
+            let existing = (archive.expressions ?? []).map { row in
+                DailyWordExisting(text: row.text, languageID: row.languageID ?? language,
+                    bars: row.bars, attempts: row.attempts, meaning: row.meaning)
+            }
+            let receiptRows = try dbStore.db.query("SELECT origin_key FROM daily_word_imports WHERE owner_key = ? AND language_id = ? AND action IN ('imported','existing','suppressed')",
+                                                   [activeLearnerIdentity, language])
+            let receipts = Set(receiptRows.compactMap { $0["origin_key"] as? String })
+            let suppressionRows = try dbStore.db.query("SELECT norm_key FROM daily_word_suppressions WHERE owner_key = ? AND language_id = ?",
+                                                       [activeLearnerIdentity, language])
+            let suppressions = Set(suppressionRows.compactMap { $0["norm_key"] as? String }.map { "\(language):\($0)" })
+            let plans = planDailyWordsImport(result: review.importCandidates(), owner: activeLearnerIdentity,
+                language: language, existing: existing, receipts: receipts, suppressions: suppressions,
+                now: Date.now.timeIntervalSinceReferenceDate)
+            let actions = try LearningDbWriter.dailyWordsImported(dbStore.db, owner: activeLearnerIdentity, plans: plans)
+            archive = try loadArchive(dbStore)
+            return DailyWordsImportSummary(imported: actions.values.filter { $0 == "imported" }.count,
+                existing: actions.values.filter { $0 == "existing" }.count,
+                suppressed: actions.values.filter { $0 == "suppressed" }.count,
+                pendingCapacity: actions.values.filter { $0 == "pending_capacity" }.count)
+        } catch {
+            self.error = String(localized: "Palique couldn’t save your progress. Please try again.")
+            return nil
+        }
+    }
+
+    func saveDailyWordMark(_ draft: DailyPracticeDraft, markID: String, text: String, meaning: String,
+                           kind: String) -> DailyWordsImportSummary? {
+        let cleanedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanedMeaning = meaning.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard isLearnerReady, !dbStore.jsonMode, draft.owner == activeLearnerIdentity,
+              draft.restoreGeneration == dataGeneration, draft.package.language == archive.preferences.learningLanguageID,
+              UUID(uuidString: markID) != nil, !cleanedText.isEmpty, cleanedText.count <= 120,
+              !cleanedMeaning.isEmpty, cleanedMeaning.count <= 300, ["word", "expression"].contains(kind) else { return nil }
+        do {
+            let language = draft.package.language
+            let existing = (archive.expressions ?? []).map { row in
+                DailyWordExisting(text: row.text, languageID: row.languageID ?? language,
+                    bars: row.bars, attempts: row.attempts, meaning: row.meaning)
+            }
+            let receiptRows = try dbStore.db.query("SELECT origin_key FROM daily_word_imports WHERE owner_key = ? AND language_id = ? AND action IN ('imported','existing','suppressed')",
+                                                   [activeLearnerIdentity, language])
+            let receipts = Set(receiptRows.compactMap { $0["origin_key"] as? String })
+            let suppressionRows = try dbStore.db.query("SELECT norm_key FROM daily_word_suppressions WHERE owner_key = ? AND language_id = ?",
+                                                       [activeLearnerIdentity, language])
+            var suppressions = Set(suppressionRows.compactMap { $0["norm_key"] as? String }.map { "\(language):\($0)" })
+            let normKey = RecallEngine.normalizeKey(cleanedText)
+            let explicitKey = "\(language):\(normKey)"
+            suppressions.remove(explicitKey)
+            let candidate = DailyWordCandidate(candidateID: markID, kind: kind, text: cleanedText,
+                meaning: cleanedMeaning, confidence: "supported", origin: "learner_mark")
+            let manual = DailyWordsReview(reviewID: draft.attemptID, languageID: language, candidates: [candidate])
+            let plans = planDailyWordsImport(result: manual, owner: activeLearnerIdentity, language: language,
+                existing: existing, receipts: receipts, suppressions: suppressions,
+                now: Date.now.timeIntervalSinceReferenceDate)
+            let actions = try LearningDbWriter.dailyWordsImported(dbStore.db, owner: activeLearnerIdentity,
+                plans: plans, clearSuppressions: [explicitKey])
+            archive = try loadArchive(dbStore)
+            return DailyWordsImportSummary(imported: actions.values.filter { $0 == "imported" }.count,
+                existing: actions.values.filter { $0 == "existing" }.count,
+                suppressed: actions.values.filter { $0 == "suppressed" }.count,
+                pendingCapacity: actions.values.filter { $0 == "pending_capacity" }.count)
+        } catch {
+            self.error = String(localized: "Palique couldn’t save your progress. Please try again.")
+            return nil
+        }
+    }
+
     /// Grades a typed recall attempt on the RecallEngine ladder, then persists.
     func gradeRecall(text: String, correct: Bool) {
         guard admitLocalMutation() else { return }

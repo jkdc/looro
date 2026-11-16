@@ -6,6 +6,7 @@ import com.jkdc.app.core.CompletionMark
 import com.jkdc.app.core.ExpressionState
 import com.jkdc.app.core.LessonState
 import com.jkdc.app.core.Preferences
+import com.jkdc.app.core.RecallEngine
 import com.jkdc.app.core.SessionRecord
 import com.jkdc.app.core.SkillError
 
@@ -168,9 +169,14 @@ object LearningDbWriter {
                 listOf(owner, provisionalID)).isEmpty()) { "daily_attempt_already_has_events" }
             check(tx.query("SELECT 1 AS found FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=? LIMIT 1",
                 listOf(owner, canonicalID)).isEmpty()) { "daily_attempt_canonical_id_conflict" }
-            val changed = tx.update("UPDATE daily_attempt_cache SET attempt_id=?,state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=?",
+            tx.update("UPDATE daily_attempt_cache SET attempt_id=?,state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=?",
                 listOf(canonicalID, DailyAttemptReducer.encode(remappedState), revision, updatedAt, owner, provisionalID))
-            check(changed == 1L && existing["package_snapshot"] != null) { "daily_attempt_remap_failed" }
+            val saved = tx.query("SELECT package_snapshot,state_json,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, canonicalID)).singleOrNull()
+            check(saved != null && saved["package_snapshot"] == existing["package_snapshot"] &&
+                saved["state_json"] == DailyAttemptReducer.encode(remappedState) && saved["revision"] == revision) {
+                "daily_attempt_remap_failed"
+            }
         }
     }
 
@@ -199,9 +205,13 @@ object LearningDbWriter {
             tx.insert("daily_outbox", mapOf("owner_key" to owner, "event_id" to eventID, "attempt_id" to attemptID,
                 "intent_json" to intentJSON, "intent_hash" to intentHash, "expected_revision" to expectedRevision,
                 "sequence" to sequence, "delivery_state" to "pending", "created_at" to createdAt))
-            val changed = tx.update("UPDATE daily_attempt_cache SET state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=? AND revision=?",
+            tx.update("UPDATE daily_attempt_cache SET state_json=?,revision=?,updated_at=? WHERE owner_key=? AND attempt_id=? AND revision=?",
                 listOf(nextStateJSON, expectedRevision + 1, createdAt, owner, attemptID, expectedRevision))
-            check(changed == 1L) { "daily_attempt_revision_conflict" }
+            val saved = tx.query("SELECT state_json,revision FROM daily_attempt_cache WHERE owner_key=? AND attempt_id=?",
+                listOf(owner, attemptID)).singleOrNull()
+            check(saved != null && saved["revision"] == expectedRevision + 1 && saved["state_json"] == nextStateJSON) {
+                "daily_attempt_revision_conflict"
+            }
             true
         }
     }
@@ -211,9 +221,10 @@ object LearningDbWriter {
         require(state in setOf("pending", "sending", "outcome_unknown", "revision_conflict", "rejected", "acknowledged"))
         db.transaction { tx ->
             check(LearnerOwnershipDao.activeIdentity(tx) == owner) { "daily_attempt_owner_changed" }
-            val changed = tx.update("UPDATE daily_outbox SET delivery_state=? WHERE owner_key=? AND event_id=?",
+            tx.update("UPDATE daily_outbox SET delivery_state=? WHERE owner_key=? AND event_id=?",
                 listOf(state, owner, eventID))
-            check(changed == 1L) { "daily_event_not_found" }
+            check(tx.query("SELECT 1 AS found FROM daily_outbox WHERE owner_key=? AND event_id=? AND delivery_state=?",
+                listOf(owner, eventID, state)).isNotEmpty()) { "daily_event_not_found" }
         }
     }
 
@@ -250,15 +261,37 @@ object LearningDbWriter {
             var inserted = 0; var existing = 0; var suppressed = 0; var pendingCapacity = 0
             for (plan in plans) {
                 require(plan.owner == owner)
+                val wasCleared = (plan.languageID to plan.normKey) in clearSuppressions
+                val suppressionExists = !wasCleared && tx.query(
+                    "SELECT 1 AS found FROM daily_word_suppressions WHERE owner_key=? AND language_id=? AND norm_key=?",
+                    listOf(owner, plan.languageID, plan.normKey)).isNotEmpty()
+                val receiptExists = tx.query("SELECT 1 AS found FROM daily_word_imports WHERE owner_key=? AND origin_key=? AND action IN ('imported','existing','suppressed')",
+                    listOf(owner, plan.originKey)).isNotEmpty()
+                val expressions = ExpressionsDao.all(tx)
+                val current = expressions.firstOrNull {
+                    RecallEngine.normalizeKey(it.text) == plan.normKey && it.languageID == plan.languageID
+                } ?: expressions.firstOrNull {
+                    RecallEngine.normalizeKey(it.text) == plan.normKey && it.languageID == null
+                }
                 var action = when (plan.action) {
                     com.jkdc.app.core.DailyWordImportAction.INSERT -> "imported"
                     com.jkdc.app.core.DailyWordImportAction.KEEP -> "existing"
                     com.jkdc.app.core.DailyWordImportAction.SUPPRESS -> "suppressed"
                     com.jkdc.app.core.DailyWordImportAction.PENDING_CAPACITY -> "pending_capacity"
                 }
-                if (plan.action == com.jkdc.app.core.DailyWordImportAction.INSERT) {
+                if (suppressionExists && !wasCleared) action = "suppressed"
+                else if (current != null || receiptExists || plan.action == com.jkdc.app.core.DailyWordImportAction.KEEP) {
+                    if (current != null && (current.meaning.isBlank() || current.languageID == null)) {
+                        val updated = current.copy(
+                            meaning = current.meaning.takeIf(String::isNotBlank) ?: plan.meaning,
+                            languageID = plan.languageID,
+                        )
+                        if (!ExpressionsDao.upsert(tx, updated, adoptLegacy = true)) action = "pending_capacity"
+                    }
+                    if (action != "pending_capacity") action = "existing"
+                } else if (plan.action == com.jkdc.app.core.DailyWordImportAction.INSERT) {
                     val saved = ExpressionsDao.upsert(tx, ExpressionState(text = plan.text, meaning = plan.meaning,
-                        source = "lookup", dueAt = plan.now, languageID = plan.languageID), adoptLegacy = false)
+                        source = "lookup", dueAt = plan.now, languageID = plan.languageID), adoptLegacy = true)
                     if (!saved) action = "pending_capacity"
                 }
                 when (action) {

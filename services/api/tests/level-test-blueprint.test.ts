@@ -276,8 +276,10 @@ test('English CEFR forms and candidate pools follow separate report pilot target
 test('English section generation derives candidate count while the form retains its own shape', () => {
   const blueprint = resolveExamBlueprint('en', 'A1')!;
 
-  assert.deepEqual(sectionGenerationSpec('recognition', blueprint), { count: 24, perPassage: 0 });
-  assert.deepEqual(sectionGenerationSpec('reading', blueprint), { count: 6, perPassage: 3 });
+  // The ask carries generation headroom over the pool target (24+4, 6+1);
+  // the validator still requires the full pool target.
+  assert.deepEqual(sectionGenerationSpec('recognition', blueprint), { count: 28, perPassage: 0 });
+  assert.deepEqual(sectionGenerationSpec('reading', blueprint), { count: 7, perPassage: 3 });
   assert.equal(blueprint.examShape.recognition, 12);
   assert.equal(blueprint.examShape.readingPassages, 3);
 });

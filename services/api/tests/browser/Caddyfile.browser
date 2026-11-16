@@ -9,6 +9,12 @@ http://127.0.0.1 {
 			header_up X-App-Proxy-Token {$ADMIN_PROXY_TOKEN}
 		}
 	}
+	handle /v1/daily-practice/* {
+		reverse_proxy api:8080 {
+			header_up X-App-Client-IP {remote_host}
+			header_up X-App-Proxy-Token {$ADMIN_PROXY_TOKEN}
+		}
+	}
 	handle {
 		root * /srv/admin-ui
 		@html path *.html

@@ -43,7 +43,7 @@ public enum LearningDatabaseError: Error, Equatable, CustomStringConvertible {
  */
 public enum LearningDatabase {
     /// Bump only together with a migration; shared/db/schema.sql pins the shape.
-    public static let version = 7
+    public static let version = 9
     public static let name = "learning.db"
 
     /// The ordered migration steps (see the KDoc). The v1 slice is cut at the

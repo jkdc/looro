@@ -1,9 +1,10 @@
 # Tareas de implementación — daily-practice
 
-**Estado: ninguna tarea de producto iniciada.** Este backlog acompaña al diseño
-para su revisión; no autoriza ejecución. Tras aprobar el diseño escrito, usar
-Superpowers `writing-plans` para desarrollar el plan de ejecución y su método de
-trabajo. No usar ODD/RDD, cambiar de rama ni crear worktrees por defecto.
+**Estado: implementación en curso en `feat/daily-practice`; tareas abiertas y
+verificación incompleta.** El usuario aprobó continuar con la implementación en
+esta rama. El plan ejecutable y la evidencia incremental están en
+`docs/superpowers/plans/2026-11-07-daily-practice.md` y
+`.superpowers/sdd/2026-11-07-daily-practice/progress.md`.
 
 ## Reglas de ejecución
 
@@ -13,7 +14,7 @@ trabajo. No usar ODD/RDD, cambiar de rama ni crear worktrees por defecto.
 - Cada regla nueva tiene prueba determinista RED observada por motivo correcto,
   mínima corrección GREEN y refactor con pruebas verdes. Los defaults históricos
   de `openspec/config.yaml` no anulan la política test-first de AGENTS.md.
-- Pruebas con clock, proveedor, TTS y red inyectados; ninguna llamada real sin
+- Pruebas con clock, proveedor de texto y red inyectados; ninguna llamada real sin
   autorización específica. Integración SQL en PostgreSQL efímero, no omitirla
   porque necesita BD.
 - Una tarea no se cierra por suite verde sin prueba del flujo nuevo. Registrar
@@ -28,7 +29,7 @@ trabajo. No usar ODD/RDD, cambiar de rama ni crear worktrees por defecto.
 |---|---|---|
 | T1 | U1,U6,U7,U8,U10,U11 | Contratos/perfil común y fixtures |
 | T2 | U1,U2,U4,U6 | Persistencia, jobs, reservas y ownership |
-| T3 | U1,U6,U7,U8,U10 | Generación/juez/TTS/publicación |
+| T3 | U1,U6,U7,U8,U10 | Generación/juez/publicación; TTS local en apps |
 | T4 | U1,U4,U5,U6,U11 | Intentos, eventos y recuperación |
 | T5 | U1,U5,U8,U11 | Speaking hospedado ligado al paquete |
 | T6 | U2,U3,U5,U11 | Revisión durable y verificable |
@@ -61,7 +62,8 @@ errores cerrados o DTO validados; no hacen IO ni consultan un alumno.
 - [ ] Definir fixture completa de un día, 5 expresiones, 3 preguntas de listening,
   3 metas y 4 ejercicios. Fixture didáctica no significa contenido publicado.
 - [ ] Validar tamaños UTF-8, codepoints, duraciones y normalización del perfil;
-  `supported_language_without_profile` rechaza sin fallback.
+  `supported_language_without_profile` rechaza sin fallback. Validar que el
+  paquete expone el `speechLocale` BCP-47 fijado por el perfil.
 - [ ] GREEN y paridad de fixture en Kotlin/Swift; ejecutar `make check` después de
   extender los checkers necesarios, sin editar código generado manualmente.
 
@@ -77,8 +79,12 @@ durable o `daily_budget_unavailable`; `claimDailyJob` devuelve lease o nada.
   `zero_budget_disables_dispatch`, `job_reclaim_before_send_is_safe`,
   `expired_sending_lease_becomes_unknown`, `two_replicas_claim_only_one_job`.
 - [ ] Crear constraints/FKs de data-and-sync.md y reloj inyectado.
-- [ ] Registrar operación antes de envío, resultado y coste atomizados; evidencia
-  desconocida conserva exposición. `shutdown_does_not_resend_provider_operation`.
+- [ ] Registrar operación antes del envío, resultado y uso de tokens como en
+  exámenes; la exposición desconocida no se reenvía automáticamente. Revisar más
+  adelante tarifas y liquidación monetaria por proveedor/modelo antes de habilitar
+  límites de gasto propios. Persistir checkpoints `complete|partial|unknown` y
+  conteos sin prompts, respuestas ni datos personales; no usar tokens para cuotas,
+  acceso ni disponibilidad. `shutdown_does_not_resend_provider_operation`.
 - [ ] Probar rollback real tras fallo de commit y reinicio simulado, no solo mocks.
 - [ ] GREEN con PostgreSQL aislado; métricas de jobs con labels cerrados.
 
@@ -91,13 +97,11 @@ operaciones editoriales), nuevos tests `daily-generation.test.ts`,
 packageVersionId,artifactHash,expectedRevision)` publica el binding validado.
 
 - [ ] RED: `judge_failure_cannot_publish`, `uncertain_language_cannot_publish`,
-  `edited_key_invalidates_judge`, `changed_audio_invalidates_final_hash`,
-  `audio_checksum_or_script_mismatch_blocks_publication`.
-- [ ] Generador, juez en invocación distinta, TTS y control de audio usando
-  adaptadores inyectados. Congelar las configuraciones antes de enviar.
+  `edited_key_invalidates_judge`, `speech_locale_must_match_profile`, and malformed/missing/duplicate private question-key bindings.
+- [ ] Generador y juez en invocación distinta usando adaptadores inyectados. El juez debe aportar evidencia pass/fail/uncertain completa y no contradictoria para cada ID namespaced; evidencia incompleta o incierta nunca permite `ready`. Congelar las configuraciones antes de enviar; sintetizar listening localmente
+  en cada app, sin proveedor TTS ni artefacto de audio servidor.
 - [ ] RED: `startup_ensures_today_and_tomorrow_once`, `utc_boundary_is_shared`,
-  `unknown_job_does_not_auto_retry`, `published_consumed_slot_cannot_be_replaced`,
-  `public_audio_never_accepts_provider_supplied_url`.
+  `unknown_job_does_not_auto_retry`, `published_consumed_slot_cannot_be_replaced`.
 - [ ] Servir endpoints públicos sin claves privadas; cache/ETag/retirada según
   contrato, tests de header y de admisión existentes sin regresión.
 - [ ] GREEN: no cambiar comportamiento de los schedulers/generación de exámenes.
@@ -120,7 +124,8 @@ principal es el account autenticado, no un accountId que mande el body.
   `late_stage_cannot_overwrite_submitted_answers`.
 - [ ] RED: `confirmed_conflict_rebases_same_intent_after_independent_word_mark`,
   `unknown_outcome_never_rebases`, `already_submitted_stage_keeps_local_draft_only`,
-  `skipping_practice_seals_accepted_speaking_without_losing_fragments`.
+  `skipping_practice_seals_accepted_speaking_without_losing_fragments`,
+  `local_tts_unavailable_skip_is_partial_and_resumable`.
 - [ ] Persistir etapas, ayudas, fragmentos y aportes manuales, CAS y cierre
   inmutable con job; `empty_attempt_has_partial_result_without_llm`.
 - [ ] Caducidad/retirada/cambio de día y recuperación de outbox sin nuevos IDs.
@@ -228,6 +233,10 @@ estilos solo cuando necesarios, `services/api/tests/admin-daily-practice.test.ts
   runId, aborto al navegar, error HTTP persistente, replay tras timeout.
 - [ ] RED API: auth/Origin/auditoría, hash no aprobado, retirada, budget inválido,
   reconciliación sin evidencia rechazada, tablas privadas excluidas de browser.
+- [ ] Proyectar al panel el historial operativo por fase y checkpoints de tokens;
+  nunca mostrar prompts/respuestas ni derivar un importe monetario. La consulta
+  de ejecuciones debe conservar cada fase (`generate`, `judge`, `review`, etc.);
+  el panel muestra únicamente estado y conteos `tokensIn`/`tokensOut`.
 - [ ] RED E2E real: login→configurar→generar stub→watch propio→preview→publicar→
   comprobar paquete público→retirar. Añadir respuestas tardías, error y reintento
   visibles, foco y aviso persistente. No sustituir UI real con prueba unitaria.
@@ -249,7 +258,7 @@ estilos solo cuando necesarios, `services/api/tests/admin-daily-practice.test.ts
   impide cerrar la entrega. Revisiones independientes de cambios de alto riesgo
   deben inspeccionar auth, costes, concurrencia y formato local.
 - [ ] Solo con autorización aparte: proveedores reales y prueba de calidad de
-  audio/revisión. Después, piloto de tiempos/accesibilidad de pedagogy.md.
+  síntesis local/revisión. Después, piloto de tiempos/accesibilidad de pedagogy.md.
 - [ ] Documentar gasto medido, límites, flags y rollback; pedir autorización de
   despliegue/activación. Mantener idiomas distintos de en desactivados.
 

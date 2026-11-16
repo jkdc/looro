@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
+import { buildDailyVoiceInstructions, canStartDailySpeaking, dailySpeechHistory, type DailySpeakingPackage } from './daily-voice.js';
 import { appendEntry, lockWallet, lockPaidWallet, reservePaidInTransaction, settlePaidInTransaction } from './ledger.js';
 import { ServiceError } from './errors.js';
 import { VoiceMeter } from './meter.js';
@@ -93,20 +94,49 @@ export class HostedVoice {
       this.leaderError=undefined;leader.release(); throw error;
     }
   }
-  async create(account: string, key: string, sdp: string, language: string, context?: unknown, requestedMilliseconds?: number) {
+  async create(account: string, key: string, sdp: string, language: string, context?: unknown, requestedMilliseconds?: number,
+    dailyAttemptId?: string) {
     if (!this.allows(account)) throw new ServiceError('hosted_voice_not_ready', 503);
     if (!key || key.length < 8 || key.length > 128 || !supportsLanguage(language) || !sdp.startsWith('v=0') || Buffer.byteLength(sdp) > 65_536)
       throw new ServiceError('invalid_live_offer');
-    const teachingContext = parseLiveContext(context);
+    if(dailyAttemptId!==undefined&&!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(dailyAttemptId))
+      throw new ServiceError('invalid_daily_attempt');
+    let dailyInstructions:string|undefined,dailyHistory:ReturnType<typeof dailySpeechHistory>=[];
+    if(dailyAttemptId){
+      const daily=(await this.db.query<{state:string;stage_state:unknown;public_payload:DailySpeakingPackage;withdrawn_at:Date|null}>(`SELECT a.state,a.stage_state,p.public_payload,d.withdrawn_at
+        FROM daily_attempts a JOIN daily_packages p ON p.id=a.package_id JOIN daily_publications d ON d.package_id=a.package_id AND d.language=a.language AND d.editorial_date=a.editorial_date WHERE a.account_id=$1 AND a.id=$2`,[account,dailyAttemptId])).rows[0];
+      if(!daily)throw new ServiceError('not_found',404);
+      if(daily.state!=='in_progress'||!canStartDailySpeaking(daily.stage_state))throw new ServiceError('daily_voice_stage_unavailable',409);
+      if(daily.withdrawn_at)throw new ServiceError('daily_content_withdrawn',410);
+      if(daily.public_payload.language!==language)throw new ServiceError('daily_voice_language_mismatch',409);
+      dailyInstructions=buildDailyVoiceInstructions(daily.public_payload);
+      const segments=(await this.db.query<{id:string;sequence:number}>('SELECT id,sequence FROM daily_voice_segments WHERE attempt_id=$1 ORDER BY sequence',[dailyAttemptId])).rows;
+      dailyHistory=dailySpeechHistory(daily.stage_state,new Map(segments.map(segment=>[segment.id,Number(segment.sequence)])));
+    }
+    const teachingContext = dailyAttemptId?parseLiveContext({instructions:dailyInstructions,history:dailyHistory}):parseLiveContext(context);
     if (requestedMilliseconds!==undefined && (!Number.isSafeInteger(requestedMilliseconds) || requestedMilliseconds<60_000 || requestedMilliseconds>3_600_000))
       throw new ServiceError('invalid_session_duration');
     const id = randomUUID(), reservation = randomUUID();
     let minutes = this.config.billingUnit === 'milliseconds', paid=false;
     let reservedMilliseconds = TRIAL_MS;
+    const dailyVoiceSegmentId=dailyAttemptId?randomUUID():undefined;
+    let dailyVoiceSequence:number|undefined;
     let paidReserve=this.paidHold(15_000);
     let deadline = new Date(this.now() + reservedMilliseconds);
     await transaction(this.db, async sql => {
       await sql.query("SELECT pg_advisory_xact_lock(hashtext('app-hosted-funding-cap'))");
+      if(dailyAttemptId){
+        const daily=(await sql.query<{state:string;stage_state:unknown;public_payload:DailySpeakingPackage;withdrawn_at:Date|null}>(`SELECT a.state,a.stage_state,p.public_payload,d.withdrawn_at
+          FROM daily_attempts a JOIN daily_packages p ON p.id=a.package_id JOIN daily_publications d ON d.package_id=a.package_id AND d.language=a.language AND d.editorial_date=a.editorial_date WHERE a.account_id=$1 AND a.id=$2 FOR UPDATE OF a,d`,
+        [account,dailyAttemptId])).rows[0];
+        if(!daily)throw new ServiceError('not_found',404);
+        if(daily.state!=='in_progress'||!canStartDailySpeaking(daily.stage_state)||daily.public_payload.language!==language||daily.withdrawn_at)
+          throw new ServiceError('daily_voice_stage_unavailable',409);
+        if((await sql.query("SELECT 1 FROM daily_voice_segments WHERE attempt_id=$1 AND state='active'",[dailyAttemptId])).rowCount)
+          throw new ServiceError('daily_voice_active',409);
+        const next=(await sql.query<{sequence:number}>(`SELECT COALESCE(MAX(sequence),-1)+1 AS sequence FROM daily_voice_segments WHERE attempt_id=$1`,[dailyAttemptId])).rows[0];
+        dailyVoiceSequence=Number(next?.sequence??0);
+      }
       const minuteWallet = minutes ? await lockMinuteWallet(sql, account) : undefined;
       let wallet = minuteWallet ?? await lockWallet(sql, account, true);
       if((await sql.query('SELECT 1 FROM minute_guest_link_intents WHERE guest_account_id=$1',[account])).rowCount)
@@ -160,6 +190,9 @@ export class HostedVoice {
         await sql.query(`INSERT INTO hosted_sessions(id,account_id,idempotency_key,reservation_id,rate_version,state,deadline,funding_exposure_nano)
           VALUES($1,$2,$3,$4,$5,'creating',$6,$7)`, [id, account, key, reservation, RATE_VERSION, deadline, HOLD.toString()]);
       }
+      if(dailyAttemptId&&dailyVoiceSegmentId&&dailyVoiceSequence!==undefined)
+        await sql.query(`INSERT INTO daily_voice_segments(id,attempt_id,hosted_session_id,sequence,state)
+          VALUES($1,$2,$3,$4,'active')`,[dailyVoiceSegmentId,dailyAttemptId,id,dailyVoiceSequence]);
     });
     if ((minutes || paid) && !await this.prepareMinuteProviderAttempt(id, account))
       throw new ServiceError('live_session_cancelled', 409);
@@ -177,6 +210,7 @@ export class HostedVoice {
       const row = (await this.db.query('SELECT state,close_requested_at FROM hosted_sessions WHERE id=$1', [id])).rows[0];
       if (row.state !== 'active' || row.close_requested_at || !this.accepting) throw new ServiceError('provider_connection_lost', 502);
       return { sessionID: id, providerSessionID: created.sessionID, sdp: created.sdp,
+        ...(dailyVoiceSegmentId?{dailyVoiceSegmentId}:{}),
         fundingMode: paid ? 'ai-value' as const : minutes ? 'minutes' as const : undefined,
         deadline: deadline.toISOString(), reservedMilliseconds: minutes ? reservedMilliseconds : undefined,
         limitMilliseconds: paid ? reservedMilliseconds : undefined,

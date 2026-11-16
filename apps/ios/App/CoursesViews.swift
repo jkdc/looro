@@ -22,10 +22,12 @@ struct CoursesView: View {
     let coordinator: ConversationCoordinator
     let accountStore: ManagedAccountStore
     var onThemeChosen: () -> Void
+    var onOpenWords: () -> Void
     @State private var openLessonID: String?
     @State private var exercisesOpen = false
     @State private var recallOpen = false
     @State private var weeklyExamsOpen = false
+    @State private var dailyPracticeOpen = false
     @State private var audioOn = true
     @State private var reader = LessonReader()
 
@@ -48,7 +50,11 @@ struct CoursesView: View {
         let courses = CourseRegistry.forLanguage(coordinator.language.id)
         let dueRecall = RecallEngine.dueCount(coordinator.store.archive, now: Date.now.timeIntervalSinceReferenceDate)
         Group {
-            if weeklyExamsOpen {
+            if dailyPracticeOpen {
+                DailyPracticeView(store: coordinator.store, accountStore: accountStore,
+                                  coordinator: coordinator, onBack: { dailyPracticeOpen = false },
+                                  onOpenWords: { dailyPracticeOpen = false; onOpenWords() })
+            } else if weeklyExamsOpen {
                 WeeklyExamHistoryView(store: coordinator.store, accountStore: accountStore,
                                       languageID: coordinator.language.id,
                                       onBack: { weeklyExamsOpen = false })
@@ -82,6 +88,14 @@ struct CoursesView: View {
                         PageHeading(eyebrow: "Your course", title: "Learn it step by step",
                                     subtitle: "Read a short lesson, then practise it in a real conversation.")
                         LanguageSwitcher(coordinator: coordinator)
+                        Button { dailyPracticeOpen = true } label: {
+                            Label("Daily practice", systemImage: "sun.max")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                                .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 18))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("daily-practice-entry")
                         if let syncStatus = coordinator.visibleProgressSyncStatus {
                             ProgressSyncStatusCard(status: syncStatus, onRetry: coordinator.retryProgressSync)
                         }
@@ -942,16 +956,29 @@ private struct FlowLike: View {
 @Observable final class LessonReader {
     private let synthesizer = AVSpeechSynthesizer()
 
-    func read(_ text: String, locale: String, rate: Float = 1) {
+    func canRead(locale: String) -> Bool { voice(for: locale) != nil }
+
+    @discardableResult func read(_ text: String, locale: String, rate: Float = 1) -> Bool {
         stop()
-        guard AVSpeechSynthesisVoice(language: locale) != nil else { return }
+        guard let voice = voice(for: locale) else { return false }
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: locale)
+        utterance.voice = voice
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * rate
         synthesizer.speak(utterance)
+        return true
     }
 
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
+    }
+
+    private func voice(for locale: String) -> AVSpeechSynthesisVoice? {
+        let language = locale.split(separator: "-").first.map(String.init)
+        guard let language, !language.isEmpty,
+              let voice = AVSpeechSynthesisVoice(language: locale),
+              voice.language.split(separator: "-").first?.caseInsensitiveCompare(language) == .orderedSame else {
+            return nil
+        }
+        return voice
     }
 }

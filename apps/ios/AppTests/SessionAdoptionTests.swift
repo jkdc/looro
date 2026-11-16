@@ -30,6 +30,126 @@ import LearningCore
     func clearCredentialRejection() { credentialRejected = false }
 }
 
+private actor DailyPracticeRequestTransport: ManagedAccountRequestTransport {
+    private let responseData: Data
+    private let statusCode: Int
+    private let fails: Bool
+    private var captured: [URLRequest] = []
+
+    init(responseData: Data, statusCode: Int = 201, fails: Bool = false) {
+        self.responseData = responseData
+        self.statusCode = statusCode
+        self.fails = fails
+    }
+
+    func send(_ request: URLRequest, limit: Int) async throws -> (Data, HTTPURLResponse) {
+        captured.append(request)
+        if fails { throw ManagedAccountError.transport }
+        guard responseData.count <= limit, let url = request.url,
+              let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)
+        else { throw ManagedAccountError.invalidResponse }
+        return (responseData, response)
+    }
+
+    func requests() -> [URLRequest] { captured }
+}
+
+@MainActor final class DailyPracticeClientTests: XCTestCase {
+    private func configuration() throws -> ManagedAccountConfiguration {
+        try ManagedAccountConfiguration(apiURL: "https://daily-practice.example.test",
+            googleClientID: "123-abc.apps.googleusercontent.com", bundleID: "com.jkdc.palique",
+            registeredURLSchemes: ["com.googleusercontent.apps.123-abc"], appleCapabilityEnabled: false)
+    }
+
+    private func session(scope: String) throws -> ManagedAccountSession {
+        let data = try JSONSerialization.data(withJSONObject: [
+            "accountID": "a0000000-0000-4000-8000-000000000001",
+            "accessToken": String(repeating: "A", count: 43),
+            "expiresInSeconds": 3600
+        ])
+        let exchange = try JSONDecoder().decode(ManagedAuthExchange.self, from: data)
+        return try ManagedAccountSession(exchange: exchange, provider: .google, scope: scope)
+    }
+
+    func testAttemptCreationUsesOwnerBearerAndIdempotencyHeader() async throws {
+        let config = try configuration()
+        let attemptID = "33333333-3333-4333-8333-333333333333"
+        let packageID = "22222222-2222-4222-8222-222222222222"
+        let response = try JSONSerialization.data(withJSONObject: [
+            "schemaVersion": 1, "attemptId": attemptID, "attemptNumber": 1, "packageVersionId": packageID,
+            "language": "en", "editorialDate": "2027-01-15", "explanationLanguage": "es", "revision": 0,
+            "state": "in_progress", "startedAt": 1_800_000_000_000, "completedStages": [], "activeMs": 0,
+            "stopReason": NSNull(), "reviewState": "not_started", "reviewId": NSNull(), "inputHash": NSNull()
+        ])
+        let transport = DailyPracticeRequestTransport(responseData: response)
+        let client = DailyPracticeClient(configuration: config, transport: transport)
+
+        _ = try await client.createAttempt(session: session(scope: config.storageScope), attemptID: attemptID,
+            packageVersionID: packageID, explanationLanguage: "es", dailyConsentVersion: 1, idempotencyKey: attemptID)
+
+        let requests = await transport.requests()
+        let request = try XCTUnwrap(requests.first)
+        XCTAssertEqual(request.url?.path, "/v1/daily-practice/attempts")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer \(String(repeating: "A", count: 43))")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Idempotency-Key"), attemptID)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Cache-Control"), "no-store")
+        let bodyData = try XCTUnwrap(request.httpBody)
+        let body = try XCTUnwrap(JSONSerialization.jsonObject(with: bodyData) as? [String: Any])
+        XCTAssertEqual(body["attemptId"] as? String, attemptID)
+        XCTAssertEqual(body["packageVersionId"] as? String, packageID)
+        XCTAssertEqual(body["dailyConsentVersion"] as? Int, 1)
+    }
+
+    func testAttemptHistoryUsesAuthenticatedNoStoreRead() async throws {
+        let config = try configuration()
+        let transport = DailyPracticeRequestTransport(responseData: Data(#"{"items":[],"nextCursor":null}"#.utf8))
+        let client = DailyPracticeClient(configuration: config, transport: transport)
+        _ = try await client.attempts(session: session(scope: config.storageScope), language: "en", limit: 50)
+        let requests = await transport.requests()
+        let request = try XCTUnwrap(requests.first)
+        XCTAssertEqual(request.url?.path, "/v1/daily-practice/attempts")
+        XCTAssertEqual(request.url?.query, "language=en&limit=50")
+        XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer \(String(repeating: "A", count: 43))")
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Cache-Control"), "no-store")
+    }
+
+    func testUncertainAttemptTransportFailureIsNotReportedAsConfirmedRejection() async throws {
+        let config = try configuration()
+        let attemptID = "33333333-3333-4333-8333-333333333333"
+        let transport = DailyPracticeRequestTransport(responseData: Data(), fails: true)
+        let client = DailyPracticeClient(configuration: config, transport: transport)
+
+        do {
+            _ = try await client.createAttempt(session: session(scope: config.storageScope), attemptID: attemptID,
+                packageVersionID: "22222222-2222-4222-8222-222222222222", explanationLanguage: "en",
+                dailyConsentVersion: 1, idempotencyKey: attemptID)
+            XCTFail("expected outcome unknown")
+        } catch let error as DailyPracticeClientError {
+            XCTAssertEqual(error, .outcomeUnknown)
+        }
+    }
+
+    func testDailyHostedCreateSendsOnlyAttemptBindingAndNeverCallerContext() async throws {
+        let config = try configuration()
+        let response = try JSONSerialization.data(withJSONObject: [
+            "sessionID": "44444444-4444-4444-8444-444444444444", "sdp": "v=0\r\n",
+            "dailyVoiceSegmentID": "66666666-6666-4666-8666-666666666666"
+        ])
+        let transport = DailyPracticeRequestTransport(responseData: response)
+        let client = ManagedAccountClient(configuration: config, transport: transport)
+        let attemptID = "33333333-3333-4333-8333-333333333333"
+        _ = try await client.hostedDailyCreate(sdp: "v=0\r\n", language: "en", dailyAttemptID: attemptID,
+            idempotencyKey: "55555555-5555-4555-8555-555555555555", session: session(scope: config.storageScope))
+        let requests = await transport.requests()
+        let request = try XCTUnwrap(requests.first)
+        let body = try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap(request.httpBody)) as? [String: Any])
+        XCTAssertEqual(Set(body.keys), Set(["sdp", "language", "dailyAttemptId"]))
+        XCTAssertEqual(body["dailyAttemptId"] as? String, attemptID)
+        XCTAssertEqual(request.value(forHTTPHeaderField: "Idempotency-Key"), "55555555-5555-4555-8555-555555555555")
+    }
+}
+
 private actor SessionAdoptionTransport: ManagedAccountRequestTransport {
     private let accountID = "a0000000-0000-4000-8000-000000000001"
     private let bearer = String(repeating: "A", count: 43)

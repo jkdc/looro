@@ -1,8 +1,10 @@
 # Práctica diaria común — guía de implementación
 
-**Estado: diseño propuesto para revisión, no implementado.** Fecha: 2026-11-07.
-La aprobación de la idea autoriza esta documentación, no el desarrollo, las
-llamadas a proveedores reales, cambios de precios ni el despliegue.
+**Estado: diseño aprobado con implementación en curso.** Fecha: 2026-11-08.
+El usuario aprobó TTS local para listening y el uso del proveedor LLM ya configurado
+para exámenes en generación/revisión diaria. Esto autoriza implementar los
+consumidores, pero no llamadas reales a proveedores, cambios de precios, activación
+de Daily Practice ni despliegue.
 
 ## Qué se va a construir
 
@@ -19,6 +21,9 @@ de preguntas prefijadas.
 
 No hay selección del temario por alumno, historial, errores ni nivel. La
 conversación responde naturalmente al alumno; eso no cambia el paquete diario.
+El paquete de listening conserva solo el texto y el locale de voz; cada app lo
+reproduce con su TTS local existente. La falta de voz para ese locale se muestra
+al alumno, sin sustitución silenciosa por otro idioma.
 
 ## Ruta de lectura
 
@@ -52,14 +57,19 @@ Para hacer el diseño ejecutable se proponen además estos valores por defecto:
 4. **Publicación automática solo tras validación y juez independiente**, con
    interruptor de publicación manual y retirada desde administración.
 5. **Revisión final financiada por un presupuesto operativo acotado**, sin nuevo
-   cobro automático al usuario. Speaking conserva los permisos y consumo
-   hospedados existentes. Si el presupuesto no permite reservar la revisión,
-   no se inicia un nuevo intento; nunca se promete revisión sin cobertura.
+   cobro automático al usuario. El usuario aprobó reutilizar el mismo proveedor LLM
+   que ya se configura para los exámenes; no se crea otra credencial ni un proveedor
+   separado. La disponibilidad de ese proveedor no habilita por sí sola Daily Practice:
+   se mantienen sus flags y presupuestos propios (cero y apagados por defecto). Si el
+   presupuesto no permite reservar la revisión, no se inicia un nuevo intento; nunca
+   se promete revisión sin cobertura. Speaking conserva permisos y consumo hospedados
+   existentes.
 
-Estos son acuerdos propuestos, no afirmaciones de que el usuario ya los eligió.
-Especialmente acceso y financiación deben aprobarse antes de implementar. No
-hay decisiones técnicas pendientes escondidas en un «TBD»: cada propuesta tiene
-un comportamiento concreto que se puede aceptar o cambiar.
+El usuario ha aprobado la financiación operativa limitada de la revisión y el
+reuso del proveedor LLM configurado para exámenes. Siguen siendo propuestas las
+demás decisiones no confirmadas, en particular la política de acceso y los
+defaults de publicación. No se activará la función ni se llamará a proveedores
+reales sin autorización separada.
 
 ## Qué significa «terminado»
 

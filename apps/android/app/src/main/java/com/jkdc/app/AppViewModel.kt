@@ -1532,7 +1532,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
         val plans = planDailyWordsImport(com.jkdc.app.core.DailyWordsReview(reviewID, dailyPackage.language, candidates),
-            ownerIdentity, dailyPackage.language, existing, receipts, suppressions, System.currentTimeMillis() / 1000.0)
+            ownerIdentity, dailyPackage.language, existing, receipts, suppressions)
         var summary: DailyWordsImportSummary? = null
         persistDailyDbAndWait(ownerIdentity, captured) { target -> summary = LearningDbWriter.dailyWordsImported(target, ownerIdentity, plans) }
         val latest = withContext(Dispatchers.IO) { ExpressionsDao.all(db) }
@@ -1564,7 +1564,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         check(examOwnerIdentity.value == captured && loadedLearningIdentity == ownerIdentity) { "daily_attempt_owner_changed" }
         val plans = planManualDailyWord(markID, text, meaning, kind, ownerIdentity, dailyPackage.language,
-            existing, receipts, suppressions, System.currentTimeMillis() / 1000.0)
+            existing, receipts, suppressions)
         var summary: DailyWordsImportSummary? = null
         persistDailyDbAndWait(ownerIdentity, captured) { target ->
             summary = LearningDbWriter.dailyWordsImported(target, ownerIdentity, plans,
@@ -3371,7 +3371,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                                     put("voiceSegmentId", fragment.voiceSegmentId); put("sequence", fragment.sequence)
                                     put("transcriptionUncertain", fragment.transcriptionUncertain)
                                 } }))
-                                put("helpUsed", JsonArray(attemptState.helpUsed.sorted().take(8).map(::JsonPrimitive)))
+                                put("helpUsed", JsonArray(DailyAttemptReducer.helpUsedForStage(
+                                    attemptState.helpUsed, dailyPackage.goals.map { "hint_${it.id}" }.toSet()).map(::JsonPrimitive)))
                             }
                             nextState = appendDailyEvent(owner, dailyPackage, staged, segmentEvent).first
                         }

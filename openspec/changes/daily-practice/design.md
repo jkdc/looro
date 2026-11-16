@@ -17,7 +17,8 @@ sequenceDiagram
     participant Words as SQLite / Words
     Scheduler->>API: asegurar paquete de fecha/idioma
     API->>DB: crear job y reservar presupuesto de contenido
-    API->>LLM: generar, validar, juzgar y sintetizar audio
+    API->>LLM: generar, validar y juzgar contenido textual
+    App->>App: sintetizar transcript con TTS local de plataforma
     API->>DB: congelar artefacto + evidencias + publicación
     App->>API: consultar paquete común y comenzar intento
     API->>DB: fijar versión y reservar revisión
@@ -37,7 +38,7 @@ afirmación de existencia actual.
 | Módulo nuevo | Responsabilidad |
 |---|---|
 | `services/api/src/daily-content.ts` | Esquemas, perfil lingüístico, proyecciones y claves |
-| `services/api/src/daily-generation.ts` | Generador, juez, TTS y publicación del hash aprobado |
+| `services/api/src/daily-generation.ts` | Generador, juez y publicación del hash aprobado |
 | `services/api/src/daily-jobs.ts` | Jobs durables, reservas, leases y reconciliación |
 | `services/api/src/daily-attempts.ts` | Ownership, CAS, etapas, cierre y snapshot |
 | `services/api/src/daily-review.ts` | Evaluación, verificación de citas y resultado persistido |
@@ -86,12 +87,11 @@ Antes de implementar, leer símbolos actuales y cambios locales concurrentes.
   floats de tiempo ni números fuera del rango entero seguro de JSON.
 - Evitar autorreferencias: `contentHash` se calcula sobre el DTO público sin su
   propio campo contentHash. `textHash` cubre contenido privado textual, claves,
-  rúbrica y perfil, excluyendo descriptor de audio y campos hash. `artifactHash`
-  cubre private_payload completo con descriptor/checksum de audio; no incluye
+  rúbrica y perfil, excluyendo campos hash. `artifactHash`
+  cubre private_payload completo; no incluye
   su propia columna hash, evidencias de juez, estados o timestamps de ejecución.
 - Publicar exige juez sobre el `textHash` exacto y validación final que vincule
-  ese texto y el audio verificado al `artifactHash` exacto. Editar texto/claves
-  invalida juez; editar audio invalida verificación de audio y validación final.
+  ese texto al `artifactHash` exacto. Editar texto/claves invalida juez y validación final.
 - Tras el primer intento del día la publicación queda consumida y no se puede
   sustituir por otra versión ese día. Puede retirarse; nunca se cambia el paquete
   silenciosamente para los siguientes alumnos.
@@ -106,7 +106,7 @@ Antes de implementar, leer símbolos actuales y cambios locales concurrentes.
 
 ### Ciclo del paquete
 
-`draft → validating → judging → audio_pending → ready → published`.
+`draft → validating → judging → ready → published`.
 Fallo de puertas → `rejected`; fallo técnico → `failed`; envío con resultado
 desconocido → `unknown`. `published → withdrawn` es terminal para nuevos intentos.
 Los estados de job son separados: no se representa «publicado» solo porque el
@@ -122,14 +122,16 @@ proceso acabó sin excepción.
 4. Juez independiente en una petición distinta, sin el razonamiento del generador:
    comprueba claves, distractores, coherencia temática, referencia B1–B2,
    accesibilidad con ayudas y ausencia de instrucciones peligrosas. Devuelve
-   `pass/fail/uncertain` con evidencia por ID; solo `pass` permite continuar.
-5. Sintetizar listening con voz permitida por perfil. Verificar MIME, duración,
-   tamaño, checksum y correspondencia del script; el mismo audio sirve a todos.
-   Si el TTS devuelve alineación, verificar cobertura del script; si no la devuelve,
-   comprobación independiente por STT stub en tests y proveedor autorizado en
-   evaluación real. Un archivo de audio válido no prueba su contenido lingüístico.
-6. Recalcular artefacto incluyendo metadatos del audio; la revisión textual se
-   vincula al hash del subdocumento revisado y una validación final al hash completo.
+   `pass/fail/uncertain` con evidencia completa por ID namespaced (`topic:`,
+   `expression:`, `listening:`, `practice:`, `goal:` y `speaking`). Una sola
+   evidencia ausente, duplicada, incierta o inválida bloquea estado `ready`; el
+   resultado agregado no puede contradecir las evidencias. Solo `pass` completo permite continuar.
+5. Validar que `speechLocale` coincide con el perfil lingüístico y que el transcript
+   cumple los límites de contenido. La app sintetiza localmente; voz, velocidad y
+   duración audible pueden variar por dispositivo y preferencias. La evaluación
+   lingüística se hace sobre texto, no sobre una grabación.
+6. Recalcular el artefacto textual; la revisión se vincula al hash del subdocumento
+   revisado y una validación final al hash completo.
    Publicar solo si ambas evidencias y el perfil coinciden. La publicación no
    requiere firma docente obligatoria: registrar la revisión como automatizada.
 7. En modo automático, publicar tras puertas completas. En modo manual queda
@@ -213,22 +215,38 @@ de su ventana de 120 segundos. La API persiste salida validada y la sirve al
 volver horas después. Reutiliza el adaptador LLM configurado y sus controles
 de timeout/secretos, no cambia propósitos ni SQL CHECK de helpers existentes.
 
-Antes de admitir un intento se reserva del presupuesto operativo la cota máxima
-de 1 evaluación de 24 KiB de evidencia y hasta 3.000 tokens de salida, según
-precio/configuración congelados. Reservas y gasto usan BigInt nanoUSD, serializado
-como string. No hay saldo o tarifa nuevos para el usuario por esta revisión.
-Contenido/TTS y revisión usan centros de coste distintos. Este modelo financiero
-es una propuesta pendiente de aprobación, no una autorización de gasto real.
+La generación y la revisión diaria resuelven el mismo proveedor LLM activo que
+utilizan los exámenes mediante `resolveLlmConfig`; no añaden credenciales,
+proveedor ni panel de configuración paralelos. Activar ese proveedor no habilita
+Daily Practice por sí solo: se mantienen sus flags y presupuestos propios (cero
+y apagados por defecto). Una operación solo se envía tras confirmar su reserva;
+si no hay presupuesto suficiente, el flujo falla cerrado. La aprobación de este
+modelo no autoriza llamadas reales, activación ni despliegue.
 
-La reserva admite espera hasta cierre del intento; Si el precio conocido no permite
-acotar gasto, falla cerrada la admisión con `daily_budget_unavailable`. El exceso
-de respuesta o timeout no produce otra llamada automática. Los límites numéricos
-monetarios se configuran por operador antes de habilitar; cero o ausencia bloquea
-nuevos trabajos, nunca significa ilimitado.
+La generación y la revisión diaria siguen inicialmente la contabilidad de uso de
+los exámenes: registrar tokens de entrada y salida con estado `complete`, `partial`
+o `unknown`, sin convertir tokens a dinero ni liquidar coste por modelo. La revisión
+futura de tarifas, límites monetarios por proveedor/modelo y liquidación queda
+anotada como trabajo previo a activar presupuestos operativos distintos. No hay
+saldo ni tarifa nuevos para el usuario. La síntesis local TTS no genera coste de
+proveedor en servidor.
+
+Cada operación persiste checkpoints de uso en `daily_provider_operations.usage`
+antes y después de la llamada. Solo se guarda estado y conteo de tokens; fase,
+resultado, hashes y marcas temporales permanecen en columnas separadas. No se
+guardan prompts, respuestas del proveedor, claves, transcripciones ni datos del
+alumno en este registro. El total de tokens es analítica operativa únicamente:
+no modifica cuotas, acceso, disponibilidad ni respuestas del producto. El panel
+admin debe poder consultar estos registros antes de release.
+
+Los flags de Daily Practice permanecen apagados y sus presupuestos en cero por
+defecto. Reutilizar la contabilidad de exámenes no autoriza gasto, activación ni
+despliegue; una configuración positiva no debe interpretarse como un límite
+monetario garantizado hasta resolver la revisión futura de tarifas.
 
 Estados de revisión: `queued → running → ready|failed|unknown`. Un lease vencido
 antes de enviar puede reencolar; vencido después de envío potencial es `unknown`,
-no una invitación a duplicar coste. Un proveedor sin recuperación/idempotencia
+no una invitación a duplicar llamadas. Un proveedor sin recuperación/idempotencia
 no permite garantizar exactamente una ejecución externa: se garantiza **no
 reenviar automáticamente en incertidumbre**, conservando la reserva y el aviso.
 Un fallo conocido pre-envío admite un reintento explícito con la misma operación;
@@ -280,8 +298,9 @@ nunca topic, fecha, usuario, palabra, fragmento o attempt ID como label.
 Las rutas HTTP ya reciben RED; jobs necesitan estos contadores.
 
 El panel muestra fallos/desconocidos, disponibilidad de hoy/mañana, tiempo de
-generación/revisión y gasto/reservas por centro. Coste real se deriva de registros
-de proveedor/operación, nunca de convertir arbitrariamente tokens a euros.
+generación/revisión y uso conocido de tokens. No presenta un coste monetario
+estimado como coste real; la tarifa por proveedor/modelo queda pendiente de la
+revisión futura.
 
 Activación propuesta: migraciones y rutas oscuras → fixtures/stubs → Android e
 iOS → E2E aislado → evaluación de proveedores autorizada → piloto autorizado →

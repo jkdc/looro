@@ -169,3 +169,33 @@ integration('write actions fail closed without the hosted service or a foreign o
     assert.equal(Number(actions.rows[0]!.count), 0);
   } finally { await service.close(); }
 });
+
+integration('daily admin job monitor is private and omits learner-bound attempt data', async () => {
+  const token = await cookie(), service = app(), runID = randomUUID(), bindingID = randomUUID();
+  const day = new Date().toISOString().slice(0, 10);
+  await db!.query(`INSERT INTO daily_jobs(id,kind,binding_id,language,editorial_date,state,config_snapshot,error_code)
+    VALUES($1,'content',$2,'en',$3,'failed','{"schemaVersion":1}'::jsonb,'audio_check_failed')`, [runID,bindingID,day]);
+  await db!.query(`INSERT INTO daily_cost_reservations(id,job_id,cost_center,budget_date,binding_id,max_nano_usd,settled_nano_usd,state,settled_at)
+    VALUES($1,$2,'content',$3,$4,500,200,'settled',now())`, [randomUUID(),runID,day,bindingID]);
+  try {
+    const denied = await service.inject({ method: 'GET', url: `/v1/admin/daily-practice/jobs?language=en&dateFrom=${day}&dateTo=${day}`,
+      headers: H('invalid') });
+    assert.equal(denied.statusCode, 401);
+    const response = await service.inject({ method: 'GET', url: `/v1/admin/daily-practice/jobs?language=en&dateFrom=${day}&dateTo=${day}`,
+      headers: H(token) });
+    assert.equal(response.statusCode, 200, response.body);
+    assert.equal(response.headers['cache-control'], 'private, no-store');
+    const body = response.json();
+    assert.equal(body.items.length, 1);
+    assert.equal(body.items[0].id, runID);
+    assert.equal(body.items[0].error_code, 'audio_check_failed');
+    assert.equal(body.items[0].reserved_nano_usd, '500');
+    assert.equal(body.items[0].settled_nano_usd, '200');
+    assert.equal('attempt_id' in body.items[0], false);
+    assert.equal('config_snapshot' in body.items[0], false);
+  } finally {
+    await db!.query('DELETE FROM daily_cost_reservations WHERE job_id=$1', [runID]);
+    await db!.query('DELETE FROM daily_jobs WHERE id=$1', [runID]);
+    await service.close();
+  }
+});

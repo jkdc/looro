@@ -1,6 +1,10 @@
 package com.jkdc.app.core
 
 import java.io.File
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
@@ -36,6 +40,57 @@ class DailyPracticeTest {
         val restored = DailyAttemptReducer.decode(DailyAttemptReducer.encode(aided))
 
         assertEquals(setOf("transcript", "hint_listen_main"), restored.helpUsed)
+    }
+
+    @Test fun helpEvidenceIsAttributedOnlyToTheStageThatOfferedIt() {
+        val state = DailyAttemptReducer.markHelpUsed(
+            DailyAttemptLocalState.start("33333333-3333-4333-8333-333333333333"),
+            listOf("hint_goal_one", "transcript", "hint_listen_main", "hint_practice_main"))
+
+        assertEquals(listOf("hint_goal_one"),
+            DailyAttemptReducer.helpUsedForStage(state.helpUsed, setOf("hint_goal_one")))
+        assertEquals(listOf("hint_listen_main", "transcript").sorted(),
+            DailyAttemptReducer.helpUsedForStage(state.helpUsed, setOf("transcript", "hint_listen_main")))
+        assertEquals(listOf("hint_practice_main"),
+            DailyAttemptReducer.helpUsedForStage(state.helpUsed, setOf("hint_practice_main")))
+        assertEquals(emptyList<String>(),
+            DailyAttemptReducer.helpUsedForStage(state.helpUsed, emptySet()))
+    }
+
+    @Test fun helpIdentifiersBeyondTheServerLimitAreIgnoredInsteadOfFailingTheStage() {
+        val state = DailyAttemptLocalState.start("33333333-3333-4333-8333-333333333333")
+        val longId = "hint_" + "a".repeat(60)
+
+        val aided = DailyAttemptReducer.markHelpUsed(state, listOf(longId, "transcript"))
+
+        assertEquals(setOf("transcript"), aided.helpUsed)
+    }
+
+    @Test fun stageSubmissionCarriesTheAnswersChosenOnThisDevice() {
+        val state = DailyAttemptReducer.answer(
+            DailyAttemptReducer.markHelpUsed(
+                DailyAttemptReducer.answer(
+                    DailyAttemptReducer.answer(
+                        DailyAttemptLocalState.start("33333333-3333-4333-8333-333333333333"),
+                        "practice-choice-1", "a"),
+                    "practice-choice-2", "b"),
+                listOf("hint_practice-choice-1", "transcript")),
+            "practice-gap-1", "shared space")
+
+        val event = DailyAttemptReducer.stageSubmittedEvent(state,
+            listOf("practice-choice-1", "practice-choice-2", "practice-gap-1", "practice-gap-2"),
+            DailyAttemptStage.PRACTICE, setOf("hint_practice-choice-1", "hint_practice-choice-2",
+                "hint_practice-gap-1", "hint_practice-gap-2"), 45_000)
+
+        val answers = requireNotNull(event["answers"]).jsonArray
+        assertEquals("a", answers[0].jsonObject["value"]?.jsonPrimitive?.content)
+        assertEquals("b", answers[1].jsonObject["value"]?.jsonPrimitive?.content)
+        assertEquals("shared space", answers[2].jsonObject["value"]?.jsonPrimitive?.content)
+        assertTrue(answers[3].jsonObject["value"] is kotlinx.serialization.json.JsonNull)
+        assertEquals("practice", requireNotNull(event["stage"]).jsonPrimitive.content)
+        assertEquals(45_000L, requireNotNull(event["activeMs"]).jsonPrimitive.long)
+        assertEquals(listOf("hint_practice-choice-1"),
+            requireNotNull(event["helpUsed"]).jsonArray.map { it.jsonPrimitive.content })
     }
 
     @Test fun manualTargetMarksPersistWithoutAdvancingTheAttempt() {

@@ -4,6 +4,7 @@
 // them through the real generation pipeline against the stub provider.
 import pg from 'pg';
 import { randomUUID, createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL required'); process.exit(1); }
@@ -69,6 +70,38 @@ try {
       now() - interval '40 minutes', now() - interval '35 minutes', now() - interval '35 minutes')`,
   [weekId, JSON.stringify(['reading: only 2 passages (needed 4)', 'writing: empty response'])]);
   console.log(`failed generation job seeded (en B2, week ${weekId - 1})`);
+
+  // A synthetic, fully reviewed package lets browser E2E exercise the real
+  // admin preview/publication/withdrawal APIs without contacting providers.
+  const daily = await import('/app/dist/src/daily-content.js');
+  const dailyGeneration = await import('/app/dist/src/daily-generation.js');
+  const packageVersionId = randomUUID();
+  const editorialDate = new Date().toISOString().slice(0, 10);
+  const packageValue = JSON.parse(await readFile('/app/daily-fixture.json', 'utf8'));
+  packageValue.packageVersionId = packageVersionId;
+  packageValue.editorialDate = editorialDate;
+  packageValue.contentHash = daily.hashDailyArtifact(packageValue);
+  const artifactHash = daily.hashDailyArtifact(packageValue);
+  const textHash = daily.hashDailyText(JSON.stringify(packageValue));
+  daily.validateDailyPackage(packageValue);
+  const answerKeys = questions => questions.map(question => ({ questionId: question.id,
+    ...(question.kind === 'single_choice' ? { acceptedOptionId: question.options[0].id } : { acceptedAnswers: ['a clear answer'] }),
+    explanation: { en: 'This answer follows the passage and topic.', es: 'Esta respuesta sigue el texto y el tema.' },
+    targetExpressionIds: [packageValue.expressions[0].id] }));
+  const privatePayload = { listening: answerKeys(packageValue.listening.questions), practice: answerKeys(packageValue.practice.questions) };
+  dailyGeneration.validateDailyAnswerKeys(packageValue, privatePayload);
+  await db.query('BEGIN');
+  try {
+    await db.query(`INSERT INTO daily_packages(id,language,editorial_date,schema_version,profile_version,state,revision,
+      public_payload,private_payload,content_hash,artifact_hash,text_hash,judge_state,judge_text_hash,judge_artifact_hash)
+      VALUES($1,'en',$2,1,'en-v1','ready',1,$3::jsonb,$4::jsonb,$5,$6,$7,'passed',$7,$6)`,
+    [packageVersionId, editorialDate, JSON.stringify(packageValue), JSON.stringify(privatePayload), packageValue.contentHash, artifactHash, textHash]);
+    await db.query('COMMIT');
+  } catch (error) {
+    await db.query('ROLLBACK');
+    throw error;
+  }
+  console.log(`daily package seeded for ${editorialDate} (${packageVersionId})`);
 } finally {
   await db.end();
 }

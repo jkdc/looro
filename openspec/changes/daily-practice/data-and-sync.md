@@ -20,16 +20,15 @@ PostgreSQL real aislado, no solo con mocks.
 
 | Tabla | Columnas principales y constraints |
 |---|---|
-| `daily_packages` | `id uuid PK`, `language`, `editorial_date date`, `schema_version`, `profile_version`, `state`, `revision bigint`, `public_payload jsonb`, `private_payload jsonb`, `content_hash`, `artifact_hash`, `text_hash`, `audio_id`, `created_at`; inmutabilidad de payload/hash desde ready |
+| `daily_packages` | `id uuid PK`, `language`, `editorial_date date`, `schema_version`, `profile_version`, `state`, `revision bigint`, `public_payload jsonb`, `private_payload jsonb`, `content_hash`, `artifact_hash`, `text_hash`, `judge_text_hash`, `judge_artifact_hash`, `created_at`; inmutabilidad de payload/hash desde ready |
 | `daily_publications` | `(language,editorial_date) PK`, `package_id FK`, `revision`, `consumed_at nullable`, `withdrawn_at nullable`, `published_at`; package language/date deben coincidir, una sola publicación |
-| `daily_audio` | `id`, `package_id`, `mime_type`, `duration_ms`, `byte_length`, `sha256`, `data bytea`; máximo 3 MiB, nunca URL de descarga arbitraria |
 | `daily_attempts` | `id uuid PK`, `account_id FK`, `package_id FK`, `language`, `editorial_date`, `attempt_number`, `explanation_language`, `daily_consent_version`, `state`, `revision`, `started_at`, `stage_state jsonb`, `active_ms`, `stop_reason`, `review_reservation_id`; `attempt_number` and UNIQUE `(account_id,language,editorial_date,attempt_number)`; enforce configurable per-day cap (1 in v1) transactionally |
 | `daily_attempt_events` | `(attempt_id,event_id) PK`, `request_hash`, `expected_revision`, `accepted_revision`, `event_type`, `body jsonb`, `response jsonb`, `created_at`; FK attempt con borrado dependiente |
 | `daily_voice_segments` | `id`, `attempt_id`, `hosted_session_id UNIQUE FK`, `sequence`, `state`, `consumed_ms`; UNIQUE parcial para un segmento activo por intento, y UNIQUE `(attempt_id,sequence)` |
 | `daily_review_inputs` | `attempt_id PK FK`, `input_hash`, `snapshot jsonb`, `frozen_at`; una escritura al cerrar, inmutable mientras se conserva |
 | `daily_reviews` | `id`, `attempt_id UNIQUE FK`, `input_hash`, `rubric_version`, `result jsonb`, `created_at`; resultado admitido inmutable |
 | `daily_jobs` | `id uuid PK` (mismo valor que `runId`), `kind=content|review`, binding a idioma/fecha o attempt, `state`, `revision`, `lease_owner`, `lease_until`, `config_snapshot`, `created_at`, `updated_at`; un job no terminal por binding |
-| `daily_provider_operations` | `id`, `job_id FK`, `phase=generate|judge|tts|audio_check|review`, `dispatch_key UNIQUE`, `state=reserved|sending|succeeded|failed|unknown`, `reservation_id`, `external_reference`, `result_hash`, `usage`, `sent_at`; no prompts crudos ni secretos aquí |
+| `daily_provider_operations` | `id`, `job_id FK`, `phase=generate|judge|review`, `dispatch_key UNIQUE`, `state=reserved|sending|succeeded|failed|unknown`, `reservation_id`, `external_reference`, `result_hash`, `usage={state,tokensIn,tokensOut}`, `sent_at`; pre/post-call checkpoints, sin prompts, respuestas, PII ni secretos |
 | `daily_cost_reservations` | `id`, `cost_center=content|review`, `budget_date`, `binding_id`, `max_nano_usd bigint`, `settled_nano_usd bigint nullable`, `state=held|settled|released|unknown`; no importes float |
 | `daily_request_keys` | `(account_id,operation,idempotency_key) PK`, `request_hash`, `http_status`, `response jsonb`, `created_at`; no respuesta con ownership ajeno |
 | `daily_config` | fila versionada, flags, idiomas, presupuestos y referencias de proveedor sin duplicar claves cifradas existentes |
@@ -79,7 +78,8 @@ Si el proceso cae:
 | Retirada mientras evalúa evidencia previa | Guardar revisión parcial de lo ya observado; no abrir nueva voz |
 
 Separar las operaciones externas del job para no repetir generación porque falló
-TTS o repetir una evaluación porque falló su notificación. Si el resultado del
+repetir una evaluación porque falló su notificación. La síntesis TTS se realiza
+localmente en cada app y no crea operaciones ni reservas de proveedor. Si el resultado del
 proveedor se recibió pero no llegó a persistirse, también es unknown salvo que
 el adaptador tenga recuperación verificable. El job no puede declarar éxito
 solamente por recordar una respuesta que ya se perdió.
@@ -237,7 +237,7 @@ el consentimiento de voz previo cubre automáticamente la nueva retención.
 | Review, candidatos e historial legible | Consultables tras finalizar, sin caducidad temporal; se eliminan en borrado de cuenta/datos conforme al ciclo de vida aprobado. |
 | Cache/outbox móvil | Conservar el único estado necesario para reanudar hasta sincronización confirmada; no borrar si la aplicación se cierra. |
 | Words guardado | Conservación local existente hasta borrado del usuario; no se elimina al expirar la revisión |
-| Paquete público | Retener al menos mientras lo referencien intentos conservados; audio sin referencias puede purgarse tras 365 días |
+| Paquete público | Retener al menos mientras lo referencien intentos conservados; el paquete contiene texto y no tiene blobs de audio asociados |
 | Auditoría/costes | Solo metadatos operativos mínimos bajo política vigente, sin transcript ni contenido personal |
 
 La retención detallada de transcript, intentos y revisiones debe ser coherente
