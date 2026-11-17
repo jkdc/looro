@@ -237,8 +237,13 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     process.on('SIGTERM', closeOnSignal);
     process.on('SIGINT', closeOnSignal);
     await lifecycle.start();
-  } catch {
-    log.error('startup_failed');
+  } catch (err) {
+    // Startup failures were previously swallowed silently; surface the cause
+    // with scalar fields (log.ts filters sensitive field names) so operators
+    // can diagnose without exec access to the crashed container.
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    const kind = err instanceof Error ? err.name : typeof err;
+    log.error('startup_failed', { detail, kind });
     try { await lifecycle.shutdown(); } catch { /* Keep the process failure visible without skipping remaining cleanup steps. */ }
     process.exitCode = 1;
   }

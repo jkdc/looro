@@ -54,6 +54,10 @@ test('main composition closes initialized resources when generation metrics init
   const result = runMainProbe('generation_metrics');
   assert.equal(result.status, 1);
   has(result.events, 'startup_failed');
+  // Regression: startup failures must log their cause (was silent swallow).
+  const detail = result.events.find(event => event.startsWith('startup_failed_detail:'));
+  assert.ok(detail, result.events.join(', '));
+  assert.ok(detail.includes('"kind":"Error"'), detail);
   before(result.events, 'observability_shutdown', 'database_close');
   assert.ok(!result.events.includes('api_started'), result.events.join(', '));
   assert.ok(!result.events.includes('minute_worker_start'), result.events.join(', '));

@@ -110,5 +110,8 @@ export const log = {
       setImmediate(() => process.emit(process.env.MAIN_WIRING_SIGNAL));
   },
   warn(name) { record(name); },
-  error(name) { record(name); },
+  error(name, fields) {
+    record(name);
+    if (fields && Object.keys(fields).length > 0) record(`${name}_detail:${JSON.stringify(fields)}`);
+  },
 };
