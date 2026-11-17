@@ -28,6 +28,7 @@ IOS_SIMULATOR := iPhone 17
 .PHONY: help up down restart logs status health migrate psql admin-cli admin-add \
   admin-passwd admin-open obs-check test-api smoke-up smoke-down \
   lab-keys lab-up lab-down lab-account lab-apk lab-install deploy \
+  remote-apk remote-install \
   android-build android-test-docker android-install \
   android-run android-logcat ios-build ios-test ios-device check clean
 
@@ -166,6 +167,14 @@ deploy: lab-up ## Despliega en el móvil conectado: API de lab + APK con claves 
 	  $(if $(DEPLOY_SERIAL),--serial $(DEPLOY_SERIAL),) $(if $(filter 1,$(ACCOUNT)),--account,)
 
 # ---- Android (nativo; necesita SDK 36 y Java 17) ---------------------------
+
+REMOTE_API_ORIGIN ?= https://palique-api.46.202.135.91.sslip.io
+
+remote-apk: ## Compila un APK debug apuntando al API desplegada en Coolify (REMOTE_API_ORIGIN)
+	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN)
+
+remote-install: remote-apk ## Compila e instala en el dispositivo conectado el APK contra la API remota
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
 
 android-build: ## Compila APK debug con tests unitarios y lint (SDK/JDK del host)
 	$(GRADLE) :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug

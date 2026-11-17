@@ -79,3 +79,21 @@ significa crash del proceso: mirar **Logs** del recurso.
 - Verificación: `curl https://tu-dominio/healthz`.
 - Panel admin: requiere `ADMIN_HMAC_KEY`/`ADMIN_PROXY_TOKEN` y su dominio;
   ver `services/api/docs/admin-panel.md` antes de habilitarlo.
+
+## 6. Conectar las apps móviles al servidor desplegado
+
+**Android** (property Gradle `-Papp.apiOrigin` → `BuildConfig.MANAGED_API_ORIGIN`):
+
+```bash
+make remote-install                    # APK debug + instalación por adb (SERIAL= opcional)
+make remote-apk REMOTE_API_ORIGIN=https://otro-dominio   # sobrecarga puntual
+```
+
+**iOS** (xcconfig, gitignored): `apps/ios/Config/Local.xcconfig` ya apunta
+`APP_MANAGED_API_URL` al servidor; compila con `make ios-build`.
+
+**Estado de cuentas**: el servidor tiene `ACCOUNTS_ENABLED=false` — el
+inicio de sesión móvil queda deshabilitado hasta configurar un proveedor de
+identidad (Google/Apple) y activar `ACCOUNTS_ENABLED=true` en Coolify junto
+con las claves `ACCOUNTS_HMAC_KEY`/`ACCOUNTS_PROXY_TOKEN` (ya generadas).
+Los endpoints públicos (contenido, level-tests proxy-exempt) funcionan ya.
