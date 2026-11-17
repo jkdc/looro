@@ -9,7 +9,7 @@ deploy) y NO el workflow `deploy.yml` de Actions (que quedó reducido a
 
 | Pieza | Cómo se despliega |
 |---|---|
-| PostgreSQL 17 + migraciones + API | Recurso **Docker Compose**: `services/api/compose.coolify.yaml` |
+| PostgreSQL 17 + migraciones + API | Recurso **Docker Compose**: `docker-compose.yml` (raíz, mismo patrón que OpenTerminal) |
 | TLS + dominio | Proxy de Coolify (Traefik) |
 | Cabeceras trusted-proxy | Middleware Traefik custom (ver abajo) |
 | Caddy / Prometheus / Grafana / Tempo | **No** van a Coolify (compose.yaml es para servidor dedicado) |
@@ -18,8 +18,8 @@ deploy) y NO el workflow `deploy.yml` de Actions (que quedó reducido a
 
 1. New Resource → **Docker Compose** → conecta el repo privado
    `jkdc/palique` (GitHub App de Coolify; da webhook de push automático).
-2. **Compose file**: `services/api/compose.coolify.yaml`.
-   Los `build.context` relativos funcionan porque Coolify clona el repo entero.
+2. **Compose file**: `docker-compose.yml` (raíz del repo; mismo patrón que
+   OpenTerminal). Los `build.context` apuntan a `services/api`.
 3. **Domain**: dominio o subdominio del servicio `api`, puerto `8080`
    (ej.: `api.tudominio.com` → `api:8080`). Coolify trae TLS con Let's Encrypt.
 4. **Environment variables** en Coolify (o variables del compose):
