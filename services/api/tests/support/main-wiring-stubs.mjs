@@ -19,6 +19,10 @@ export function connectDatabase() {
   record('database_open');
   return { async end() { record('database_close'); }, async query() { return { rows: [] }; } };
 }
+// migrate.js is resolved through this stub in wiring probes; the API process
+// only calls it when migrationsOnBootEnabled is set, which these probes never do.
+export function migrationsOnBootEnabled() { return false; }
+export async function migrate() {}
 export function createApiLifecycle({ listen, startWorkers, shutdownSteps }) {
   let shutdownPromise;
   const shutdown = () => shutdownPromise ??= (async () => {

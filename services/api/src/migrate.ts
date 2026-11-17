@@ -2,6 +2,12 @@ import { readdir, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { connectDatabase, transaction, type Database } from './db.js';
 
+// Single-container deployments (Coolify git app) have no separate migrate
+// job; this opt-in flag lets the API process apply the schema at startup.
+export function migrationsOnBootEnabled(env: NodeJS.ProcessEnv): boolean {
+  return env.RUN_MIGRATIONS_ON_BOOT === 'true';
+}
+
 const postCommitConstraints = [
   ['hosted_sessions', 'hosted_rejection_evidence'],
   ['minute_stripe_paid_totals', 'minute_stripe_paid_totals_gross_minor_check'],

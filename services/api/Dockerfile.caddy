@@ -1,0 +1,5 @@
+# Coolify edge: config baked into the image because Coolify artifacts cannot
+# back file bind mounts / compose configs for non-build services.
+FROM caddy:2-alpine
+COPY Caddyfile.coolify-full /etc/caddy/Caddyfile
+COPY admin-ui /srv/admin-ui

@@ -1,0 +1,4 @@
+FROM grafana/grafana:10.4.8
+COPY telemetry/grafana/provisioning/datasources/datasource.yaml /etc/grafana/provisioning/datasources/datasource.yaml
+COPY telemetry/grafana/provisioning/dashboards/dashboards.yaml /etc/grafana/provisioning/dashboards/dashboards.yaml
+COPY telemetry/grafana/dashboards/palique-overview.json /etc/grafana/dashboards/palique-overview.json

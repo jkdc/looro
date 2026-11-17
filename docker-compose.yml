@@ -87,18 +87,16 @@ services:
   # Edge behind Coolify's Traefik: routes by Host to the API and serves the
   # admin panel. Both Coolify domains point at this service, port 80.
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: services/api
+      dockerfile: Dockerfile.caddy
     environment:
       - API_DOMAIN=${API_DOMAIN:?Set the API domain}
       - ADMIN_DOMAIN=${ADMIN_DOMAIN:?Set the admin panel domain}
       - ADMIN_PROXY_TOKEN=${ADMIN_PROXY_TOKEN:-}
     volumes:
-      - ./services/api/admin-ui:/srv/admin-ui:ro
       - palique-caddy-data:/data
       - palique-caddy-config:/config
-    configs:
-      - source: caddy-config
-        target: /etc/caddy/Caddyfile
     depends_on:
       - api
     expose:
@@ -106,11 +104,9 @@ services:
     restart: unless-stopped
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.127.0
-    command: ["--config=/etc/otelcol-contrib/config.yaml"]
-    configs:
-      - source: otel-config
-        target: /etc/otelcol-contrib/config.yaml
+    build:
+      context: services/api
+      dockerfile: Dockerfile.otel
     expose:
       - "4318"
     depends_on:
@@ -118,13 +114,12 @@ services:
     restart: unless-stopped
 
   tempo:
-    image: grafana/tempo:2.7.1
+    build:
+      context: services/api
+      dockerfile: Dockerfile.tempo
     command: ["-config.file=/etc/tempo/tempo.yaml"]
     volumes:
       - palique-tempo:/tmp/tempo
-    configs:
-      - source: tempo-config
-        target: /etc/tempo/tempo.yaml
     expose:
       - "3200"
     depends_on:
@@ -140,7 +135,9 @@ services:
     restart: "no"
 
   prometheus:
-    image: prom/prometheus:v2.54.1
+    build:
+      context: services/api
+      dockerfile: Dockerfile.prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
@@ -148,21 +145,15 @@ services:
       - --storage.tsdb.retention.size=2GB
     volumes:
       - palique-prometheus:/prometheus
-    configs:
-      - source: prometheus-config
-        target: /etc/prometheus/prometheus.yml
-      - source: prometheus-alerts
-        target: /etc/prometheus/alerts.yml
     depends_on:
       - otel-collector
       - alertmanager
     restart: unless-stopped
 
   alertmanager:
-    image: prom/alertmanager:v0.27.0
-    configs:
-      - source: alertmanager-config
-        target: /etc/alertmanager/alertmanager.yml
+    build:
+      context: services/api
+      dockerfile: Dockerfile.alertmanager
     depends_on:
       - webhook-logger
     restart: unless-stopped
@@ -197,19 +188,14 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:10.4.8
+    build:
+      context: services/api
+      dockerfile: Dockerfile.grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-palique-local}
     volumes:
       - palique-grafana:/var/lib/grafana
-    configs:
-      - source: grafana-datasource
-        target: /etc/grafana/provisioning/datasources/datasource.yaml
-      - source: grafana-dashboards-provider
-        target: /etc/grafana/provisioning/dashboards/dashboards.yaml
-      - source: grafana-dashboard-palique
-        target: /etc/grafana/dashboards/palique-overview.json
     depends_on:
       - tempo
       - prometheus
@@ -222,26 +208,3 @@ volumes:
   palique-tempo:
   palique-prometheus:
   palique-grafana:
-
-# File configs travel inside the Docker config store instead of host bind
-# mounts: Coolify artifacts can leave stale directories where a file is
-# expected, which breaks file mounts (dir-onto-file) at container start.
-configs:
-  caddy-config:
-    file: ./services/api/Caddyfile.coolify-full
-  otel-config:
-    file: ./services/api/telemetry/otel-collector-config.yaml
-  tempo-config:
-    file: ./services/api/telemetry/tempo.yaml
-  prometheus-config:
-    file: ./services/api/telemetry/prometheus.yml
-  prometheus-alerts:
-    file: ./services/api/telemetry/alerts.yml
-  alertmanager-config:
-    file: ./services/api/telemetry/alertmanager.yml
-  grafana-datasource:
-    file: ./services/api/telemetry/grafana/provisioning/datasources/datasource.yaml
-  grafana-dashboards-provider:
-    file: ./services/api/telemetry/grafana/provisioning/dashboards/dashboards.yaml
-  grafana-dashboard-palique:
-    file: ./services/api/telemetry/grafana/dashboards/palique-overview.json

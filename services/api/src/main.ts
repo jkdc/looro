@@ -29,6 +29,7 @@ import { createDailyContentWorkerScheduler, type DailyContentWorkerScheduler } f
 import { createDailyReviewWorkerScheduler, type DailyReviewWorkerScheduler } from './daily-review-worker-scheduler.js';
 import { log } from './log.js';
 import { addDatabasePoolObservability, initGenerationMetrics, initObservability, shutdownObservability, startGenerationMetricsRefresh } from './observability.js';
+import { migrate, migrationsOnBootEnabled } from './migrate.js';
 
 export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> {
   const databaseURL = env.DATABASE_URL;
@@ -93,6 +94,8 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     initObservability(env);
     const db = connectDatabase(databaseURL);
     database = db;
+    // Opt-in for single-container deployments (see migrationsOnBootEnabled).
+    if (migrationsOnBootEnabled(env)) await migrate(db);
     dailyScheduler = createDailyScheduler(db);
     dailyContentWorker = createDailyContentWorkerScheduler(db,env);
     dailyReviewWorker = createDailyReviewWorkerScheduler(db,env);
