@@ -1,76 +1,81 @@
 # Despliegue en Coolify (VPS Hostinger)
 
-La instalación del usuario usa **Coolify** sobre el VPS, así que el deploy
-automático lo gestiona el **webhook de GitHub de Coolify** (push → build →
-deploy) y NO el workflow `deploy.yml` de Actions (que quedó reducido a
-`workflow_dispatch` para no duplicar deploys).
+Despliegue en Coolify con el patrón **repositorio conectado** (igual que
+OpenTerminal): Coolify clona el repo privado `jkdc/palique` vía GitHub App,
+hace build y redeploy con su webhook en cada push. El deploy automático por
+push lo gestiona Coolify; el workflow `deploy.yml` de Actions quedó como
+respaldo manual (`workflow_dispatch`).
 
-## Arquitectura en Coolify
+## Arquitectura
 
 | Pieza | Cómo se despliega |
 |---|---|
-| PostgreSQL 17 + migraciones + API | Recurso **Docker Compose**: `docker-compose.yml` (raíz, mismo patrón que OpenTerminal) |
-| TLS + dominio | Proxy de Coolify (Traefik) |
-| Cabeceras trusted-proxy | Middleware Traefik custom (ver abajo) |
-| Caddy / Prometheus / Grafana / Tempo | **No** van a Coolify (compose.yaml es para servidor dedicado) |
+| PostgreSQL 17 | Recurso **Database → PostgreSQL** de Coolify (no va en el repo) |
+| API | App **Git Repository** → build pack Dockerfile → `services/api/Dockerfile` |
+| Migraciones | La propia API las aplica al arranque con `RUN_MIGRATIONS_ON_BOOT=true` |
+| TLS + dominio | Proxy de Coolify (Traefik), dominio configurado en la UI |
 
-## 1. Recurso Docker Compose en Coolify
+El `docker-compose.yml` de la raíz sigue existiendo como alternativa compose,
+pero el flujo activo es la app git individual.
 
-1. New Resource → **Docker Compose** → conecta el repo privado
-   `jkdc/palique` (GitHub App de Coolify; da webhook de push automático).
-2. **Compose file**: `docker-compose.yml` (raíz del repo; mismo patrón que
-   OpenTerminal). Los `build.context` apuntan a `services/api`.
-3. **Domain**: dominio o subdominio del servicio `api`, puerto `8080`
-   (ej.: `api.tudominio.com` → `api:8080`). Coolify trae TLS con Let's Encrypt.
-4. **Environment variables** en Coolify (o variables del compose):
-   - `POSTGRES_PASSWORD` — obligatoria.
-   - `PUBLIC_ORIGIN` — `https://api.tudominio.com` (obligatoria en esta variante).
-   - `ACCOUNTS_ENABLED=true`, `ACCOUNTS_HMAC_KEY` y `ACCOUNTS_PROXY_TOKEN`
-     — dos hex de 64 chars distintos (32 bytes cada uno): `openssl rand -hex 32`.
-     Sin esto el login queda deshabilitado.
-   - Opcionales: `GOOGLE_ANDROID_*`, `APPLE_CLIENT_ID`, `STRIPE_*`,
-     `LEVELTEST_*` (ver `compose.yaml` para el catálogo completo).
+## 1. PostgreSQL en Coolify
 
-## 2. Cabeceras trusted-proxy (obligatorio para el login)
+New Resource → **Database → PostgreSQL 17**. Guarda la cadena de conexión
+interna que Coolify genera (host, puerto, usuario, password, base).
 
-La API solo acepta `X-App-Client-IP` de un proxy que además demuestre
-`X-App-Proxy-Token` (`services/api/src/access-requests.ts:76`). El Traefik de
-Coolify **no puede inyectar** esas cabeceras (su middleware
-`customRequestHeaders` solo fija valores estáticos y no puede copiar la IP
-del cliente desde `X-Forwarded-For`).
+## 2. App git (la API)
 
-La solución ya viene resuelta en `compose.coolify.yaml`: un sidecar
-**`edge`** (Caddy) recibe el tráfico del dominio, resuelve la IP real del
-cliente desde `X-Forwarded-For` (confiando solo en rangos privados Docker,
-con `trusted_proxies`) e inyecta ambas cabeceras hacia la API.
+New Resource → **Git Repository** → repo `jkdc/palique`, branch `main`:
 
-Configuración resultante en Coolify:
+- **Build pack**: Dockerfile
+- **Dockerfile location**: `services/api/Dockerfile`
+- **Port**: `8080`
+- **Domain**: el dominio público de la API (Coolify trae TLS de Let's Encrypt)
 
-- **Domain** del recurso → servicio **`edge`**, puerto **`8081`** (no `api:8080`).
-- La variable `ACCOUNTS_PROXY_TOKEN` debe estar definida (la usa el sidecar).
+## 3. Variables de entorno de la app
 
-Si algo falla aquí, el login responde **503 `access_request_proxy_not_ready`**
-— es la señal de este ajuste.
+Obligatorias:
 
-## 3. Por qué el contenedor salía "Restarting"
+- `DATABASE_URL` — la cadena del recurso PostgreSQL de Coolify.
+- `PUBLIC_ORIGIN` — `https://tu-dominio` (la app rechaza orígenes no-https
+  salvo localhost).
+- `RUN_MIGRATIONS_ON_BOOT=true` — aplica el esquema al arrancar (opt-in;
+  idempotente y con advisory lock, seguro en redeploys).
 
-El primer intento desplegó la API sin variables: `main.ts` hace
-`process.exit(1)` si falta `DATABASE_URL`, y el compose exige
-`POSTGRES_PASSWORD` y dominio. Con el compose de Coolify + variables de la
-sección 1 el contenedor queda sano (healthcheck `healthz` incluido, que
-Coolify usa para el estado del recurso).
+Para login de cuentas:
 
-## 4. Deploy automático
+- `ACCOUNTS_ENABLED=true`
+- `ACCOUNTS_HMAC_KEY` y `ACCOUNTS_PROXY_TOKEN` — dos hex de 64 chars
+  distintos (`openssl rand -hex 32`).
 
-- Push a `main` → webhook Coolify → build + `docker compose up`.
-- Rollback: Coolify UI → Deployments → redeploy de un commit anterior.
-- El workflow `.github/workflows/deploy.yml` queda como respaldo manual
-  (`workflow_dispatch`) para el escenario de servidor dedicado con
-  `deploy.sh`; en Coolify no se usa.
+**Nota trusted-proxy**: el login exige cabeceras que normalmente inyecta
+Caddy (`X-App-Client-IP`). Con Traefik de Coolify no hay inyector, así que
+en esta topología añade también:
 
-## 5. Verificación
+- `ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true`
 
-```bash
-curl https://api.tudominio.com/healthz          # {"ok":true,...}
-# login correcto = cabeceras inyectadas bien
-```
+Eso hace que la API confíe en la dirección del socket directo (Traefik,
+una IP privada de la red Docker). Coste conocido: el limitado por IP
+trata a todos los clientes como una única dirección (rate limits
+compartidos). Es aceptable para el despliegue MVP actual; si se necesita
+limitado por IP real, el `docker-compose.yml` raíz trae el sidecar `edge`
+con Caddy que lo resuelve.
+
+Opcionales: `GOOGLE_ANDROID_*`, `APPLE_CLIENT_ID`, `STRIPE_*`, `LEVELTEST_*`.
+
+## 4. Por qué salía "Restarting"
+
+El primer intento desplegó la API sin `DATABASE_URL`: `main.ts` hace
+`process.exit(1)` sin ella. Con las variables de la sección 3 el contenedor
+queda sano. En Coolify, un estado "Restarting" con deploy en verde siempre
+significa crash del proceso: mirar **Logs** del recurso.
+
+## 5. Deploy automático y operación
+
+- Push a `main` → webhook Coolify → build + redeploy.
+- Migraciones nuevas SQL: se aplican solas al arrancar con
+  `RUN_MIGRATIONS_ON_BOOT=true`.
+- Rollback: Deployments → redeploy de commit anterior.
+- Verificación: `curl https://tu-dominio/healthz`.
+- Panel admin: requiere `ADMIN_HMAC_KEY`/`ADMIN_PROXY_TOKEN` y su dominio;
+  ver `services/api/docs/admin-panel.md` antes de habilitarlo.

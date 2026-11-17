@@ -1,15 +1,18 @@
-# Coolify deployment (same pattern as OpenTerminal): root-level compose,
-# domains are wired in the Coolify UI. Differences imposed by this backend:
-# PostgreSQL is required, and the accounts login needs trusted-proxy headers
-# that Coolify's Traefik cannot inject, so an `edge` Caddy sidecar provides
-# them. Point the Coolify domain at service `edge`, port 8081.
+# Full-stack Coolify deployment: same containers as the local stack
+# (database + migrations + API + Caddy edge with admin panel + full
+# observability). Coolify's Traefik owns ports 80/443 and terminates TLS,
+# so this compose publishes no host ports: wire the Coolify domains at
+# service `caddy`, port 80:
+#   API_DOMAIN   -> caddy:80
+#   ADMIN_DOMAIN -> caddy:80 (same container, routed by Host)
+# Observability UIs stay bound to 127.0.0.1 only (SSH tunnel to reach them).
 services:
   database:
     image: postgres:17-alpine
     environment:
       - POSTGRES_DB=app
       - POSTGRES_USER=app
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set a unique database password in Coolify}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Set a unique database password}
     volumes:
       - palique-postgres:/var/lib/postgresql/data
     healthcheck:
@@ -39,7 +42,7 @@ services:
       - "8080"
     environment:
       - DATABASE_URL=postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
-      - PUBLIC_ORIGIN=${PUBLIC_ORIGIN:?Set the public origin in Coolify (https://your-domain)}
+      - PUBLIC_ORIGIN=https://${API_DOMAIN:?Set the API domain}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - ACCOUNTS_ENABLED=${ACCOUNTS_ENABLED:-}
       - ACCOUNTS_HMAC_KEY=${ACCOUNTS_HMAC_KEY:-}
@@ -51,15 +54,18 @@ services:
       - STRIPE_TEST_WEBHOOK_SECRET=${STRIPE_TEST_WEBHOOK_SECRET:-}
       - ADMIN_HMAC_KEY=${ADMIN_HMAC_KEY:-}
       - ADMIN_PROXY_TOKEN=${ADMIN_PROXY_TOKEN:-}
+      - HOSTED_VOICE_EXPERIMENTAL=${HOSTED_VOICE_EXPERIMENTAL:-false}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - LEVELTEST_GENERATE_ENABLED=${LEVELTEST_GENERATE_ENABLED:-false}
+      - LEVELTEST_GENERATE_LANGS=${LEVELTEST_GENERATE_LANGS:-en,es}
+      - LEVELTEST_GENERATE_LEVELS=${LEVELTEST_GENERATE_LEVELS:-A1,A2,B1}
       - LEVELTEST_LLM_PROVIDER=${LEVELTEST_LLM_PROVIDER:-}
       - LEVELTEST_LLM_URL=${LEVELTEST_LLM_URL:-}
       - LEVELTEST_LLM_MODEL=${LEVELTEST_LLM_MODEL:-}
       - LEVELTEST_LLM_API_KEY=${LEVELTEST_LLM_API_KEY:-}
       - LEVELTEST_LLM_MASTER_KEY=${LEVELTEST_LLM_MASTER_KEY:-}
-      # Observability stack is not part of the Coolify deployment.
-      - OTEL_ENABLED=false
+      - OTEL_ENABLED=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
       - OTEL_SERVICE_NAME=palique-api
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz || exit 1"]
@@ -70,25 +76,136 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+      otel-collector:
+        condition: service_started
     restart: unless-stopped
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
 
-  # Coolify's Traefik cannot inject custom request headers, so this Caddy
-  # sidecar is the edge for the Coolify domain (login trusted-proxy headers).
-  edge:
+  # Edge behind Coolify's Traefik: routes by Host to the API and serves the
+  # admin panel. Both Coolify domains point at this service, port 80.
+  caddy:
     image: caddy:2-alpine
     environment:
-      - ACCOUNTS_PROXY_TOKEN=${ACCOUNTS_PROXY_TOKEN:-}
+      - API_DOMAIN=${API_DOMAIN:?Set the API domain}
+      - ADMIN_DOMAIN=${ADMIN_DOMAIN:?Set the admin panel domain}
+      - ADMIN_PROXY_TOKEN=${ADMIN_PROXY_TOKEN:-}
     volumes:
-      - ./services/api/Caddyfile.coolify:/etc/caddy/Caddyfile:ro
+      - ./services/api/Caddyfile.coolify-full:/etc/caddy/Caddyfile:ro
+      - ./services/api/admin-ui:/srv/admin-ui:ro
+      - palique-caddy-data:/data
+      - palique-caddy-config:/config
     depends_on:
       - api
     expose:
-      - "8081"
+      - "80"
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.127.0
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./services/api/telemetry/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    expose:
+      - "4318"
+    depends_on:
+      - tempo
+    restart: unless-stopped
+
+  tempo:
+    image: grafana/tempo:2.7.1
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./services/api/telemetry/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - palique-tempo:/tmp/tempo
+    expose:
+      - "3200"
+    depends_on:
+      tempo-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  tempo-init:
+    image: alpine:3.20
+    command: ["chown", "-R", "10001:10001", "/tmp/tempo"]
+    volumes:
+      - palique-tempo:/tmp/tempo
+    restart: "no"
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=90d
+      - --storage.tsdb.retention.size=2GB
+    volumes:
+      - ./services/api/telemetry/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./services/api/telemetry/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - palique-prometheus:/prometheus
+    depends_on:
+      - otel-collector
+      - alertmanager
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    volumes:
+      - ./services/api/telemetry/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    depends_on:
+      - webhook-logger
+    restart: unless-stopped
+
+  webhook-logger:
+    image: python:3.12-alpine
+    command:
+      - python
+      - -c
+      - |
+        import json
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                length = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(length).decode("utf-8", "replace")
+                try:
+                    pretty = json.dumps(json.loads(body), ensure_ascii=False, sort_keys=True)
+                except ValueError:
+                    pretty = body
+                print(f"ALERT POST {self.path}: {pretty}", flush=True)
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"ok":true}')
+
+            def log_message(self, *args):
+                pass
+
+        HTTPServer(("0.0.0.0", 5001), Handler).serve_forever()
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.8
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-palique-local}
+    volumes:
+      - ./services/api/telemetry/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./services/api/telemetry/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./services/api/telemetry/grafana/dashboards:/etc/grafana/dashboards:ro
+      - palique-grafana:/var/lib/grafana
+    depends_on:
+      - tempo
+      - prometheus
     restart: unless-stopped
 
 volumes:
   palique-postgres:
+  palique-caddy-data:
+  palique-caddy-config:
+  palique-tempo:
+  palique-prometheus:
+  palique-grafana:
