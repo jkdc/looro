@@ -11,7 +11,7 @@
 	}
 }
 
-{$API_DOMAIN} {
+http://{$API_DOMAIN} {
 	reverse_proxy api:8080
 	header {
 		Strict-Transport-Security "max-age=31536000"
@@ -22,7 +22,7 @@
 	}
 }
 
-{$ADMIN_DOMAIN} {
+http://{$ADMIN_DOMAIN} {
 	header {
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options "nosniff"
