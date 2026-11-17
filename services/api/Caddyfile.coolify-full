@@ -1,0 +1,48 @@
+# Coolify full-stack edge: Coolify's Traefik owns 80/443 and terminates TLS,
+# so this Caddy serves plain HTTP inside the Docker network and routes by
+# Host header — same topology as the local stack (API + admin panel +
+# observability), only the TLS layer moves to Traefik.
+{
+	auto_https off
+	# Traefik (Coolify) connects from a Docker network address; trust private
+	# ranges so {remote_host} is the real client IP from X-Forwarded-For.
+	servers {
+		trusted_proxies static 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+	}
+}
+
+{$API_DOMAIN} {
+	reverse_proxy api:8080
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), geolocation=(), microphone=()"
+	}
+}
+
+{$ADMIN_DOMAIN} {
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'"
+	}
+	handle /v1/admin/* {
+		reverse_proxy api:8080 {
+			header_up X-App-Client-IP {remote_host}
+			header_up X-App-Proxy-Token {$ADMIN_PROXY_TOKEN}
+		}
+	}
+	handle {
+		root * /srv/admin-ui
+		# Never cache HTML: the entry documents carry the asset versions.
+		@html path *.html
+		header @html Cache-Control "no-cache"
+		@assets path *.js *.css
+		header @assets Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}
