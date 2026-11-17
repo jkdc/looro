@@ -93,10 +93,12 @@ services:
       - ADMIN_DOMAIN=${ADMIN_DOMAIN:?Set the admin panel domain}
       - ADMIN_PROXY_TOKEN=${ADMIN_PROXY_TOKEN:-}
     volumes:
-      - ./services/api/Caddyfile.coolify-full:/etc/caddy/Caddyfile:ro
       - ./services/api/admin-ui:/srv/admin-ui:ro
       - palique-caddy-data:/data
       - palique-caddy-config:/config
+    configs:
+      - source: caddy-config
+        target: /etc/caddy/Caddyfile
     depends_on:
       - api
     expose:
@@ -106,8 +108,9 @@ services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.127.0
     command: ["--config=/etc/otelcol-contrib/config.yaml"]
-    volumes:
-      - ./services/api/telemetry/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    configs:
+      - source: otel-config
+        target: /etc/otelcol-contrib/config.yaml
     expose:
       - "4318"
     depends_on:
@@ -118,8 +121,10 @@ services:
     image: grafana/tempo:2.7.1
     command: ["-config.file=/etc/tempo/tempo.yaml"]
     volumes:
-      - ./services/api/telemetry/tempo.yaml:/etc/tempo/tempo.yaml:ro
       - palique-tempo:/tmp/tempo
+    configs:
+      - source: tempo-config
+        target: /etc/tempo/tempo.yaml
     expose:
       - "3200"
     depends_on:
@@ -142,9 +147,12 @@ services:
       - --storage.tsdb.retention.time=90d
       - --storage.tsdb.retention.size=2GB
     volumes:
-      - ./services/api/telemetry/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./services/api/telemetry/alerts.yml:/etc/prometheus/alerts.yml:ro
       - palique-prometheus:/prometheus
+    configs:
+      - source: prometheus-config
+        target: /etc/prometheus/prometheus.yml
+      - source: prometheus-alerts
+        target: /etc/prometheus/alerts.yml
     depends_on:
       - otel-collector
       - alertmanager
@@ -152,8 +160,9 @@ services:
 
   alertmanager:
     image: prom/alertmanager:v0.27.0
-    volumes:
-      - ./services/api/telemetry/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    configs:
+      - source: alertmanager-config
+        target: /etc/alertmanager/alertmanager.yml
     depends_on:
       - webhook-logger
     restart: unless-stopped
@@ -193,10 +202,14 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-palique-local}
     volumes:
-      - ./services/api/telemetry/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
-      - ./services/api/telemetry/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./services/api/telemetry/grafana/dashboards:/etc/grafana/dashboards:ro
       - palique-grafana:/var/lib/grafana
+    configs:
+      - source: grafana-datasource
+        target: /etc/grafana/provisioning/datasources/datasource.yaml
+      - source: grafana-dashboards-provider
+        target: /etc/grafana/provisioning/dashboards/dashboards.yaml
+      - source: grafana-dashboard-palique
+        target: /etc/grafana/dashboards/palique-overview.json
     depends_on:
       - tempo
       - prometheus
@@ -209,3 +222,26 @@ volumes:
   palique-tempo:
   palique-prometheus:
   palique-grafana:
+
+# File configs travel inside the Docker config store instead of host bind
+# mounts: Coolify artifacts can leave stale directories where a file is
+# expected, which breaks file mounts (dir-onto-file) at container start.
+configs:
+  caddy-config:
+    file: ./services/api/Caddyfile.coolify-full
+  otel-config:
+    file: ./services/api/telemetry/otel-collector-config.yaml
+  tempo-config:
+    file: ./services/api/telemetry/tempo.yaml
+  prometheus-config:
+    file: ./services/api/telemetry/prometheus.yml
+  prometheus-alerts:
+    file: ./services/api/telemetry/alerts.yml
+  alertmanager-config:
+    file: ./services/api/telemetry/alertmanager.yml
+  grafana-datasource:
+    file: ./services/api/telemetry/grafana/provisioning/datasources/datasource.yaml
+  grafana-dashboards-provider:
+    file: ./services/api/telemetry/grafana/provisioning/dashboards/dashboards.yaml
+  grafana-dashboard-palique:
+    file: ./services/api/telemetry/grafana/dashboards/palique-overview.json
