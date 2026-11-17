@@ -1,0 +1,26 @@
+# Coolify edge sidecar: injects the trusted-proxy headers the API requires
+# (X-App-Client-IP / X-App-Proxy-Token). Coolify's Traefik terminates TLS and
+# routes the Coolify domain here; this Caddy resolves the real client IP from
+# X-Forwarded-For (only trusting private-network proxies) and forwards to the
+# api service. Mirror of the production Caddyfile's security headers.
+{
+	auto_https off
+	# Coolify's Traefik connects from a Docker network address; trust private
+	# ranges so {remote_host} becomes the real client IP from X-Forwarded-For.
+	servers {
+		trusted_proxies static 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+	}
+}
+:8081 {
+	reverse_proxy api:8080 {
+		header_up X-App-Client-IP {remote_host}
+		header_up X-App-Proxy-Token {$ACCOUNTS_PROXY_TOKEN}
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), geolocation=(), microphone=()"
+	}
+}

@@ -6,13 +6,9 @@ name: Deploy API to VPS
 # docs/deployment-hostinger.md.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "services/api/**"
-      - "shared/**"
-      - "Makefile"
-      - ".github/workflows/deploy.yml"
+  # Auto-deploy is handled by the Coolify webhook on push (see
+  # docs/deployment-coolify.md). This workflow stays as a manual fallback for
+  # a dedicated-server setup (docs/deployment-hostinger.md).
   workflow_dispatch:
 
 concurrency:
