@@ -181,15 +181,17 @@ test('daily admin idempotency replays the first response and rejects key reuse w
 
 test('daily config accepts only explicit English feature flags and non-negative integer budgets', () => {
   const value=normalizeDailyAdminConfig({schemaVersion:1,expectedRevision:0,readEnabled:false,newAttemptsEnabled:false,
-    generationEnabled:false,autoPublishEnabled:false,enabledLanguages:['en'],contentBudgetNanoUsd:'0',reviewBudgetNanoUsd:'0',retentionDays:365});
+    generationEnabled:false,autoPublishEnabled:false,budgetEnforced:false,enabledLanguages:['en'],contentBudgetNanoUsd:'0',reviewBudgetNanoUsd:'0',retentionDays:365});
   assert.equal(value.autoPublishEnabled,false);
+  assert.equal(value.budgetEnforced,false);
   assert.deepEqual(value.enabledLanguages,['en']);
 });
 
-test('daily config rejects unsupported languages, budget floats, and stale revisions', () => {
+test('daily config rejects unsupported languages, budget floats, stale revisions, and missing budget enforcement', () => {
   const base={schemaVersion:1,expectedRevision:4,readEnabled:true,newAttemptsEnabled:true,generationEnabled:true,
-    autoPublishEnabled:false,enabledLanguages:['en'],contentBudgetNanoUsd:'500',reviewBudgetNanoUsd:'400',retentionDays:365};
+    autoPublishEnabled:false,budgetEnforced:true,enabledLanguages:['en'],contentBudgetNanoUsd:'500',reviewBudgetNanoUsd:'400',retentionDays:365};
   assert.throws(()=>normalizeDailyAdminConfig({...base,enabledLanguages:['en','fr']}),/invalid/i);
   assert.throws(()=>normalizeDailyAdminConfig({...base,reviewBudgetNanoUsd:'1.5'}),/invalid/i);
   assert.throws(()=>normalizeDailyAdminConfig({...base,expectedRevision:-1}),/invalid/i);
+  assert.throws(()=>normalizeDailyAdminConfig((({...base,budgetEnforced:undefined}) as Record<string,unknown>)),/invalid/i);
 });

@@ -90,7 +90,7 @@ const SECTION_SPECS: Record<SectionName, SectionSpec> = {
 // validation (word ranges, dedupe, judge flags) may discard candidates, and
 // the validator still requires the full pool target. Without this headroom a
 // single rejected passage fails the whole week (en A1 week 202647).
-const GENERATION_HEADROOM: Record<SectionName, number> = { recognition: 4, reading: 1, listening: 1, writing: 1 };
+const GENERATION_HEADROOM: Record<SectionName, number> = { recognition: 6, reading: 2, listening: 2, writing: 2 };
 
 export function sectionGenerationSpec(section: SectionName, model: ExamModelEntry): Pick<SectionSpec, 'count' | 'perPassage'> {
   if (section === 'recognition') return { count: model.poolTarget.recognition + GENERATION_HEADROOM.recognition, perPassage: 0 };
@@ -174,8 +174,9 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
   if (section === 'recognition') {
     const options = sectionBlueprint?.options ?? 4;
     const mix = sectionBlueprint?.mix;
-    const mixInstruction = mix ? `Meet at least these blueprint candidate pool quotas: ${Object.entries(mix).map(([kind, target]) => `${target} ${kind}`).join(', ')}.` :
-      'Use a balanced mixture of choice and gap-fill items.';
+    const mixInstruction = mix
+      ? `Candidate quotas are hard requirements: produce AT LEAST ${Object.entries(mix).map(([kind, target]) => `${target} items of kind "${kind}"`).join(' and ')}. Items of any other kind, malformed items, or duplicates do NOT count toward these quotas. Count your items per kind before answering.`
+      : 'Use a balanced mixture of choice and gap-fill items.';
     user = [
       `Write ${count} vocabulary and grammar items at CEFR ${level} level in ${langName}.`,
       `Task family: ${sectionBlueprint?.taskFamily ?? 'vocabulary and grammar in context'}. Skills to test: ${skills}.`,
@@ -195,6 +196,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
       `Register and task family: ${register}; ${sectionBlueprint?.taskFamily ?? 'comprehension of connected text'}. Assess ${focus}; avoid repeating the same question target within or across passages.`,
       `Content focus: ${skills}. Weekly theme: ${theme}.`,
       `Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the passage.`,
+      `Discard rules: any passage outside the ${minWords}-${maxWords} word range, with missing or duplicate questions, or with ambiguous answers is rejected — check word counts per passage before answering.`,
       fewShotJson,
       `Reply as JSON array: [{"title":"...","text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
     ].join('\n');
@@ -209,6 +211,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
       `Format and task family: ${format}; ${sectionBlueprint?.taskFamily ?? 'spoken comprehension'}. Assess ${focus}; vary speakers and situations without making the answer depend on visual clues.`,
       `Task family: ${sectionBlueprint?.taskFamily ?? 'controlled short production'}. Content focus: ${skills}. Weekly theme: ${theme}.`,
       `These will be read aloud — use natural spoken language. Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the spoken text.`,
+      `Discard rules: any passage outside the ${minWords}-${maxWords} word range, with missing or duplicate questions, or with ambiguous answers is rejected — check word counts per passage before answering.`,
       fewShotJson,
       `Reply as JSON array: [{"text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
     ].join('\n');

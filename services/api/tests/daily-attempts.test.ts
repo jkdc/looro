@@ -74,7 +74,7 @@ test('creating an attempt without review budget fails closed with the contracted
     [`budget-gate-${Date.now()}-${Math.floor(Math.random()*1e6)}@daily.test`])).rows[0]!.id;
   try{
     const editorialDate=new Date().toISOString().slice(0,10);
-    await db.query(`UPDATE daily_config SET new_attempts_enabled=true,review_budget_nano_usd='0' WHERE singleton=true`);
+    await db.query(`UPDATE daily_config SET new_attempts_enabled=true,review_budget_nano_usd='0',budget_enforced=true WHERE singleton=true`);
     const packageId=(await db.query<{id:string}>(`SELECT package_id AS id FROM daily_publications WHERE language='en' AND editorial_date=$1`,[editorialDate])).rows[0]?.id
       ??(await db.query<{id:string}>(`INSERT INTO daily_packages(id,language,editorial_date,schema_version,profile_version,state,revision,public_payload,private_payload,content_hash,artifact_hash,text_hash,judge_state,judge_text_hash,judge_artifact_hash)
         VALUES(gen_random_uuid(),'en',$1,1,'en-v1','published',0,'{}'::jsonb,'{}'::jsonb,'${'a'.repeat(64)}','${'b'.repeat(64)}','${'c'.repeat(64)}','passed','${'c'.repeat(64)}','${'b'.repeat(64)}') RETURNING id`,
@@ -103,4 +103,32 @@ test('creating an attempt without review budget fails closed with the contracted
     await db.query(`DELETE FROM accounts WHERE id=$1`,[accountId]);
     await db.end();
   }
+});
+
+test('creating an attempt proceeds without review budget when enforcement is disabled', async t => {
+  const databaseURL=process.env.TEST_DATABASE_URL;
+  const integration=(name:string,fn:()=>Promise<void>)=>t.test(name,{skip:!databaseURL&&'Set TEST_DATABASE_URL.'},fn);
+  const {createDailyAttempt}=await import('../src/daily-attempts.js');
+  const {connectDatabase}=await import('../src/db.js');
+  const db=await connectDatabase(databaseURL!);
+  const accountId=(await db.query<{id:string}>(`INSERT INTO accounts(id,email) VALUES(gen_random_uuid(),$1) RETURNING id`,
+    [`budget-bypass-${Date.now()}-${Math.floor(Math.random()*1e6)}@daily.test`])).rows[0]!.id;
+  try{
+    const editorialDate=new Date().toISOString().slice(0,10);
+    await db.query(`UPDATE daily_config SET new_attempts_enabled=true,review_budget_nano_usd='0',budget_enforced=false WHERE singleton=true`);
+    const packageId=(await db.query<{id:string}>(`SELECT package_id AS id FROM daily_publications WHERE language='en' AND editorial_date=$1`,[editorialDate])).rows[0]?.id
+      ??(await db.query<{id:string}>(`INSERT INTO daily_packages(id,language,editorial_date,schema_version,profile_version,state,revision,public_payload,private_payload,content_hash,artifact_hash,text_hash,judge_state,judge_text_hash,judge_artifact_hash)
+        VALUES(gen_random_uuid(),'en',$1,1,'en-v1','published',0,'{}'::jsonb,'{}'::jsonb,'${'d'.repeat(64)}','${'e'.repeat(64)}','${'f'.repeat(64)}','passed','${'f'.repeat(64)}','${'e'.repeat(64)}') RETURNING id`,
+        [editorialDate])).rows[0]!.id;
+    if((await db.query(`SELECT 1 FROM daily_publications WHERE language='en' AND editorial_date=$1`,[editorialDate])).rowCount===0)
+      await db.query(`INSERT INTO daily_publications(language,editorial_date,package_id,revision) VALUES('en',$1,$2,1)`,[editorialDate,packageId]);
+    const body={schemaVersion:1 as const,attemptId:'11111111-1111-4111-8111-111111111113',packageVersionId:packageId,
+      explanationLanguage:'es' as const,dailyConsentVersion:1 as const};
+    await t.test('creation succeeds and records a held reservation',async()=>{
+      await createDailyAttempt(db,accountId,body,`11111111-1111-4111-8111-111111111114`);
+      const reservation=await db.query(`SELECT state FROM daily_cost_reservations WHERE binding_id=$1 AND cost_center='review'`,
+        ['11111111-1111-4111-8111-111111111113']);
+      assert.equal(reservation.rows[0]?.state,'held');
+    });
+  } finally { await db.query(`DELETE FROM daily_attempts WHERE account_id=$1`,[accountId]); await db.end(); }
 });

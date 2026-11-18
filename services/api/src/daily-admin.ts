@@ -6,14 +6,14 @@ import { ensureDailyPackage } from './daily-jobs.js';
 import { publishDailyPackage } from './daily-generation.js';
 import type { PoolClient } from 'pg';
 
-export type NormalizedDailyAdminConfig = { expectedRevision:number; readEnabled:boolean; newAttemptsEnabled:boolean;
+export type NormalizedDailyAdminConfig = { expectedRevision:number; readEnabled:boolean; newAttemptsEnabled:boolean; budgetEnforced:boolean;
   generationEnabled:boolean; autoPublishEnabled:boolean; enabledLanguages:string[]; contentBudgetNanoUsd:string;
   reviewBudgetNanoUsd:string; retentionDays:number };
 export type DailyAdminPackageQuery={language:'en';dateFrom:string;dateTo:string;limit:number;cursor:{date:string;id:string}|null};
 export type DailyAdminJobQuery={language:'en';dateFrom:string;dateTo:string;kind:'all'|'content'|'review';limit:number};
 export type DailyAdminGenerationRequest={language:'en';editorialDate:string;reason:string};
 export type DailyAdminPublicationRequest={packageVersionId:string;artifactHash:string;expectedRevision:number;reason:string};
-const keys=['schemaVersion','expectedRevision','readEnabled','newAttemptsEnabled','generationEnabled','autoPublishEnabled',
+const keys=['schemaVersion','expectedRevision','readEnabled','newAttemptsEnabled','generationEnabled','autoPublishEnabled','budgetEnforced',
   'enabledLanguages','contentBudgetNanoUsd','reviewBudgetNanoUsd','retentionDays'];
 const isRecord=(x:unknown):x is Record<string,unknown>=>!!x&&typeof x==='object'&&!Array.isArray(x);
 const budget=(x:unknown):x is string=>typeof x==='string'&&/^(0|[1-9]\d{0,18})$/.test(x)&&BigInt(x)<=9_223_372_036_854_775_807n;
@@ -149,14 +149,14 @@ export async function runDailyAdminIdempotent<T>(db:Database,adminId:string,oper
 export function normalizeDailyAdminConfig(input:unknown):NormalizedDailyAdminConfig {
   if(!isRecord(input)||Object.keys(input).length!==keys.length||Object.keys(input).some(key=>!keys.includes(key))||input.schemaVersion!==1||
     !Number.isSafeInteger(input.expectedRevision)||Number(input.expectedRevision)<0||
-    !['readEnabled','newAttemptsEnabled','generationEnabled','autoPublishEnabled'].every(key=>typeof input[key]==='boolean')||
+    !['readEnabled','newAttemptsEnabled','generationEnabled','autoPublishEnabled','budgetEnforced'].every(key=>typeof input[key]==='boolean')||
     !Array.isArray(input.enabledLanguages)||input.enabledLanguages.length!==1||input.enabledLanguages[0]!=='en'||
     !budget(input.contentBudgetNanoUsd)||!budget(input.reviewBudgetNanoUsd)||
     !Number.isSafeInteger(input.retentionDays)||Number(input.retentionDays)<30||Number(input.retentionDays)>3650)
     throw new ServiceError('invalid_daily_config');
   return { expectedRevision:Number(input.expectedRevision),readEnabled:input.readEnabled as boolean,
     newAttemptsEnabled:input.newAttemptsEnabled as boolean,generationEnabled:input.generationEnabled as boolean,
-    autoPublishEnabled:input.autoPublishEnabled as boolean,enabledLanguages:['en'],
+    autoPublishEnabled:input.autoPublishEnabled as boolean,budgetEnforced:input.budgetEnforced as boolean,enabledLanguages:['en'],
     contentBudgetNanoUsd:input.contentBudgetNanoUsd as string,reviewBudgetNanoUsd:input.reviewBudgetNanoUsd as string,
     retentionDays:Number(input.retentionDays) };
 }
@@ -166,15 +166,15 @@ export async function saveDailyAdminConfig(tx:PoolClient,input:unknown,adminId:s
   const reason=validateDailyAdminReason(reasonValue);
     const result=await tx.query(`UPDATE daily_config SET revision=revision+1,read_enabled=$2,new_attempts_enabled=$3,
       generation_enabled=$4,auto_publish_enabled=$5,enabled_languages=$6::text[],content_budget_nano_usd=$7,
-      review_budget_nano_usd=$8,retention_days=$9,updated_at=now()
+      review_budget_nano_usd=$8,retention_days=$9,budget_enforced=$10,updated_at=now()
       WHERE singleton=true AND revision=$1 RETURNING revision,read_enabled,new_attempts_enabled,generation_enabled,
-      auto_publish_enabled,enabled_languages,content_budget_nano_usd,review_budget_nano_usd,retention_days,updated_at`,
+      auto_publish_enabled,enabled_languages,content_budget_nano_usd,review_budget_nano_usd,retention_days,budget_enforced,updated_at`,
     [config.expectedRevision,config.readEnabled,config.newAttemptsEnabled,config.generationEnabled,config.autoPublishEnabled,
-      config.enabledLanguages,config.contentBudgetNanoUsd,config.reviewBudgetNanoUsd,config.retentionDays]);
+      config.enabledLanguages,config.contentBudgetNanoUsd,config.reviewBudgetNanoUsd,config.retentionDays,config.budgetEnforced]);
     if(result.rowCount!==1)throw new ServiceError('daily_revision_conflict',409);
     await recordAdminAction(tx,adminId,'daily.config.update','daily_config',reason,{revision:result.rows[0]!.revision,
       readEnabled:config.readEnabled,newAttemptsEnabled:config.newAttemptsEnabled,generationEnabled:config.generationEnabled,
-      autoPublishEnabled:config.autoPublishEnabled,enabledLanguages:config.enabledLanguages,
+      autoPublishEnabled:config.autoPublishEnabled,budgetEnforced:config.budgetEnforced,enabledLanguages:config.enabledLanguages,
       contentBudgetNanoUsd:config.contentBudgetNanoUsd,reviewBudgetNanoUsd:config.reviewBudgetNanoUsd,
       retentionDays:config.retentionDays});
     return result.rows[0] as Record<string,unknown>;
@@ -182,7 +182,7 @@ export async function saveDailyAdminConfig(tx:PoolClient,input:unknown,adminId:s
 
 export async function dailyAdminSnapshot(db:Database):Promise<Record<string,unknown>> {
   const [config,counts]=await Promise.all([
-    db.query(`SELECT revision,read_enabled,new_attempts_enabled,generation_enabled,auto_publish_enabled,enabled_languages,
+    db.query(`SELECT revision,read_enabled,new_attempts_enabled,generation_enabled,auto_publish_enabled,enabled_languages,budget_enforced,
       content_budget_nano_usd::text,review_budget_nano_usd::text,retention_days,updated_at FROM daily_config WHERE singleton=true`),
     db.query(`SELECT kind,state,count(*)::integer AS count FROM daily_jobs GROUP BY kind,state ORDER BY kind,state`),
   ]);

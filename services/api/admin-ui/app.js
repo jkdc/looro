@@ -1664,7 +1664,8 @@ async function renderDailyPractice(container, _params, _id, context) {
       <div class="row g-3"><div class="col-md-6"><label class="form-check form-switch"><input class="form-check-input" id="daily-read" type="checkbox" ${c.read_enabled ? 'checked' : ''}><span class="form-check-label">Permitir lectura pública</span></label>
       <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-attempts" type="checkbox" ${c.new_attempts_enabled ? 'checked' : ''}><span class="form-check-label">Permitir nuevos intentos</span></label>
       <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-generation" type="checkbox" ${c.generation_enabled ? 'checked' : ''}><span class="form-check-label">Permitir generación</span></label>
-      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-auto-publish" type="checkbox" ${c.auto_publish_enabled ? 'checked' : ''}><span class="form-check-label">Publicación automática (requiere autorización editorial)</span></label></div>
+      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-auto-publish" type="checkbox" ${c.auto_publish_enabled ? 'checked' : ''}><span class="form-check-label">Publicación automática (requiere autorización editorial)</span></label>
+      <label class="form-check form-switch mt-2"><input class="form-check-input" id="daily-budget-enforced" type="checkbox" ${c.budget_enforced ? 'checked' : ''}><span class="form-check-label">Exigir presupuesto diario (desactivado = generar sin presupuesto)</span></label></div>
       <div class="col-md-6"><label class="form-label" for="daily-content-budget">Presupuesto máximo por contenido (nanoUSD)</label><input class="form-control" id="daily-content-budget" inputmode="numeric" value="${escapeHtml(String(c.content_budget_nano_usd))}">
       <label class="form-label mt-2" for="daily-review-budget">Presupuesto máximo por revisión (nanoUSD)</label><input class="form-control" id="daily-review-budget" inputmode="numeric" value="${escapeHtml(String(c.review_budget_nano_usd))}">
       <label class="form-label mt-2" for="daily-retention">Retención (días)</label><input class="form-control" id="daily-retention" type="number" min="30" max="3650" value="${escapeHtml(String(c.retention_days))}"></div>
@@ -1673,6 +1674,7 @@ async function renderDailyPractice(container, _params, _id, context) {
     const button = $('#daily-config-save');
     const readDraft = () => ({ readEnabled: $('#daily-read').checked, newAttemptsEnabled: $('#daily-attempts').checked,
       generationEnabled: $('#daily-generation').checked, autoPublishEnabled: $('#daily-auto-publish').checked,
+      budgetEnforced: $('#daily-budget-enforced').checked,
       enabledLanguages: [...(c.enabled_languages ?? [])], contentBudgetNanoUsd: $('#daily-content-budget').value.trim(),
       reviewBudgetNanoUsd: $('#daily-review-budget').value.trim(), retentionDays: Number($('#daily-retention').value) });
     const updateDirty = () => { button.disabled = !dailyConfigIsDirty(c, readDraft()) || $('#daily-config-reason').value.trim().length < 10; };

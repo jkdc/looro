@@ -164,8 +164,8 @@ export async function createDailyAttempt(db:Database,accountId:string,bodyValue:
     const instant=now();if(!Number.isFinite(instant.getTime()))throw new ServiceError('invalid_daily_clock');
     const editorialDate=instant.toISOString().slice(0,10);
     await tx.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[`${accountId}:en:${editorialDate}`]);
-    const config=(await tx.query<{new_attempts_enabled:boolean;max_attempts_per_day:number;review_budget_nano_usd:string}>(
-      'SELECT new_attempts_enabled,max_attempts_per_day,review_budget_nano_usd FROM daily_config WHERE singleton=true FOR SHARE')).rows[0];
+    const config=(await tx.query<{new_attempts_enabled:boolean;max_attempts_per_day:number;review_budget_nano_usd:string;budget_enforced:boolean}>(
+      'SELECT new_attempts_enabled,max_attempts_per_day,review_budget_nano_usd,budget_enforced FROM daily_config WHERE singleton=true FOR SHARE')).rows[0];
     if(!config?.new_attempts_enabled)throw new ServiceError('daily_unavailable',503);
     const publication=(await tx.query<{package_id:string;withdrawn_at:Date|null}>(`SELECT package_id,withdrawn_at FROM daily_publications
       WHERE language='en' AND editorial_date=$1 FOR UPDATE`,[editorialDate])).rows[0];
@@ -191,7 +191,7 @@ export async function createDailyAttempt(db:Database,accountId:string,bodyValue:
     await tx.query(`INSERT INTO daily_budget_limits(cost_center,budget_date,max_nano_usd) VALUES('review',$1,$2) ON CONFLICT DO NOTHING`,
       [editorialDate,config.review_budget_nano_usd]);
     let reservationId:string;
-    try{reservationId=await reserveDailyCost(tx,{bindingId:attemptId,jobId,budgetDate:editorialDate},'review',MAX_REVIEW_RESERVATION_NANO);}
+    try{reservationId=await reserveDailyCost(tx,{bindingId:attemptId,jobId,budgetDate:editorialDate},'review',MAX_REVIEW_RESERVATION_NANO,config.budget_enforced);}
     catch(error){if(error instanceof Error&&error.message==='daily_budget_unavailable')throw new ServiceError('daily_budget_unavailable',503);throw error;}
     await tx.query('UPDATE daily_attempts SET review_reservation_id=$2 WHERE id=$1',[attemptId,reservationId]);
     await tx.query(`UPDATE daily_publications SET consumed_at=COALESCE(consumed_at,$3) WHERE language='en' AND editorial_date=$1 AND package_id=$2`,

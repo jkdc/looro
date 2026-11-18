@@ -3,7 +3,7 @@ import type { PoolClient } from 'pg';
 
 export type DailyReservationBinding = { bindingId: string; jobId: string; budgetDate: string };
 export async function reserveDailyCost(tx: PoolClient, binding: DailyReservationBinding,
-  costCenter: 'content'|'review', maxNanoUsd: bigint): Promise<string> {
+  costCenter: 'content'|'review', maxNanoUsd: bigint, enforced = true): Promise<string> {
   if (!/^[0-9a-f-]{36}$/i.test(binding.bindingId) || !/^[0-9a-f-]{36}$/i.test(binding.jobId) || !/^\d{4}-\d{2}-\d{2}$/.test(binding.budgetDate) ||
       !['content','review'].includes(costCenter) || maxNanoUsd <= 0n) throw new Error('invalid_daily_reservation');
   const old = await tx.query<{id:string;max_nano_usd:string}>(`SELECT id,max_nano_usd FROM daily_cost_reservations
@@ -11,6 +11,14 @@ export async function reserveDailyCost(tx: PoolClient, binding: DailyReservation
   if (old.rows[0]) {
     if (BigInt(old.rows[0].max_nano_usd) !== maxNanoUsd) throw new Error('daily_reservation_conflict');
     return old.rows[0].id;
+  }
+  if (!enforced) {
+    // Budget enforcement disabled by daily_config: record the reservation for
+    // audit and settlement, but never fail for missing budget headroom.
+    const id = randomUUID();
+    await tx.query(`INSERT INTO daily_cost_reservations(id,job_id,cost_center,budget_date,binding_id,max_nano_usd,state)
+      VALUES($1,$2,$3,$4,$5,$6,'held')`, [id,binding.jobId,costCenter,binding.budgetDate,binding.bindingId,maxNanoUsd.toString()]);
+    return id;
   }
   const budget = await tx.query<{max_nano_usd:string}>(`SELECT max_nano_usd FROM daily_budget_limits
     WHERE cost_center=$1 AND budget_date=$2 FOR UPDATE`, [costCenter,binding.budgetDate]);

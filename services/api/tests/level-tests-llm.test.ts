@@ -5,7 +5,7 @@ import { createApp } from '../src/app.js';
 import { connectDatabase, transaction, type Database } from '../src/db.js';
 import { validateGeneratedPool } from '../src/level-tests-validate.js';
 import { encryptSecret, decryptSecret, maskKey, resolveLlmConfig, LlmTransportError } from '../src/llm-config.js';
-import { examModelFor, sectionGenerationSpec, sectionPoolMinimum, generateWeeklyLevelTest } from '../src/level-tests-llm.js';
+import { buildSectionMessages, examModelFor, sectionGenerationSpec, sectionPoolMinimum, generateWeeklyLevelTest } from '../src/level-tests-llm.js';
 import { EXAM_MODELS } from '../src/level-tests-content.generated.js';
 
 const ENV_BASE: NodeJS.ProcessEnv = {
@@ -86,7 +86,7 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
       }));
     if (user.includes('vocabulary and grammar')) {
       const requested = count(/Write (\d+) vocabulary and grammar items/, goodPool.recognition.length);
-      const mix = Object.fromEntries([...user.matchAll(/(\d+) (choice|gap)/g)].map(match => [match[2]!, Number(match[1])])) as Record<string, number>;
+      const mix = Object.fromEntries([...user.matchAll(/(\d+) items of kind "(choice|gap)"/g)].map(match => [match[2]!, Number(match[1])])) as Record<string, number>;
       return stubReply(overrides?.recognition ?? Array.from({ length: requested }, (_, index) =>
         item(`rec-${index}`, index < (mix.choice ?? requested) ? 'choice' : 'gap')));
     }
@@ -336,18 +336,18 @@ test('section asks include generation headroom so one rejected candidate cannot 
   const enA1 = examModelFor('A1', 'en');
   assert.ok(enA1, 'the en A1 blueprint must exist');
   assert.deepEqual(sectionGenerationSpec('listening', enA1),
-    { count: enA1.poolTarget.listeningPassages + 1, perPassage: enA1.examShape.listeningPerPassage });
+    { count: enA1.poolTarget.listeningPassages + 2, perPassage: enA1.examShape.listeningPerPassage });
   assert.deepEqual(sectionGenerationSpec('reading', enA1),
-    { count: enA1.poolTarget.readingPassages + 1, perPassage: enA1.examShape.readingPerPassage });
+    { count: enA1.poolTarget.readingPassages + 2, perPassage: enA1.examShape.readingPerPassage });
   assert.deepEqual(sectionGenerationSpec('recognition', enA1),
-    { count: enA1.poolTarget.recognition + 4, perPassage: 0 });
+    { count: enA1.poolTarget.recognition + 6, perPassage: 0 });
   assert.deepEqual(sectionGenerationSpec('writing', enA1),
-    { count: enA1.poolTarget.writing + 1, perPassage: 0 });
+    { count: enA1.poolTarget.writing + 2, perPassage: 0 });
   // The shared spec normalizes any blueprint; the legacy wildcard pipeline
   // keeps its own ask (see generated-exam-language-onboarding.md).
   const wildcardB2 = examModelFor('B2', 'es');
   assert.ok(wildcardB2, 'the wildcard B2 blueprint must exist');
-  assert.equal(sectionGenerationSpec('listening', wildcardB2).count, wildcardB2.poolTarget.listeningPassages + 1);
+  assert.equal(sectionGenerationSpec('listening', wildcardB2).count, wildcardB2.poolTarget.listeningPassages + 2);
 });
 
 test('every exam model derives its pool target from exactly twice the exam shape', () => {
@@ -368,4 +368,25 @@ test('the section acceptance bar stays at the pool target while the ask carries 
   assert.ok(sectionGenerationSpec('listening', enA1).count > sectionPoolMinimum('listening', enA1),
     'the ask must exceed the acceptance bar so one rejected candidate cannot fail the week');
   assert.ok(sectionGenerationSpec('recognition', enA1).count > sectionPoolMinimum('recognition', enA1));
+});
+
+test('reinforced English generation asks for headroom and hard candidate quotas', () => {
+  const model = examModelFor('A1', 'en');
+  assert.ok(model, 'english A1 model required');
+  const reading = sectionGenerationSpec('reading', model);
+  assert.ok(reading.count >= model.poolTarget.readingPassages + 2,
+    `reading headroom must be at least +2 (got ${reading.count} vs target ${model.poolTarget.readingPassages})`);
+  const recognition = sectionGenerationSpec('recognition', model);
+  assert.ok(recognition.count >= model.poolTarget.recognition + 6,
+    `recognition headroom must be at least +6 (got ${recognition.count} vs target ${model.poolTarget.recognition})`);
+  const messages = buildSectionMessages('reading', 'en', 'A1', reading.count, reading.perPassage, 202647, [], model);
+  const user = messages.find(message => message.role === 'user');
+  assert.ok(user, 'user message required');
+  assert.ok(user.content.includes('Discard rules'), 'reading prompt must state discard rules');
+  assert.ok(user.content.includes('word range'), 'reading prompt must restate the word range');
+  const recognitionMessages = buildSectionMessages('recognition', 'en', 'A1', recognition.count, 0, 202647, [], model);
+  const recognitionUser = recognitionMessages.find(message => message.role === 'user');
+  assert.ok(recognitionUser, 'recognition user message required');
+  assert.ok(recognitionUser.content.includes('hard requirements'), 'recognition prompt must enforce quotas');
+  assert.ok(recognitionUser.content.includes('AT LEAST'), 'recognition prompt must ask for minimum counts');
 });

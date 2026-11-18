@@ -52,16 +52,18 @@ async function startContentReservation(db:Database,job:DailyJob,workerId:string,
   const editorialDate=normalizeDailyEditorialDate(job.editorial_date);
   return transaction(db,async tx=>{
     const live=await liveContentJob(tx,job.id,workerId,now);
-    const settings=(await tx.query<{generation_enabled:boolean;enabled_languages:string[]}>(
-      'SELECT generation_enabled,enabled_languages FROM daily_config WHERE singleton=true FOR SHARE')).rows[0];
+    const settings=(await tx.query<{generation_enabled:boolean;enabled_languages:string[];budget_enforced:boolean}>(
+      'SELECT generation_enabled,enabled_languages,budget_enforced FROM daily_config WHERE singleton=true FOR SHARE')).rows[0];
     if(!settings?.generation_enabled||!settings.enabled_languages.includes(live.language)){
       await closeDailyJob(tx,job.id,workerId,'cancelled','daily_generation_disabled',now);return null;
     }
     const snapshot=isRecord(live.config_snapshot)?live.config_snapshot:{};
-    if(typeof snapshot.contentBudgetNanoUsd!=='string'||!/^([1-9]\d*)$/.test(snapshot.contentBudgetNanoUsd))
+    const budgetEnforced=settings.budget_enforced;
+    if(budgetEnforced&&(typeof snapshot.contentBudgetNanoUsd!=='string'||!/^([1-9]\d*)$/.test(snapshot.contentBudgetNanoUsd)))
       throw new Error('daily_budget_unavailable');
+    const reservationNano=BigInt(budgetEnforced?String(snapshot.contentBudgetNanoUsd):'1');
     const reservationId=await reserveDailyCost(tx,{bindingId:live.binding_id,jobId:live.id,budgetDate:normalizeDailyEditorialDate(live.editorial_date!)},
-      'content',BigInt(snapshot.contentBudgetNanoUsd));
+      'content',reservationNano,budgetEnforced);
     const profileVersion=typeof snapshot.profileVersion==='string'?snapshot.profileVersion:'en-v1';
     await tx.query(`INSERT INTO daily_packages(id,language,editorial_date,schema_version,profile_version,state)
       VALUES($1,$2,$3,1,$4,'draft') ON CONFLICT(id) DO NOTHING`,[live.binding_id,live.language,editorialDate,profileVersion]);

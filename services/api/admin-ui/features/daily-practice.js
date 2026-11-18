@@ -45,6 +45,7 @@ const DAILY_CONFIG_FIELDS = Object.freeze([
   ['newAttemptsEnabled', 'new_attempts_enabled'],
   ['generationEnabled', 'generation_enabled'],
   ['autoPublishEnabled', 'auto_publish_enabled'],
+  ['budgetEnforced', 'budget_enforced'],
   ['enabledLanguages', 'enabled_languages'],
   ['contentBudgetNanoUsd', 'content_budget_nano_usd'],
   ['reviewBudgetNanoUsd', 'review_budget_nano_usd'],

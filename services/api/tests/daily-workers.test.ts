@@ -14,7 +14,7 @@ test('daily content worker does not resolve or call a provider when its frozen b
   const client={query:async(sql:string)=>{
     statements.push(sql);
     if(sql.includes('FROM daily_jobs')&&sql.includes('FOR UPDATE'))return {rows:[job]};
-    if(sql.includes('FROM daily_config'))return {rows:[{generation_enabled:true,enabled_languages:['en']}]};
+    if(sql.includes('FROM daily_config'))return {rows:[{generation_enabled:true,enabled_languages:['en'],budget_enforced:true}]};
     return {rows:[],rowCount:1};
   },release:()=>{}};
   const db={connect:async()=>client} as unknown as Database;
@@ -24,6 +24,29 @@ test('daily content worker does not resolve or call a provider when its frozen b
   assert.deepEqual(result,{jobId:job.id,state:'failed',packageVersionId:null,errorCode:'daily_budget_unavailable'});
   assert.equal(providerResolutions,0);
   assert.equal(statements.some(sql=>sql.includes('INSERT INTO daily_provider_operations')),false);
+});
+
+test('daily content worker skips budget checks when daily_config disables enforcement', async () => {
+  const job: DailyJob = { id:'11111111-1111-4111-8111-111111111111',kind:'content',binding_id:'22222222-2222-4222-8222-222222222222',
+    language:'en',editorial_date:'2026-11-08',attempt_id:null,state:'running',lease_owner:'daily-worker-a',lease_until:new Date('2026-11-08T12:01:00Z'),
+    config_snapshot:{schemaVersion:1,profileVersion:'en-v1',contentBudgetNanoUsd:'0',autoPublishEnabled:false} };
+  const statements:string[]=[];
+  const client={query:async(sql:string)=>{
+    statements.push(sql);
+    if(sql.includes('FROM daily_jobs')&&sql.includes('FOR UPDATE'))return {rows:[job]};
+    if(sql.includes('FROM daily_config'))return {rows:[{generation_enabled:true,enabled_languages:['en'],budget_enforced:false}]};
+    if(sql.includes('FROM daily_packages WHERE id=$1 FOR UPDATE'))return {rows:[{state:'draft',revision:0}],rowCount:1};
+    return {rows:[],rowCount:1};
+  },release:()=>{}};
+  const db={connect:async()=>client} as unknown as Database;
+  let providerResolutions=0;
+  try {
+    await runDailyContentJob(db,{},job,'daily-worker-a',{now:()=>new Date('2026-11-08T12:00:00Z'),
+      createProvider:async()=>{providerResolutions++;throw new Error('provider_reached_after_bypass');}});
+  } catch (error) { if (!(error instanceof Error) || !error.message.includes('provider_reached_after_bypass')) throw error; }
+  // The bypass must reach the provider instead of failing with daily_budget_unavailable.
+  assert.equal(providerResolutions,1);
+  assert.ok(statements.some(sql=>sql.includes('INSERT INTO daily_cost_reservations')), 'reservation must still be recorded');
 });
 
 test('daily worker tick recovers expired leases and claims one content job atomically', async () => {
@@ -68,7 +91,7 @@ test('daily content worker runs separate generation and judge operations with an
     statements.push(sql);
     if(sql==='BEGIN'||sql==='COMMIT'||sql==='ROLLBACK')return {rows:[],rowCount:0};
     if(sql.includes('FROM daily_jobs')&&sql.includes('FOR UPDATE'))return {rows:[job]};
-    if(sql.includes('FROM daily_config'))return {rows:[{generation_enabled:true,enabled_languages:['en']}]};
+    if(sql.includes('FROM daily_config'))return {rows:[{generation_enabled:true,enabled_languages:['en'],budget_enforced:true}]};
     if(sql.includes('FROM daily_cost_reservations')&&sql.includes('FOR UPDATE'))return {rows:[]};
     if(sql.includes('FROM daily_budget_limits'))return {rows:[{max_nano_usd:'100'}]};
     if(sql.includes('AS used'))return {rows:[{used:'0'}]};
