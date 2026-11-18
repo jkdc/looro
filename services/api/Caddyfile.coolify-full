@@ -12,7 +12,12 @@
 }
 
 http://{$API_DOMAIN} {
-	reverse_proxy api:8080
+	# Trusted-proxy admission for the account routes (sign-in, session
+	# validation): mirrors the production Caddyfile.
+	reverse_proxy api:8080 {
+		header_up X-App-Client-IP {remote_host}
+		header_up X-App-Proxy-Token {$ACCOUNTS_PROXY_TOKEN}
+	}
 	header {
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options "nosniff"

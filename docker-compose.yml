@@ -94,6 +94,7 @@ services:
       - API_DOMAIN=${API_DOMAIN:?Set the API domain}
       - ADMIN_DOMAIN=${ADMIN_DOMAIN:?Set the admin panel domain}
       - ADMIN_PROXY_TOKEN=${ADMIN_PROXY_TOKEN:-}
+      - ACCOUNTS_PROXY_TOKEN=${ACCOUNTS_PROXY_TOKEN:-}
     volumes:
       - palique-caddy-data:/data
       - palique-caddy-config:/config
