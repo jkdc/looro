@@ -169,9 +169,10 @@ deploy: lab-up ## Despliega en el móvil conectado: API de lab + APK con claves 
 # ---- Android (nativo; necesita SDK 36 y Java 17) ---------------------------
 
 REMOTE_API_ORIGIN ?= https://palique-api.46.202.135.91.sslip.io
+REMOTE_CONVERSATION_ENGINE ?= glm
 
-remote-apk: ## Compila un APK debug apuntando al API desplegada en Coolify (REMOTE_API_ORIGIN)
-	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN)
+remote-apk: ## Compila un APK debug apuntando al API desplegada en Coolify (REMOTE_API_ORIGIN, motor REMOTE_CONVERSATION_ENGINE)
+	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN) -Papp.conversationEngine=$(REMOTE_CONVERSATION_ENGINE)
 
 remote-install: remote-apk ## Compila e instala en el dispositivo conectado el APK contra la API remota
 	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
