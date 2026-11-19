@@ -50,6 +50,7 @@ import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { registerAdminLevelTestGenerationRoutes, registerAdminLevelTestReviewRoutes } from './http/routes/admin-level-tests.js';
 import { registerAdminLevelTestAttemptRoutes } from './http/routes/admin-level-test-attempts.js';
 import { log } from './log.js';
+import { requestRateLimitPerMinute } from './request-rate-limit.js';
 import { registerAdminLevelTestLlmConfigRoutes } from './http/routes/admin-level-test-llm-config.js';
 import { paliqueMetrics } from './metrics.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, mergeProgressV2, listProgress, listProgressV2 } from './progress.js';
@@ -99,6 +100,8 @@ const requestRoute = (request: FastifyRequest): string => request.routeOptions.u
 export function createApp(services: Services) {
   const { db } = services;
   const environment = services.environment ?? process.env;
+  // Fail fast on a misconfigured cap instead of throwing inside the request hook.
+  const networkRequestsPerMinute = requestRateLimitPerMinute(environment);
   const orderStatus = async (account: string, id: string) => {
     const commerce = services.minuteCommerce;
     if (!commerce) throw new ServiceError('minute_purchases_unavailable', 503);
@@ -231,7 +234,7 @@ export function createApp(services: Services) {
       if (windows.size >= 20_000) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
       slot = { until: now + 60_000, count: 0 }; windows.set(networkKey, slot);
     }
-    if (++slot.count > 120) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
+    if (++slot.count > networkRequestsPerMinute) { paliqueMetrics.requestsRejected.add(1, { reason: 'rate_limit' }); throw new ServiceError('rate_limit', 429); }
   });
   // Admin authorization is structural: every route registered under /v1/admin/
   // requires a live admin session in this hook, so a route that forgets its own
