@@ -1,4 +1,5 @@
 import type { PoolClient } from 'pg';
+import { log } from './log.js';
 import { hashDailyArtifact, hashDailyText, validateDailyPackage } from './daily-content.js';
 import { resolveDailyLanguageProfile } from './daily-language-profiles.js';
 
@@ -108,8 +109,16 @@ export async function runDailyContentQualityGate(input:DailyContentQualityGateIn
     !record(candidate.content)||Object.keys(candidate.content).length!==7||
     !['topic','objective','expressions','listening','speaking','goals','practice'].every(key=>Object.hasOwn(candidate.content,key))||
     !record(candidate.content.listening)||Object.keys(candidate.content.listening).length!==2||
-    !Object.hasOwn(candidate.content.listening,'transcript')||!Object.hasOwn(candidate.content.listening,'questions'))
+    !Object.hasOwn(candidate.content.listening,'transcript')||!Object.hasOwn(candidate.content.listening,'questions')) {
+    const content = record(candidate) ? candidate.content : undefined;
+    const listening = record(content) ? content.listening : undefined;
+    log.error('daily_candidate_shape_mismatch',{
+      rootKeys: record(candidate) ? Object.keys(candidate).join(',') : String(typeof candidate),
+      contentKeys: record(content) ? Object.keys(content).join(',') : String(typeof content),
+      listeningKeys: listening && record(listening) ? Object.keys(listening).join(',') : String(typeof listening),
+      goalSample: JSON.stringify(record(content) && Array.isArray(content.goals) ? content.goals[0] : null).slice(0,300)});
     throw new Error('invalid_daily_content_candidate');
+  }
   const base={schemaVersion:1 as const,packageVersionId:input.packageVersionId,contentHash:'0'.repeat(64),editorialDate:input.editorialDate,
     language:profile.language,profileVersion:profile.profileVersion,topic:candidate.content.topic,objective:candidate.content.objective,
     challengeReference:profile.challengeReference,estimatedMinutes:{preparation:2 as const,listening:4 as const,speaking:6 as const,

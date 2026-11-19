@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { reserveDailyCost } from './daily-budget.js';
+import { log } from './log.js';
 import { runDailyContentQualityGate, publishDailyPackage } from './daily-generation.js';
 import { transaction, type Database } from './db.js';
 import { buildDailyContentGenerationMessages, buildDailyContentJudgeMessages, buildDailyReviewMessages } from './daily-prompts.js';
@@ -80,6 +81,7 @@ async function executeProviderPhase(db:Database,provider:DailyLlmProvider,job:Da
     dispatchKey:`${job.id}:${phase}:v1`,reservationId,now:instant}));
   let started=false,providerReplied=false,closed=false;
   try{
+    log.info('daily_provider_phase_dispatch',{phase:job.kind+':'+phase,jobId:job.id});
     const reply=await provider.complete(messages,undefined,async usage=>{
       const checkpointAt=now();
       await transaction(db,async tx=>{
@@ -89,10 +91,13 @@ async function executeProviderPhase(db:Database,provider:DailyLlmProvider,job:Da
       if(!started){started=true;onDispatch();}
     });
     providerReplied=true;
+    log.info('daily_provider_phase_completed',{phase:job.kind+':'+phase,jobId:job.id});
     await transaction(db,tx=>finishDailyProviderOperation(tx,operation.id,workerId,'succeeded',now(),contentHash(reply.content)));
     closed=true;
     return extractJson(reply.content);
   }catch(error){
+    const detail=error instanceof Error?`${error.name}: ${error.message}`:String(error);
+    log.error('daily_provider_phase_failed',{phase,jobId:job.id,detail});
     if(started&&!closed){
       const unknown=providerReplied||(error instanceof LlmTransportError&&error.message==='llm_outcome_unknown');
       try{await transaction(db,tx=>finishDailyProviderOperation(tx,operation.id,workerId,unknown?'unknown':'failed',now()));closed=true;}catch{/* Recovery marks a lost lease unknown. */}
@@ -229,6 +234,8 @@ export async function runDailyContentJob(db:Database,env:NodeJS.ProcessEnv,job:D
       errorCode:state==='ready'?null:gate.judgeState==='failed'?'daily_judge_failed':'daily_judge_uncertain'};
   }catch(error){
     const unknown=error instanceof LlmTransportError&&error.message==='llm_outcome_unknown';
+    const detail=error instanceof Error?`${error.name}: ${error.message}`:String(error);
+    log.error('daily_content_generation_failed',{detail,kind:error instanceof Error?error.name:typeof error});
     const code=unknown?'llm_outcome_unknown':safeCode(error,'daily_generation_failed');
     try{await transaction(db,async tx=>{
       await liveContentJob(tx,job.id,workerId,now());

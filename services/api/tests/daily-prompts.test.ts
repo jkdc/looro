@@ -10,6 +10,28 @@ test('daily content prompt requests one common 17-minute English B1-B2 package w
   assert.match(messages[0]!.content, /approximately 17 minutes/);
   assert.match(messages[1]!.content, /2026-11-08/);
   assert.throws(() => buildDailyContentGenerationMessages('fr', '2026-11-08'), /daily_language_not_enabled/);
+  // Regression: the model must be told the exact goal object shape — a vague
+  // "goals:[3 items]" produced goals without sentenceStarters/exampleResponses
+  // and the validator rejected the package (invalid daily package: goals[0]).
+  assert.match(messages[0]!.content, /Each goal needs exactly id,task,hints,sentenceStarters,exampleResponses/);
+  assert.match(messages[0]!.content, /omitting sentenceStarters or exampleResponses rejects the whole package/);
+  // Regression: every validator rule the model kept violating must be spelled
+  // out in the prompt (failures: listening question kind, practice mix 2+2,
+  // option object shape with empty options for gap_fill, fixed estimatedMinutes).
+  assert.match(messages[0]!.content, /Listening has exactly 3 questions and ALL of them are kind single_choice/);
+  assert.match(messages[0]!.content, /exactly 2 single_choice and 2 gap_fill/);
+  assert.match(messages[0]!.content, /EXACTLY 4 option objects/);
+  assert.match(messages[0]!.content, /gap_fill options are an EMPTY array/);
+  assert.match(messages[0]!.content, /unique across the whole package/);
+  assert.match(messages[0]!.content, /no questions and no "\?" character/);
+  // Regression: the candidate gate requires listening to hold exactly
+  // {transcript, questions} and content to hold exactly the 7 known keys;
+  // instructing the model to add speechLocale/estimatedMinutes/supportLocales
+  // made every generation fail with invalid_daily_content_candidate.
+  assert.match(messages[0]!.content, /EXACTLY these 7 keys and no others/);
+  assert.match(messages[0]!.content, /Never add estimatedMinutes, supportLocales or speechLocale/);
+  assert.match(messages[0]!.content, /The listening object contains ONLY the keys "transcript" and "questions"/);
+  assert.match(messages[0]!.content, /Extra or missing keys anywhere reject the whole package/);
 });
 
 test('content judge prompt binds every namespaced item and asks for an evidence verdict', () => {
