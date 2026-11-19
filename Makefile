@@ -168,14 +168,27 @@ deploy: lab-up ## Despliega en el móvil conectado: API de lab + APK con claves 
 
 # ---- Android (nativo; necesita SDK 36 y Java 17) ---------------------------
 
+# Contrato de despliegue móvil (no cambiar sin leer docs/deployment-coolify.md):
+# - La app SIEMPRE usa el motor `api`: whisper STT en el dispositivo y el texto
+#   va al backend (`/v1/proxy/responses`), que resuelve proveedor/modelo desde
+#   su panel. Nunca una conexión directa del móvil a un proveedor LLM.
+# - El client ID de Google es obligatorio: sin él el cliente de cuenta se
+#   desactiva silenciosamente y la app no llama nunca al servidor.
+# - Los modelos whisper se empujan siempre tras instalar (push-local-models).
 REMOTE_API_ORIGIN ?= https://palique-api.46.202.135.91.sslip.io
 REMOTE_CONVERSATION_ENGINE ?= api
+REMOTE_GOOGLE_CLIENT_ID ?= 1234567890-paliquetest.apps.googleusercontent.com
+REMOTE_SERIAL ?=
 
-remote-apk: ## Compila un APK debug apuntando al API desplegada en Coolify (REMOTE_API_ORIGIN, motor REMOTE_CONVERSATION_ENGINE: api = proxy del backend con el modelo del panel)
-	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN) -Papp.conversationEngine=$(REMOTE_CONVERSATION_ENGINE)
+remote-apk: ## Compila el APK contra la API de Coolify (motor api = proxy del backend) y verifica su contenido
+	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN) -Papp.conversationEngine=$(REMOTE_CONVERSATION_ENGINE) -Papp.googleServerClientID=$(REMOTE_GOOGLE_CLIENT_ID)
+	bash apps/android/scripts/verify-remote-apk.sh apps/android/app/build/outputs/apk/debug/app-debug.apk 	  "$$(echo $(REMOTE_API_ORIGIN) | sed 's|https://||')" 	  "$$(echo $(REMOTE_GOOGLE_CLIENT_ID) | sed 's/-.*//;s|^1234567890-||')" 	  $(REMOTE_CONVERSATION_ENGINE)
 
-remote-install: remote-apk ## Compila e instala en el dispositivo conectado el APK contra la API remota
-	adb -s "$$(bash apps/android/scripts/adb-device.sh $(SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
+remote-install: remote-apk ## Instala en el dispositivo el APK completo del contrato (sesión no incluida: usar el seam debug o Google)
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(REMOTE_SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(REMOTE_SERIAL))" shell pm grant com.jkdc.palique.android android.permission.RECORD_AUDIO || true
+	SERIAL=$(REMOTE_SERIAL) bash apps/android/scripts/push-local-models.sh
+	adb -s "$$(bash apps/android/scripts/adb-device.sh $(REMOTE_SERIAL))" shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity
 
 android-build: ## Compila APK debug con tests unitarios y lint (SDK/JDK del host)
 	$(GRADLE) :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug

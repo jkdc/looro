@@ -80,20 +80,34 @@ significa crash del proceso: mirar **Logs** del recurso.
 - Panel admin: requiere `ADMIN_HMAC_KEY`/`ADMIN_PROXY_TOKEN` y su dominio;
   ver `services/api/docs/admin-panel.md` antes de habilitarlo.
 
-## 6. Conectar las apps móviles al servidor desplegado
+## 6. Contrato de despliegue móvil (NO cambiar sin leer esto)
 
-**Android** (property Gradle `-Papp.apiOrigin` → `BuildConfig.MANAGED_API_ORIGIN`):
+La app móvil que se despliega contra este servidor lleva **siempre**:
 
-```bash
-make remote-install                    # APK debug + instalación por adb (SERIAL= opcional)
-make remote-apk REMOTE_API_ORIGIN=https://otro-dominio   # sobrecarga puntual
-```
+1. **Motor `api`** (proxy del backend): whisper STT se ejecuta en el
+   dispositivo, el **texto** resultante va al backend
+   (`/v1/proxy/responses`) y el backend lo pasa por el proveedor/modelo
+   configurado en su panel. El móvil **nunca** se conecta directamente a un
+   proveedor LLM (sin claves GLM/OpenAI en el dispositivo).
+2. **`app.apiOrigin`** apuntando a este servidor y un **`app.googleServerClientID`**
+   con formato válido (`^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$`).
+   Sin el client ID, `ManagedAccountConfiguration.parse` devuelve null y la
+   app **desactiva en silencio** el cliente de cuenta: cero peticiones al
+   servidor y errores "engine needs the app account session source".
+3. **Modelos whisper empujados** al dispositivo tras instalar
+   (`apps/android/scripts/push-local-models.sh`): sin ellos la conversación
+   se queda en "Preparando la conversación…" indefinidamente.
+4. **Sesión de cuenta** adoptada (seam debug con `debug.accountID`/`debug.accountToken`
+   sobre una cuenta sembrada en la BD) o login Google real una vez haya
+   credenciales en el servidor.
 
-**iOS** (xcconfig, gitignored): `apps/ios/Config/Local.xcconfig` ya apunta
-`APP_MANAGED_API_URL` al servidor; compila con `make ios-build`.
+`make remote-install` aplica todo el contrato mecánicamente: compila con las
+tres propiedades, **verifica el APK** (origin + client ID + motor cableados,
+`apps/android/scripts/verify-remote-apk.sh`; sin esa verificación el fallo es
+silencioso), instala, concede micrófono, empuja whisper y lanza la app.
 
-**Estado de cuentas**: el servidor tiene `ACCOUNTS_ENABLED=false` — el
-inicio de sesión móvil queda deshabilitado hasta configurar un proveedor de
-identidad (Google/Apple) y activar `ACCOUNTS_ENABLED=true` en Coolify junto
-con las claves `ACCOUNTS_HMAC_KEY`/`ACCOUNTS_PROXY_TOKEN` (ya generadas).
-Los endpoints públicos (contenido, level-tests proxy-exempt) funcionan ya.
+Si la app crashea al arrancar tras una reinstalación (`SecureStorage` /
+`GuestInstallationStore`), es la clave del AndroidKeyStore invalidada:
+`adb shell pm clear com.jkdc.palique.android` y volver a adoptar la sesión.
+(BUG conocido por arreglar: el read falla cerrado y crashea en bucle en vez
+de resetear con aviso; se mantiene por diseño anti-doble-bono de bienvenida.)
