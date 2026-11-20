@@ -225,6 +225,31 @@ proveedor: no se reintenta automáticamente), `attempt_limit_reached`
 (2 intentos automáticos) y `generation_failed`. Las líneas
 `level_test_generation_job` dan `language`/`level`/`week`/`status`.
 
+En Tempo, buscar el span `level_test_generation` por
+`generation.run_id` (el identificador del trabajo en PostgreSQL).
+`generation.outcome` distingue `draft`, `approved`, `failed` y `unknown`;
+un HTTP 202 solo confirma el lanzamiento. El span incluye versiones de prompt
+y juez, y eventos de llamada (`generate.provider`, `repair.provider`,
+`judge.provider`), recepción, validación, veredictos, composición y
+publicación. Los contadores usan ítems o pasajes según la sección; el juez
+cuenta ítems. Las llamadas registran duración, uso reportado y un
+`finish_reason` acotado (`length`, `stop`, `not_reported`, etc.).
+Una dirección de uso no reportada se omite, no equivale a cero. No se
+almacenan prompts, respuestas ni errores crudos en la traza; el ID no es
+una etiqueta de métricas.
+
+### Generación de práctica diaria
+
+Buscar el span `daily_content_generation` por `daily.job_id`; ese ID también
+correlaciona los eventos de despacho con `daily_jobs`.
+`daily.queue_ms` mide desde la creación hasta la reclamación; el evento
+`job.first_dispatch` mide desde la reclamación hasta el primer despacho.
+`generate.provider`, `repair.provider` y `judge.provider` separan tiempo de
+llamada, motivo de fin y tokens reportados. `validation.result` e
+`publication.result` distinguen un paquete listo, publicado o rechazado.
+`unknown` se concilia: no desencadena otro envío. Los errores usan códigos
+cerrados; no se registran preguntas, objetivos, respuestas ni excepciones crudas.
+
 <a id="pool-de-bd-saturado"></a>
 ### Pool de BD saturado
 
