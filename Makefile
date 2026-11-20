@@ -181,8 +181,9 @@ REMOTE_GOOGLE_CLIENT_ID ?= 1234567890-paliquetest.apps.googleusercontent.com
 REMOTE_SERIAL ?=
 
 remote-apk: ## Compila el APK contra la API de Coolify (motor api = proxy del backend) y verifica su contenido
+	rm -f apps/android/app/build/generated/source/buildConfig/debug/com/jkdc/app/BuildConfig.java
 	$(GRADLE) :app:assembleDebug -Papp.apiOrigin=$(REMOTE_API_ORIGIN) -Papp.conversationEngine=$(REMOTE_CONVERSATION_ENGINE) -Papp.googleServerClientID=$(REMOTE_GOOGLE_CLIENT_ID)
-	bash apps/android/scripts/verify-remote-apk.sh apps/android/app/build/outputs/apk/debug/app-debug.apk 	  "$$(echo $(REMOTE_API_ORIGIN) | sed 's|https://||')" 	  "$$(echo $(REMOTE_GOOGLE_CLIENT_ID) | sed 's/-.*//;s|^1234567890-||')" 	  $(REMOTE_CONVERSATION_ENGINE)
+	bash apps/android/scripts/verify-remote-apk.sh apps/android/app/build/outputs/apk/debug/app-debug.apk 	  "$$(echo $(REMOTE_API_ORIGIN) | sed 's|https://||')" 	  "$(REMOTE_GOOGLE_CLIENT_ID)" 	  $(REMOTE_CONVERSATION_ENGINE)
 
 remote-install: remote-apk ## Instala en el dispositivo el APK completo del contrato (sesión no incluida: usar el seam debug o Google)
 	adb -s "$$(bash apps/android/scripts/adb-device.sh $(REMOTE_SERIAL))" install -r apps/android/app/build/outputs/apk/debug/app-debug.apk

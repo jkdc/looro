@@ -11,7 +11,7 @@
 #
 # Usage: verify-remote-apk.sh <apk> <origin-host> <client-id-suffix> <engine>
 #   origin-host       e.g. palique-api.46.202.135.91.sslip.io
-#   client-id-suffix  e.g. paliquetest (matches *.apps.googleusercontent.com)
+#   client-id         full id, e.g. 1234567890-paliquetest.apps.googleusercontent.com
 #   engine            e.g. api (the marker proves the engine wiring exists;
 #                        the SELECTED engine is enforced by the build command
 #                        itself: always pass -Papp.conversationEngine=api)
@@ -19,7 +19,8 @@ set -euo pipefail
 
 APK="${1:?Usage: verify-remote-apk.sh <apk> <origin-host> <client-id-suffix> <engine>}"
 ORIGIN_HOST="${2:?Missing origin host}"
-CLIENT_SUFFIX="${3:?Missing client id suffix}"
+CLIENT_ID="${3:?Missing client id}"
+CLIENT_SUFFIX="${CLIENT_ID#*-}"; CLIENT_SUFFIX="${CLIENT_SUFFIX%%.*}"
 ENGINE="${4:?Missing engine}"
 
 fail() { echo "[verify-remote-apk] FAIL: $1" >&2; exit 1; }
@@ -29,7 +30,13 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 unzip -q "$APK" 'classes*.dex' -d "$tmp"
 
-found_in_dex() { grep --binary-files=text -q "$1" "$tmp"/classes*.dex 2>/dev/null; }
+found_in_dex() {
+  # grep -q sobre dex binarios es no determinista (a veces no ve el match);
+  # -a -c por fichero lee siempre el contenido completo y es estable.
+  local count
+  count=$(grep -a -c "$1" "$tmp"/classes*.dex 2>/dev/null | awk -F: '{ s += $NF } END { print s + 0 }')
+  [ "${count:-0}" -ge 1 ]
+}
 
 found_in_dex "$ORIGIN_HOST" || fail "APK does not contain the API origin host '$ORIGIN_HOST' (build without -Papp.apiOrigin?)"
 found_in_dex "${CLIENT_SUFFIX}.apps.googleusercontent.com" || fail "APK does not contain the Google client ID (build without -Papp.googleServerClientID? the account client silently disables)"
