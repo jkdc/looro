@@ -91,3 +91,14 @@ test('daily LLM reports per-call token checkpoints separately from its cumulativ
   ]);
   assert.deepEqual(provider.usage(), { state: 'complete', tokensIn: 30, tokensOut: 3 });
 });
+
+test('daily transport does not dispatch if aborted during its usage checkpoint', async () => {
+  const controller = new AbortController();
+  let dispatched = 0;
+  const provider = await createDailyLlmProvider({} as never, {}, {
+    resolve:async()=>({provider:'openai',baseUrl:'https://invalid.example',model:'test',apiKey:'fake'}),
+    complete:async()=>{dispatched++;return {content:'{}'};},
+  });
+  await assert.rejects(provider.complete([], controller.signal, async()=>controller.abort()), /llm_outcome_unknown/);
+  assert.equal(dispatched,0);
+});

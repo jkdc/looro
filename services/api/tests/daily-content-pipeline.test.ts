@@ -67,3 +67,56 @@ test('daily_quality_gate_does_not_trust_a_pass_when_any_id_is_uncertain',async()
   assert.equal(result.state,'unknown');
   assert.equal(result.judgeState,'unknown');
 });
+
+test('daily candidate shape errors never log provider fields or generated goal text', async () => {
+  const original = console.error;
+  const lines: unknown[] = [];
+  console.error = value => { lines.push(value); };
+  try {
+    const damaged = candidate();
+    damaged.content.goals[0].task = 'synthetic-goal-secret';
+    Object.assign(damaged.content, {'synthetic-private-field':true});
+    await assert.rejects(runDailyContentQualityGate({
+      language:'en', editorialDate:'2026-11-08', packageVersionId:'11111111-1111-4111-8111-111111111111',
+      generate:async()=>damaged, judge:async()=>{throw new Error('must not judge');},
+    }), /invalid_daily_content_candidate/);
+  } finally { console.error = original; }
+  assert.doesNotMatch(lines.join('\n'), /synthetic-goal-secret|synthetic-private-field/);
+});
+
+for (const mode of ['accepted','changed-id','wrong-key','ambiguous','missing-other-keys'] as const) {
+  test(`daily question repair is bounded and checked before the judge: ${mode}`, async () => {
+    const original = candidate(), damaged = structuredClone(original);
+    damaged.content.listening.questions[0].options.pop();
+    if(mode==='ambiguous') damaged.privatePayload.listening.push(damaged.privatePayload.listening[0]!);
+    if(mode==='missing-other-keys') Reflect.deleteProperty(damaged.privatePayload,'practice');
+    let repairs = 0, judges = 0;
+    const deps = {
+      language:'en', editorialDate:'2026-11-08', packageVersionId:'11111111-1111-4111-8111-111111111111',
+      generate:async()=>damaged,
+      repair:async(target:{section:string;questionId:string})=>{
+        repairs++;
+        assert.equal(target.section,'listening');
+        assert.equal(target.questionId,original.content.listening.questions[0].id);
+        const question=structuredClone(original.content.listening.questions[0]);
+        const answerKey=structuredClone(original.privatePayload.listening[0]!);
+        if(mode==='changed-id')question.id='changed';
+        if(mode==='wrong-key')Object.assign(answerKey,{acceptedOptionId:'not-an-option'});
+        return {question,answerKey};
+      },
+      judge:async(input:{publicPayload:unknown;privatePayload:unknown})=>{
+        judges++;
+        const payload=input.publicPayload as typeof fixture;
+        assert.deepEqual(payload.listening.questions,original.content.listening.questions);
+        assert.equal(payload.listening.transcript,original.content.listening.transcript);
+        assert.deepEqual(payload.practice,original.content.practice);
+        assert.deepEqual(input.privatePayload,original.privatePayload);
+        return {decision:'pass' as const,evidence:evidence('pass')};
+      },
+    };
+    if(mode==='accepted') assert.equal((await runDailyContentQualityGate(deps)).state,'ready');
+    else await assert.rejects(runDailyContentQualityGate(deps));
+    assert.equal(repairs,mode==='ambiguous'||mode==='missing-other-keys'?0:1);
+    assert.equal(judges,mode==='accepted'?1:0);
+  });
+}

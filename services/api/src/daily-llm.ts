@@ -26,6 +26,7 @@ export async function createDailyLlmProvider(db: Database, env: NodeJS.ProcessEn
     model: config.model,
     usage: () => usage.snapshot(),
     complete: async (messages, signal, onUsage) => {
+      if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
       usage.begin();
       const callUsage = new GenerationUsageTracker();
       callUsage.begin();
@@ -34,6 +35,7 @@ export async function createDailyLlmProvider(db: Database, env: NodeJS.ProcessEn
         catch { throw new LlmTransportError('llm_outcome_unknown'); }
       };
       await callCheckpoint();
+      if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
       let reply: ChatReply;
       try {
         reply = await dependencies.complete(config, messages, signal);
@@ -47,6 +49,7 @@ export async function createDailyLlmProvider(db: Database, env: NodeJS.ProcessEn
       usage.report(reply);
       callUsage.report(reply);
       await callCheckpoint();
+      if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
       return reply;
     },
   };

@@ -8,6 +8,7 @@ export type DailyConfig = { readEnabled: boolean; newAttemptsEnabled: boolean; g
   autoPublishEnabled: boolean; enabledLanguages: string[]; contentBudgetNanoUsd: bigint; reviewBudgetNanoUsd: bigint; retentionDays: number };
 export type DailyJob = { id: string; kind: 'content' | 'review'; binding_id: string; language: string;
   editorial_date: string | null; attempt_id: string | null; state: string; lease_owner: string | null; lease_until: Date | null;
+  created_at?: Date; updated_at?: Date;
   config_snapshot: Record<string, unknown> };
 
 /** Persist provider token usage for pre-release analysis; it never affects admission or learner quotas. */

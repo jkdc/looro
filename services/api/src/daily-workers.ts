@@ -1,14 +1,15 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { ROOT_CONTEXT, trace, type Attributes, type Span } from '@opentelemetry/api';
 import type { PoolClient } from 'pg';
 import { reserveDailyCost } from './daily-budget.js';
 import { log } from './log.js';
 import { runDailyContentQualityGate, publishDailyPackage } from './daily-generation.js';
 import { transaction, type Database } from './db.js';
-import { buildDailyContentGenerationMessages, buildDailyContentJudgeMessages, buildDailyReviewMessages } from './daily-prompts.js';
+import { buildDailyContentGenerationMessages, buildDailyContentJudgeMessages, buildDailyQuestionRepairMessages, buildDailyReviewMessages } from './daily-prompts.js';
 import { hashDailyArtifact } from './daily-content.js';
 import { validateDailyReview } from './daily-review.js';
 import { createDailyLlmProvider, type DailyLlmProvider } from './daily-llm.js';
-import { extractJson, LlmTransportError } from './llm-config.js';
+import { extractJson, LlmTransportError, normalizeFinishReason } from './llm-config.js';
 import { recordDailyProviderUsage, reserveDailyProviderOperation, startDailyProviderOperation, finishDailyProviderOperation,
   claimDailyJob, recoverExpiredDailyJobs, renewDailyJobLease, type DailyJob } from './daily-jobs.js';
 
@@ -16,6 +17,7 @@ export type DailyContentWorkerResult={jobId:string;state:'succeeded'|'failed'|'u
 export type DailyContentWorkerDependencies={
   now?:()=>Date;
   createProvider?:(db:Database,env:NodeJS.ProcessEnv)=>Promise<DailyLlmProvider>;
+  signal?:AbortSignal;
 };
 export type DailyContentWorkerRunDependencies=DailyContentWorkerDependencies&{leaseMs?:number};
 export type DailyReviewWorkerResult={jobId:string;state:'succeeded'|'failed'|'unknown';attemptId:string|null;errorCode:string|null};
@@ -26,6 +28,25 @@ const idPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
 const workerPattern=/^[a-zA-Z0-9_-]{1,64}$/;
 const safeCode=(error:unknown,fallback:string)=>error instanceof Error&&/^[a-z0-9_]{1,80}$/.test(error.message)?error.message:fallback;
 const contentHash=(value:string)=>createHash('sha256').update(value,'utf8').digest('hex');
+const diagnosticCodes = new Set([
+  'invalid_daily_content_candidate','invalid_daily_content_binding','invalid_daily_answer_keys','invalid_daily_judge_result',
+  'invalid_daily_question_repair','daily_llm_unavailable','daily_budget_unavailable','daily_budget_exceeded',
+  'daily_job_lease_lost','daily_operation_not_dispatchable','daily_package_not_dispatchable',
+  'daily_package_revision_conflict','llm_outcome_unknown','llm_empty_reply','daily_provider_json_invalid',
+  'daily_repair_reservation_unavailable','daily_generation_cancelled',
+]);
+function diagnosticCode(error:unknown,fallback:string):string{
+  if(!(error instanceof Error))return fallback;
+  if(diagnosticCodes.has(error.message))return error.message;
+  if(error instanceof LlmTransportError&&/^llm_http_\d{3}$/.test(error.code))return error.code;
+  return fallback;
+}
+type ObserveDaily = (name:string,attributes:Attributes)=>void;
+const elapsed = (now:Date,start:Date)=>Math.max(0,now.getTime()-start.getTime());
+const knownTokens = (n?:number)=>typeof n==='number'&&Number.isSafeInteger(n)&&n>=0?n:undefined;
+const checkSignal = (signal?:AbortSignal)=>{
+  if(signal?.aborted)throw new LlmTransportError('llm_outcome_unknown');
+};
 
 export function normalizeDailyEditorialDate(value:string|Date):string{
   const date=value instanceof Date?value.toISOString().slice(0,10):value;
@@ -74,48 +95,77 @@ async function startContentReservation(db:Database,job:DailyJob,workerId:string,
   });
 }
 
-async function executeProviderPhase(db:Database,provider:DailyLlmProvider,job:DailyJob,workerId:string,phase:'generate'|'judge'|'review',
-  reservationId:string,messages:Parameters<DailyLlmProvider['complete']>[0],now:()=>Date,onDispatch:()=>void):Promise<unknown>{
+async function executeProviderPhase(db:Database,provider:DailyLlmProvider,job:DailyJob,workerId:string,phase:'generate'|'judge'|'review'|'repair',
+  reservationId:string,messages:Parameters<DailyLlmProvider['complete']>[0],now:()=>Date,onDispatch:()=>void,
+  signal?:AbortSignal,observe?:ObserveDaily):Promise<unknown>{
+  checkSignal(signal);
   const instant=now();
-  const operation=await transaction(db,tx=>reserveDailyProviderOperation(tx,{jobId:job.id,workerId,phase,
-    dispatchKey:`${job.id}:${phase}:v1`,reservationId,now:instant}));
-  let started=false,providerReplied=false,closed=false;
+  const operation=await transaction(db,tx=>reserveDailyProviderOperation(tx,{jobId:job.id,workerId,phase:phase==='repair'?'generate':phase,
+    dispatchKey:`${job.id}:${phase==='repair'?'generate:repair':phase}:v1`,reservationId,now:instant}));
+  let started=false,providerReplied=false,closed=false,reservationUnavailable=false;
+  let dispatchedAt=instant;
   try{
-    log.info('daily_provider_phase_dispatch',{phase:job.kind+':'+phase,jobId:job.id});
-    const reply=await provider.complete(messages,undefined,async usage=>{
+    checkSignal(signal);
+    const reply=await provider.complete(messages,signal,async usage=>{
+      if(!started)checkSignal(signal);
       const checkpointAt=now();
       await transaction(db,async tx=>{
-        if(!started)await startDailyProviderOperation(tx,operation.id,workerId,checkpointAt);
+        if(!started){
+          await startDailyProviderOperation(tx,operation.id,workerId,checkpointAt);
+          if(phase==='repair'){
+            const held=await tx.query(`SELECT id FROM daily_cost_reservations WHERE id=$1 AND job_id=$2
+              AND binding_id=$3 AND cost_center='content' AND state='held' FOR UPDATE`,[reservationId,job.id,job.binding_id]);
+            if(!held.rows[0]){
+              reservationUnavailable=true;
+              throw new Error('daily_repair_reservation_unavailable');
+            }
+          }
+        }
         await recordDailyProviderUsage(tx,operation.id,usage);
       });
-      if(!started){started=true;onDispatch();}
+      if(!started){
+        started=true;dispatchedAt=now();onDispatch();
+        log.info('daily_provider_phase_dispatch',{phase:job.kind+':'+phase,jobId:job.id});
+      }
     });
     providerReplied=true;
-    log.info('daily_provider_phase_completed',{phase:job.kind+':'+phase,jobId:job.id});
+    checkSignal(signal);
     await transaction(db,tx=>finishDailyProviderOperation(tx,operation.id,workerId,'succeeded',now(),contentHash(reply.content)));
     closed=true;
-    return extractJson(reply.content);
-  }catch(error){
-    const detail=error instanceof Error?`${error.name}: ${error.message}`:String(error);
-    log.error('daily_provider_phase_failed',{phase,jobId:job.id,detail});
+    log.info('daily_provider_phase_completed',{phase:job.kind+':'+phase,jobId:job.id});
+    observe?.(`${phase}.provider`,{outcome:'succeeded',duration_ms:elapsed(now(),dispatchedAt),
+      finish_reason:normalizeFinishReason(reply.finishReason),tokens_in:knownTokens(reply.tokensIn),tokens_out:knownTokens(reply.tokensOut)});
+    try{return extractJson(reply.content);}catch{
+      observe?.(`${phase}.response`,{outcome:'invalid',code:'daily_provider_json_invalid'});
+      throw new Error('daily_provider_json_invalid');
+    }
+  }catch(caught){
+    const error=reservationUnavailable&&!started?new Error('daily_repair_reservation_unavailable'):caught;
+    const unknown=providerReplied||(error instanceof LlmTransportError&&error.code==='llm_outcome_unknown');
+    const code=diagnosticCode(error,'daily_provider_failed');
+    log.error('daily_provider_phase_failed',{phase,jobId:job.id,error_code:code});
+    if(!closed)observe?.(`${phase}.provider`,{outcome:unknown?'unknown':'failed',code,
+      duration_ms:elapsed(now(),dispatchedAt),
+      ...(error instanceof LlmTransportError?{finish_reason:normalizeFinishReason(error.finishReason),
+        tokens_in:knownTokens(error.usage?.tokensIn),tokens_out:knownTokens(error.usage?.tokensOut)}:{})});
     if(started&&!closed){
-      const unknown=providerReplied||(error instanceof LlmTransportError&&error.message==='llm_outcome_unknown');
       try{await transaction(db,tx=>finishDailyProviderOperation(tx,operation.id,workerId,unknown?'unknown':'failed',now()));closed=true;}catch{/* Recovery marks a lost lease unknown. */}
     }
+    if(!closed&&providerReplied)throw new LlmTransportError('llm_outcome_unknown');
     throw error;
   }
 }
 
-async function withLeaseHeartbeat<T>(db:Database,job:DailyJob,workerId:string,leaseMs:number,now:()=>Date,run:()=>Promise<T>):Promise<T>{
+async function withLeaseHeartbeat<T>(db:Database,job:DailyJob,workerId:string,leaseMs:number,now:()=>Date,run:(signal:AbortSignal)=>Promise<T>):Promise<T>{
   let heartbeat:Promise<void>|null=null;
-  let heartbeatFailed=false;
+  const controller=new AbortController();
   const timer=setInterval(()=>{
-    if(heartbeat||heartbeatFailed)return;
+    if(heartbeat||controller.signal.aborted)return;
     heartbeat=transaction(db,tx=>renewDailyJobLease(tx,job.id,workerId,now(),leaseMs))
-      .catch(()=>{heartbeatFailed=true;}).finally(()=>{heartbeat=null;});
+      .catch(()=>{controller.abort();}).finally(()=>{heartbeat=null;});
   },Math.max(250,Math.floor(leaseMs/3)));
   timer.unref?.();
-  try{return await run();}
+  try{return await run(controller.signal);}
   finally{clearInterval(timer);if(heartbeat)await heartbeat;}
 }
 
@@ -190,28 +240,63 @@ export async function runDailyContentJob(db:Database,env:NodeJS.ProcessEnv,job:D
   dependencies:DailyContentWorkerDependencies={}):Promise<DailyContentWorkerResult>{
   const now=dependencies.now??(()=>new Date());
   if(job.kind!=='content'||!idPattern.test(job.id)||!workerPattern.test(workerId))throw new Error('invalid_daily_content_job');
+  const started=now(), claimed=job.updated_at;
+  let span:Span|undefined;
+  try{span=trace.getTracer('palique-api').startSpan('daily_content_generation',{attributes:{
+    'daily.job_id':job.id,
+    'daily.queue_ms':job.created_at instanceof Date&&claimed instanceof Date&&Number.isFinite(job.created_at.getTime())&&Number.isFinite(claimed.getTime())
+      ?elapsed(claimed,job.created_at):undefined,
+  }},ROOT_CONTEXT);}catch{/* Best-effort diagnostics. */}
+  const observe:ObserveDaily=(name,attributes)=>{try{span?.addEvent(name,attributes);}catch{/* Best-effort diagnostics. */}};
+  let outcome='failed';
+  try{
+    const result=await runDailyContentJobOnce(db,env,job,workerId,{...dependencies,now},observe,claimed??started);
+    outcome=result.state==='succeeded'?(job.config_snapshot.autoPublishEnabled===true?'published':'ready'):result.state;
+    observe('job.result',{outcome,code:result.errorCode??undefined});
+    return result;
+  }finally{
+    try{span?.setAttribute('daily.outcome',outcome);span?.setAttribute('daily.duration_ms',elapsed(now(),started));}catch{/* Best-effort diagnostics. */}
+    try{span?.end();}catch{/* Best-effort diagnostics. */}
+  }
+}
+
+async function runDailyContentJobOnce(db:Database,env:NodeJS.ProcessEnv,job:DailyJob,workerId:string,
+  dependencies:DailyContentWorkerDependencies&{now:()=>Date},observe:ObserveDaily,claimed:Date):Promise<DailyContentWorkerResult>{
+  const {now,signal}=dependencies;
   let reservation:{packageVersionId:string;reservationId:string}|null=null;
   let providerInvoked=false;
+  const onDispatch=()=>{
+    if(!providerInvoked)observe('job.first_dispatch',{duration_ms:elapsed(now(),claimed)});
+    providerInvoked=true;
+  };
   try{
+    checkSignal(signal);
     reservation=await startContentReservation(db,job,workerId,now());
     if(!reservation)return {jobId:job.id,state:'cancelled',packageVersionId:null,errorCode:'daily_generation_disabled'};
     const provider=await (dependencies.createProvider??createDailyLlmProvider)(db,env);
     const editorialDate=normalizeDailyEditorialDate(job.editorial_date!);
     let revision=0;
     const gate=await runDailyContentQualityGate({language:job.language,editorialDate,packageVersionId:reservation.packageVersionId,
+      onValidation:(outcome,code)=>observe('validation.result',{outcome,code}),
       generate:async()=>{
         const generated=await executeProviderPhase(db,provider,job,workerId,'generate',reservation!.reservationId,
-          buildDailyContentGenerationMessages(job.language,editorialDate),now,()=>{providerInvoked=true;});
+          buildDailyContentGenerationMessages(job.language,editorialDate),now,onDispatch,signal,observe);
         return generated;
       },
+      repair:target=>executeProviderPhase(db,provider,job,workerId,'repair',reservation!.reservationId,
+        buildDailyQuestionRepairMessages(target),now,onDispatch,signal,observe),
       judge:async input=>{
+        checkSignal(signal);
         await transaction(db,async tx=>{await liveContentJob(tx,job.id,workerId,now());
           await saveCandidate(tx,reservation!.packageVersionId,input);revision=1;});
         const judged=await executeProviderPhase(db,provider,job,workerId,'judge',reservation!.reservationId,
-          buildDailyContentJudgeMessages(input),now,()=>{providerInvoked=true;});
+          buildDailyContentJudgeMessages(input),now,onDispatch,signal,observe);
         return judged as {decision:'pass'|'fail'|'uncertain';evidence:unknown[]};
       }});
     const state=gate.state==='ready'?'ready':'rejected';
+    observe('judge.result',{outcome:gate.judgeState});
+    checkSignal(signal);
+    const publicationStarted=now();
     const finalRevision=await transaction(db,async tx=>{
       await liveContentJob(tx,job.id,workerId,now());
       const updated=await tx.query<{revision:number}>(`UPDATE daily_packages SET state=$2,revision=revision+1,public_payload=$3::jsonb,
@@ -230,13 +315,16 @@ export async function runDailyContentJob(db:Database,env:NodeJS.ProcessEnv,job:D
       return nextRevision;
     });
     void finalRevision;
+    observe('publication.result',{outcome:state==='ready'&&job.config_snapshot.autoPublishEnabled===true?'published':state,
+      duration_ms:elapsed(now(),publicationStarted)});
     return {jobId:job.id,state:state==='ready'?'succeeded':'failed',packageVersionId:reservation.packageVersionId,
       errorCode:state==='ready'?null:gate.judgeState==='failed'?'daily_judge_failed':'daily_judge_uncertain'};
   }catch(error){
-    const unknown=error instanceof LlmTransportError&&error.message==='llm_outcome_unknown';
-    const detail=error instanceof Error?`${error.name}: ${error.message}`:String(error);
-    log.error('daily_content_generation_failed',{detail,kind:error instanceof Error?error.name:typeof error});
-    const code=unknown?'llm_outcome_unknown':safeCode(error,'daily_generation_failed');
+    const cancelled=signal?.aborted&&!providerInvoked;
+    const unknown=!cancelled&&(signal?.aborted||(error instanceof LlmTransportError&&error.code==='llm_outcome_unknown'));
+    const state=cancelled?'cancelled':unknown?'unknown':'failed';
+    const code=cancelled?'daily_generation_cancelled':unknown?'llm_outcome_unknown':diagnosticCode(error,'daily_generation_failed');
+    log.error('daily_content_generation_failed',{jobId:job.id,error_code:code});
     try{await transaction(db,async tx=>{
       await liveContentJob(tx,job.id,workerId,now());
       if(reservation){
@@ -245,9 +333,9 @@ export async function runDailyContentJob(db:Database,env:NodeJS.ProcessEnv,job:D
         await tx.query(`UPDATE daily_cost_reservations SET state=$2 WHERE id=$1 AND state='held'`,[reservation.reservationId,
           providerInvoked||unknown?'unknown':'released']);
       }
-      await closeDailyJob(tx,job.id,workerId,unknown?'unknown':'failed',code,now());
+      await closeDailyJob(tx,job.id,workerId,state,code,now());
     });}catch{/* A lost lease is reconciled by recoverExpiredDailyJobs; never resend this dispatch. */}
-    return {jobId:job.id,state:unknown?'unknown':'failed',packageVersionId:reservation?.packageVersionId??null,errorCode:code};
+    return {jobId:job.id,state,packageVersionId:reservation?.packageVersionId??null,errorCode:code};
   }
 }
 
@@ -260,7 +348,9 @@ export async function runDailyContentWorkerOnce(db:Database,env:NodeJS.ProcessEn
   await transaction(db,tx=>recoverExpiredDailyJobs(tx,instant));
   const job=await transaction(db,tx=>claimDailyJob(tx,workerId,leaseMs,()=>instant,'content'));
   if(!job)return null;
-  return withLeaseHeartbeat(db,job,workerId,leaseMs,now,()=>runDailyContentJob(db,env,job,workerId,dependencies));
+  return withLeaseHeartbeat(db,job,workerId,leaseMs,now,leaseSignal=>runDailyContentJob(db,env,job,workerId,{
+    ...dependencies,signal:dependencies.signal?AbortSignal.any([leaseSignal,dependencies.signal]):leaseSignal,
+  }));
 }
 
 /** Recovers expired work and claims at most one review job using PostgreSQL SKIP LOCKED. */

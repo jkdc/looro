@@ -16,6 +16,9 @@ export type DailyPackage = {
 };
 export type DailyQuestion = { id: string; kind: 'single_choice' | 'gap_fill'; prompt: string;
   options: Array<{ id: string; text: string }>; hints: { en: string; es: string } };
+export class DailyQuestionValidationError extends Error {
+  constructor(public section:'listening'|'practice',public position:number,message:string){super(message);}
+}
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const sha256 = /^[0-9a-f]{64}$/i;
@@ -96,9 +99,15 @@ export function validateDailyPackage(value: unknown): DailyPackage {
       p.practice.questions.filter((q: DailyQuestion) => q.kind === 'gap_fill').length !== 2) throw new Error('invalid daily package: practice.questions');
   const allQuestionIds = new Set<string>();
   if (p.listening.questions.some((q: DailyQuestion) => q.kind !== 'single_choice')) throw new Error('invalid daily package: listening question kind');
-  [...p.listening.questions, ...p.practice.questions].forEach((q: unknown, i: number) => {
-    validateQuestion(q, `questions[${i}]`); if (allQuestionIds.has(q.id)) throw new Error('duplicate question id'); allQuestionIds.add(q.id);
-  });
+  for(const section of ['listening','practice'] as const) {
+    p[section].questions.forEach((q:unknown,position:number)=>{
+      const i=section==='listening'?position:position+p.listening.questions.length;
+      try{validateQuestion(q,`questions[${i}]`);}
+      catch(error){throw new DailyQuestionValidationError(section,position,error instanceof Error?error.message:'invalid daily question');}
+      if(allQuestionIds.has(q.id))throw new Error('duplicate question id');
+      allQuestionIds.add(q.id);
+    });
+  }
   if (JSON.stringify(p.supportLocales) !== JSON.stringify(['en','es'])) throw new Error('invalid daily package: supportLocales');
   const size = Buffer.byteLength(JSON.stringify(p));
   if (!profile || size > profile.maxPackageBytes) throw new Error('invalid daily package: size');
