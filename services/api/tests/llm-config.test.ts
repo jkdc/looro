@@ -66,3 +66,15 @@ test("fingerprints are stable, truncated SHA-256 identifiers", () => {
   assert.notEqual(fingerprintSecret("plain-secret"), fingerprintSecret("plain-secret2"));
   assert.match(fingerprintSecret("plain-secret"), /^[a-f0-9]{16}$/);
 });
+
+test('chat completion reports only bounded finish reasons and the usage supplied by the provider', async () => {
+  for (const [given, expected] of [['length', 'length'], [undefined, 'not_reported'], ['private provider text', 'unknown']]) {
+    const reply = await chatCompletion({ provider: 'openai', baseUrl: 'https://llm.example/v1', model: 'test', apiKey: 'fake' },
+      [{ role: 'user', content: 'generate' }], async () => new Response(JSON.stringify({
+        choices: [{ finish_reason: given, message: { content: 'fixture' } }], usage: { completion_tokens: 5 },
+      })));
+    assert.equal(Reflect.get(reply, 'finishReason'), expected);
+    assert.equal(reply.tokensIn, undefined);
+    assert.equal(reply.tokensOut, 5);
+  }
+});

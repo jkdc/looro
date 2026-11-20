@@ -102,7 +102,16 @@ export async function resolveLlmConfig(db: Database, env: NodeJS.ProcessEnv): Pr
 }
 
 export interface ChatMessage { role: 'system' | 'user'; content: string }
-export interface ChatReply { content: string; tokensIn?: number; tokensOut?: number }
+export type LlmFinishReason = 'stop' | 'length' | 'content_filter' | 'tool_calls' | 'function_call' | 'not_reported' | 'unknown';
+export interface ChatReply { content: string; tokensIn?: number; tokensOut?: number; finishReason?: LlmFinishReason }
+
+export function normalizeFinishReason(value: unknown): LlmFinishReason {
+  switch (value) {
+    case 'stop': case 'length': case 'content_filter': case 'tool_calls': case 'function_call': return value;
+    case undefined: case null: case 'not_reported': return 'not_reported';
+    default: return 'unknown';
+  }
+}
 
 /** One OpenAI-compatible chat completion. Any transport error after invocation
     has an unknown provider-side outcome and must not be retried automatically. */
@@ -135,21 +144,23 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
       throw new LlmTransportError('llm_outcome_unknown');
     }
     if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
-    let payload: { choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
+    let payload: { choices?: { message?: { content?: string }; finish_reason?: unknown }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
     try {
       payload = await response.json() as typeof payload;
     } catch {
       throw new LlmTransportError('llm_outcome_unknown');
     }
-    const content = payload.choices?.[0]?.message?.content;
+    const choice = payload.choices?.[0];
+    const content = choice?.message?.content;
+    const finishReason = normalizeFinishReason(choice?.finish_reason);
     const reportedUsage = {
       ...(Number.isSafeInteger(payload.usage?.prompt_tokens) && payload.usage!.prompt_tokens! >= 0
         ? { tokensIn: payload.usage!.prompt_tokens } : {}),
       ...(Number.isSafeInteger(payload.usage?.completion_tokens) && payload.usage!.completion_tokens! >= 0
         ? { tokensOut: payload.usage!.completion_tokens } : {}),
     };
-    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply', reportedUsage);
-    const outcome: ChatReply = { content,
+    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply', reportedUsage, finishReason);
+    const outcome: ChatReply = { content, finishReason,
       ...reportedUsage };
     paliqueMetrics.llmRequests.add(1, { provider: config.provider, status: 'ok' });
     if (typeof payload.usage?.prompt_tokens === 'number' && Number.isFinite(payload.usage.prompt_tokens))
@@ -167,7 +178,7 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
 }
 
 export class LlmTransportError extends Error {
-  constructor(public code: string, public usage?: Pick<ChatReply, 'tokensIn' | 'tokensOut'>) { super(code); }
+  constructor(public code: string, public usage?: Pick<ChatReply, 'tokensIn' | 'tokensOut'>, public finishReason?: LlmFinishReason) { super(code); }
 }
 
 /** Extracts the first JSON object from a reply that may carry prose or code fences. */
