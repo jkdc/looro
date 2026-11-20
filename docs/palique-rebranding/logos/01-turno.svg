@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Turno" color="#251D31">
+  <title>Turno — propuesta para Palique</title>
+  <path fill="currentColor" fill-rule="evenodd" d="M20 11h21a12 12 0 0 1 0 24H29l-10 8v-8A12 12 0 0 1 20 11Zm4 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+  <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M34 43h9l9 7v-8a10 10 0 0 0 4-16"/>
+</svg>

@@ -1,0 +1,24 @@
+.comparison{padding-block:48px}.comparison h1{font-size:clamp(2.9rem,7.5vw,6rem)}.comparison>.lead{max-width:58ch}
+.comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:34px}
+.direction{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;--headline:Georgia,serif;--round:19px}
+.direction[data-theme=editorial]{--fondo:#FAF7F0;--texto:#251D31;--accion:#DDF58F;--on-action:#251D31;--acento:#E5D9FA;--session:#251D31;--session-text:#FAF7F0;--dialogue:#392C45;--on-dialogue:#FAF7F0;--state:#DDF58F;--orb:#AACE70;--border:#827187}
+.direction[data-theme=cafe]{--fondo:#FCF2E5;--texto:#34261F;--accion:#9C402E;--on-action:#FFF9EE;--acento:#DEE5BE;--session:#F3DFCA;--session-text:#34261F;--dialogue:#FFF8EE;--on-dialogue:#34261F;--state:#613625;--orb:#C96C50;--border:#9D715C;--headline:ui-rounded,system-ui,sans-serif;--round:28px}
+.direction[data-theme=signal]{--fondo:#F5F7FC;--texto:#162245;--accion:#2146C7;--on-action:#FFFFFF;--acento:#FFDDB7;--session:#E5EBFF;--session-text:#162245;--dialogue:#FFFFFF;--on-dialogue:#162245;--state:#2146C7;--orb:#7690FF;--border:#6675A5;--headline:system-ui,sans-serif;--round:10px}
+.direction-head{padding:18px 15px 15px}.direction-head h2{font:750 1.2rem/1.12 var(--sans);letter-spacing:-.035em}.description{min-height:3.4em;margin:8px 0 12px;font-size:.85rem}
+.swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.swatches span{font:700 .64rem/1.2 ui-monospace,monospace}.swatches span:before{content:"";display:block;height:20px;background:var(--sample);border:1px solid #251d3160;border-radius:4px;margin-bottom:4px}
+.sample{margin:0 12px 12px;padding:8px;background:var(--fondo);color:var(--texto);border:1px solid var(--border);border-radius:var(--round)}
+.sample-brand{display:flex;align-items:center;gap:3px;padding:5px 8px 9px;font-weight:850;letter-spacing:-.085em;font-size:1.34rem}
+.monogram{width:26px;height:26px}
+.sample-screen{padding:12px;border-radius:var(--round);border:1px solid var(--border);background:var(--fondo);color:var(--texto)}
+.sample-screen+.sample-screen{margin-top:8px}.sample-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.69rem;font-weight:750}.sample-top span:first-child{letter-spacing:.12em}.sample-top span+span{border:1px solid var(--border);border-radius:99px;padding:1px 7px}
+.start{text-align:center}.start h3{font:700 2.23rem/1 var(--headline);letter-spacing:-.06em;margin:12px 0}.direction[data-theme=editorial] .start h3{font-weight:400}
+.start p,.sample-alt{margin:9px 0;font-size:.82rem}.sample-alt{text-decoration:underline;margin-bottom:0}
+.sample-orb{height:78px;width:85px;margin:auto;border-radius:49% 51% 57% 43%;display:flex;align-items:center;justify-content:center;gap:4px;background:radial-gradient(at 23% 13%,var(--acento),var(--orb) 78%);border:1px solid var(--border)}
+.sample-orb i{height:10px;width:3px;background:var(--texto);border-radius:3px}.sample-orb i:nth-child(2n){height:18px}.sample-orb i:nth-child(3){height:27px}
+.sample-cta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:7px 12px;background:var(--accion);color:var(--on-action);border-radius:var(--round);font-size:.85rem;font-weight:750}
+.session{background:var(--session);color:var(--session-text)}.sample-state{font-size:.74rem;color:var(--state);font-weight:750;margin:9px 0}
+.dialogue{padding:9px;border-radius:var(--round);background:var(--dialogue);color:var(--on-dialogue)}.dialogue small{font-size:.63rem;letter-spacing:.1em;font-weight:800}.dialogue h3{font-size:.94rem}.dialogue p{font-size:.78rem;margin:3px 0 0}
+.learner{margin-top:5px}.sample-tools{display:flex;gap:5px;justify-content:space-between;margin-top:8px;font-size:.7rem}.sample-tools span{border:1px solid var(--border);border-radius:99px;padding:3px 6px}
+.tradeoff{margin:auto 16px 16px;font-size:.85rem;color:var(--muted)}
+@media(max-width:920px){.comparison-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.comparison{padding-block:32px}.comparison-grid{grid-template-columns:1fr}.description{min-height:0}}

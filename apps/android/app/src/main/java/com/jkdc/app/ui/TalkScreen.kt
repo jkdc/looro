@@ -90,6 +90,7 @@ fun TalkScreen(
     onLookup: (String, String) -> Unit,
     onHelp: () -> Unit,
 ) {
+    val palette = LocalConversationPalette.current
     var typing by rememberSaveable { mutableStateOf(false) }
     var lookup by rememberSaveable { mutableStateOf(false) }
     var lookupWord by rememberSaveable { mutableStateOf("") }
@@ -113,7 +114,7 @@ fun TalkScreen(
     val meaningScroll = remember(assistantPassage?.id, vm.archive.preferences.meaningLanguage) { ScrollState(0) }
     val textMeasurer = rememberTextMeasurer()
 
-    BoxWithConstraints(Modifier.fillMaxSize().testTag("talk-screen")) {
+    BoxWithConstraints(Modifier.fillMaxSize().background(palette.background).testTag("talk-screen")) {
     val scrollPage = LocalDensity.current.fontScale > 1.3f || maxHeight < 480.dp
     val compact = !scrollPage && maxHeight < 620.dp
     val captionWidth = with(LocalDensity.current) { (maxWidth - 56.dp).roundToPx().coerceAtLeast(1) }
@@ -144,7 +145,7 @@ fun TalkScreen(
             Text(
                 vm.selectedTheme?.title ?: vm.language.talkTitle,
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = if (compact) 6.dp else 8.dp),
-                style = MaterialTheme.typography.labelMedium, color = AppColors.Secondary,
+                style = MaterialTheme.typography.labelMedium, color = palette.mutedText,
             )
         }
         Spacer(Modifier.height(if (compact) 8.dp else 24.dp - 16.dp * readingSpace))
@@ -153,13 +154,18 @@ fun TalkScreen(
             listening = vm.state == "active" && vm.isVoiceSession && !vm.isMuted,
             active = vm.state != "closing",
             modifier = Modifier.size(orbSize),
+            palette = palette,
             contentDescription = stringResource(
                 if (vm.state == "active" && vm.isVoiceSession && !vm.isMuted) R.string.talk_orb_listening_desc
                 else R.string.talk_orb_idle_desc),
         )
         Box(Modifier.fillMaxWidth().padding(top = if (compact) 8.dp else 12.dp), contentAlignment = Alignment.Center) {
+            val active = vm.state == "active"
             Text(statusText(vm.state, vm.isMuted, vm.isVoiceSession), style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Secondary, modifier = Modifier.testTag("conversation-status"))
+                color = if (active) palette.sessionText else palette.mutedText,
+                modifier = Modifier.testTag("conversation-status")
+                    .background(if (active) palette.sessionSurface else palette.background, CircleShape)
+                    .padding(horizontal = 10.dp, vertical = 4.dp))
             if (assistantPassage != null && !replyPending && passage?.isNotBlank() == true) {
                 Box(Modifier.matchParentSize(), contentAlignment = Alignment.CenterEnd) {
                     ReportUtteranceAction(onClick = {
@@ -170,7 +176,7 @@ fun TalkScreen(
         }
         Spacer(Modifier.height(if (compact) 12.dp else 20.dp - 8.dp * readingSpace))
         vm.partialUserTranscript?.let { partial ->
-            Text(partial, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,
+            Text(partial, style = MaterialTheme.typography.bodySmall, color = palette.mutedText,
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().testTag("partial-transcript"))
             Spacer(Modifier.height(4.dp))
         }
@@ -189,7 +195,7 @@ fun TalkScreen(
         ) {
             if (replyPending) {
                 Text(stringResource(R.string.history_speaker_you), style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.Secondary, modifier = Modifier.padding(bottom = 4.dp))
+                    color = palette.mutedText, modifier = Modifier.padding(bottom = 4.dp))
             }
             Text(
                 if (passage == null) AnnotatedString(caption)
@@ -197,7 +203,11 @@ fun TalkScreen(
                     vm.clearLookup(); lookupWord = word; lookupSentence = caption
                     lookup = true; onLookup(word, caption)
                 },
-                style = if (passage == null) MaterialTheme.typography.displaySmall else MaterialTheme.typography.headlineSmall,
+                style = if (passage == null) MaterialTheme.typography.displaySmall.let {
+                    if (palette.serifHeadline) it.copy(fontFamily = androidx.compose.ui.text.font.FontFamily.Serif) else it
+                }
+                    else MaterialTheme.typography.headlineSmall,
+                color = palette.text,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().testTag("target-caption"),
             )
@@ -228,20 +238,20 @@ fun TalkScreen(
                     vm.translating -> stringResource(R.string.talk_meaning_loading)
                     else -> ""
                 },
-                color = AppColors.Secondary,
+                color = palette.mutedText,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.testTag("meaning-caption"),
             )
             if (vm.meaningFailed) {
-                Text(stringResource(R.string.talk_meaning_failed), color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.talk_meaning_failed), color = palette.mutedText, style = MaterialTheme.typography.bodySmall)
                 AppTextButton(onClick = vm::retryMeaning) { Text(stringResource(R.string.talk_retry_meaning_button)) }
             }
             }
         }
         if (!replyPending) vm.session?.passages?.lastOrNull { it.speaker == Speaker.user }?.let { user ->
             Row(Modifier.padding(top = 3.dp).testTag("user-caption"), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.history_speaker_you), style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
-                Text(user.text.takeLast(160), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,
+                Text(stringResource(R.string.history_speaker_you), style = MaterialTheme.typography.labelSmall, color = palette.mutedText)
+                Text(user.text.takeLast(160), style = MaterialTheme.typography.bodySmall, color = palette.mutedText,
                     textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
@@ -253,7 +263,7 @@ fun TalkScreen(
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(9.dp), verticalAlignment = Alignment.CenterVertically) {
                 CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp)
-                Text(stringResource(R.string.talk_checking), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                Text(stringResource(R.string.talk_checking), style = MaterialTheme.typography.bodySmall, color = palette.mutedText)
             }
         }
         Spacer(Modifier.height(when { scrollPage -> 28.dp; compact -> 10.dp; else -> 24.dp }))
@@ -291,7 +301,7 @@ fun TalkScreen(
                 })
         }
         Text(stringResource(if (vm.state == "active" && vm.isVoiceSession && !vm.isMuted) R.string.talk_microphone_on else R.string.talk_microphone_off),
-            style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary, modifier = Modifier.padding(top = 6.dp))
+            style = MaterialTheme.typography.bodySmall, color = palette.mutedText, modifier = Modifier.padding(top = 6.dp))
         if (vm.state == "active" || vm.state == "paused" || microphoneMessage != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically) {
                 AppTextButton(onClick = { typing = true }, enabled = !busy && !vm.working) {
@@ -305,14 +315,14 @@ fun TalkScreen(
             }
         } else if (vm.session == null) {
             Text(stringResource(R.string.talk_reply_any_language), style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Secondary, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 7.dp, bottom = 8.dp))
+                color = palette.mutedText, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 7.dp, bottom = 8.dp))
         }
 
         microphoneMessage?.let {
-            Text(it, color = AppColors.Secondary, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall)
+            Text(it, color = palette.mutedText, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall)
             if (onOpenAppSettings != null) AppTextButton(onClick = onOpenAppSettings) { Text(stringResource(R.string.talk_open_phone_settings)) }
         }
-        vm.notice?.let { Text(it, color = AppColors.Secondary, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
+        vm.notice?.let { Text(it, color = palette.mutedText, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall) }
         if (vm.state == "paused") {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 4.dp)) {
@@ -344,11 +354,11 @@ fun TalkScreen(
     val micEnabled = !busy && (vm.state != "active" || vm.isVoiceSession)
     if (!(vm.state == "active" && !vm.isVoiceSession) && !beginnerSession) {
         Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 124.dp).size(64.dp)
-            .shadow(16.dp, CircleShape, ambientColor = AppColors.Orange.copy(alpha = .12f), spotColor = AppColors.Orange.copy(alpha = .2f))
+            .shadow(16.dp, CircleShape, ambientColor = palette.primary.copy(alpha = .12f), spotColor = palette.primary.copy(alpha = .2f))
             .background(when {
-                listening -> Brush.linearGradient(listOf(AppColors.Sage, AppColors.Sage))
-                talkActive -> Brush.linearGradient(listOf(AppColors.Cream, AppColors.Cream))
-                else -> Brush.linearGradient(listOf(Color(0xFFFFBA7A), AppColors.Orange))
+                listening -> palette.primary
+                talkActive -> palette.background
+                else -> palette.primary
             }, CircleShape).clip(CircleShape)
             .testTag("start-conversation").semantics { contentDescription = micDescription }
             .clickable(enabled = micEnabled, role = Role.Button) {
@@ -358,13 +368,13 @@ fun TalkScreen(
                     else -> onMicrophone()
                 }
             }, contentAlignment = Alignment.Center) {
-            if (busy) CircularProgressIndicator(Modifier.size(25.dp), color = AppColors.Ink, strokeWidth = 2.dp)
+            if (busy) CircularProgressIndicator(Modifier.size(25.dp), color = palette.onPrimary, strokeWidth = 2.dp)
             else AppIcon(when {
                 listening -> AppSymbol.Wave
                 talkActive -> AppSymbol.MicOff
                 else -> AppSymbol.Mic
             }, modifier = Modifier.size(28.dp),
-                color = if (talkActive && !listening) AppColors.Secondary else AppColors.Ink)
+                color = if (talkActive && !listening) palette.mutedText else palette.onPrimary)
         }
     }
     }

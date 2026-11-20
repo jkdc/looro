@@ -1,0 +1,26 @@
+{
+  "editorial": {
+    "background": "FAF7F0",
+    "text": "251D31",
+    "mutedText": "5E5369",
+    "primary": "DDF58F",
+    "onPrimary": "251D31",
+    "sessionSurface": "251D31",
+    "sessionText": "FAF7F0",
+    "orbLight": "F2FFC8",
+    "orbDark": "AACE70",
+    "headingStyle": "serif"
+  },
+  "reference": {
+    "background": "FFF9EE",
+    "text": "362A22",
+    "mutedText": "735B4A",
+    "primary": "FF8A4D",
+    "onPrimary": "362A22",
+    "sessionSurface": "FFF1C7",
+    "sessionText": "362A22",
+    "orbLight": "FFF5D6",
+    "orbDark": "FF8A4D",
+    "headingStyle": "rounded"
+  }
+}

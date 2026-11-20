@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palique — Comparativa visual</title>
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="direcciones.css">
+<script src="direcciones.js" defer></script>
+<header class="mast wrap">
+  <a href="index.html" class="wordmark"><img src="logos/02-p-de-palique.svg" alt="">palique</a>
+  <nav aria-label="Propuesta"><a href="index.html">Propuesta inicial</a><a href="roadmap.md">Roadmap</a></nav>
+</header>
+<main class="wrap comparison">
+  <p class="tag">ESTUDIO DE IDENTIDAD · 02</p>
+  <h1>Una P.<br>Tres maneras de hablar.</h1>
+  <p class="lead">Mismo logo, mismas pantallas. Cambian la paleta, la tipografía y el peso de los controles. Así puedes elegir el estilo sin volver a decidir el logo.</p>
+  <div class="comparison-grid" id="directions"></div>
+  <noscript>Activa JavaScript para cargar las maquetas comparadas.</noscript>
+  <template id="direction">
+    <article class="direction">
+      <div class="direction-head"><p class="tag"></p><h2></h2><p class="description"></p><div class="swatches" aria-label="Paleta"></div></div>
+      <div class="sample">
+        <div class="sample-brand"><img class="monogram" src="logos/02-p-de-palique.svg" alt="">palique</div>
+        <section class="sample-screen start" aria-label="Maqueta de Hablar">
+          <div class="sample-top"><span>HABLAR</span><span>Español</span></div>
+          <h3>¿De qué<br>hablamos?</h3>
+          <div class="sample-orb" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <p>Empieza con un hola.</p>
+          <div class="sample-cta">Hablar <span aria-hidden="true">↗</span></div>
+          <div class="sample-alt">Prefiero escribir</div>
+        </section>
+        <section class="sample-screen session" aria-label="Maqueta de Conversación">
+          <div class="sample-top"><span>EN EL CAFÉ</span><span>Español</span></div>
+          <p class="sample-state">● Palique está hablando</p>
+          <div class="dialogue"><small>PALIQUE</small><h3>¿Y algo para comer?</h3><p lang="en">And something to eat?</p></div>
+          <div class="dialogue learner"><small>TÚ</small><p>Un café con leche, por favor.</p></div>
+          <div class="sample-tools"><span>Traducción</span><span>Terminar</span></div>
+        </section>
+      </div>
+      <p class="tradeoff"></p>
+    </article>
+  </template>
+</main>
+<footer class="wrap mast foot"><b>Palique / Propuesta para revisión</b><a href="roadmap.md">Leer el roadmap ↗</a></footer>
+</html>

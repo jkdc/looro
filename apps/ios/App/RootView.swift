@@ -130,6 +130,7 @@ struct RootView: View {
 }
 
 struct TalkView: View {
+    @Environment(\.conversationPalette) private var palette
     @Bindable var coordinator: ConversationCoordinator
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var typing = false
@@ -140,18 +141,21 @@ struct TalkView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     Text(coordinator.selectedTheme?.title ?? coordinator.language.talkTitle)
-                        .font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(AppColor.secondary)
+                        .font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(palette.mutedText)
                         .padding(.horizontal, 14).padding(.vertical, 9).background(AppColor.butter.opacity(0.58), in: Capsule()).padding(.top, 12)
                     Spacer(minLength: 8)
-                    AppOrb(energy: max(coordinator.outputLevel, coordinator.inputLevel * 0.45), listening: coordinator.state == .active && !coordinator.isMuted, active: coordinator.state != .closing)
+                    AppOrb(energy: max(coordinator.outputLevel, coordinator.inputLevel * 0.45), listening: coordinator.state == .active && !coordinator.isMuted, active: coordinator.state != .closing, palette: palette)
                         .frame(width: typeSize.isAccessibilitySize ? 170 : 220, height: typeSize.isAccessibilitySize ? 180 : 222).padding(.vertical, 8)
-                    Text(coordinator.status).font(.system(.caption, design: .rounded)).foregroundStyle(AppColor.secondary)
+                    Text(coordinator.status).font(.system(.caption, design: .rounded))
+                        .foregroundStyle(coordinator.state == .active ? palette.sessionText : palette.mutedText)
+                        .padding(.horizontal, 10).padding(.vertical, 4)
+                        .background(coordinator.state == .active ? palette.sessionSurface : palette.background, in: Capsule())
                         .contentTransition(.numericText()).padding(.top, 6).padding(.bottom, 16).accessibilityAddTraits(.updatesFrequently)
                         .accessibilityIdentifier("conversation-status")
                     captionArea
                     Spacer(minLength: 12)
                     controls
-                    Text(coordinator.microphoneLabel).font(.caption2).foregroundStyle(AppColor.secondary).padding(.top, 10)
+                    Text(coordinator.microphoneLabel).font(.caption2).foregroundStyle(palette.mutedText).padding(.top, 10)
                         .accessibilityIdentifier("microphone-status")
                     HStack(spacing: 24) {
                         if coordinator.state == .active || coordinator.state == .paused {
@@ -161,7 +165,7 @@ struct TalkView: View {
                                 Button("A little help", systemImage: "sparkles") { coordinator.help() }
                             }
                         } else if coordinator.session == nil {
-                            Text("Reply in whichever language comes to you.").foregroundStyle(AppColor.secondary)
+                            Text("Reply in whichever language comes to you.").foregroundStyle(palette.mutedText)
                         } else if !coordinator.isRunning {
                             Button("New conversation", systemImage: "arrow.counterclockwise") { coordinator.resetConversation() }
                                 .accessibilityIdentifier("new-conversation")
@@ -176,11 +180,11 @@ struct TalkView: View {
                         }.font(.headline).padding(.bottom, 12)
                     }
                     if let notice = coordinator.notice {
-                        Text(notice).font(.footnote).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center).padding(.bottom, 12)
+                        Text(notice).font(.footnote).foregroundStyle(palette.mutedText).multilineTextAlignment(.center).padding(.bottom, 12)
                     }
                 }.padding(.horizontal, 30).frame(maxWidth: .infinity).frame(minHeight: geometry.size.height)
             }.scrollIndicators(.hidden)
-        }
+        }.background(palette.background)
         .sheet(isPresented: $typing) { TypedReplyView(coordinator: coordinator) }
         .animation(.smooth(duration: 0.35), value: coordinator.state)
         .sheet(item: $transcript) { session in
@@ -190,8 +194,8 @@ struct TalkView: View {
     }
     private var captionArea: some View {
         VStack(spacing: 12) {
-            Text(linkedCaption).font(.system(coordinator.assistantPassage == nil ? .largeTitle : .title2, design: .rounded, weight: .medium))
-                .tracking(-0.5).multilineTextAlignment(.center).tint(AppColor.ink)
+            Text(linkedCaption).font(.system(coordinator.assistantPassage == nil ? .largeTitle : .title2, design: coordinator.assistantPassage == nil && palette.serifHeadline ? .serif : .rounded, weight: .medium))
+                .tracking(-0.5).multilineTextAlignment(.center).tint(palette.text)
                 .environment(\.openURL, OpenURLAction { url in
                     guard url.scheme == "app-word", let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let word = components.queryItems?.first?.value else { return .discarded }
                     lookup = WordLookup(word: word, sentence: coordinator.caption); return .handled
@@ -199,11 +203,11 @@ struct TalkView: View {
             if coordinator.language.id == "zh" { PinyinHelp(text: coordinator.caption) }
             if coordinator.store.preferences.meaningVisible {
                 Text(coordinator.assistantPassage == nil ? MeaningLanguages.greeting(in: coordinator.store.preferences.meaningLanguage) : !coordinator.meaning.isEmpty ? coordinator.meaning : coordinator.translating ? "Finding the meaning…" : "")
-                    .font(.subheadline).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
+                    .font(.subheadline).foregroundStyle(palette.mutedText).multilineTextAlignment(.center)
                     .accessibilityIdentifier("meaning-caption")
                 if let error = coordinator.meaningError {
                     VStack(spacing: 6) {
-                        Text(error).foregroundStyle(AppColor.secondary)
+                        Text(error).foregroundStyle(palette.mutedText)
                         Button("Try meaning again") { coordinator.retryMeaning() }
                     }.font(.caption).multilineTextAlignment(.center)
                 }
@@ -212,9 +216,9 @@ struct TalkView: View {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("YOU").font(.system(.caption2, design: .rounded, weight: .medium))
                     Text(String(user.text.suffix(160))).font(.caption)
-                }.foregroundStyle(AppColor.secondary).multilineTextAlignment(.center).padding(.top, 3)
+                }.foregroundStyle(palette.mutedText).multilineTextAlignment(.center).padding(.top, 3)
             }
-            if coordinator.working { ProgressView("Checking that for you…").font(.caption).tint(AppColor.secondary) }
+            if coordinator.working { ProgressView("Checking that for you…").font(.caption).tint(palette.mutedText) }
             if let sources = coordinator.session?.topics.last?.sources, !sources.isEmpty {
                 Button("Sources", systemImage: "link") { transcript = coordinator.session }.font(.caption)
             }
@@ -229,7 +233,7 @@ struct TalkView: View {
                 components.queryItems = [URLQueryItem(name: "word", value: word)]
                 part.link = components.url
             }
-            part.foregroundColor = AppColor.ink; result.append(part)
+            part.foregroundColor = palette.text; result.append(part)
         }
         return result
     }
@@ -249,10 +253,10 @@ struct TalkView: View {
                 else if !coordinator.isRunning { coordinator.start() }
             } label: {
                 ZStack {
-                    Circle().fill(LinearGradient(colors: [Color(red: 1, green: 0.73, blue: 0.48), AppColor.orange], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    if coordinator.state == .connecting || coordinator.state == .closing { ProgressView().tint(AppColor.ink) }
-                    else { Image(systemName: coordinator.isMuted && coordinator.state == .active ? "mic.slash" : "mic").font(.system(size: 28, weight: .regular)).contentTransition(.symbolEffect(.replace)) }
-                }.frame(width: 76, height: 76).shadow(color: AppColor.orange.opacity(0.25), radius: 10, y: 6)
+                    Circle().fill(palette.primary)
+                    if coordinator.state == .connecting || coordinator.state == .closing { ProgressView().tint(palette.onPrimary) }
+                    else { Image(systemName: coordinator.isMuted && coordinator.state == .active ? "mic.slash" : "mic").font(.system(size: 28, weight: .regular)).contentTransition(.symbolEffect(.replace)).foregroundStyle(palette.onPrimary) }
+                }.frame(width: 76, height: 76).shadow(color: palette.primary.opacity(0.25), radius: 10, y: 6)
             }.buttonStyle(.plain).padding(.bottom, 18)
                 .disabled(coordinator.state == .connecting || coordinator.state == .closing)
                 .accessibilityLabel(coordinator.state == .active ? (coordinator.isMuted ? String(localized: "Unmute microphone") : String(localized: "Mute microphone")) : String(localized: "Start conversation"))
