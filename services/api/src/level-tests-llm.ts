@@ -4,7 +4,8 @@ import { randomUUID, createHash } from 'node:crypto';
 import { transaction, type Database } from './db.js';
 import type { PoolClient } from 'pg';
 import { LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
-import { chatCompletion, extractJson, resolveLlmConfig, LlmTransportError, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
+import { chatCompletion, extractJson, normalizeFinishReason, resolveLlmConfig, LlmTransportError, type ChatReply,
+  type LlmFinishReason, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
 import { identifySnapshot, MAX_LEVEL_TEST_SNAPSHOT_BYTES, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { levelTestSettings } from './level-test-settings.js';
@@ -27,9 +28,9 @@ export const LANGUAGE_NAMES: Record<string, string> = {
   it: 'Italian', pt: 'Portuguese', nb: 'Norwegian Bokm\u00e5l', zh: 'Chinese (Mandarin, Simplified)',
 };
 
-export const PROMPT_VERSION = 2;
+export const PROMPT_VERSION = 3;
 export const JUDGE_VERSION = 2;
-const ENGLISH_PROMPT_VERSION = 4;
+const ENGLISH_PROMPT_VERSION = 5;
 const ENGLISH_JUDGE_VERSION = 5;
 export function generationVersionsFor(languageID: string): { promptVersion: number; judgeVersion: number } {
   return languageID === 'en'
@@ -144,22 +145,38 @@ const SKILLS_BY_LEVEL: Record<string, Record<SectionName, string>> = {
   },
 };
 
+function englishItemShape(kind: 'choice' | 'gap' | 'written' | 'order', optionsCount: number,
+  assessedSkill?: string, index = 1) {
+  const options = Array.from({ length: optionsCount }, (_, i) => i === 0 ? 'correct option' : `distractor ${i}`);
+  return { kind, prompt: `Item ${index} prompt`, ...(kind === 'choice' && { options }),
+    answers: [kind === 'choice' ? options[0] : kind === 'order' ? 'ordered example answer' : 'accepted answer'],
+    explain: 'One short sentence explaining the key.', ...(assessedSkill && { assessedSkill }) };
+}
+
 export function buildSectionMessages(section: SectionName, languageID: string, level: string,
                        count: number, perPassage: number, weekId: number,
                        fewShot: LevelTestContentItem[], model: ExamModelEntry,
-                       repairFeedback: string[] = []): { role: 'system' | 'user'; content: string }[] {
-  if (languageID !== 'en') return legacySectionMessages(section, languageID, level, count, perPassage, weekId, fewShot);
+                       repairFeedback: string[] = [], deficit?: SectionDeficit): { role: 'system' | 'user'; content: string }[] {
+  if (languageID !== 'en') {
+    const messages = legacySectionMessages(section, languageID, level, count, perPassage, weekId, fewShot);
+    const codes = repairFeedback.filter(code => /^(recognition|reading|listening|writing)(?:\[\d+\])?\.[a-z_]+$/.test(code));
+    if (codes.length) messages.push({ role: 'user', content: `Regenerate the full section with the same requirements. Correct these validation failures: ${codes.join(', ')}.` });
+    return messages;
+  }
   const langName = LANGUAGE_NAMES[languageID] ?? languageID;
   const englishBlueprint = model;
   const sectionBlueprint = englishBlueprint?.sections[section];
   const skills = sectionBlueprint?.skills?.join(', ') ?? SKILLS_BY_LEVEL[level]?.[section] ?? 'general language competence';
   const theme = weeklyTheme(weekId);
   const fewShotJson = fewShot.length ? `Example items (style anchor — do NOT copy): ${JSON.stringify(fewShot)}` : '';
+  const primarySkill = model.assessment?.sections[section].requiredSkills[0];
+  const example = (kind: Parameters<typeof englishItemShape>[0], index = 1) =>
+    englishItemShape(kind, sectionBlueprint?.options ?? 4, primarySkill, index);
 
   const system = [
     `You are a certified exam item writer for CEFR ${level} ${langName} tests.`,
     'Return ONLY a valid JSON array — no prose, no code fences, no markdown.',
-    'Every item must have exactly one indisputably correct answer and plausible-but-clearly-wrong distractors.',
+    'Choice items must have exactly one indisputably correct answer and plausible-but-clearly-wrong distractors.',
     'Every `explain` teaches the rule in one short sentence in the target language.',
     ...(englishBlueprint ? [
       `Assessment anchor: ${englishBlueprint.canDoAnchor}`,
@@ -174,7 +191,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
   if (section === 'recognition') {
     const options = sectionBlueprint?.options ?? 4;
     const mix = sectionBlueprint?.mix;
-    const mixInstruction = mix
+    const mixInstruction = deficit ? 'Use the requested replacement kinds; existing candidates already cover the other quotas.' : mix
       ? `Candidate quotas are hard requirements: produce AT LEAST ${Object.entries(mix).map(([kind, target]) => `${target} items of kind "${kind}"`).join(' and ')}. Items of any other kind, malformed items, or duplicates do NOT count toward these quotas. Count your items per kind before answering.`
       : 'Use a balanced mixture of choice and gap-fill items.';
     user = [
@@ -183,7 +200,7 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
       `${mixInstruction} Choice items use ${options} options with exactly 1 correct answer.`,
       `Weekly theme for context: ${theme}.`,
       fewShotJson,
-      `Reply as JSON array: [{"kind":"choice"|"gap","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]`,
+      `JSON item shapes: ${JSON.stringify([example('choice'), example('gap')])}`,
     ].join('\n');
   } else if (section === 'reading') {
     const [minWords, maxWords] = sectionBlueprint?.words ?? [60, 120];
@@ -198,7 +215,8 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
       `Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the passage.`,
       `Discard rules: any passage outside the ${minWords}-${maxWords} word range, with missing or duplicate questions, or with ambiguous answers is rejected — check word counts per passage before answering.`,
       fewShotJson,
-      `Reply as JSON array: [{"title":"...","text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
+      `JSON passage shape: ${JSON.stringify([{ title: 'Title', text: 'Passage text',
+        items: Array.from({ length: questionCount }, (_, i) => example('choice', i + 1)) }])}`,
     ].join('\n');
   } else if (section === 'listening') {
     const [minWords, maxWords] = sectionBlueprint?.words ?? [40, 90];
@@ -209,23 +227,24 @@ export function buildSectionMessages(section: SectionName, languageID: string, l
     user = [
       `Write ${count} distinct listening passages (${minWords}-${maxWords} words each) in ${langName} at CEFR ${level} level.`,
       `Format and task family: ${format}; ${sectionBlueprint?.taskFamily ?? 'spoken comprehension'}. Assess ${focus}; vary speakers and situations without making the answer depend on visual clues.`,
-      `Task family: ${sectionBlueprint?.taskFamily ?? 'controlled short production'}. Content focus: ${skills}. Weekly theme: ${theme}.`,
+      `Content focus: ${skills}. Weekly theme: ${theme}.`,
       `These will be read aloud — use natural spoken language. Each passage has exactly ${questionCount} comprehension questions (choice with ${sectionBlueprint?.options ?? 4} options). Every keyed answer must be supported by the spoken text.`,
       `Discard rules: any passage outside the ${minWords}-${maxWords} word range, with missing or duplicate questions, or with ambiguous answers is rejected — check word counts per passage before answering.`,
       fewShotJson,
-      `Reply as JSON array: [{"text":"...","items":[{"kind":"choice","prompt":"...","options":["..."],"answers":["..."],"explain":"..."}]}]`,
+      `JSON passage shape: ${JSON.stringify([{ text: 'Passage text',
+        items: Array.from({ length: questionCount }, (_, i) => example('choice', i + 1)) }])}`,
     ].join('\n');
   } else {
     user = [
       `Write ${count} short production items at CEFR ${level} level in ${langName}.`,
       `Content focus: ${skills}. Weekly theme: ${theme}.`,
       `Each item gives a short instruction in ${englishBlueprint ? 'English adapted to the target level' : "the learner's language"} and expects a short answer in ${langName}.`,
-      `Accept 1-3 valid variants per item.`,
+      'Use gap, written or order items, without options. Accept 1–4 valid answers; order items need exactly one answer of at least three words.',
       fewShotJson,
-      `Reply as JSON array: [{"kind":"written","prompt":"Write...","answers":["variant1","variant2"],"explain":"..."}]`,
+      `JSON item shapes: ${JSON.stringify([example('gap'), example('written'), example('order')])}`,
     ].join('\n');
   }
-  const messages = [{ role: 'system' as const, content: system + '\n' + assessmentGenerationRubric(model,section) }, { role: 'user' as const, content: user }];
+  const messages = [{ role: 'system' as const, content: system + '\n' + assessmentGenerationRubric(model, section, !!deficit) }, { role: 'user' as const, content: user }];
   if (repairFeedback.length) messages.push({ role: 'user', content: [
     'Your previous response did not pass deterministic validation. Repair the entire section and satisfy every listed check.',
     `Validation locations and codes: ${repairFeedback.join(', ')}.`,
@@ -291,14 +310,58 @@ interface SectionResult {
   items: GeneratedItem[];
   passages?: { title: string; text: string; items: GeneratedItem[] }[];
   validationErrors: ValidationFailure[];
+  received?: number;
 }
 
-type LlmCall = (config: ResolvedLlmConfig, messages: { role: 'system' | 'user'; content: string }[], signal?: AbortSignal) => Promise<ChatReply>;
+type ProviderCall = (config: ResolvedLlmConfig, messages: { role: 'system' | 'user'; content: string }[], signal?: AbortSignal) => Promise<ChatReply>;
+type ProviderPhase = 'generate' | 'repair' | 'judge';
+type LlmCall = (...args: [...Parameters<ProviderCall>, { phase: ProviderPhase; section: SectionName; requested: number }]) => Promise<ChatReply>;
+type DiagnosticFields = {
+  section?: SectionName;
+  outcome: 'ok' | 'invalid' | 'failed' | 'unknown' | 'draft' | 'approved';
+  reason?: string;
+  requested?: number; received?: number; accepted?: number; rejected?: number; flagged?: number; missing?: number;
+  missing_count?: number; missing_kinds?: string[]; missing_skills?: string[];
+  duration_ms?: number; tokens_in?: number; tokens_out?: number; finish_reason?: LlmFinishReason;
+};
+type DiagnosticEvent = `${ProviderPhase}.provider` | 'generate.response' | 'repair.response' | 'validate.candidates' |
+  'validate.repair' | 'validate.pool' | 'judge.verdicts' | 'judge.pool' | 'compose.result' | 'publication.result';
+
+interface SectionDeficit {
+  count: number;
+  missingCount: number;
+  missingKinds: [string, number][];
+  missingSkills: string[];
+}
+
+function sectionDeficit(pool: GeneratedPool, section: SectionName, model: ExamModelEntry): SectionDeficit {
+  const items = sectionItems(pool, section);
+  const units = sectionUnitCount(pool, section);
+  const perUnit = section === 'reading' || section === 'listening' ? model.examShape[`${section}PerPassage`] : 1;
+  const missingCount = Math.max(0, sectionPoolMinimum(section, model) - units);
+  const missingKinds = Object.entries(section === 'recognition' ? model.sections.recognition?.mix ?? {} : {})
+    .map(([kind, required]): [string, number] => [kind, required - items.filter(item => item.kind === kind).length])
+    .filter(([, count]) => count > 0);
+  const missingSkills = (model.assessment?.sections[section].requiredSkills ?? [])
+    .filter(skill => !items.some(item => item.assessedSkill === skill));
+  const count = Math.max(missingCount, missingKinds.reduce((sum, [, amount]) => sum + amount, 0),
+    Math.ceil(missingSkills.length / perUnit));
+  return { count, missingCount, missingKinds, missingSkills };
+}
+
+function sectionUnitCount(pool: GeneratedPool, section: SectionName): number {
+  return section === 'reading' || section === 'listening' ? pool[`${section}Passages`].length : pool[section].length;
+}
+
+function diagnosticTokens(usage?: Pick<ChatReply, 'tokensIn' | 'tokensOut'>) {
+  const known = (value?: number) => value !== undefined && Number.isSafeInteger(value) && value >= 0 ? value : undefined;
+  return { tokens_in: known(usage?.tokensIn), tokens_out: known(usage?.tokensOut) };
+}
 
 async function generateSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
   languageID: string, level: string, model: ExamModelEntry, weekId: number,
-  repairFeedback: string[] = [], signal?: AbortSignal,
+  repairFeedback: string[] = [], signal?: AbortSignal, deficit?: SectionDeficit,
 ): Promise<SectionResult> {
   // Blueprint-driven generation (English) asks with headroom and accepts at
   // the pool target. The legacy wildcard pipeline keeps its own ask == bar,
@@ -307,13 +370,26 @@ async function generateSection(
   const spec = languageID === 'en' ? sectionGenerationSpec(section, model) : SECTION_SPECS[section];
   const sectionMinimum = languageID === 'en' ? sectionPoolMinimum(section, model) : spec.count;
   const fewShot = generationExamples(languageID, level, section);
-  const messages = buildSectionMessages(section, languageID, level, spec.count, spec.perPassage, weekId, fewShot, model, repairFeedback);
-  const reply = await call(config, messages, signal);
+  const messages = buildSectionMessages(section, languageID, level, deficit?.count ?? spec.count,
+    spec.perPassage, weekId, fewShot, model, repairFeedback, deficit);
+  if (deficit) messages.push({ role: 'user', content: [
+    `Generate exactly ${deficit.count} replacement candidates, not a complete section.`,
+    `Missing candidates by count: ${deficit.missingCount}.`,
+    ...(deficit.missingKinds.length ? [`Missing kinds: ${deficit.missingKinds.map(([kind, count]) => `${count} ${kind}`).join(', ')}.`] : []),
+    ...(deficit.missingSkills.length ? [`Missing primary skills: ${deficit.missingSkills.join(', ')}.`] : []),
+    'Use new prompts and stimuli; the server retains the accepted candidates.',
+  ].join(' ') });
   let parsed: unknown;
-  try { parsed = extractJson(reply.content); }
-  catch { parsed = undefined; }
+  try {
+    const reply = await call(config, messages, signal, { phase: deficit || repairFeedback.length ? 'repair' : 'generate',
+      section, requested: deficit?.count ?? spec.count });
+    try { parsed = extractJson(reply.content); } catch { /* A known invalid answer can be repaired. */ }
+  } catch (error) {
+    if (!(languageID === 'en' && error instanceof LlmTransportError && error.code === 'llm_empty_reply')) throw error;
+  }
   if (!Array.isArray(parsed) || !parsed.length) return {
-    section, items: [], passages: [], validationErrors: [{ section, code: 'invalid_response', detail: 'expected a non-empty JSON array' }],
+    section, items: [], passages: [], received: Array.isArray(parsed) ? 0 : undefined,
+    validationErrors: [{ section, code: 'invalid_response', detail: 'expected a non-empty JSON array' }],
   };
 
   if (section === 'reading' || section === 'listening') {
@@ -342,17 +418,20 @@ async function generateSection(
         assessedSkill: typeof raw.assessedSkill === 'string' ? raw.assessedSkill : undefined,
         unitID: typeof raw.unitID === 'string' ? raw.unitID : undefined,
       }));
-      if (passageItems.length !== rawItems.length) validationErrors.push({ section, code: 'item', detail: 'passage contains a non-object question' });
+      if (passageItems.length !== rawItems.length) {
+        validationErrors.push({ section, code: 'item', detail: 'passage contains a non-object question' });
+        if (languageID === 'en') continue;
+      }
       if (passageItems.length < 2) {
         validationErrors.push({ section, code: 'passage', detail: 'passage has too few questions' });
         continue;
       }
       passages.push({ title: p.title ?? '', text: passageText, items: passageItems });
     }
-    if (passages.length < sectionMinimum) {
+    if (!deficit && passages.length < sectionMinimum) {
       validationErrors.push({ section, code: 'minimum', detail: `${passages.length} valid passages` });
     }
-    return { section, items: [], passages, validationErrors };
+    return { section, items: [], passages, validationErrors, received: parsed.length };
   }
 
   // recognition / writing: flat item arrays
@@ -369,7 +448,7 @@ async function generateSection(
     unitID: typeof item.unitID === 'string' ? item.unitID : undefined,
   }));
   if (items.length !== parsed.length) validationErrors.push({ section, code: 'item', detail: 'section contains a non-object item' });
-  return { section, items, validationErrors };
+  return { section, items, validationErrors, received: parsed.length };
 }
 
 export async function retryFailedSectionsOnce(failures: ValidationFailure[],
@@ -401,7 +480,8 @@ async function judgeSection(
   languageID: string, level: string, model: ExamModelEntry,
   items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
 ): Promise<JudgeVerdict[]> {
-  const reply = await call(config, buildJudgeMessages(section, languageID, level, items, model), signal);
+  const reply = await call(config, buildJudgeMessages(section, languageID, level, items, model), signal,
+    { phase: 'judge', section, requested: items.length });
   const verdicts = parseVerdicts(reply, languageID === 'en');
   if (model.assessment && verdicts.some(verdict=>verdict.assessedSkill !== items.find(item=>item.id===verdict.id)?.assessedSkill ||
       typeof verdict.skillEvidence !== 'string' || verdict.skillEvidence.trim().length<8 || verdict.skillEvidence.length>240))
@@ -413,10 +493,11 @@ async function judgeSection(
 
 export interface GenerateDeps {
   db: Database; env: NodeJS.ProcessEnv;
-  transport?: LlmCall;
+  transport?: ProviderCall;
   now?: Date;
   /** Durable run checkpoint, called before and after each provider attempt. */
   onUsage?: (usage: GenerationUsage) => Promise<void>;
+  onDiagnostic?: (name: DiagnosticEvent, fields: DiagnosticFields) => void;
 }
 
 export type GenerationOrigin = 'user_operator' | 'automatic_worker';
@@ -461,23 +542,50 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     try { await deps.onUsage?.(snapshot); }
     catch { throw new LlmTransportError('llm_outcome_unknown'); }
   };
-  const call: LlmCall = async (resolved, messages, signal) => {
+  const observe = (name: DiagnosticEvent, fields: DiagnosticFields) => {
+    try { deps.onDiagnostic?.(name, fields); } catch { /* Diagnostics must not decide a run. */ }
+  };
+  const elapsed = (start: number) => Math.round(performance.now() - start);
+  const unknownOutcome = (error: unknown) => options.signal?.aborted ||
+    (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
+  const call: LlmCall = async (resolved, messages, signal, { phase, section, requested }) => {
+    if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
     await checkpoint(usage.begin());
+    if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
+    const started = performance.now();
     let reply: ChatReply;
     try { reply = await providerCall(resolved, messages, signal); }
     catch (error) {
-      await checkpoint(usage.report(error instanceof LlmTransportError ? error.usage : undefined));
+      const known = error instanceof LlmTransportError ? error : undefined;
+      observe(`${phase}.provider`, { section, requested, outcome: unknownOutcome(error) ? 'unknown' : 'failed',
+        reason: known?.code === 'llm_empty_reply' ? 'empty_reply' : known && /^llm_http_\d{3}$/.test(known.code) ? 'http_error' : 'provider_failure',
+        duration_ms: elapsed(started), finish_reason: normalizeFinishReason(known?.finishReason),
+        ...diagnosticTokens(known?.usage) });
+      await checkpoint(usage.report(known?.usage));
+      if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
       throw error;
     }
+    observe(`${phase}.provider`, { section, requested, outcome: signal?.aborted ? 'unknown' : 'ok',
+      duration_ms: elapsed(started), finish_reason: normalizeFinishReason(reply.finishReason), ...diagnosticTokens(reply) });
     await checkpoint(usage.report(reply));
+    if (signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
     return reply;
+  };
+  const observeResponse = (phase: 'generate' | 'repair', result: SectionResult) => {
+    const parsed = result.passages?.length ?? result.items.length;
+    observe(`${phase}.response`, { section: result.section, outcome: parsed ? 'ok' : 'invalid',
+      received: result.received, accepted: parsed,
+      rejected: result.received === undefined ? undefined : result.received - parsed,
+      reason: parsed ? undefined : 'invalid_or_empty_array' });
   };
 
   // ---- generate sections independently ----
   const sectionResults = new Map<SectionName, SectionResult>();
   for (const section of SECTION_ORDER) {
     try {
-      sectionResults.set(section, await generateSection(call, config, section, languageID, level, model, weekId, [], options.signal));
+      const result = await generateSection(call, config, section, languageID, level, model, weekId, [], options.signal);
+      observeResponse('generate', result);
+      sectionResults.set(section, result);
     } catch (error) {
       const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
       return { status: 'failed', languageID, level, weekId,
@@ -499,20 +607,62 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     assignProvisionalIds(candidate);
     return validateCandidate(candidate);
   };
-  const initial = validate();
-  const initialFailures = [...initial.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
+  let admitted: GeneratedPool | undefined;
+  const admit = (candidate: GeneratedPool, preserved?: GeneratedPool) => {
+    assignProvisionalIds(candidate);
+    return validateGeneratedPool({ recognition: candidate.recognition, writing: candidate.writing,
+      reading: candidate.readingPassages, listening: candidate.listeningPassages }, model.examShape,
+      languageID, model, true, { preserved }).pool;
+  };
+  const observeAdmission = (name: 'validate.candidates' | 'validate.repair', section: SectionName,
+    result: SectionResult, candidate: GeneratedPool, durationMs: number, deficit: SectionDeficit) => {
+    const accepted = sectionUnitCount(candidate, section);
+    observe(name, { section, outcome: deficit.count ? 'invalid' : 'ok', received: result.received, accepted,
+      rejected: result.received === undefined ? undefined : result.received - accepted,
+      duration_ms: durationMs, missing: deficit.count, reason: deficit.count ? 'candidate_deficit' : undefined,
+      missing_count: deficit.missingCount, missing_kinds: deficit.missingKinds.map(([kind, count]) => `${kind}:${count}`),
+      missing_skills: deficit.missingSkills });
+  };
   try {
-    await retryFailedSectionsOnce(initialFailures, async (section, feedback) => {
-      const repaired = await generateSection(call, config, section, languageID, level, model, weekId, feedback, options.signal);
-      sectionResults.set(section, repaired);
-    });
+    if (languageID === 'en') {
+      const admissionStarted = performance.now();
+      admitted = admit(buildPool());
+      const admissionDuration = elapsed(admissionStarted);
+      for (const section of SECTION_ORDER)
+        observeAdmission('validate.candidates', section, sectionResults.get(section)!, admitted, admissionDuration,
+          sectionDeficit(admitted, section, model));
+      for (const section of SECTION_ORDER) {
+        const deficit = sectionDeficit(admitted, section, model);
+        if (!deficit.count) continue;
+        if (options.signal?.aborted) throw new LlmTransportError('llm_outcome_unknown');
+        const repair = await generateSection(call, config, section, languageID, level, model, weekId, [], options.signal, deficit);
+        observeResponse('repair', repair);
+        const repairStarted = performance.now();
+        const additions = admit(poolFromSectionResults(new Map([[section, repair]])), admitted);
+        if (section === 'recognition' || section === 'writing') admitted[section].push(...additions[section]);
+        else admitted[`${section}Passages`].push(...additions[`${section}Passages`]);
+        observeAdmission('validate.repair', section, repair, additions, elapsed(repairStarted), sectionDeficit(admitted, section, model));
+      }
+    } else {
+      const initial = validate();
+      const initialFailures = [...initial.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
+      await retryFailedSectionsOnce(initialFailures, async (section, feedback) => {
+        const repaired = await generateSection(call, config, section, languageID, level, model, weekId, feedback, options.signal);
+        observeResponse('repair', repaired);
+        sectionResults.set(section, repaired);
+      });
+    }
   } catch (error) {
     const outcomeUnknown = options.signal?.aborted || (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown');
     return { status: 'failed', languageID, level, weekId,
       errors: [outcomeUnknown ? 'llm_outcome_unknown' : 'section_repair_failed'], ...usageOutcome() };
   }
-  const final = validate();
-  const finalFailures = [...final.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
+  if (admitted) assignProvisionalIds(admitted);
+  const validationStarted = performance.now();
+  const final = admitted ? validateCandidate(admitted) : validate();
+  const finalFailures = admitted ? final.errors : [...final.errors, ...[...sectionResults.values()].flatMap(result => result.validationErrors)];
+  observe('validate.pool', { outcome: finalFailures.length ? 'invalid' : 'ok', duration_ms: elapsed(validationStarted),
+    reason: finalFailures.length ? 'pool_constraints' : undefined });
   if (!final.ok || finalFailures.length) return { status: 'failed', languageID, level, weekId, ...usageOutcome(),
     errors: finalFailures.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
   let pool = final.pool;
@@ -521,6 +671,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   const review: JudgeVerdict[] = [];
   if (settings.verifyMode !== 'off') for (const section of SECTION_ORDER) {
     const items = sectionItems(pool, section);
+    const judgeStarted = performance.now();
     try {
       const verdicts = await judgeSection(call, config, section, languageID, level, model, items, options.signal);
       const expected = new Set(items.map(item => item.id)), seen = new Set<string>();
@@ -530,9 +681,16 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       }
       const missing = items.filter(item => !seen.has(item.id!));
       if (missing.length && settings.verifyMode === 'strict') throw new Error('judge_incomplete');
+      const accepted = verdicts.filter(verdict => verdict.verdict === 'ok').length;
+      const flagged = verdicts.filter(verdict => verdict.verdict === 'flagged').length;
+      observe('judge.verdicts', { section, outcome: missing.length ? 'invalid' : 'ok', requested: items.length,
+        received: verdicts.length, accepted, flagged, rejected: verdicts.length - accepted - flagged, missing: missing.length,
+        duration_ms: elapsed(judgeStarted) });
       review.push(...verdicts, ...missing.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_incomplete' })));
       // English flagged content is excluded just like a rejection; it is not safe evidence for an exam.
     } catch (error) {
+      observe('judge.verdicts', { section, outcome: unknownOutcome(error) ? 'unknown' : 'failed', requested: items.length,
+        reason: 'judge_failed_or_incomplete', duration_ms: elapsed(judgeStarted) });
       if (options.signal?.aborted || (error instanceof LlmTransportError && error.code === "llm_outcome_unknown"))
         return { status: "failed", languageID, level, weekId, ...usageOutcome(), errors: ["llm_outcome_unknown"] };
       if (settings.verifyMode === "strict") return { status: "failed", languageID, level, weekId,
@@ -550,7 +708,10 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       recognition: model.examShape.recognition, writing: model.examShape.writing,
       readingPassages: model.examShape.readingPassages, listeningPassages: model.examShape.listeningPassages,
     } } : model;
+    const trimStarted = performance.now();
     const trimmed = validateCandidate(pool, compositionModel);
+    observe('judge.pool', { outcome: trimmed.ok ? 'ok' : 'invalid', duration_ms: elapsed(trimStarted),
+      reason: trimmed.ok ? undefined : 'pool_constraints_after_judge' });
     if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, ...usageOutcome(),
       errors: trimmed.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
     pool = trimmed.pool;
@@ -558,30 +719,43 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   const generationId = config.sessionID!;
   const blueprintHash = frozen?.hash ?? createHash('sha256').update(JSON.stringify(model)).digest('hex');
+  const composeStarted = performance.now();
+  const compositionFailed = (reason: string): GenerationOutcome => {
+    observe('compose.result', { outcome: 'failed', reason, requested: settings.variants, duration_ms: elapsed(composeStarted) });
+    return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: [reason] };
+  };
   let composed: GeneratedVariant[];
   try { composed=composeVariants(pool,model,weekId,settings.variants); }
-  catch (error) { return {status:'failed',languageID,level,weekId,...usageOutcome(),
-    errors:[error instanceof Error && error.message==='coverage_search_limit'?'coverage_search_limit':'insufficient_coverage_capacity']}; }
+  catch (error) { return compositionFailed(error instanceof Error && error.message === 'coverage_search_limit'
+    ? 'coverage_search_limit' : 'insufficient_coverage_capacity'); }
   const variants = composed.map(variant =>
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
       ...variant }, 'llm', generationId));
   if (variants.some(variant => Buffer.byteLength(JSON.stringify(variant)) > MAX_LEVEL_TEST_SNAPSHOT_BYTES))
-    return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: ['snapshot_too_large'] };
+    return compositionFailed('snapshot_too_large');
   const formFailure = languageID === 'en' ? englishServedFormFailure(variants, model, pool) : null;
   if (formFailure) {
     const error = formFailure === 'coverage' ? 'insufficient_coverage_capacity' : formFailure === 'mix' ? 'insufficient_variant_capacity'
       : formFailure === 'variant_diversity' ? 'insufficient_variant_diversity' : 'insufficient_variant_stimulus_diversity';
-    return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: [error] };
+    return compositionFailed(error);
   }
+  observe('compose.result', { outcome: 'ok', requested: settings.variants, accepted: variants.length, duration_ms: elapsed(composeStarted) });
   const status = settings.publishMode === 'auto' && !(languageID === 'en' && settings.verifyMode === 'off') ? 'approved' : 'draft';
   const approvedBy = status === 'approved' ? 'system:auto' : null;
-
-  await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
-    model: config.model, generator: `llm:${config.provider}`, review,
-    blueprintVersion: frozen?.version ?? 1, blueprintHash, blueprintContract: frozen?.contract ?? null,
-    tokensIn: usage.snapshot().state === 'complete' ? usage.snapshot().tokensIn : null, tokensOut: usage.snapshot().state === 'complete' ? usage.snapshot().tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
-    origin: options.origin });
+  if (options.signal?.aborted) return { status: 'failed', languageID, level, weekId, ...usageOutcome(), errors: ['llm_outcome_unknown'] };
+  const publicationStarted = performance.now();
+  try {
+    await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
+      model: config.model, generator: `llm:${config.provider}`, review,
+      blueprintVersion: frozen?.version ?? 1, blueprintHash, blueprintContract: frozen?.contract ?? null,
+      tokensIn: usage.snapshot().state === 'complete' ? usage.snapshot().tokensIn : null, tokensOut: usage.snapshot().state === 'complete' ? usage.snapshot().tokensOut : null, approvedBy, verifyMode: settings.verifyMode, force: options.force === true,
+      origin: options.origin });
+  } catch (error) {
+    observe('publication.result', { outcome: 'failed', reason: 'persist_failed', duration_ms: elapsed(publicationStarted) });
+    throw error;
+  }
+  observe('publication.result', { outcome: status, accepted: variants.length, duration_ms: elapsed(publicationStarted) });
 
   return { status: status as 'approved' | 'draft', languageID, level, weekId,
     variants: variants.length, ...usageOutcome() };

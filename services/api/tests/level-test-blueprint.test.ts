@@ -154,9 +154,9 @@ test('English validation rejects clearly Cyrillic lexical content without adding
   assert.ok(result.errors.some(error => error.code === 'language'));
 });
 
-test('English prompt and judge contracts have distinct persisted versions without changing other languages', () => {
-  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 4, judgeVersion: 5 });
-  assert.deepEqual(generationVersionsFor('es'), { promptVersion: 2, judgeVersion: 2 });
+test('generation versions record English and legacy prompt changes without bumping either judge', () => {
+  assert.deepEqual(generationVersionsFor('en'), { promptVersion: 5, judgeVersion: 5 });
+  assert.deepEqual(generationVersionsFor('es'), { promptVersion: 3, judgeVersion: 2 });
 });
 
 test('English validation enforces blueprint option count and candidate kind quotas', () => {

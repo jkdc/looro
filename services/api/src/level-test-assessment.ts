@@ -108,9 +108,11 @@ export function selectCoverageGroups<T>(groups: readonly {value:T;skills:readonl
 }
 
 /** Runtime rubric v1 is part of the frozen assessment, not an editor-only skill. */
-export function assessmentGenerationRubric(model:ExamModelEntry, section:ExamSectionName): string {
+export function assessmentGenerationRubric(model:ExamModelEntry, section:ExamSectionName, repairing = false): string {
   const a=model.assessment;
   if (!a) return '';
   const rules=a.sections[section];
-  return `Assessment rubric v${a.rubricVersion}, design revision ${a.revision}. Every item must include exactly one assessedSkill from ${JSON.stringify(rules.requiredSkills)}. Cover every listed skill in the candidate pool, with alternatives across passages and kinds so multiple forms can retain coverage. The tag identifies what answering actually requires, not vocabulary merely encountered. ${JSON.stringify(rules.guidance??{})}\nReviewed complete reference (style and task-demand anchor; do not copy): ${JSON.stringify(rules.example)}`;
+  const coverage = repairing ? 'Cover the missing primary skills requested for this repair.'
+    : 'Cover every listed skill in the candidate pool, with alternatives across passages and kinds so multiple forms can retain coverage.';
+  return `Assessment rubric v${a.rubricVersion}, design revision ${a.revision}. Every item must include exactly one assessedSkill from ${JSON.stringify(rules.requiredSkills)}. ${coverage} The tag identifies what answering actually requires, not vocabulary merely encountered. ${JSON.stringify(rules.guidance??{})}\nReviewed complete reference (style and task-demand anchor; do not copy): ${JSON.stringify(rules.example)}`;
 }

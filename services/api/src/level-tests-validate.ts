@@ -90,7 +90,8 @@ const WORDS = (text: string) => text.trim().split(/\s+/).filter(Boolean).length;
 const normalize = (text: string) => text.toLowerCase().replace(/[.,!?;:¿¡"“”«»…()]/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShape>,
-  targetLanguage: string, blueprint?: ExamModelEntry, deferLanguageReview = false): ValidationResult {
+  targetLanguage: string, blueprint?: ExamModelEntry, deferLanguageReview = false,
+  admission?: { preserved?: GeneratedPool }): ValidationResult {
   const shape = {
     recognition: examShape.recognition ?? 12, writing: examShape.writing ?? 3,
     readingPassages: examShape.readingPassages ?? 2, readingPerPassage: examShape.readingPerPassage ?? 3,
@@ -115,10 +116,15 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
   const readingPassages = arrayed(raw?.reading);
   const listeningPassages = arrayed(raw?.listening);
 
-  const seenPrompts = new Set<string>();
+  const preserved = admission?.preserved;
+  const fingerprintOf = (prompt: string) => normalize(prompt).slice(0, 160);
+  const seenPrompts = new Set(preserved ? [...preserved.recognition, ...preserved.writing,
+    ...preserved.readingPassages.flatMap(p => p.items), ...preserved.listeningPassages.flatMap(p => p.items)]
+    .map(item => fingerprintOf(item.prompt)) : []);
   const seenIds = new Set<string>();
-  const acceptItem = (section: LevelTestContentItem['section'], bucket: GeneratedItem[], value: unknown, index: number): boolean => {
-    const where = `${section}[${index}]`;
+  const acceptItem = (section: LevelTestContentItem['section'], bucket: GeneratedItem[], value: unknown, index: number,
+    pending?: { prompts: Set<string>; ids: Set<string>; path: string }): boolean => {
+    const where = pending ? `${pending.path}.items[${index}]` : `${section}[${index}]`;
     const fields = record(value);
     if (!fields) return fail(where, 'item', 'expected an item object');
     const item = fields as unknown as RawGeneratedItem;
@@ -126,12 +132,17 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     if (!['choice', 'gap', 'written', 'order'].includes(kind)) return fail(where, 'kind', 'unsupported exercise kind');
     if (targetLanguage === 'en' && !englishSectionKinds(section).includes(kind as string))
       return fail(where, 'kind', 'exercise kind is not permitted in this section');
-    if (item.id && item.id !== 'pending' && seenIds.has(item.id)) return fail(where, 'id', 'duplicate item id');
+    const allowedSkills = admission && blueprint?.assessment?.sections[section]?.requiredSkills;
+    if (allowedSkills && (typeof item.assessedSkill !== 'string' || !allowedSkills.includes(item.assessedSkill)))
+      return fail(where, 'assessed_skill', 'item is missing an allowed primary skill');
+    if (item.id && item.id !== 'pending' && (seenIds.has(item.id) || pending?.ids.has(item.id)))
+      return fail(where, 'id', 'duplicate item id');
     const prompt = typeof item.prompt === 'string' ? item.prompt.trim() : '';
     const answers = strings(item.answers);
     if (!prompt || prompt.length > 500) return fail(where, 'prompt', 'missing or oversized prompt');
-    const fingerprint = normalize(prompt).slice(0, 160);
-    if (seenPrompts.has(fingerprint)) return fail(where, 'duplicate', 'repeated prompt inside the generation');
+    const fingerprint = fingerprintOf(prompt);
+    if (seenPrompts.has(fingerprint) || pending?.prompts.has(fingerprint))
+      return fail(where, 'duplicate', 'repeated prompt inside the generation');
     const options = strings(item.options);
     if (kind === 'choice') {
       if (options.length < 3) return fail(where, 'options', 'fewer than 3 options');
@@ -160,8 +171,8 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
       if (checks.some(passed => !passed)) return false;
     } else if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage, prompt))
       return fail(where, 'language', 'the item does not look like the target language');
-    seenPrompts.add(fingerprint);
-    if (item.id) seenIds.add(item.id);
+    (pending?.prompts ?? seenPrompts).add(fingerprint);
+    if (item.id) (pending?.ids ?? seenIds).add(item.id);
     bucket.push({
       assessedSkill: typeof item.assessedSkill === 'string' ? item.assessedSkill : undefined,
       id: item.id ?? 'pending', section: section as LevelTestSection, kind, prompt,
@@ -191,7 +202,10 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     if (mismatches.length) errors.push({ section: 'recognition', code: 'mix', detail: 'candidate item-kind quotas are below the blueprint minimum' });
   }
 
-  const seenPassageTexts = { reading: new Set<string>(), listening: new Set<string>() };
+  const seenPassageTexts = {
+    reading: new Set(preserved?.readingPassages.map(passage => normalize(passage.text))),
+    listening: new Set(preserved?.listeningPassages.map(passage => normalize(passage.text))),
+  };
   const acceptPassage = (kind: 'reading' | 'listening', minWords: number, maxWords: number,
                          minItems: number, value: unknown, index: number): boolean => {
     const where = `${kind}[${index}]`;
@@ -201,14 +215,24 @@ export function validateGeneratedPool(pool: unknown, examShape: Partial<ExamShap
     const text = typeof passage.text === 'string' ? passage.text.trim() : '';
     const words = text ? WORDS(text) : 0;
     const bucket: GeneratedItem[] = [];
-    arrayed(passage.items).forEach((item, position) => acceptItem(kind, bucket, item, position));
+    const items = arrayed(passage.items);
+    const pending = admission ? { prompts: new Set<string>(), ids: new Set<string>(), path: where } : undefined;
+    items.forEach((item, position) => acceptItem(kind, bucket, item, position, pending));
     if (words < minWords || words > maxWords)
       return fail(where, 'passage', `passage length out of range (${words} words)`);
     if (targetLanguage === 'en' && !language(where, 'passage', text)) return false;
     if (bucket.length < minItems) return fail(where, 'passage', 'fewer valid questions than required');
+    if (pending && (bucket.length !== items.length || (blueprint?.assessment && bucket.length !== minItems)))
+      return fail(where, 'passage_questions', 'passage must preserve the complete question group');
     const fingerprint = normalize(text);
     if (targetLanguage === 'en' && seenPassageTexts[kind].has(fingerprint))
       return fail(where, 'duplicate_passage', 'repeated passage text within the same section');
+    if (pending && seenPassageTexts[kind === 'reading' ? 'listening' : 'reading'].has(fingerprint))
+      return fail(where, 'overlap', 'a listening passage duplicates a reading passage');
+    if (pending) {
+      for (const prompt of pending.prompts) seenPrompts.add(prompt);
+      for (const id of pending.ids) seenIds.add(id);
+    }
     if (targetLanguage === 'en') seenPassageTexts[kind].add(fingerprint);
     const target = kind === 'reading' ? clean.readingPassages : clean.listeningPassages;
     target.push({ title: typeof passage.title === 'string' ? passage.title : '', text, items: bucket });

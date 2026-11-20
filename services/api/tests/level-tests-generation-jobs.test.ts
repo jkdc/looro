@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { trace } from '@opentelemetry/api';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { connectDatabase } from '../src/db.js';
@@ -301,5 +302,41 @@ test('an unexpected failure inside the provider pipeline is recorded as failed, 
   } finally {
     await db.query('DELETE FROM level_test_generation_jobs WHERE language_id=$1 AND level=$2 AND week_index=$3', ['en', 'A1', weekIndex]);
     await db.end();
+  }
+});
+
+test('generation trace uses the durable run identity and a bounded terminal outcome', async () => {
+  const runId = randomUUID();
+  const spans: { name: string; attributes: Record<string, unknown>; events: string[]; ended: boolean }[] = [];
+  trace.setGlobalTracerProvider({ getTracer: () => ({ startSpan: (name: string, options: { attributes?: Record<string, unknown> }) => {
+    const span = { name, attributes: { ...options.attributes }, events: [] as string[], ended: false };
+    spans.push(span);
+    return {
+      setAttribute: (key: string, value: unknown) => { span.attributes[key] = value; },
+      addEvent: (name: string) => { span.events.push(name); },
+      end: () => { span.ended = true; },
+    };
+  } }) } as never);
+  let inserted: unknown;
+  const client = { release() {}, async query(sql: string, params: unknown[]) {
+    if (sql.includes('pg_try_advisory_lock')) return { rows: [{ locked: true }] };
+    if (sql.includes('INSERT INTO level_test_generation_jobs')) inserted = params[0];
+    return { rows: [] };
+  } };
+  const db = { connect: async () => client, query: async () => ({ rows: [] }) } as never;
+  try {
+    const result = await runLevelTestGenerationJob(db, {}, {
+      languageID: 'en', level: 'A1', weekIndex: 202647, origin: 'automatic_worker',
+    }, runId);
+    assert.equal(result.status, 'failed');
+    assert.equal(inserted, runId);
+    assert.equal(spans.length, 1);
+    assert.equal(spans[0]?.name, 'level_test_generation');
+    assert.equal(spans[0]?.attributes['generation.run_id'], runId);
+    assert.equal(spans[0]?.attributes['generation.outcome'], 'failed');
+    assert.equal(spans[0]?.attributes['generation.prompt_version'], 5);
+    assert.equal(spans[0]?.ended, true);
+  } finally {
+    trace.disable();
   }
 });

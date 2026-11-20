@@ -390,3 +390,35 @@ test('reinforced English generation asks for headroom and hard candidate quotas'
   assert.ok(recognitionUser.content.includes('hard requirements'), 'recognition prompt must enforce quotas');
   assert.ok(recognitionUser.content.includes('AT LEAST'), 'recognition prompt must ask for minimum counts');
 });
+
+test('English prompt examples are valid JSON by kind and match blueprint option counts', () => {
+  const model = examModelFor('A1', 'en')!;
+  const user = buildSectionMessages('recognition', 'en', 'A1', 30, 0, 202647, [], model)[1]!.content;
+  const exampleLine = user.split('\n').find(line => line.startsWith('JSON item shapes: '));
+  assert.ok(exampleLine);
+  const [choice, gap] = JSON.parse(exampleLine.slice('JSON item shapes: '.length));
+  assert.equal(choice.kind, 'choice');
+  assert.equal(choice.options.length, model.sections.recognition!.options);
+  assert.deepEqual(choice.answers, [choice.options[0]]);
+  assert.equal(gap.kind, 'gap');
+  assert.equal(Object.hasOwn(gap, 'options'), false);
+  assert.ok(model.assessment!.sections.recognition.requiredSkills.includes(choice.assessedSkill));
+  assert.ok(model.assessment!.sections.recognition.requiredSkills.includes(gap.assessedSkill));
+});
+
+test('Spanish deterministic repair adds feedback without altering the legacy prompt', () => {
+  const model = examModelFor('A1', 'es')!;
+  const initial = buildSectionMessages('listening', 'es', 'A1', 4, 2, 202647, [], model);
+  const repair = buildSectionMessages('listening', 'es', 'A1', 4, 2, 202647, [], model, ['listening.minimum']);
+  assert.equal(initial.length, 2);
+  assert.deepEqual(repair.slice(0, 2), initial);
+  assert.match(repair[2]?.content ?? '', /listening\.minimum/);
+});
+
+test('English writing prompt does not require distractors or a single accepted answer for every kind', () => {
+  const messages = buildSectionMessages('writing', 'en', 'A1', 8, 0, 202647, [], examModelFor('A1', 'en')!);
+  const system = messages[0]!.content;
+  assert.doesNotMatch(system, /Every item must have exactly one indisputably correct answer/);
+  assert.match(system, /Choice items must have exactly one indisputably correct answer/);
+  assert.match(messages[1]!.content, /without options\. Accept 1–4 valid answers/);
+});

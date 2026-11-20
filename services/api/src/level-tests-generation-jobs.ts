@@ -1,7 +1,8 @@
 import type { PoolClient } from 'pg';
 import { randomUUID } from 'node:crypto';
+import { ROOT_CONTEXT, trace, type Span } from '@opentelemetry/api';
 import type { Database } from './db.js';
-import { generateWeeklyLevelTest, type GenerateOptions, type GenerationOutcome } from './level-tests-llm.js';
+import { generateWeeklyLevelTest, generationVersionsFor, type GenerateOptions, type GenerationOutcome } from './level-tests-llm.js';
 import { paliqueMetrics } from './metrics.js';
 import type { GenerationUsage } from './level-test-generation-usage.js';
 
@@ -81,31 +82,52 @@ async function runLevelTestGenerationJobOnce(
 
     const attempt = (prior?.attempts ?? 0) + 1;
     const runId = await startRun(client, options, weekId!, attempt, runCorrelationId);
-    let outcome: GenerationOutcome;
+    const started = performance.now();
+    const versions = generationVersionsFor(options.languageID);
+    let span: Span | undefined;
     try {
-      outcome = await generateWeeklyLevelTest({ db, env, onUsage: async usage => {
-        const updated = await client.query(`UPDATE level_test_generation_jobs
-          SET tokens_in=$2, tokens_out=$3, usage_state=$4, updated_at=now() WHERE id=$1 AND state='running'`,
-        [runId, usage.tokensIn, usage.tokensOut, usage.state]);
-        if (updated.rowCount !== 1) throw new Error('generation_run_checkpoint_failed');
-      } }, { ...options, weekIndex: weekId, signal: options.signal });
-    } catch (error) {
-      const unknown = options.signal?.aborted || (error instanceof Error && error.message === 'llm_outcome_unknown');
-      await closeRun(client, runId, unknown ? 'unknown' : 'failed',
-        unknown ? 'llm_outcome_unknown' : 'generation_failed',
-        [unknown ? 'llm_outcome_unknown' : 'generation_failed']);
-      if (unknown) return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['llm_outcome_unknown'] };
-      return { status: 'failed', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['generation_failed'] };
+      span = trace.getTracer('palique-api').startSpan('level_test_generation', { attributes: {
+        'generation.run_id': runId, 'generation.language': options.languageID, 'generation.level': options.level,
+        'generation.week_index': weekId!, 'generation.attempt': attempt,
+        'generation.prompt_version': versions.promptVersion, 'generation.judge_version': versions.judgeVersion,
+      } }, ROOT_CONTEXT);
+    } catch { /* Tracing must not alter durable job handling. */ }
+    let terminal: GenerationOutcome['status'] | 'unknown' = 'failed';
+    try {
+      let outcome: GenerationOutcome;
+      try {
+        outcome = await generateWeeklyLevelTest({ db, env, onDiagnostic: (name, fields) => { span?.addEvent(name, fields); }, onUsage: async usage => {
+          const updated = await client.query(`UPDATE level_test_generation_jobs
+            SET tokens_in=$2, tokens_out=$3, usage_state=$4, updated_at=now() WHERE id=$1 AND state='running'`,
+          [runId, usage.tokensIn, usage.tokensOut, usage.state]);
+          if (updated.rowCount !== 1) throw new Error('generation_run_checkpoint_failed');
+        } }, { ...options, weekIndex: weekId, signal: options.signal });
+      } catch (error) {
+        const unknown = options.signal?.aborted || (error instanceof Error && error.message === 'llm_outcome_unknown');
+        await closeRun(client, runId, unknown ? 'unknown' : 'failed',
+          unknown ? 'llm_outcome_unknown' : 'generation_failed',
+          [unknown ? 'llm_outcome_unknown' : 'generation_failed']);
+        terminal = unknown ? 'unknown' : 'failed';
+        if (unknown) return { status: 'unknown', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['llm_outcome_unknown'] };
+        return { status: 'failed', languageID: options.languageID, level: options.level, weekId: weekId!, errors: ['generation_failed'] };
+      }
+      const unknown = options.signal?.aborted || (outcome.status === 'failed' && outcome.errors?.some(code => code.includes('llm_outcome_unknown')));
+      const state = unknown ? 'unknown' : outcome.status === 'failed' ? 'failed' : 'finished';
+      const errorCode = unknown ? 'llm_outcome_unknown' : outcome.status === 'failed' ? safeCode(outcome.errors?.[0]) : null;
+      // Keep the section-level reasons for the operator-facing error dialog; the
+      // coarse error_code stays the stable contract for badges and summaries.
+      const details = state === 'finished' ? [] : sanitizeGenerationErrorDetails(outcome.errors, unknown ? 'llm_outcome_unknown' : errorCode);
+      await closeRun(client, runId, state, errorCode, details, outcome.usage);
+      terminal = unknown ? 'unknown' : outcome.status;
+      if (unknown) return { ...outcome, status: 'unknown', errors: ['llm_outcome_unknown'] };
+      return outcome.status === 'failed' ? { ...outcome, errors: [errorCode ?? 'generation_failed'] } : outcome;
+    } finally {
+      try {
+        span?.setAttribute('generation.outcome', terminal);
+        span?.setAttribute('generation.duration_ms', Math.round(performance.now() - started));
+      } catch { /* Best-effort tracing. */ }
+      try { span?.end(); } catch { /* Best-effort tracing. */ }
     }
-    const unknown = options.signal?.aborted || (outcome.status === 'failed' && outcome.errors?.some(code => code.includes('llm_outcome_unknown')));
-    const state = unknown ? 'unknown' : outcome.status === 'failed' ? 'failed' : 'finished';
-    const errorCode = unknown ? 'llm_outcome_unknown' : outcome.status === 'failed' ? safeCode(outcome.errors?.[0]) : null;
-    // Keep the section-level reasons for the operator-facing error dialog; the
-    // coarse error_code stays the stable contract for badges and summaries.
-    const details = state === 'finished' ? [] : sanitizeGenerationErrorDetails(outcome.errors, unknown ? 'llm_outcome_unknown' : errorCode);
-    await closeRun(client, runId, state, errorCode, details, outcome.usage);
-    if (unknown) return { ...outcome, status: 'unknown', errors: ['llm_outcome_unknown'] };
-    return outcome.status === 'failed' ? { ...outcome, errors: [errorCode ?? 'generation_failed'] } : outcome;
   } finally {
     if (locked) {
       try { await client.query('SELECT pg_advisory_unlock(hashtextextended($1, 0))',

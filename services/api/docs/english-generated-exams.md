@@ -14,6 +14,10 @@ New English generations clone their complete blueprint before asynchronous work.
 
 English draft approval verifies the contract's version/hash, language and level, then uses its recorded shape and constraints. Changing the current bundled blueprint does not reinterpret a draft. Missing legacy contracts return `level_test_contract_required` (409); regenerate those drafts rather than inventing retrospective contracts. Invalid or mismatched contracts return `level_test_not_approvable` (409). Previously approved snapshots remain readable and approval replay remains idempotent. Neither migration recalculates grades or rewrites snapshots.
 
+## Candidate recovery
+
+For English A1–C1, a structurally invalid item is discarded rather than invalidating otherwise sufficient surplus candidates. Comprehension passages are all-or-nothing: invalid groups do not reserve deduplication keys. A shortfall in count, exercise kinds or primary skills triggers at most one section repair. Only replacements are requested, and they are validated against the retained candidates before the existing judge and composition gates. An unresolved deficit fails closed; there is no automatic retry of an unknown provider outcome or repair after the judge.
+
 ## Run consumption
 
 Migration `053_level_test_generation_usage.sql` adds `tokens_in`, `tokens_out` and `usage_state` to each generation run. The status API includes `usage: { state, tokensIn, tokensOut }` for recent and correlated runs.
@@ -34,7 +38,7 @@ The run is checkpointed before and after every provider call, before parsing gen
 
 The exporter rejects unapproved, stale, unknown-catalog or infeasible content before embedding each level in its API blueprint. Updating content requires a new review of its canonical payload, not simply editing the approval hash. Existing catalog IDs are reused; inversion, cleft sentences and ellipsis have explicit catalog entries rather than misleading substitute tags.
 
-Runtime rubric v1 is loaded by the existing generator and judge. English prompt/judge versions are 4/5. Every new covered item has one primary `assessedSkill` from its section's approved list. A tag represents what answering requires, not a skill merely encountered in the passage. The judge must return the same tag plus 8–240 characters of observable `skillEvidence`; missing, uncertain or mismatched evidence cannot authorize the item. Semantic truth still depends on reviewer quality: a catalog-valid label is not by itself proof of task validity.
+Runtime rubric v1 is loaded by the existing generator and judge. English prompt/judge versions are 5/5. The legacy generation prompt is version 3; its repair now includes deterministic rejection codes without changing its acceptance rules. Every new covered item has one primary `assessedSkill` from its section's approved list. A tag represents what answering requires, not a skill merely encountered in the passage. The judge must return the same tag plus 8–240 characters of observable `skillEvidence`; missing, uncertain or mismatched evidence cannot authorize the item. Semantic truth still depends on reviewer quality: a catalog-valid label is not by itself proof of task validity.
 
 Every form must include each required capability at least once. This LLM-reviewed minimum-presence rule is an engineering pilot constraint, not an empirically calibrated weighting. A bounded deterministic dynamic program selects whole reading/listening groups and individual recognition/writing items while jointly preserving kind quotas. Covered passages have exactly the frozen questions-per-passage count. Insufficient combinations fail with `insufficient_coverage_capacity`; bounded search exhaustion fails with `coverage_search_limit`. Neither case silently reduces coverage or retries uncertain provider calls. Existing distinct-form and distinct-stimulus gates still apply.
 

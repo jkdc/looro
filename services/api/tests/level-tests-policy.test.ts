@@ -167,8 +167,8 @@ test('individually uncertain city-name options are not pooled into false foreign
   assert.ok((state.weeks[0]!.pool as GeneratedPool).recognition.some(item => item.prompt === 'Which city is in California?'));
 });
 
-test('non-English judge-off generation keeps its existing auto-publication and version behavior', async () => {
-  const { db, state } = database(), content = pool();
+function spanishPool() {
+  const content = pool();
   for (const [index, entry] of [...content.recognition, ...content.writing,
     ...content.reading.flatMap(p => p.items), ...content.listening.flatMap(p => p.items)].entries()) {
     entry.prompt = `Pregunta ${index}: ella ___ médica.`;
@@ -177,10 +177,15 @@ test('non-English judge-off generation keeps its existing auto-publication and v
   }
   for (const [index, passage] of [...content.reading, ...content.listening].entries())
     passage.text = `Historia ${index}. ` + 'La familia vive en una casa cerca de la escuela y trabaja todos los días. '.repeat(4);
-  const result = await generateWeeklyLevelTest({ db, env: { ...ENV, LEVELTEST_VERIFY: 'off' }, transport: transport(content) },
+  return content;
+}
+
+test('non-English judge-off generation keeps its existing auto-publication and version behavior', async () => {
+  const { db, state } = database();
+  const result = await generateWeeklyLevelTest({ db, env: { ...ENV, LEVELTEST_VERIFY: 'off' }, transport: transport(spanishPool()) },
     { languageID: 'es', level: 'A1', now: NOW, origin: 'automatic_worker' });
   assert.equal(result.status, 'approved');
-  assert.equal(state.weeks[0]?.prompt_version, 2);
+  assert.equal(state.weeks[0]?.prompt_version, 3);
   assert.equal(state.weeks[0]?.judge_version, 2);
   assert.equal(state.weeks[0]?.blueprint_version, 1);
   assert.equal(state.weeks[0]?.blueprint_contract, null);
@@ -327,7 +332,7 @@ test('generation aggregates token usage across section and judge calls', async (
 test('generation persists the bumped English prompt and judge contract versions', async () => {
   const { db, state } = database();
   assert.equal((await generate(db)).status, 'approved');
-  assert.equal(state.weeks[0]!.prompt_version, 4);
+  assert.equal(state.weeks[0]!.prompt_version, 5);
   assert.equal(state.weeks[0]!.judge_version, 5);
 });
 
@@ -340,6 +345,127 @@ test('an unknown provider outcome is not retried by the section loop', async () 
   });
   assert.equal(outcome.status, 'failed');
   assert.equal(calls, 1);
+});
+
+function listeningFixture(count: number): ReturnType<typeof pool>['listening'] {
+  return Array.from({ length: count }, (_, index) => ({
+    ...pool().listening[0]!,
+    text: `Listening message ${index}. ${paragraph}`,
+    items: Array.from({ length: 3 }, (_, question) => item(`listening-${index}-${question}`)),
+  }));
+}
+
+for (const mode of ['surplus', 'deficit', 'duplicate', 'interrupted'] as const) {
+  test(`English generation preserves valid passages during ${mode} recovery`, async () => {
+    const { db, state } = database();
+    const originals = listeningFixture(mode === 'surplus' ? 7 : 5);
+    const repaired = listeningFixture(6)[5]!;
+    const calls: string[] = [];
+    const judgedTexts = new Set<string>();
+    const outcome = await generate(db, ENV, async (config, messages) => {
+      const user = messages[1]!.content;
+      if (messages[0]!.content.includes('quality reviewer')) {
+        const payload = JSON.parse(user);
+        if (payload.section === 'listening') {
+          for (const question of payload.items) judgedTexts.add(question.passageText);
+        }
+      }
+      if (!user.includes('listening passages')) return sectionTransport()(config, messages);
+      calls.push(messages.map(message => message.content).join('\n'));
+      if (calls.length === 1) {
+        // This invalid passage reuses a real question before the valid passage arrives.
+        const invalid = { ...originals[0], text: 'Too short' };
+        return { content: JSON.stringify(mode === 'surplus' ? [invalid, ...originals] : originals) };
+      }
+      if (mode === 'interrupted') throw new LlmTransportError('llm_outcome_unknown');
+      return { content: JSON.stringify([mode === 'duplicate' ? originals[0] : repaired]) };
+    });
+    assert.equal(outcome.status, mode === 'duplicate' || mode === 'interrupted' ? 'failed' : 'approved');
+    assert.equal(calls.length, mode === 'surplus' ? 1 : 2);
+    if (mode !== 'surplus') assert.match(calls[1]!, /Generate exactly 1 replacement/);
+    if (mode === 'interrupted') assert.deepEqual(outcome.errors, ['llm_outcome_unknown']);
+    if (mode === 'duplicate' || mode === 'interrupted') {
+      assert.equal(state.weeks.length, 0);
+      assert.equal(judgedTexts.size, 0);
+    } else {
+      assert.equal(state.weeks.length, 1);
+      assert.deepEqual(judgedTexts, new Set([...originals, ...(mode === 'deficit' ? [repaired] : [])].map(passage => passage.text)));
+    }
+  });
+}
+
+test('English repair requests missing kinds and primary skills even when section count is sufficient', async () => {
+  const { db, state } = database();
+  const candidates = pool();
+  const model = examModelFor('A1', 'en')!;
+  const missingSkill = model.assessment!.sections.recognition.requiredSkills.at(-1)!;
+  const otherSkill = model.assessment!.sections.recognition.requiredSkills[0]!;
+  candidates.recognition = candidates.recognition.map((value, index) => ({
+    ...value, kind: index === 16 ? 'choice' : value.kind,
+    options: index === 16 ? ['is', 'are', 'am', 'be'] : value.options,
+    assessedSkill: value.assessedSkill === missingSkill ? otherSkill : value.assessedSkill,
+  }));
+  let feedback = '';
+  let calls = 0;
+  let diagnostic: Record<string, unknown> | undefined;
+  const deps = { db, env: ENV, onDiagnostic: (name: string, fields: Record<string, unknown>) => {
+    if (name === 'validate.candidates' && fields.section === 'recognition') diagnostic = fields;
+  }, transport: async (config: Parameters<ReturnType<typeof sectionTransport>>[0],
+    messages: Parameters<ReturnType<typeof sectionTransport>>[1]) => {
+    if (!messages[1]!.content.includes('vocabulary and grammar')) return transport(candidates)(config, messages);
+    calls++;
+    if (calls === 1) return transport(candidates)(config, messages);
+    feedback = messages.map(message => message.content).join('\n');
+    return { content: JSON.stringify([{ ...item('recognition-100', 'gap'), assessedSkill: missingSkill }]) };
+  } };
+  const result = await generateWeeklyLevelTest(deps, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
+  assert.equal(result.status, 'approved');
+  assert.equal(state.weeks.length, 1);
+  assert.equal(calls, 2);
+  assert.match(feedback, /Generate exactly 1 replacement/);
+  assert.match(feedback, /1 gap/i);
+  assert.ok(feedback.includes(`Missing primary skills: ${missingSkill}`));
+  assert.doesNotMatch(feedback, /Candidate quotas are hard requirements|Cover every listed skill|repair the entire section/i);
+  assert.equal(diagnostic?.missing_count, 0);
+  assert.deepEqual(diagnostic?.missing_kinds, ['gap:1']);
+  assert.deepEqual(diagnostic?.missing_skills, [missingSkill]);
+});
+
+test('cancellation during the repair checkpoint does not dispatch another provider call', async () => {
+  const { db, state } = database();
+  const abort = new AbortController();
+  const content = { ...pool(), listening: listeningFixture(5) };
+  let checkpoints = 0;
+  let calls = 0;
+  const outcome = await generateWeeklyLevelTest({ db, env: ENV, onUsage: async () => {
+    // Four initial dispatch/report pairs, then the repair dispatch checkpoint.
+    if (++checkpoints === 9) abort.abort();
+  }, transport: async (config, messages) => {
+    calls++;
+    return transport(content)(config, messages);
+  } }, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker', signal: abort.signal });
+  assert.equal(outcome.status, 'failed');
+  assert.deepEqual(outcome.errors, ['llm_outcome_unknown']);
+  assert.equal(calls, 4);
+  assert.equal(state.weeks.length, 0);
+});
+
+test('legacy judge diagnostics distinguish flagged verdicts from rejections', async () => {
+  const { db, state } = database();
+  let recognition: Record<string, unknown> | undefined;
+  const deps = { db, env: { ...ENV, LEVELTEST_VERIFY: 'flag' },
+    onDiagnostic: (name: string, fields: Record<string, unknown>) => {
+      if (name === 'judge.verdicts' && fields.section === 'recognition') recognition = fields;
+    },
+    transport: transport(spanishPool(), items => ({ items: items.map((entry, index) => ({
+      id: entry.id, verdict: index === 0 ? 'flagged' : 'ok',
+    })) })),
+  };
+  const result = await generateWeeklyLevelTest(deps, { languageID: 'es', level: 'A1', now: NOW, origin: 'automatic_worker' });
+  assert.equal(result.status, 'approved');
+  assert.equal((state.weeks[0]!.pool as GeneratedPool).recognition.length, 24);
+  assert.equal(recognition?.flagged, 1);
+  assert.equal(recognition?.rejected, 0);
 });
 
 test('a scheduled generation preserves an existing draft unless force is explicit', async () => {
@@ -836,4 +962,41 @@ test('manual approval rejects leaked internal assessed tags even in rehashed sna
   row.variants[0]=identifySnapshot(form,'llm',row.id) as unknown as Record<string,unknown>;
   await assert.rejects(approveGeneratedWeek(db,row.id,ADMIN,'Reviewed content'),{code:'level_test_not_approvable'});
   assert.equal(state.audit.length,0);
+});
+
+test('generation emits bounded diagnostics for repair, judge, composition, and publication', async () => {
+  for (const mode of ['auto', 'review']) {
+    const { db } = database();
+    const events: { name: string; fields: Record<string, unknown> }[] = [];
+    const original = listeningFixture(6);
+    let listeningCalls = 0;
+    const deps = { db, env: { ...ENV, LEVELTEST_PUBLISH_MODE: mode },
+      onDiagnostic: (name: string, fields: Record<string, unknown>) => events.push({ name, fields }),
+      transport: async (config: Parameters<ReturnType<typeof sectionTransport>>[0],
+        messages: Parameters<ReturnType<typeof sectionTransport>>[1]) => {
+        if (!messages[1]!.content.includes('listening passages')) return sectionTransport()(config, messages);
+        listeningCalls++;
+        return { content: JSON.stringify(listeningCalls === 1 ? original.slice(0, 5) : original.slice(5)),
+          tokensOut: 11, finishReason: 'length' as const };
+      },
+    };
+    const result = await generateWeeklyLevelTest(deps, { languageID: 'en', level: 'A1', now: NOW, origin: 'automatic_worker' });
+    assert.equal(result.status, mode === 'auto' ? 'approved' : 'draft');
+    const event = (name: string, section?: string) => events.find(entry => entry.name === name &&
+      (section === undefined || entry.fields.section === section))?.fields;
+    const first = event('generate.provider', 'listening');
+    assert.equal(first?.requested, 8);
+    assert.equal(first?.finish_reason, 'length');
+    assert.equal(first?.tokens_out, 11);
+    assert.equal(first?.tokens_in, undefined);
+    assert.ok(typeof first?.duration_ms === 'number');
+    assert.equal(event('generate.response', 'listening')?.received, 5);
+    assert.equal(event('validate.candidates', 'listening')?.accepted, 5);
+    assert.equal(event('repair.provider', 'listening')?.requested, 1);
+    assert.equal(event('validate.repair', 'listening')?.accepted, 1);
+    assert.equal(event('judge.verdicts', 'listening')?.accepted, 18);
+    assert.equal(event('compose.result')?.outcome, 'ok');
+    assert.equal(event('publication.result')?.outcome, result.status);
+    assert.doesNotMatch(JSON.stringify(events), /Listening message|Question listening|fake-key/);
+  }
 });
