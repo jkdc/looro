@@ -31,6 +31,11 @@ import { log } from './log.js';
 import { addDatabasePoolObservability, initGenerationMetrics, initObservability, shutdownObservability, startGenerationMetricsRefresh } from './observability.js';
 import { migrate, migrationsOnBootEnabled } from './migrate.js';
 
+/** The daily schedulers belong to the single-container runtime; isolated test
+    stacks set DAILY_SCHEDULERS_ENABLED=false so background workers never
+    enqueue or claim daily_jobs rows while DB-level tests run. */
+const dailySchedulersEnabled = (env: NodeJS.ProcessEnv): boolean => env.DAILY_SCHEDULERS_ENABLED !== 'false';
+
 export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> {
   const databaseURL = env.DATABASE_URL;
   if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
@@ -96,9 +101,11 @@ export async function main(env: NodeJS.ProcessEnv = process.env): Promise<void> 
     database = db;
     // Opt-in for single-container deployments (see migrationsOnBootEnabled).
     if (migrationsOnBootEnabled(env)) await migrate(db);
-    dailyScheduler = createDailyScheduler(db);
-    dailyContentWorker = createDailyContentWorkerScheduler(db,env);
-    dailyReviewWorker = createDailyReviewWorkerScheduler(db,env);
+    if (dailySchedulersEnabled(env)) {
+      dailyScheduler = createDailyScheduler(db);
+      dailyContentWorker = createDailyContentWorkerScheduler(db,env);
+      dailyReviewWorker = createDailyReviewWorkerScheduler(db,env);
+    }
     addDatabasePoolObservability(db);
     await initGenerationMetrics(db);
     stopGenerationMetricsRefresh = startGenerationMetricsRefresh(db);

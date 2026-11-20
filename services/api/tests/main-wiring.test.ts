@@ -9,7 +9,7 @@ const isCompiled = existsSync(fileURLToPath(compiledMain));
 const mainEntry = isCompiled ? compiledMain : new URL('../src/main.ts', import.meta.url);
 const registerHooks = new URL('./support/main-wiring-register.mjs', import.meta.url);
 
-function runMainProbe(failure?: string, signal?: string) {
+function runMainProbe(failure?: string, signal?: string, extraEnv: Record<string, string> = {}) {
   const loaderArgs = isCompiled ? [] : ['--import', 'tsx'];
   const result = spawnSync(process.execPath, [...loaderArgs, '--import', fileURLToPath(registerHooks), fileURLToPath(mainEntry)], {
     cwd: process.cwd(), encoding: 'utf8', timeout: 10_000,
@@ -20,6 +20,7 @@ function runMainProbe(failure?: string, signal?: string) {
       MAIN_WIRING_FAILURE: failure ?? '',
       MAIN_WIRING_SIGNAL: signal ?? '',
       MAIN_WIRING_ENTRY: mainEntry.href,
+      ...extraEnv,
     },
   });
   assert.equal(result.error, undefined, result.error?.message);
@@ -47,6 +48,22 @@ test('main composition starts configured workers only after listening succeeds',
   before(result.events, 'daily_worker_start', 'daily_content_worker_start');
   before(result.events, 'daily_content_worker_start', 'daily_review_worker_start');
   before(result.events, 'daily_review_worker_start', 'api_started');
+  assert.ok(!result.events.includes('startup_failed'), result.events.join(', '));
+});
+
+test('main composition skips the daily schedulers when disabled for isolated test stacks', () => {
+  // Regression: the smoke API ran live daily schedulers against the shared
+  // ephemeral database, so its scheduler enqueued and its worker claimed
+  // content jobs while DB-level daily tests ran, flipping job ids and states
+  // nondeterministically. Isolated stacks must be able to run without them.
+  const result = runMainProbe(undefined, undefined, { DAILY_SCHEDULERS_ENABLED: 'false' });
+  assert.equal(result.status, 0);
+  has(result.events, 'api_started');
+  has(result.events, 'minute_worker_start');
+  has(result.events, 'generation_worker_start');
+  assert.ok(!result.events.includes('daily_worker_start'), result.events.join(', '));
+  assert.ok(!result.events.includes('daily_content_worker_start'), result.events.join(', '));
+  assert.ok(!result.events.includes('daily_review_worker_start'), result.events.join(', '));
   assert.ok(!result.events.includes('startup_failed'), result.events.join(', '));
 });
 

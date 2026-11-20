@@ -34,6 +34,9 @@ services:
       ADMIN_PROXY_TOKEN: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
       ADMIN_PUBLIC_ORIGIN: http://localhost:8081
       ADMIN_ALLOW_LOCAL_LOOPBACK: "true"
+      # DB-level daily tests share this database; the API under test must not
+      # enqueue or claim daily_jobs concurrently with them.
+      DAILY_SCHEDULERS_ENABLED: "false"
     ports: ["127.0.0.1::8080"]
     read_only: true
     tmpfs: [/tmp]
